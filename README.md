@@ -40,6 +40,8 @@ You can find your user id on your [MTGAHelper website profile page](https://mtga
 
 You will notice activity in the status bar any time the tracker is communicating with the servers. For example the status bar will blink and indicate `Uploading log file to server...` while it is uploading your data, which can take some time. You are NOT blocked by this activity and can continue playing the game normally.
 
+Once your data is uploaded successfully, you can simply refresh the MTGAHelper website to see it updated.
+
 -----
 
 ###### All art is property of their respective artists and/or Wizards of the Coast Inc. This website is not produced, endorsed, supported, or affiliated with Wizards of the Coast. MTGAHelper is unofficial Fan Content permitted under the Fan Content Policy.
