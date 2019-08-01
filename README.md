@@ -1,5 +1,3 @@
-# A project related to [MTGAHelper](http://www.mtgahelper.com)
-
 ![MTGAHelper](http://www.mtgahelper.com/images/hero1-bg.jpg)
 
 [MTGAHelper](http://www.mtgahelper.com) is an application used along with the game Magic: The Gathering Arena.
