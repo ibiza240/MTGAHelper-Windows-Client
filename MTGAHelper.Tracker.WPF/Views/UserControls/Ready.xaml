@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="MTGAHelper.Tracker.WPF.Views.UserControls.Ready"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MTGAHelper.Tracker.WPF.Views"
+             xmlns:uc="clr-namespace:MTGAHelper.Tracker.WPF.Views.UserControls"
+             xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+    </UserControl.Resources>
+    <UserControl.Style>
+        <Style TargetType="{x:Type uc:Ready}">
+            <Setter Property="Visibility" Value="Hidden" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding MainWindowContext}" Value="Ready">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
+    <DockPanel Margin="10,10,10,10">
+        <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
+            <Label>You're all set!</Label>
+            <!--<Label Content="{Binding Path=Username, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"></Label>-->
+            <Label Content="{Binding Path=CardsOwned, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"></Label>
+
+            <Label>
+                <TextBlock>
+                    View all your data on the
+                    <LineBreak/>
+                    <Hyperlink NavigateUri="https://mtgahelper.com" helpers:HyperlinkExtensions.IsExternal="true">
+                        MTGAHelper website
+                    </Hyperlink>.
+                </TextBlock>
+            </Label>
+
+            <Label>
+                <TextBlock TextWrapping="WrapWithOverflow">
+                At the moment this client will only be used to automatically synchronize your collection log files with our servers.
+                </TextBlock>
+            </Label>
+
+            <Label>
+                <TextBlock TextWrapping="WrapWithOverflow">
+                    In time, we'll be adding more features such as a draft helper and an in-game deck tracker.
+                </TextBlock>
+            </Label>
+
+            <StackPanel Orientation="Horizontal" Visibility="{Binding ShowLaunchMtgaGameClient, Converter={StaticResource BoolToVisConverter}}">
+                <Image Source="/Assets/Images/MTGA.png" Width="18" Margin="0,6" />
+                <Label>
+                    <Hyperlink Click="HyperlinkLaunchGame_Click">
+                        Launch the MTGArena game client
+                    </Hyperlink>
+                </Label>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel  DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
+            <Label>
+                <TextBlock TextWrapping="WrapWithOverflow">
+                    Processing your log file may take some time. With enough support, the servers will be much faster. Thanks for your understanding!
+                </TextBlock>
+            </Label>
+        </StackPanel>
+    </DockPanel>
+</UserControl>

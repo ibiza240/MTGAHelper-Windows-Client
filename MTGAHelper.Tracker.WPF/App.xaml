@@ -1,0 +1,13 @@
+﻿<Application x:Class="MTGAHelper.Tracker.WPF.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:MTGAHelper.Tracker.WPF.Views">
+    <Application.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value ="#aaaaaa"/>
+        </Style>
+        <Style TargetType="Hyperlink">
+            <Setter Property="Foreground" Value ="aquamarine"/>
+        </Style>
+    </Application.Resources>
+</Application>

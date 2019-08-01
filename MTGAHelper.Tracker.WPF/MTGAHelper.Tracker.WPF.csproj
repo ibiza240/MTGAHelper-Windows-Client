@@ -1,0 +1,81 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>wcC.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyName>MTGAHelper.Tracker</AssemblyName>
+    <Version>0.1.0</Version>
+    <Company>MTGAHelper</Company>
+    <Authors>MTGAHelper</Authors>
+    <Description>MTGAHelper Local client</Description>
+    <Copyright>2019 MTGAHelper</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\Images\loading.gif" />
+    <None Remove="Assets\Images\MTGA.png" />
+    <None Remove="Assets\Images\wcC.ico" />
+    <None Remove="Assets\Images\wcC.png" />
+    <None Remove="StatusBarTop.xaml" />
+    <None Remove="Views\OptionsWindow.xaml" />
+    <None Remove="Views\UC_DraftHelper.xaml" />
+    <None Remove="Views\UC_Ready.xaml" />
+    <None Remove="Views\UC_StatusBarTop.xaml" />
+    <None Remove="Views\UC_Welcome.xaml" />
+    <None Remove="Views\UserControls\DraftHelper.xaml" />
+    <None Remove="Views\UserControls\Playing.xaml" />
+    <None Remove="Views\UserControls\Ready.xaml" />
+    <None Remove="Views\UserControls\StatusBarTop.xaml" />
+    <None Remove="Views\UserControls\Welcome.xaml" />
+    <None Remove="Welcome.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="IWshRuntimeLibrary.dll">
+      <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <Private>true</Private>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.WindowsDesktop.App" Version="3.0.0-preview7-27912-14" />
+    <PackageReference Include="Serilog" Version="2.8.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
+    <PackageReference Include="WpfAnimatedGif" Version="1.4.18" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MTGAHelper.Web.Models\MTGAHelper.Web.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Images\loading.gif" />
+    <Resource Include="Assets\Images\MTGA.png" />
+    <Resource Include="Assets\Images\wcC.ico" />
+    <Resource Include="Assets\Images\wcC.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,41 @@
+﻿<Window x:Class="MTGAHelper.Tracker.WPF.Views.OptionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MTGAHelper.Tracker.WPF.Views"
+        mc:Ignorable="d"
+        Title="Options" Icon="/Assets/images/wcC.png"
+        Height="200" Width="800" ResizeMode="NoResize" Background="#272b30"
+        PreviewKeyDown="Window_PreviewKeyDown">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Label Grid.Row="0" Grid.Column="1" Margin="-3,0,0,0">Values are saved upon closing this window</Label>
+        
+        <Label Grid.Row="1" Grid.Column="0" HorizontalContentAlignment="Right">User Id</Label>
+        <TextBox Grid.Row="1" Grid.Column="1" Height="20" x:Name="txtUserId"
+                     Text="{Binding Path=UserId, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Margin="0,0,5,0" />
+        
+        <Label  Grid.Row="2" Grid.Column="0" HorizontalContentAlignment="Right">Log file full location</Label>
+        <TextBox Grid.Row="2" Grid.Column="1" Height="20" x:Name="txtLogFilePath"
+                     Text="{Binding Path=LogFilePath, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Margin="0,0,5,0" />
+        
+        <Label Grid.Row="3" Grid.Column="0" HorizontalContentAlignment="Right">MTGA game full location</Label>
+        <TextBox Grid.Row="3" Grid.Column="1" Height="20" x:Name="txtGameFilePath"
+                     Text="{Binding Path=GameFilePath, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Margin="0,0,5,0" />
+
+        <CheckBox Grid.Row="4" Grid.Column="1" Height="20" x:Name="chkRunOnStartup" Margin="0,5,0,0"
+                      Content="Start MTGAHelper tracker on Windows startup"
+                      IsChecked="{Binding Path=RunOnStartup, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+    </Grid>
+</Window>
