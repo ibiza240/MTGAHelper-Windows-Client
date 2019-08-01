@@ -38,7 +38,7 @@ You can find your user id on your [MTGAHelper website profile page](https://mtga
 
 ### Usage
 
-You will notice activity in the status bar any time the tracker is communicating with the servers. For example the status bar will blink and indicate `Uploading log file to server...` when it is uploading your data, which can take some time. You are NOT blocked by this activity and can continue playing the game normally.
+You will notice activity in the status bar any time the tracker is communicating with the servers. For example the status bar will blink and indicate `Uploading log file to server...` while it is uploading your data, which can take some time. You are NOT blocked by this activity and can continue playing the game normally.
 
 -----
 
