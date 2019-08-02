@@ -6,8 +6,9 @@
 
 This project contains source code for the local program that can be installed on your computer known as a *Tracker*  and is used to communicate with the MTGAHelper servers.
 
-You can then go to the [MTGAHelper](http://www.mtgahelper.com)  at any time to see your cards collection statistics and a variety of information tracked for you while you enjoy playing Magic: The Gathering Arena.
+You can then go to the [MTGAHelper website](http://www.mtgahelper.com)  at any time to see your cards collection statistics and a variety of information tracked for you while you enjoy playing Magic: The Gathering Arena.
 
+Please note that this tracker runs only on Windows for now.
 
 ### Features
 
