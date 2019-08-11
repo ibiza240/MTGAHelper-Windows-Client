@@ -8,7 +8,7 @@ This project contains the Installer and source code for the local program that c
 
 You can then use the **[MTGAHelper website](http://www.mtgahelper.com)**  at any time to see your cards collection statistics and a variety of information tracked for you while you enjoy playing Magic: The Gathering Arena.
 
-See [this post](https://www.patreon.com/posts/29073757) for an overview on how to best use MTGAHelper.
+See [this post](https://www.patreon.com/posts/how-to-make-best-29075781) for an overview on how to best use MTGAHelper.
 
 Please note that this tracker runs only on Windows for now.
 
