@@ -13,6 +13,7 @@ Please note that this tracker runs only on Windows for now.
 ### Features
 
 - Automatically synchronizes your log files data with the MTGAHelper servers
+- Draft helper when picking your cards during a draft
 
 -----
 
