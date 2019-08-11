@@ -48,8 +48,8 @@ namespace MTGAHelper.Web.UI.Model.Response
                 );
 
                 info.Item2.NbMissing =
-                            hCards[i.IsSideboard].Contains(i.Card.name) ? 0 : (deckInfo.CardsRequired.ByCard.ContainsKey(i.Card) ?
-                            (i.IsSideboard ? deckInfo.CardsRequired.ByCard[i.Card].NbMissingSideboard : deckInfo.CardsRequired.ByCard[i.Card].NbMissingMain) : 0);
+                            hCards[i.IsSideboard].Contains(i.Card.name) ? 0 : (deckInfo.CardsRequired.ByCard.ContainsKey(i.Card.name) ?
+                            (i.IsSideboard ? deckInfo.CardsRequired.ByCard[i.Card.name].NbMissingSideboard : deckInfo.CardsRequired.ByCard[i.Card.name].NbMissingMain) : 0);
 
                 //if (i.Card.name.Contains("Guildgate"))
                 //    System.Diagnostics.Debugger.Break();

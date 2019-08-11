@@ -1,0 +1,148 @@
+﻿<UserControl x:Class="MTGAHelper.Tracker.WPF.Views.UserControls.Drafting"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MTGAHelper.Tracker.WPF.Views"
+             xmlns:uc="clr-namespace:MTGAHelper.Tracker.WPF.Views.UserControls"
+             xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <!--<helpers:BoolToStringConverter x:Key="IsRareDraftPickBorderThicknessConverter" TrueValue="1,1,1,1" FalseValue="0,1,0,0" />
+        <helpers:BoolToStringConverter x:Key="IsRareDraftPickBorderBrushConverter" TrueValue="#ccac00" FalseValue="#555555" />
+        <helpers:BoolToStringConverter x:Key="IsRareDraftPickColorConverter" TrueValue="#ccac00" FalseValue="#aaaaaa" />-->
+        <helpers:BoolToStringConverter x:Key="BoolToVisHiddenConverter" TrueValue="Visible" FalseValue="Hidden" />
+        <helpers:BoolToStringConverter x:Key="BoolToVisCollapsedConverter" TrueValue="Visible" FalseValue="Collapsed" />
+        <helpers:RatingFloatToColorScaleConverter x:Key="RatingToColorConverter" />
+        <helpers:StringToValueConverter x:Key="ShowWeightConverter" Value="0" WhenEqual="Hidden" WhenNotEqual="Visible" />
+        <Style TargetType="Label">
+            <Setter Property="ToolTipService.InitialShowDelay" Value="50" />
+        </Style>
+    </UserControl.Resources>
+        <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
+        <Label Padding="0" FontSize="20" FontWeight="Bold">
+            <TextBlock>Draft picks</TextBlock>
+        </Label>
+        <Label Padding="0" Margin="0,5,0,5" Visibility="{Binding ShowGlobalMTGAHelperSays, Converter={StaticResource BoolToVisCollapsedConverter}}">
+            <TextBlock Text="{Binding CardsWheelingMessage}" />
+        </Label>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" Height="788">
+            <StackPanel Orientation="Vertical">
+                <ItemsControl ItemsSource="{Binding CardsDraftByTier}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Key, StringFormat='Limited Rating: {0}'}" FontSize="16" FontWeight="Bold"
+                                    Foreground="{Binding Path=Key, Converter={StaticResource RatingToColorConverter}}" />
+                                <DataGrid ItemsSource="{Binding Value}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="0,0,0,5"
+                    GridLinesVisibility="None" Background="Transparent" RowBackground="Transparent" Foreground="#aaaaaa" HeadersVisibility="None" BorderThickness="0" >
+                                    <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <EventSetter Event="MouseEnter" Handler="CardThumbnail_MouseEnter"/>
+                                        <EventSetter Event="MouseLeave" Handler="CardThumbnail_MouseLeave"/>
+                                        <Setter Property="BorderThickness" Value="0,1,0,0" />
+                                            <Setter Property="BorderBrush" Value="#555555" />
+                                        </Style>
+                                    </DataGrid.RowStyle>
+                                    <DataGrid.CellStyle>
+                                        <Style TargetType="{x:Type DataGridCell}">
+                                            <Setter Property="Foreground" Value="Black" />
+                                            <Style.Triggers>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="Background" Value="{x:Null}" />
+                                                    <Setter Property="BorderBrush" Value="{x:Null}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGrid.CellStyle>
+                                    <DataGrid.Columns>
+                                        <DataGridTemplateColumn IsReadOnly="True">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Border BorderThickness="2" Width="36" Height="36">
+                                                        <Border.BorderBrush>
+                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" GradientStops="{Binding CardVM.ColorGradient.Value}" />
+                                                        </Border.BorderBrush>
+
+                                                        <Rectangle Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                            <Rectangle.Fill>
+                                                                <ImageBrush ImageSource="{Binding ImageArtUrl}" Stretch="UniformToFill" />
+                                                            </Rectangle.Fill>
+                                                        </Rectangle>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn IsReadOnly="True">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Vertical" Margin="2,0,0,0">
+                                                        <Label Padding="0">
+                                                            <TextBlock Text="{Binding Name}" />
+                                                        </Label>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Label Padding="0">
+                                                                <!--<Label.ToolTip>
+                                                                    <TextBlock Foreground="Black">Limited Draft Rating</TextBlock>
+                                                                </Label.ToolTip>-->
+                                                                <TextBlock Text="{Binding Rating}" FontWeight="Bold" 
+                                                    Foreground="{Binding Path=RatingFloat, Converter={StaticResource RatingToColorConverter}}" />
+                                                            </Label>
+                                                            <!--<Label Padding="0">
+                                                                <Label.ToolTip>
+                                                                    <TextBlock Foreground="Black">Weight of missing copies (based on your MTGAHelper tracked decks)</TextBlock>
+                                                                </Label.ToolTip>
+                                                                <TextBlock Text="{Binding Weight, StringFormat='Weight: {0}'}"  />
+                                                                --><!--Foreground="{Binding Path=IsRareDraftPick, Converter={StaticResource IsRareDraftPickColorConverter}}"--><!--
+                                                            </Label>-->
+                                                            <!--<Label Padding="10,0,0,0">
+                                                                <Label.ToolTip>
+                                                                    <TextBlock Foreground="Black">M: Missing copies (based on your MTGAHelper tracked decks)</TextBlock>
+                                                                </Label.ToolTip>
+                                                                <TextBlock Text="{Binding NbMissingTrackedDecks, StringFormat='M: {0}'}"  />
+                                                                --><!--Foreground="{Binding Path=IsRareDraftPick, Converter={StaticResource IsRareDraftPickColorConverter}}"--><!--
+                                                            </Label>-->
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn IsReadOnly="True" Width="*">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Visibility="{Binding DataContext.ShowGlobalMTGAHelperSays, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVisCollapsedConverter}}">
+                                                        <Border HorizontalAlignment="Right" ToolTipService.InitialShowDelay="50">
+                                                            <Border.ToolTip>
+                                                                <TextBlock Foreground="Black"  Text="Raredraft choice" />
+                                                        </Border.ToolTip>
+                                                        <Image Source="/Assets/Images/Treasure.png" Width="20"
+                                                                Opacity="{Binding DataContext.RaredraftOpacity, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
+                                            Visibility="{Binding RareDraftPickEnum, Converter={StaticResource BoolToVisHiddenConverter}}" />
+                                                        </Border>
+                                                        <Border HorizontalAlignment="Right" ToolTipService.InitialShowDelay="50" Margin="0,2,4,0">
+                                                            <Border.ToolTip>
+                                                                <TextBlock Foreground="Black" Text="Used in your tracked decks" />
+                                                            </Border.ToolTip>
+                                                            <Image Source="/Assets/Images/star.png" Width="12"
+                                                Visibility="{Binding Weight, Converter={StaticResource ShowWeightConverter}}" />
+                                                        </Border>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </StackPanel>
+</UserControl>

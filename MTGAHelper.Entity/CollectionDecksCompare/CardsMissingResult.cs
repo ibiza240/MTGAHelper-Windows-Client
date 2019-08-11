@@ -10,7 +10,7 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
 
         public Dictionary<string, CardRequiredInfoByDeck> ByDeck { get; private set; } = new Dictionary<string, CardRequiredInfoByDeck>();
 
-        public Dictionary<Card, CardRequiredInfoByCard> ByCard { get; private set; } = new Dictionary<Card, CardRequiredInfoByCard>();
+        public Dictionary<string, CardRequiredInfoByCard> ByCard { get; private set; } = new Dictionary<string, CardRequiredInfoByCard>();
 
         public CardsMissingResult()
         {
@@ -18,6 +18,7 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
 
         public CardsMissingResult(ICollection<CardRequiredInfo> computedData, Dictionary<string, bool> decksTracked)
         {
+            //var test = computedData.FirstOrDefault(i => i.Card.name == "Teferi, Hero of Dominaria");
             this.computedData = computedData;
 
             ByDeck = computedData
@@ -27,8 +28,10 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
 
             ByCard = computedData
                 .Where(i => i.IsForAverageArchetypeOthersInMain == false)
-                .GroupBy(i => i.Card)
+                .GroupBy(i => i.Card.name)
                 .ToDictionary(i => i.Key, i => new CardRequiredInfoByCard(i, decksTracked));
+
+            //var test2 = ByCard.FirstOrDefault(i => i.Key.name == "Teferi, Hero of Dominaria");
         }
 
         public Dictionary<string, InfoCardMissingSummary[]> GetModelSummary()
@@ -49,7 +52,7 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
                 .Where(i => i.Value.NbMissing > 0)
                 .GroupBy(i => i.Value.Card.setConsideringCraftedOnly)
                 .ToDictionary(i => i.Key, x => x
-                    .OrderBy(i => i.Key.GetRarityEnum(true))
+                    .OrderBy(i => i.Value.Card.GetRarityEnum(true))
                     .GroupBy(i => i.Value.Card.GetRarityEnum(true)).Select(i => new InfoCardMissingSummary
                     {
                         Set = x.Key,
@@ -102,16 +105,16 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
         {
             return ByCard
                 .Where(i => i.Value.NbMissing > 0)
-                .Where(i => i.Key.type.Contains("Land") || i.Value.MissingWeight != 0)
+                .Where(i => i.Value.Card.type.Contains("Land") || i.Value.MissingWeight != 0)
                 .Select(i => new CardMissingDetailsModel
                 {
-                    CardName = i.Key.name,
-                    Set = i.Key.set,
+                    CardName = i.Value.Card.name,
+                    Set = i.Value.Card.set,
                     //SetId = i.Key.number,
-                    CraftedOnly = i.Key.craftedOnly,
-                    ImageCardUrl = i.Key.imageCardUrl,//i.Key.images["normal"],
-                    Rarity = i.Key.GetRarityEnum(true).ToString(),
-                    Type = i.Key.type,
+                    CraftedOnly = i.Value.Card.craftedOnly,
+                    ImageCardUrl = i.Value.Card.imageCardUrl,//i.Key.images["normal"],
+                    Rarity = i.Value.Card.GetRarityEnum(true).ToString(),
+                    Type = i.Value.Card.type,
                     NbOwned = i.Value.NbOwned,
                     NbMissing = i.Value.NbMissing,
                     MissingWeight = i.Value.MissingWeight,

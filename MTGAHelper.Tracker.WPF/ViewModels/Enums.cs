@@ -8,7 +8,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
     {
         Unknown,
         Welcome,
-        Ready,
+        Home,
+        InCollection,
         Drafting,
         Playing,
     }

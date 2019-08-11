@@ -24,11 +24,25 @@
         }
     }
 
+    public enum RaredraftPickReasonEnum
+    {
+        None,
+        BestVaultRarity,
+        HighestWeight,
+        RareLandMissing,
+        MissingInCollection,
+    }
+
     public class CardForDraftPick : Card
     {
-        public string Rating { get; set; }
-        public string Description { get; set; }
+        public string Rating { get; set; } = "N/A";
+        public string Description { get; set; } = "N/A";
         public float Weight { get; set; }
-        public int Top5Rank { get; set; }
+        public int NbDecksUsedMain { get; set; }
+        public int NbDecksUsedSideboard { get; set; }
+        public RaredraftPickReasonEnum IsRareDraftPick { get; set; }
+        public int NbMissingTrackedDecks { get; set; }
+        public int NbMissingCollection { get; set; }
+        public DraftRatingTopCard TopCommonCard { get; set; } = new DraftRatingTopCard(0, "");
     }
 }

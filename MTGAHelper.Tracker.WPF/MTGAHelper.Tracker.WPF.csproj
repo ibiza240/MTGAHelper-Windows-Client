@@ -7,16 +7,20 @@
     <ApplicationIcon>wcC.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>MTGAHelper.Tracker</AssemblyName>
-    <Version>0.1.0</Version>
+    <Version>1.0.0</Version>
     <Company>MTGAHelper</Company>
     <Authors>MTGAHelper</Authors>
     <Description>MTGAHelper Local client</Description>
     <Copyright>2019 MTGAHelper</Copyright>
+    <Configurations>Debug;Release;DebugWithServer</Configurations>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Assets\Images\loading.gif" />
     <None Remove="Assets\Images\MTGA.png" />
+    <None Remove="Assets\Images\star.png" />
+    <None Remove="Assets\Images\Treasure.png" />
     <None Remove="Assets\Images\wcC.ico" />
     <None Remove="Assets\Images\wcC.png" />
     <None Remove="StatusBarTop.xaml" />
@@ -25,7 +29,6 @@
     <None Remove="Views\UC_Ready.xaml" />
     <None Remove="Views\UC_StatusBarTop.xaml" />
     <None Remove="Views\UC_Welcome.xaml" />
-    <None Remove="Views\UserControls\DraftHelper.xaml" />
     <None Remove="Views\UserControls\Playing.xaml" />
     <None Remove="Views\UserControls\Ready.xaml" />
     <None Remove="Views\UserControls\StatusBarTop.xaml" />
@@ -62,12 +65,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MTGAHelper.Lib.OutputLogParser\MTGAHelper.Lib.OutputLogParser.csproj" />
     <ProjectReference Include="..\MTGAHelper.Web.Models\MTGAHelper.Web.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Assets\Images\loading.gif" />
     <Resource Include="Assets\Images\MTGA.png" />
+    <Resource Include="Assets\Images\star.png" />
+    <Resource Include="Assets\Images\Treasure.png" />
     <Resource Include="Assets\Images\wcC.ico" />
     <Resource Include="Assets\Images\wcC.png" />
   </ItemGroup>

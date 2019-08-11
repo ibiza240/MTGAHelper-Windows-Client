@@ -21,48 +21,55 @@ namespace MTGAHelper.Entity
         //public static readonly ulong FnvOffset64 = 14695981039346656037;
         public uint To32BitFnv1aHash(string toHash, bool separateUpperByte = false)
         {
-            IEnumerable<byte> bytesToHash;
+            if (toHash == null)
+                return 0;
 
-            if (separateUpperByte)
-                bytesToHash = toHash.ToCharArray()
-                    .Select(c => new[] { (byte)((c - (byte)c) >> 8), (byte)c })
-                    .SelectMany(c => c);
-            else
-                bytesToHash = toHash.ToCharArray()
-                    .Select(Convert.ToByte);
-
-            //this is the actual hash function; very simple
-            uint hash = FnvOffset32;
-
-            foreach (var chunk in bytesToHash)
+            //unchecked
             {
-                hash ^= chunk;
-                hash *= FnvPrime32;
+                IEnumerable<byte> bytesToHash;
+
+                if (separateUpperByte)
+                    bytesToHash = toHash.ToCharArray()
+                        .Select(c => new[] { (byte)((c - (byte)c) >> 8), (byte)c })
+                        .SelectMany(c => c);
+                else
+                    bytesToHash = toHash.ToCharArray()
+                        .Select(i => Encoding.ASCII.GetBytes(i.ToString())[0]);
+
+                //this is the actual hash function; very simple
+                uint hash = FnvOffset32;
+
+                foreach (var chunk in bytesToHash)
+                {
+                    hash ^= chunk;
+                    hash *= FnvPrime32;
+                }
+
+                return hash;
             }
-
-            return hash;
         }
 
-        private string GetHash(byte[] bytes)
-        {
-            StringBuilder sb = new StringBuilder();
+        //private string GetHash(byte[] bytes)
+        //{
+        //    StringBuilder sb = new StringBuilder();
 
-            using (var hash = SHA256.Create())
-            {
-                var result = hash.ComputeHash(bytes);
+        //    using (var hash = SHA256.Create())
+        //    {
+        //        var result = hash.ComputeHash(bytes);
 
-                foreach (var b in result)
-                    sb.Append(b.ToString("x2"));
-            }
+        //        foreach (var b in result)
+        //            sb.Append(b.ToString("x2"));
+        //    }
 
-            return sb.ToString();
-        }
+        //    return sb.ToString();
+        //}
 
-        public string GetHash(string value)
-        {
-            Encoding enc = Encoding.UTF8;
-            return GetHash(enc.GetBytes(value));
-        }
+        //public string GetHash(string value)
+        //{
+        //    //Encoding enc = Encoding.UTF8;
+        //    //return GetHash(enc.GetBytes(value));
+        //    return GetDeterministicHashCode(value).ToString();
+        //}
 
         public string RemoveInvalidCharacters(string filename)
         {
@@ -72,5 +79,24 @@ namespace MTGAHelper.Entity
 
             return newFilename;
         }
+
+        //int GetDeterministicHashCode(string str)
+        //{
+        //    unchecked
+        //    {
+        //        int hash1 = (5381 << 16) + 5381;
+        //        int hash2 = hash1;
+
+        //        for (int i = 0; i < str.Length; i += 2)
+        //        {
+        //            hash1 = ((hash1 << 5) + hash1) ^ str[i];
+        //            if (i == str.Length - 1)
+        //                break;
+        //            hash2 = ((hash2 << 5) + hash2) ^ str[i + 1];
+        //        }
+
+        //        return hash1 + (hash2 * 1566083941);
+        //    }
+        //}
     }
 }

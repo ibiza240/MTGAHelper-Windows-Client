@@ -26,7 +26,7 @@
             <TextBlock Foreground="White" FontWeight="Bold">MTGAHelper</TextBlock>
         </StatusBarItem>
         <StatusBarItem Grid.Column="2" HorizontalAlignment="Right">
-            <TextBlock Text="v0.1" />
+            <TextBlock Text="{Binding Version, StringFormat='v{0}'}" />
         </StatusBarItem>
         <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Right">
             <Menu>
@@ -36,6 +36,8 @@
                     <MenuItem Header="_Upload log file now" Click="Menu_UploadNow_Click" />
                     <Separator />
                     <MenuItem Header="_Exit" Click="Menu_Exit_Click" />
+                    <!--<Separator />
+                    <MenuItem Header="Test _Drafter" Click="MenuTestDrafter_Click" />-->
                 </MenuItem>
             </Menu>
         </StatusBarItem>

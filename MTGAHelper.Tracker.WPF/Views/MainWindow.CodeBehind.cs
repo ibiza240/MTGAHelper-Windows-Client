@@ -1,6 +1,7 @@
 ﻿using MTGAHelper.Tracker.WPF.ViewModels;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,8 @@ namespace MTGAHelper.Tracker.WPF.Views
     {
         void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            windowCardPopupDrafting.SetCardPopupPosition(this.Top, this.Width);
+
             if (api.IsLocalTrackerUpToDate() == false)
                 MustDownloadNewVersion();
 
@@ -25,14 +28,24 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         void MustDownloadNewVersion()
         {
-            MessageBox.Show("A new version of the MTGAHelper tracker is available, please download it to access the latest features.", "MTGAHelper");
-            var ps = new ProcessStartInfo(@"https://github.com/ibiza240/MTGAHelper-Windows-Client")
+#if DEBUG || DEBUGWITHSERVER
+#else
+            if (configApp.SkipVersionCheck)
+                return;
+
+            if (MessageBox.Show("A new version of the MTGAHelper Tracker is available, you must install it to continue. Proceed now?", "MTGAHelper", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                UseShellExecute = true,
-                Verb = "open"
-            };
-            Process.Start(ps);
+                var updaterApp = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MTGAHelper.Tracker.AutoUpdater.exe");
+                var ps = new ProcessStartInfo(updaterApp)
+                {
+                    UseShellExecute = true,
+                    Verb = "runas"
+                };
+                Process.Start(ps);
+            }
+
             App.Current.Shutdown();
+#endif
         }
 
         void InitialServerApiCalls()
@@ -91,6 +104,15 @@ namespace MTGAHelper.Tracker.WPF.Views
         void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             vm.RefreshOpacity();
+        }
+
+        private void Window_LocationChanged(object sender, EventArgs e)
+        {
+            if (double.IsNaN(Application.Current.MainWindow.Top) || double.IsNaN(Application.Current.MainWindow.Left))
+                return;
+
+            var left = (int)(this.Left < SystemParameters.WorkArea.Width / 2 ? this.Left + Width : this.Left - windowCardPopupDrafting.Width);
+            windowCardPopupDrafting.SetCardPopupPosition((int)this.Top, left);
         }
     }
 }

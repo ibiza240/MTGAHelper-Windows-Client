@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
 {
+    [Serializable]
     public class OutputLogResult
     {
         //InfoByDate<ICollection<CardWithAmount>> lastCollectionInMemory = null;
@@ -18,7 +19,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public IList<InfoByDate<IList<ConfigModelRawDeck>>> DecksByDate { get; set; } = new List<InfoByDate<IList<ConfigModelRawDeck>>>();
         public IList<InfoByDate<DateSnapshotDiff>> DiffByDate { get; set; } = new List<InfoByDate<DateSnapshotDiff>>();
 
-        public string LastUploadHash { get; set; }
+        public uint LastUploadHash { get; set; }
 
         public ICollection<DateSnapshotInfo> BuildHistory()
         {

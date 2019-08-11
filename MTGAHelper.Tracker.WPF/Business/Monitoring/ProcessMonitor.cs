@@ -10,11 +10,7 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
 {
     public class ProcessMonitor
     {
-//#if DEBUG
-//        const string PROCESS_NAME = "notepad";
-//#else
         const string PROCESS_NAME = "MTGA";
-//#endif
 
         public bool IsRunning { get; private set; } = false;
 

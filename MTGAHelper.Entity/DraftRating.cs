@@ -4,12 +4,12 @@ using System.Text;
 
 namespace MTGAHelper.Entity
 {
-    public class DraftRatingTop5Card
+    public class DraftRatingTopCard
     {
         public int Rank { get; set; }
         public string Name { get; set; }
 
-        public DraftRatingTop5Card(int rank, string name)
+        public DraftRatingTopCard(int rank, string name)
         {
             Rank = rank;
             Name = name;
@@ -18,7 +18,7 @@ namespace MTGAHelper.Entity
 
     public class DraftRating
     {
-        public Card Card { get; set; }
+        //public Card Card { get; set; }
         public string CardName { get; set; }
         public string Rating { get; set; }
         public string Description { get; set; }
@@ -35,6 +35,6 @@ namespace MTGAHelper.Entity
     public class DraftRatingScraperResultForSet
     {
         public ICollection<DraftRating> Ratings { get; set; } = new DraftRating[0];
-        public Dictionary<string, ICollection<DraftRatingTop5Card>> Top5CardsByColor { get; set; } = new Dictionary<string, ICollection<DraftRatingTop5Card>>();
+        public Dictionary<string, ICollection<DraftRatingTopCard>> TopCommonCardsByColor { get; set; } = new Dictionary<string, ICollection<DraftRatingTopCard>>();
     }
 }

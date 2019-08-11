@@ -38,6 +38,7 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
             //{
             //    System.Diagnostics.Debugger.Break();
             //}
+            //if (card.name == "Duress") System.Diagnostics.Debugger.Break();
 
             Card = card;
             IsSideboard = isSideboard;

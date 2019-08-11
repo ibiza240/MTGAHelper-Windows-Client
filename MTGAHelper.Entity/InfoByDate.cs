@@ -4,6 +4,7 @@ using System.Text;
 
 namespace MTGAHelper.Entity
 {
+    [Serializable]
     public class InfoByDate<T>
     {
         public DateTime DateTime;

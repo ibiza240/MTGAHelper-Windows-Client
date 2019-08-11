@@ -24,8 +24,9 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
         public CardRequiredInfoByCard(IEnumerable<CardRequiredInfo> cards, Dictionary<string, bool> decksTracked, bool buildByDeck = true)
         {
             Card = cards.First().Card;
+            //if (Card.name == "Duress") System.Diagnostics.Debugger.Break();
 
-            if (cards.Any(i => i.Card != Card))
+            if (cards.Any(i => i.Card.name != Card.name))
             {
                 throw new Exception("ByCard not with all the same card.");
             }
@@ -65,7 +66,7 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
             if (buildByDeck)
             {
                 ByDeck = cards
-                    .Where(i => i.MissingWeight > 0 || i.Card.type.Contains("Land"))
+                    //.Where(i => i.MissingWeight > 0 || i.Card.type.Contains("Land"))
                     .GroupBy(x => x.DeckId)
                     .ToDictionary(x => x.Key, x => new CardRequiredInfoByDeck(x.Key, x, decksTracked));
             }

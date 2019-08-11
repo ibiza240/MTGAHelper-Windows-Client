@@ -1,0 +1,27 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+*.dll
+*.user
+*.pdb
+*.bak*
+Debug
+DebugWithServer
+Release
+obj
+packages
+/FailedZipFiles
+/logs
+/userhistory
+/UserMessages
+/InvalidZips
+/BAK*
+/output_log*
+/data/configusers
+/data/test
+/data/news.json
+/data/decks.json
+/data/events.json
+/NODATE

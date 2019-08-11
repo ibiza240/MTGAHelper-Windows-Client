@@ -23,17 +23,20 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                     Task.Delay(1000).Wait();
 
                     var activeFlags = new NetworkStatusEnum[0];
-                    lock(lockFlags)
+                    lock (lockFlags)
                     {
                         activeFlags = Enum.GetValues(typeof(NetworkStatusEnum)).Cast<NetworkStatusEnum>()
                             .Where(i => flagsStatus.HasFlag(i))
                             .ToArray();
                     }
 
+                    int idx = 0;
                     foreach (var f in activeFlags)
                     {
+                        idx++;
                         EmitStatus?.Invoke(this, f);
-                        Task.Delay(1000).Wait();
+                        if (idx < activeFlags.Length)
+                            Task.Delay(1000).Wait();
                     }
                 }
             });
@@ -41,12 +44,12 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public void SetNetworkStatus(NetworkStatusEnum flag, bool isActive)
         {
-            lock(lockFlags)
+            lock (lockFlags)
             {
-            if (isActive)
-                flagsStatus |= flag;  // Set flag
-            else
-                flagsStatus &= ~flag;  // Remove flag
+                if (isActive)
+                    flagsStatus |= flag;  // Set flag
+                else
+                    flagsStatus &= ~flag;  // Remove flag
             }
         }
 
@@ -60,9 +63,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         {
             lock (lockFlags)
                 return flagsStatus;
-                //return Enum.GetValues(typeof(TrackerStatusEnum)).Cast<TrackerStatusEnum>()
-                //    .Where(i => flagsStatus.HasFlag(i))
-                //    .ToArray();
+            //return Enum.GetValues(typeof(TrackerStatusEnum)).Cast<TrackerStatusEnum>()
+            //    .Where(i => flagsStatus.HasFlag(i))
+            //    .ToArray();
         }
     }
 }

@@ -37,11 +37,11 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
             await ContinuallyCheckForProcess(cancellationToken);
         }
 
-        Task ContinuallyCheckForProcess(CancellationToken cancellationToken)
+        async Task ContinuallyCheckForProcess(CancellationToken cancellationToken)
         {
             Task task = null;
 
-            task = Task.Run(() =>
+            await Task.Run(() =>
             {
                 while (true)
                 {
@@ -101,9 +101,7 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
 
                     Task.Delay(1000).Wait();
                 }
-            });
-
-            return task;
+            }).ConfigureAwait(false);
         }
 
         public void ResetStringBuilder()

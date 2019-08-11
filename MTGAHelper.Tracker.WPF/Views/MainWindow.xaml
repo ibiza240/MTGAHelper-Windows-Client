@@ -8,10 +8,10 @@
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
         Title="MTGAHelper" Icon="/Assets/images/wcC.png"
-        Top="0" Left="0" Height="800" Width="240" ResizeMode="NoResize"
+        Top="0" Left="0" Height="900" Width="250"
         Loaded="Window_Loaded"
-        Activated="Window_Activated"
-        Deactivated="Window_Deactivated"
+        Activated="Window_Activated" Deactivated="Window_Deactivated"
+        LocationChanged="Window_LocationChanged"
         Opacity="{Binding OpacityPct}" AllowsTransparency="True" WindowStyle="None" Background="#272b30" BorderBrush="#181b1f" BorderThickness="2">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
@@ -65,21 +65,35 @@
         </Style>
     </Window.Resources>
 
-        <Grid DockPanel.Dock="Top">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="*" />
+    <Grid DockPanel.Dock="Top">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
             
-            <uc:StatusBarTop Grid.Row="0"  x:Name="statusBarTop" MouseLeftButtonDown="StatusBarTop_OnMouseLeftButtonDown" />
+        <uc:StatusBarTop Grid.Row="0" x:Name="statusBarTop" MouseLeftButtonDown="StatusBarTop_OnMouseLeftButtonDown" />
 
-            <uc:Ready Grid.Row="1" x:Name="ucReady" />
-            <uc:Welcome Grid.Row="1" x:Name="ucWelcome" />
-            <uc:DraftHelper Grid.Row="1" x:Name="ucDraftHelper" />
+        <uc:Ready Grid.Row="1" x:Name="ucReady" />
+        <uc:Welcome Grid.Row="1" x:Name="ucWelcome" />
 
+        <StackPanel Grid.Row="1">
+            <StackPanel.Style>
+                <Style TargetType="{x:Type StackPanel}">
+                    <Setter Property="Visibility" Value="Hidden" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding MainWindowContext}" Value="Drafting">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StackPanel.Style>
+            <uc:Drafting x:Name="ucDraftHelper" />
+        </StackPanel>
+
+        <uc:Playing Grid.Row="1" x:Name="ucPlaying" />
 
         <StackPanel Grid.Row="2" DockPanel.Dock="Bottom" Orientation="Vertical">
 
@@ -95,7 +109,7 @@
 
         </StackPanel>
         <StackPanel Grid.Row="3" DockPanel.Dock="Bottom" Orientation="Vertical">
-            <Slider Maximum="100" Value="{Binding Opacity, UpdateSourceTrigger=PropertyChanged}"
+            <Slider Maximum="100" Value="{Binding Opacity, UpdateSourceTrigger=PropertyChanged}" Background="#181b1f"
                 ValueChanged="Slider_ValueChanged" Style="{StaticResource MyCustomStyleForSlider}" LargeChange="10" />
 
             <StatusBar Background="#181b1f">

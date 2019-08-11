@@ -47,9 +47,9 @@ namespace MTGAHelper.Entity
 
             var m = string.Join("_", cardsMain);
             var s = string.Join("_", cardsSideboard);
-            var id = util.GetHash($"{m}|{s}");
+            var id = util.To32BitFnv1aHash($"{m}|{s}");
 
-            return ScraperType + id;
+            return $"{ScraperType}_{id}";
         }
 
         public string GetColor()

@@ -15,7 +15,7 @@ namespace MTGAHelper.Tracker.WPF.Views.Helpers
             if (value == null)
                 return FalseValue;
             else
-                return (bool)value ? TrueValue : FalseValue;
+                return System.Convert.ToBoolean(value) ? TrueValue : FalseValue;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -25,6 +25,7 @@ namespace MTGAHelper.Tracker.WPF.Views.Helpers
     }
 
     public class BoolToStringConverter : BoolToValueConverter<string> { }
+    public class BoolToIntegerConverter : BoolToValueConverter<int> { }
     //public class BoolToBrushConverter : BoolToValueConverter<Brush> { }
     //public class BoolToVisibilityConverter : BoolToValueConverter<Visibility> { }
     //public class BoolToObjectConverter : BoolToValueConverter<Object> { }

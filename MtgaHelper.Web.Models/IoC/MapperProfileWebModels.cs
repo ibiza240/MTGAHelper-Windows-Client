@@ -6,6 +6,7 @@ using MTGAHelper.Lib.Config.Users;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
 using MTGAHelper.Lib.UserHistory;
 using MTGAHelper.Web.Models.Response.User;
+using MTGAHelper.Web.Models.SharedDto;
 using MTGAHelper.Web.UI.Model.Response.Dto;
 using MTGAHelper.Web.UI.Model.Response.User;
 using MTGAHelper.Web.UI.Model.Response.User.History;
@@ -29,6 +30,9 @@ namespace MTGAHelper.Web.UI.IoC
 
             CreateMap<Card, CardDto>()
                 .ForMember(i => i.IdArena, i => i.MapFrom(x => x.grpId));
+
+            CreateMap<Card, CardDtoFull>();
+            CreateMap<CardDtoFull, Card>();
 
             CreateMap<CardWithAmount, CardWithAmountDto>()
                 .ForMember(i => i.Name, i => i.MapFrom(x => x.Card.name))

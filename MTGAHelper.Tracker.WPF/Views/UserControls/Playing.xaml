@@ -17,9 +17,14 @@
             </Style.Triggers>
         </Style>
     </UserControl.Style>
-    <StackPanel Orientation="Vertical">
-        <TextBlock>
+    <StackPanel Orientation="Vertical" Margin="10,10,10,10">
+        <Label FontSize="20" FontWeight="Bold">
+            <TextBlock>Match in progress</TextBlock>
+        </Label>
+        <Label>
+            <TextBlock TextWrapping="WrapWithOverflow">
             At the end of your match, the data will be sent to the server.
-        </TextBlock>
+            </TextBlock>
+        </Label>
     </StackPanel>
 </UserControl>

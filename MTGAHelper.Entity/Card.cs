@@ -4,14 +4,14 @@ using System.Collections.Generic;
 namespace MTGAHelper.Entity
 {
     [Serializable]
-    public class Card : IEquatable<Card>
+    public class Card //: IEquatable<Card>
     {
         public const string CRAFTEDONLY = "CraftedOnly";
 
         public string setConsideringCraftedOnly => craftedOnly ? CRAFTEDONLY : set;
 
-        public List<string> colors { get; set; }
-        public List<string> color_identity { get; set; }
+        public List<string> colors { get; set; } = new List<string>();
+        public List<string> color_identity { get; set; } = new List<string>();
         public string layout { get; set; }
         public string name { get; set; }
         public int mtgo_id { get; set; }
@@ -127,33 +127,33 @@ namespace MTGAHelper.Entity
             return false;
         }
 
-        public static bool operator ==(Card c1, Card c2)
-        {
-            if (c1 is null || c2 is null)
-            {
-                return c1 is null && c2 is null;
-            }
+        //public static bool operator ==(Card c1, Card c2)
+        //{
+        //    if (c1 is null || c2 is null)
+        //    {
+        //        return c1 is null && c2 is null;
+        //    }
 
-            return c1.Equals(c2);
-        }
+        //    return c1.Equals(c2);
+        //}
 
-        public static bool operator !=(Card c1, Card c2)
-        {
-            return !(c1 == c2);
-        }
+        //public static bool operator !=(Card c1, Card c2)
+        //{
+        //    return !(c1 == c2);
+        //}
 
-        public bool Equals(Card other)
-        {
-            if (other is null)
-            {
-                return false;
-            }
+        //public bool Equals(Card other)
+        //{
+        //    if (other is null)
+        //    {
+        //        return false;
+        //    }
 
-            if (ReferenceEquals(this, other))
-                return true;
-            else
-                return CompareNameWith(other.name);
-        }
+        //    if (ReferenceEquals(this, other))
+        //        return true;
+        //    else
+        //        return CompareNameWith(other.name);
+        //}
 
         public override int GetHashCode()
         {

@@ -1,0 +1,71 @@
+﻿<Window x:Class="MTGAHelper.Tracker.WPF.Views.CardPopupDrafting"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MTGAHelper.Tracker.WPF.Views"
+        xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
+        mc:Ignorable="d"
+        Title="Card popup" ShowInTaskbar="False"
+        Width="320" SizeToContent="Height"
+        Background="#272b30" Foreground="#aaaaaa"
+        ResizeMode="NoResize" WindowStyle="None" Topmost="True">
+    <Window.Resources>
+        <helpers:IntToVisibilityConverter x:Key="IntToVisConverter" Threshold="0" />
+        <helpers:StringToValueConverter x:Key="ShowWeightConverter" Value="0" WhenNotEqual="Visible" WhenEqual="Collapsed" />
+        <helpers:BoolToStringConverter x:Key="BoolToVisConverter" TrueValue="Visible" FalseValue="Collapsed" />
+        <helpers:StringToValueConverter x:Key="ShowNbMissingString" Value="MissingInCollection" WhenNotEqual="Visible" WhenEqual="Collapsed" />
+        <helpers:MultiBooleanToVisibilityConverter x:Key="MultiBooleanToVisibilityConverter" />
+    </Window.Resources>
+    <StackPanel>
+        <StackPanel Margin="10">
+            <TextBlock FontSize="16" FontWeight="Bold" Text="LSV from ChannelFireball says" TextWrapping="WrapWithOverflow" />
+            <TextBlock Text="{Binding Card.Rating, StringFormat='Limited Rating: {0}'}" FontWeight="Bold" Margin="0,5,0,0" />
+            <TextBlock Text="{Binding Card.Description}" TextWrapping="WrapWithOverflow" Margin="0,5,0,0" />
+            <TextBlock Foreground="White" Visibility="{Binding Card.TopCommonCard.Rank, Converter={StaticResource IntToVisConverter}}">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="This card is the Top {0} common card in {1} for this set">
+                        <Binding Path="TopCommonCard.Rank" />
+                        <Binding Path="TopCommonCard.Name" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <StackPanel Visibility="{Binding ShowGlobalMTGAHelperSays.Value, Converter={StaticResource BoolToVisConverter}}">
+                <TextBlock FontSize="16" FontWeight="Bold" Text="MTGAHelper says" Margin="0,10,0,0" />
+                <TextBlock Text="{Binding Card.NbMissingString}">
+                    <TextBlock.Visibility>
+                        <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
+                            <Binding Path="Card.IsRequiredToShowNbMissing" />
+                            <Binding Path="ShowGlobalMTGAHelperSays.Value" />
+                        </MultiBinding>
+                    </TextBlock.Visibility>
+                </TextBlock>
+
+                <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,10,0,0" Visibility="{Binding Card.RareDraftPickEnum, Converter={StaticResource BoolToVisConverter}}">
+                <Image Source="/Assets/Images/Treasure.png" Width="20" Margin="0,0,4,0" />
+                <StackPanel>
+                    <TextBlock Text="{Binding Card.RareDraftPickReason}" TextWrapping="WrapWithOverflow" />
+                </StackPanel>
+            </StackPanel>-->
+                <Grid Margin="0,10,0,0" Visibility="{Binding Card.RareDraftPickEnum, Converter={StaticResource BoolToVisConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0" Source="/Assets/Images/Treasure.png" Width="20" Margin="0,0,4,0" />
+                    <TextBlock Grid.Column="1" Text="{Binding Card.RareDraftPickReason}" TextWrapping="WrapWithOverflow" />
+                </Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="4,10,4,0" Visibility="{Binding Card.Weight, Converter={StaticResource ShowWeightConverter}}">
+                    <Image Source="/Assets/Images/star.png" Width="12" Margin="0,0,8,0" />
+                    <StackPanel>
+                        <TextBlock Text="{Binding Card.NbDecksUsedInfo}" />
+                        <TextBlock Text="{Binding Card.Weight, StringFormat='This card has a weight of {0:#,###.#}'}" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <Image x:Name="imgPopupCard" Source="{Binding Card.ImageCardUrl}" />
+    </StackPanel>
+</Window>

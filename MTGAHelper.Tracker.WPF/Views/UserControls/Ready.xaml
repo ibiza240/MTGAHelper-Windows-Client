@@ -15,7 +15,7 @@
         <Style TargetType="{x:Type uc:Ready}">
             <Setter Property="Visibility" Value="Hidden" />
             <Style.Triggers>
-                <DataTrigger Binding="{Binding MainWindowContext}" Value="Ready">
+                <DataTrigger Binding="{Binding MainWindowContext}" Value="Home">
                     <Setter Property="Visibility" Value="Visible" />
                 </DataTrigger>
             </Style.Triggers>
@@ -23,7 +23,9 @@
     </UserControl.Style>
     <DockPanel Margin="10,10,10,10">
         <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
-            <Label>You're all set!</Label>
+            <Label FontSize="20" FontWeight="Bold">
+                <TextBlock>You're all set!</TextBlock>
+            </Label>
             <!--<Label Content="{Binding Path=Username, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"></Label>-->
             <Label Content="{Binding Path=CardsOwned, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"></Label>
 
@@ -39,17 +41,26 @@
 
             <Label>
                 <TextBlock TextWrapping="WrapWithOverflow">
-                At the moment this client will only be used to automatically synchronize your collection log files with our servers.
+                This client automatically synchronizes your collection log files with our servers.
                 </TextBlock>
             </Label>
 
             <Label>
                 <TextBlock TextWrapping="WrapWithOverflow">
-                    In time, we'll be adding more features such as a draft helper and an in-game deck tracker.
+                It also acts as a Draft Helper while you are draft picking. You will have access to Limited ratings from ChannelFireball as well as "Raredrafting" information based on your collection and tracked decks.
                 </TextBlock>
             </Label>
 
-            <StackPanel Orientation="Horizontal" Visibility="{Binding ShowLaunchMtgaGameClient, Converter={StaticResource BoolToVisConverter}}">
+            <Label>
+                <TextBlock TextWrapping="WrapWithOverflow">
+                    If you haven't already, go select which sources of decks you want to track on the 
+                    <Hyperlink NavigateUri="https://mtgahelper.com/my/sources" helpers:HyperlinkExtensions.IsExternal="true">
+                        Decks sources page
+                    </Hyperlink>.
+                </TextBlock>
+            </Label>
+
+            <StackPanel Orientation="Horizontal" Visibility="{Binding ShowLaunchMtgaGameClient, Converter={StaticResource BoolToVisConverter}}" Margin="0,20">
                 <Image Source="/Assets/Images/MTGA.png" Width="18" Margin="0,6" />
                 <Label>
                     <Hyperlink Click="HyperlinkLaunchGame_Click">
@@ -59,11 +70,11 @@
             </StackPanel>
         </StackPanel>
         <StackPanel  DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
-            <Label>
+            <!--<Label>
                 <TextBlock TextWrapping="WrapWithOverflow">
                     Processing your log file may take some time. With enough support, the servers will be much faster. Thanks for your understanding!
                 </TextBlock>
-            </Label>
+            </Label>-->
         </StackPanel>
     </DockPanel>
 </UserControl>

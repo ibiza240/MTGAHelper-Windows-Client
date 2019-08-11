@@ -12,10 +12,11 @@ namespace MTGAHelper.Tracker.WPF.Config
         public string LogFilePath { get; set; }
         public string GameFilePath { get; set; }
         public bool RunOnStartup { get; set; }
+        public bool SkipVersionCheck { get; set; }
 
         internal void Save()
         {
-#if DEBUG
+#if DEBUG || DEBUGWITHSERVER
             var configFolder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 #else
             var configFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");

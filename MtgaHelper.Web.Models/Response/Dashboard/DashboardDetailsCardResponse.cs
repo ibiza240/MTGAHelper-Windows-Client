@@ -20,8 +20,8 @@ namespace MTGAHelper.Web.UI.Model.Response
                 {
                     DeckId = i.Key,
                     DeckName = decks[i.Key].Name,
-                    NbMain = i.Value.ByCard[c].NbRequiredMain,
-                    NbSideboard = i.Value.ByCard[c].NbRequiredSideboard
+                    NbMain = i.Value.ByCard[c.name].NbRequiredMain,
+                    NbSideboard = i.Value.ByCard[c.name].NbRequiredSideboard
                 })
                 .ToArray();
         }

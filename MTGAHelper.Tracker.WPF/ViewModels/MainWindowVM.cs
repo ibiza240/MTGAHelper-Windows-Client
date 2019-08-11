@@ -7,6 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
+using AutoMapper;
 using MTGAHelper.Tracker.WPF.Business;
 using MTGAHelper.Tracker.WPF.Business.Monitoring;
 using MTGAHelper.Tracker.WPF.Models;
@@ -40,8 +43,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             { ProblemsFlags.GameClientFileNotFound, "MTGArena game not found" },
         };
 
-        public bool IsInMatch { get; set; }
-        public bool IsDrafting { get; set; }
+        //public bool IsInMatch { get; set; }
+        //public bool IsDrafting { get; set; }
         public int SizeOfLogToSend { get; set; }
 
         public bool IsUploading => statusBlinker.HasFlag(NetworkStatusEnum.Uploading);
@@ -53,30 +56,19 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public ProblemsFlags Problems { get; private set; } = ProblemsFlags.None;
         public int Opacity { get; set; } = 90;
 
-        public ICollection<CardDraftPick> CardsDraft { get; set; } = new CardDraftPick[0];
+        public DraftingVM DraftingVM { get; set; } = new DraftingVM();
 
-        public ICollection<Card> CardsDeck { get; set; } = new Card[]
+        public ICollection<CardVM> CardsDeck { get; set; } = new CardVM[]
         {
-            new Card { ImageUrl = "/Assets/Images/MTGA.png", Name = "Test 1" },
-            new Card { ImageUrl = "https://www.gravatar.com/avatar/c41cb884edf04a01fa5fc5f5a7960637?s=328&d=identicon&r=PG", Name = "Test 2" },
+            new CardVM { ImageArtUrl = "/Assets/Images/MTGA.png", Name = "Test 1" },
+            new CardVM { ImageArtUrl = "https://www.gravatar.com/avatar/c41cb884edf04a01fa5fc5f5a7960637?s=328&d=identicon&r=PG", Name = "Test 2" },
         };
 
-        // Read-only bindings
-        public MainWindowContextEnum MainWindowContext
-        {
-            get
-            {
-                if (isInitialSetupDone)
-                {
-                    if (IsInMatch) return MainWindowContextEnum.Ready;
-                    else if (IsDrafting) return MainWindowContextEnum.Ready;
-                    else return MainWindowContextEnum.Ready;
-                }
-                else
-                    return MainWindowContextEnum.Welcome;
-            }
-        }
+        public MainWindowContextEnum MainWindowContext { get; set; } = MainWindowContextEnum.Welcome;
 
+        public string Version => $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major}.{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor}";
+
+        // Read-only bindings
         public string NetworkStatusDisplayed => dictStatus[networkStatusDisplayed] + (networkStatusDisplayed == NetworkStatusEnum.Ready ? $" ({SizeOfLogToSend})" : "");
 
         public ICollection<string> ProblemsList => Enum.GetValues(typeof(ProblemsFlags)).Cast<ProblemsFlags>()
@@ -103,6 +95,13 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public NetworkStatusEnum GetFlagsNetworkStatus() => statusBlinker.GetFlags();
 
+        internal void WrapNetworkStatusInNewTask(NetworkStatusEnum status, Action workToDo)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                WrapNetworkStatus(status, workToDo);
+            });
+        }
         internal void WrapNetworkStatus(NetworkStatusEnum status, Action workToDo)
         {
             statusBlinker.SetNetworkStatus(status, true);
@@ -145,13 +144,27 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         {
             var isUserIdValid = Guid.TryParse(userId, out Guid g);
             SetProblem(ProblemsFlags.InvalidUserId, isUserIdValid == false);
-            RaisePropertyChangedEvent(nameof(MainWindowContext));
+            //RaisePropertyChangedEvent(nameof(MainWindowContext));
+
+            if (isUserIdValid)
+                RemoveWelcome();
         }
 
         public void SetCollection(CollectionResponse collectionResponse)
         {
             Collection = collectionResponse;
             RaisePropertyChangedEvent(nameof(CardsOwned));
+            RemoveWelcome();
+        }
+
+        public void RemoveWelcome()
+        {
+
+            if (MainWindowContext == MainWindowContextEnum.Welcome)
+            {
+                MainWindowContext = MainWindowContextEnum.Home;
+                RaisePropertyChangedEvent(nameof(MainWindowContext));
+            }
         }
 
         internal void SetProblemServerUnavailable()
@@ -164,27 +177,48 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             });
         }
 
-        internal void SetLogContentNewText(string newText, int logContentSize)
+        internal void SetMainWindowContext(MainWindowContextEnum newWindowContext)
         {
-            SizeOfLogToSend = logContentSize;
+            if (MainWindowContext != MainWindowContextEnum.Welcome)
+            {
+                MainWindowContext = newWindowContext;
+                RaisePropertyChangedEvent(nameof(MainWindowContext));
+            }
+        }
 
-            if (newText.Contains("<== Draft.MakePick"))
-                IsDrafting = true;
-            else if (newText.Contains("Client.SceneChange"))
-                IsDrafting = false;
+        //internal void SetMainWindowContext(string newText, int logContentSize)
+        //{
+        //    SizeOfLogToSend = logContentSize;
 
-            if (newText.Contains("Event.MatchCreated"))
-                IsInMatch = true;
-            else if (newText.Contains("DuelScene.EndOfMatchReport"))
-                IsInMatch = false;
+        //    if (MainWindowContext != MainWindowContextEnum.Welcome)
+        //    {
+        //        if (newText.Contains("<== Draft.MakePick") || newText.Contains("<== Draft.DraftStatus"))
+        //            MainWindowContext = MainWindowContextEnum.Drafting;
+        //        //else if (newText.Contains("Client.SceneChange") || newText.Contains("Draft.Complete"))
+        //        //    IsDrafting = false;
 
+        //        if (newText.Contains("Event.MatchCreated"))
+        //            MainWindowContext = MainWindowContextEnum.Playing;
+        //        else if (newText.Contains("DuelScene.EndOfMatchReport"))
+        //            MainWindowContext = MainWindowContextEnum.Home;
+        //    }
+
+        //    RaisePropertyChangedEvent(nameof(MainWindowContext));
+        //}
+
+        internal void SetCardsDraftBuffered(ICollection<CardDraftPick> cards)
+        {
+            DraftingVM.SetCardsDraftBuffered(cards);
+            MainWindowContext = MainWindowContextEnum.Drafting;
             RaisePropertyChangedEvent(nameof(MainWindowContext));
         }
 
-        internal void SetCardsDraft(ICollection<CardDraftPick> cards)
+        internal void SetCardsDraftFromBuffered()
         {
-            CardsDraft = cards;
-            RaisePropertyChangedEvent(nameof(CardsDraft));
+            if (DraftingVM.updateCardsDraftBuffered)
+            {
+                DraftingVM.SetCardsDraftFromBuffered();
+            }
         }
 
         #region Event handlers

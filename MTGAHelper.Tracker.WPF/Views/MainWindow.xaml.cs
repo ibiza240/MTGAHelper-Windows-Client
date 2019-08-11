@@ -1,35 +1,48 @@
 ﻿using Microsoft.Extensions.Options;
 using Microsoft.Win32;
 using MTGAHelper.Entity;
+using MTGAHelper.Lib.Cache;
+using MTGAHelper.Lib.IO.Reader;
+using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
+using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
 using MTGAHelper.Tracker.WPF.Business;
 using MTGAHelper.Tracker.WPF.Business.Monitoring;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.ViewModels;
+using MTGAHelper.Web.UI.Model.Request;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace MTGAHelper.Tracker.WPF.Views
 {
     public partial class MainWindow : Window
     {
+        public MainWindowVM vm;
+
         ConfigModelApp configApp;
         ProcessMonitor processMonitor;
         LogFileZipper zipper;
         ServerApiCaller api;
         StartupShortcutManager startupManager;
         LogSplitter logSplitter;
-        MainWindowVM vm;
         MtgaResourcesLocator resourcesLocator;
         FileMonitor fileMonitor;
         DraftHelper draftHelper;
+        //LogProcessor logProcessor;
+        ReaderMtgaOutputLog reader;
+
+
+        public CardPopupDrafting windowCardPopupDrafting = new CardPopupDrafting();
 
         public MainWindow(
             IOptionsMonitor<ConfigModelApp> configApp,
@@ -41,9 +54,14 @@ namespace MTGAHelper.Tracker.WPF.Views
             LogSplitter logSplitter,
             MtgaResourcesLocator resourcesLocator,
             FileMonitor fileMonitor,
-            DraftHelper draftHelper)
+            DraftHelper draftHelper,
+            //LogProcessor logProcessor,
+            ReaderMtgaOutputLog readerMtgaOutputLog,
+            CacheSingleton<ICollection<Card>> allCards
+            )
         {
             this.configApp = configApp.CurrentValue;
+            this.reader = readerMtgaOutputLog;
             this.processMonitor = processMonitor;
             processMonitor.OnProcessMonitorStatusChanged += OnProcessMonitorStatusChanged;
             this.zipper = zipper;
@@ -54,6 +72,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             this.fileMonitor = fileMonitor;
             fileMonitor.OnFileSizeChangedNewText += OnFileSizeChangedNewText;
             this.draftHelper = draftHelper;
+            //this.logProcessor = logProcessor;
 
             fileMonitor.SetFilePath(this.configApp.LogFilePath);
             viewModel.ValidateUserId(this.configApp.UserId);
@@ -62,10 +81,20 @@ namespace MTGAHelper.Tracker.WPF.Views
 
             InitializeComponent();
 
+            statusBarTop.Init(this, vm, /*draftHelper, logProcessor, this.configApp.UserId,*/ allCards.Get());
             ucReady.Init(this.configApp.GameFilePath);
+            ucDraftHelper.Init(vm.DraftingVM);
 
             this.processMonitor.Start(new System.Threading.CancellationToken());
             this.fileMonitor.Start(new System.Threading.CancellationToken());
+
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(200);
+            timer.Tick += (object sender, EventArgs e) =>
+            {
+                vm.SetCardsDraftFromBuffered();
+            };
+            timer.Start();
         }
 
         internal void ShowDialogOptions()
@@ -106,7 +135,41 @@ namespace MTGAHelper.Tracker.WPF.Views
             }
         }
 
-        void UploadInfoToServer(byte[] zipFile, string uploadHash, Action callbackOnError = null)
+        //void UploadInfoToServer(byte[] zipFile, string uploadHash, Action callbackOnError = null)
+        //{
+        //    if (vm.CanUpload == false)
+        //    {
+        //        callbackOnError?.Invoke();
+        //        return;
+        //    }
+
+        //    Task.Factory.StartNew(() =>
+        //    {
+        //        try
+        //        {
+        //            if (api.IsSameLastUploadHash(configApp.UserId, uploadHash))
+        //            {
+        //                vm.WrapNetworkStatus(NetworkStatusEnum.UpToDate, () => Task.Delay(5000).Wait());
+        //                return;
+        //            }
+
+        //            if (api.IsLocalTrackerUpToDate() == false)
+        //                MustDownloadNewVersion();
+
+        //            vm.WrapNetworkStatus(NetworkStatusEnum.Uploading, () =>
+        //            {
+        //                var collection = api.UploadZippedLogFile(configApp.UserId, zipFile);
+        //                vm.SetCollection(collection);
+        //            });
+        //        }
+        //        catch (HttpRequestException ex)
+        //        {
+        //            callbackOnError?.Invoke();
+        //            vm.SetProblemServerUnavailable();
+        //        }
+        //    });
+        //}
+        void UploadInfoToServer(string logToSend, Action callbackOnError = null)
         {
             if (vm.CanUpload == false)
             {
@@ -114,22 +177,55 @@ namespace MTGAHelper.Tracker.WPF.Views
                 return;
             }
 
+            fileMonitor.ResetStringBuilder();
             Task.Factory.StartNew(() =>
             {
                 try
                 {
+                    var uploadHash = logSplitter.GetLastUploadHash(logToSend);
                     if (api.IsSameLastUploadHash(configApp.UserId, uploadHash))
                     {
                         vm.WrapNetworkStatus(NetworkStatusEnum.UpToDate, () => Task.Delay(5000).Wait());
                         return;
                     }
 
-                    if (api.IsLocalTrackerUpToDate() == false)
-                        MustDownloadNewVersion();
+                    //if (api.IsLocalTrackerUpToDate() == false)
+                    //    MustDownloadNewVersion();
 
+                    OutputLogResult result = null;
+                    Guid? errorId = null;
+                    using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(logToSend ?? "")))
+                    {
+                        try
+                        {
+                            (result, errorId) = reader.LoadFileContent(configApp.UserId, ms);
+
+                            //if (result.CollectionByDate.Any(i => i.DateTime == default(DateTime)))
+                            //    SendErrorReport()
+
+                            if (result.CollectionByDate.Any(i => i.DateTime == default(DateTime)))
+                                api.LogErrorRemoteFile(configApp.UserId, logToSend, $"_NODATE_outputlog_{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip");
+
+                            if (errorId.HasValue)
+                                api.LogErrorRemoteFile(configApp.UserId, logToSend, $"_parsererror_{errorId}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip");
+
+                            //return result;
+                        }
+                        catch (Exception ex)
+                        {
+                            //throw new ParseCollectionInvalidZipFileException(ex);
+                            Log.Error(ex, "Problem processing log piece ({logSize})", logToSend.Length);
+                            //return new OutputLogResult();
+                            api.LogErrorRemoteFile(configApp.UserId, logToSend, $"_unknownError{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip");
+                        }
+                    }
+
+                    var collection = result.GetLastCollection();
+                    //Log.Information("Uploading processed log: {collectionCount} cards, {matchCount} matches", collection.Info.Sum(i => i.Value), result.MatchesByDate.Sum(i => i.Info.Count));
+                    //Log.Debug(JsonConvert.SerializeObject(result));
                     vm.WrapNetworkStatus(NetworkStatusEnum.Uploading, () =>
                     {
-                        var collection = api.UploadZippedLogFile(configApp.UserId, zipFile);
+                        var collection = api.UploadOutputLogResult(configApp.UserId, result);
                         vm.SetCollection(collection);
                     });
                 }
@@ -141,14 +237,28 @@ namespace MTGAHelper.Tracker.WPF.Views
             });
         }
 
+        public void UploadLogFragment(Action callbackOnError = null)
+        {
+            var logToSend = fileMonitor.LogContentToSend.ToString();
+            UploadInfoToServer(logToSend, () =>
+            {
+                var flags = vm.GetFlagsNetworkStatus();
+                var activeStatus = Enum.GetValues(typeof(NetworkStatusEnum)).Cast<NetworkStatusEnum>()
+                    .Where(i => i != NetworkStatusEnum.Ready)
+                    .Where(i => flags.HasFlag(i))
+                    .ToArray();
+
+                Log.Warning("FileSizeChangedNewText() Could not upload data. Status:{status} - Problems:{problems}", string.Join(',', activeStatus), vm.ProblemsList);
+            });
+        }
+
         public void UploadLogFile(Action callbackOnError = null)
         {
             if (File.Exists(configApp.LogFilePath) && new FileInfo(configApp.LogFilePath).Length > 0)
             {
                 var logContent = zipper.ReadLogFile(configApp.LogFilePath);
-                var zipFile = zipper.ZipText(logContent);
-                var uploadHash = logSplitter.GetLastUploadHash(logContent);
-                UploadInfoToServer(zipFile, uploadHash, callbackOnError);
+                UploadInfoToServer(logContent, callbackOnError);
+                reader.ResetPreparer();
             }
             else
                 callbackOnError?.Invoke();
@@ -165,40 +275,90 @@ namespace MTGAHelper.Tracker.WPF.Views
                 UploadLogFile();
         }
 
-        void OnFileSizeChangedNewText(object sender, string newText)
+        public void OnFileSizeChangedNewText(object sender, string newText)
         {
-            if (newText.Contains("<== Draft.MakePick"))
+            vm.SizeOfLogToSend = fileMonitor.LogContentToSend.Length;
+
+            ICollection<IMtgaOutputLogPartResult> messages = new IMtgaOutputLogPartResult[0];
+            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(newText ?? "")))
             {
-                vm.WrapNetworkStatus(NetworkStatusEnum.Downloading, () =>
-                {
-                    var cardsInfo = draftHelper.ParseDraftMakePick(configApp.UserId, newText);
-                    vm.SetCardsDraft(cardsInfo);
-                });
+                messages = reader.ProcessIntoMessages("local", ms);
             }
+            //vm.SetMainWindowContext(newText, fileMonitor.LogContentToSend.Length);
 
-            vm.SetLogContentNewText(newText, fileMonitor.LogContentToSend.Length);
-
-            if (vm.IsInMatch == false && newText.Contains("<== PlayerInventory.GetPlayerCardsV3"))
+            foreach (var msg in messages)
             {
-                // Trigger to upload the stored log content
-                var logToSend = fileMonitor.LogContentToSend.ToString();
-                var zipped = zipper.ZipText(logToSend);
-                var uploadHash = logSplitter.GetLastUploadHash(logToSend);
+                if (msg is IResultCardPool msgCardPool)
+                    // Refresh the drafting window to show whole card pool
+                    SetCardsDraft(msgCardPool.CardPool);
+                else if (msg is IResultDraftPick msgDraftPack && msgDraftPack.DraftPack != null)
+                    // Refresh the drafting window to show the new picks
+                    SetCardsDraft(msgDraftPack.DraftPack.Select(i => Convert.ToInt32(i)).ToArray());
 
-                UploadInfoToServer(zipped, uploadHash, () =>
+                if ((msg is LogInfoRequestResult logInfo && logInfo.Raw.@params.messageName == "DuelScene.EndOfMatchReport") ||
+                    (vm.MainWindowContext != MainWindowContextEnum.Playing && msg is GetPlayerCardsResult))
                 {
-                    var flags = vm.GetFlagsNetworkStatus();
-                    var activeStatus = Enum.GetValues(typeof(NetworkStatusEnum)).Cast<NetworkStatusEnum>()
-                        .Where(i => i != NetworkStatusEnum.Ready)
-                        .Where(i => flags.HasFlag(i))
-                        .ToArray();
+                    // Trigger to upload the stored log content
+                    UploadLogFragment();
+                }
 
-                    Log.Warning("FileSizeChangedNewText() Could not upload data. Status:{status} - Problems:{problems}", string.Join(',', activeStatus, vm.ProblemsList));
-                });
+                // Change MainWindowContext
+                if (msg is LogInfoRequestResult logInfo2)
+                {
+                    var prms = logInfo2.Raw.@params;
+                    switch (prms.messageName)
+                    {
+                        case "Client.SceneChange":
+                            if (prms.humanContext.Contains("Client changed scene") &&
+                                ((string)prms.payloadObject.context).Contains("Draft") == false && ((string)prms.payloadObject.context) != "deck builder")
+                            {
+                                vm.SetMainWindowContext(MainWindowContextEnum.Home);
+                            }
+                            break;
+                        case "DuelScene.EndOfMatchReport":
+                            vm.SetMainWindowContext(MainWindowContextEnum.Home);
+                            break;
+                    }
+                }
+                else if (msg is MatchCreatedResult matchCreated)
+                {
+                    vm.SetMainWindowContext(MainWindowContextEnum.Playing);
+                }
 
-                fileMonitor.ResetStringBuilder();
+
+                //    if (MainWindowContext != MainWindowContextEnum.Welcome)
+                //    {
+                //        if (newText.Contains("<== Draft.MakePick") || newText.Contains("<== Draft.DraftStatus"))
+                //            MainWindowContext = MainWindowContextEnum.Drafting;
+                //        //else if (newText.Contains("Client.SceneChange") || newText.Contains("Draft.Complete"))
+                //        //    IsDrafting = false;
+
+                //        if (newText.Contains("Event.MatchCreated"))
+                //            MainWindowContext = MainWindowContextEnum.Playing;
+                //        else if (newText.Contains("DuelScene.EndOfMatchReport"))
+                //            MainWindowContext = MainWindowContextEnum.Home;
+                //    }
             }
         }
+
+        void SetCardsDraft(ICollection<int> cardPool)
+        {
+            if (cardPool != null)
+            {
+                vm.WrapNetworkStatusInNewTask(NetworkStatusEnum.Downloading, () =>
+                {
+                    var cardsInfo = draftHelper.GetDraftPicksForCards(configApp.UserId, cardPool);
+
+                    //if (msg is GetEventPlayerCourseV2Result course)
+                    //{
+                    //    course.Raw.CourseDeck.
+                    //}
+
+                    vm.SetCardsDraftBuffered(cardsInfo);
+                });
+            }
+        }
+
     }
     #endregion
 }

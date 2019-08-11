@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MTGAHelper.Tracker.WPF.Views"
              xmlns:uc="clr-namespace:MTGAHelper.Tracker.WPF.Views.UserControls"
-             xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Style>
@@ -19,23 +18,14 @@
         </Style>
     </UserControl.Style>
     <StackPanel Orientation="Vertical" Margin="10,10,10,10">
-        <Label>
-            Welcome!
+        <Label FontSize="20" FontWeight="Bold">
+            <TextBlock>Welcome!</TextBlock>
         </Label>
 
         <Label>
             <TextBlock TextWrapping="Wrap">
-                First, you need to specify your MTGAHelper User Id in the
-                <Hyperlink Click="HyperlinkOptions_Click" FocusVisualStyle="{x:Null}">Options window</Hyperlink>.
-            </TextBlock>
-        </Label>
-
-        <Label>
-            <TextBlock TextWrapping="Wrap">
-                If you don't know your MTGAHelper User Id, you can view it by going to the 
-                <Hyperlink NavigateUri="https://mtgahelper.com/profile" helpers:HyperlinkExtensions.IsExternal="true">
-                    MTGAHelper website profile page
-                </Hyperlink>. This User Id is your unique identifier and will allow you to track your data over time.
+                Please start by entering your User Id in the Options menu
+                <Hyperlink Click="HyperlinkOptions_Click" FocusVisualStyle="{x:Null}">here</Hyperlink>.
             </TextBlock>
         </Label>
     </StackPanel>

@@ -14,6 +14,7 @@ namespace MTGAHelper.Tracker.WPF.IoC
         {
             return services
                 .Configure<ConfigModelApp>(configApp)
+                .Configure<Lib.Config.ConfigModelApp>(configApp.GetSection("configApp"))
                 .AddOptions()
                 .AddSingleton<MainWindow>()
                 .AddSingleton<MainWindowVM>()
@@ -28,7 +29,9 @@ namespace MTGAHelper.Tracker.WPF.IoC
                 .AddTransient<StartupShortcutManager>()
                 .AddTransient<DraftHelper>()
                 .AddTransient<StatusBlinker>()
-                .AddTransient<MtgaResourcesLocator>();
+                .AddTransient<MtgaResourcesLocator>()
+                //.AddTransient<LogProcessor>()
+                ;
         }
     }
 }

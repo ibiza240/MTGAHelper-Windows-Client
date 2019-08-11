@@ -26,7 +26,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public ObservableProperty(T value)
         {
-            this.value = value;
+            Value = value;
         }
     }
 }

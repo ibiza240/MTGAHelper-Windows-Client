@@ -12,7 +12,7 @@ namespace MTGAHelper.Entity
 
         public string LastPartWithDate { get; private set; }
 
-        public string GetLastUploadHash(string logContent)
+        public uint GetLastUploadHash(string logContent)
         {
             using (var streamReader = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(logContent ?? ""))))
             {
@@ -34,14 +34,21 @@ namespace MTGAHelper.Entity
                 }
 
                 StoreLastPartWithDate(builder.ToString().Trim());
-                return util.GetHash(LastPartWithDate);
+                return util.To32BitFnv1aHash(LastPartWithDate);
             }
         }
 
         public void StoreLastPartWithDate(string part)
         {
-            if (part.Contains(DateTime.Now.Year.ToString()) || part.Contains((DateTime.Now.Year - 1).ToString()))
-                LastPartWithDate = part;
+            //try
+            //{
+                if (part.Contains(DateTime.Now.Year.ToString()) || part.Contains((DateTime.Now.Year - 1).ToString()))
+                    LastPartWithDate = part;
+            //}
+            //catch (Exception ex)
+            //{
+            //    System.Diagnostics.Debugger.Break();
+            //}
         }
     }
 }

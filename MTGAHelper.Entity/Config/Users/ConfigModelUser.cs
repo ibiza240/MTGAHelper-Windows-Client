@@ -12,7 +12,7 @@ namespace MTGAHelper.Lib.Config
         public const string DEFAULT_SCRAPER = "mtggoldfish-meta-standard";
 
         public string Id { get; set; } = USER_LOCAL;
-        public string LastUploadHash { get; set; }
+        public string LastUploadHash { get; set; } = "";
 
         public DateTime DateCreatedUtc { get; set; } = DateTime.UtcNow;
         public bool ThemeIsDark { get; set; } = true;
