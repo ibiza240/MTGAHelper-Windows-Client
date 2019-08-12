@@ -50,7 +50,20 @@ Once your data is uploaded successfully, you can simply refresh the MTGAHelper w
 
 If you start the tracker and nothing happens, it's probably because you don't have the .NET Core 3.0 framework installed. Please try installing it before re-launching the tracker, to see if it fixes the problem.
 
-If you are stuck at any moment, you can always reach us directly through our [Discord server](https://discord.gg/GTd3RMd) for the fastest response time or by using the [contact form](https://www.mtgahelper.com/contact) on the MTGAHelper website.
+Another thing to check is that the following files are present in the `%AppData%/MTGAHelper` directory:
+
+    appsettings.json
+    data/dateFormats.json
+    
+After a successful installation of the tracker, these should be created automatically.
+
+One last thing to try is to run the tracker from a command line window by running:
+
+    dotnet "C:\Program Files (x86)\MTGAHelper\MTGAHelper Tracker\MTGAHelper.Tracker.dll"
+
+This might give some information on why the tracker doesn't want to start.
+
+If you are stuck at any moment, please reach us directly through our [Discord server](https://discord.gg/GTd3RMd) for the fastest response time or by using the [contact form](https://www.mtgahelper.com/contact) on the MTGAHelper website so we can assist you.
 
 -----
 
