@@ -1,6 +1,6 @@
 ![MTGAHelper](http://www.mtgahelper.com/images/hero1-bg.jpg)
 
-[MTGAHelper](http://www.mtgahelper.com) is an application used along with the game Magic: The Gathering Arena.
+[MTGAHelper](http://www.mtgahelper.com) is a web application used along with the game Magic: The Gathering Arena.
 
 ### MTGAHelper-Windows-Client
 
