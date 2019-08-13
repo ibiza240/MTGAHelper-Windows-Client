@@ -28,7 +28,7 @@ You will require to install:
 - [This version if you have a 64-bit Operating System (x64-based processor)](https://dotnet.microsoft.com/download/thank-you/dotnet-sdk-3.0.100-preview7-windows-x64-installer)
 - [This version if you have a 32-bit Operating System (x86-based processor)](https://dotnet.microsoft.com/download/thank-you/dotnet-sdk-3.0.100-preview7-windows-x86-installer)
 
-Note: If you are on Windows 7, you will most likely need this Update for Windows 7 (KB2533623):
+> Note: If you are on Windows 7, you will most likely need this Update for Windows 7 (KB2533623):
 - [This version if you have a 64-bit Operating System (x64-based processor)](https://www.microsoft.com/en-us/download/details.aspx?id=26764)
 - [This version if you have a 32-bit Operating System (x86-based processor)](https://www.microsoft.com/en-us/download/details.aspx?id=26767)
 
