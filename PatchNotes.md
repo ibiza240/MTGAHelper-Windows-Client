@@ -1,3 +1,9 @@
+### v1.1
+
+Bugfixes
+- Fixed incorrect parsing for Bo3
+- Fixed the Start on Windows startup option
+
 ### v1.0
 
 Initial program
