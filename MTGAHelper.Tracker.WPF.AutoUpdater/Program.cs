@@ -46,12 +46,13 @@ namespace MTGAHelper.Tracker.WPF.AutoUpdater
             pInstall.WaitForExit();
             // Keep the appsettings.json
             File.Copy(fileAppSettingsCopy, fileAppSettings, true);
+            File.Delete(fileAppSettingsCopy);
             Console.WriteLine("Installation complete! Enjoy the latest version of MTGAHelper Tracker :)");
 
             Thread.Sleep(1000);
 
             Process pTracker = new Process();
-            pTracker.StartInfo.FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MTGAHelper.lnk");
+            pTracker.StartInfo.FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MTGAHelper Tracker.lnk");
             pTracker.StartInfo.UseShellExecute = true;
             pTracker.Start();
         }

@@ -135,40 +135,6 @@ namespace MTGAHelper.Tracker.WPF.Views
             }
         }
 
-        //void UploadInfoToServer(byte[] zipFile, string uploadHash, Action callbackOnError = null)
-        //{
-        //    if (vm.CanUpload == false)
-        //    {
-        //        callbackOnError?.Invoke();
-        //        return;
-        //    }
-
-        //    Task.Factory.StartNew(() =>
-        //    {
-        //        try
-        //        {
-        //            if (api.IsSameLastUploadHash(configApp.UserId, uploadHash))
-        //            {
-        //                vm.WrapNetworkStatus(NetworkStatusEnum.UpToDate, () => Task.Delay(5000).Wait());
-        //                return;
-        //            }
-
-        //            if (api.IsLocalTrackerUpToDate() == false)
-        //                MustDownloadNewVersion();
-
-        //            vm.WrapNetworkStatus(NetworkStatusEnum.Uploading, () =>
-        //            {
-        //                var collection = api.UploadZippedLogFile(configApp.UserId, zipFile);
-        //                vm.SetCollection(collection);
-        //            });
-        //        }
-        //        catch (HttpRequestException ex)
-        //        {
-        //            callbackOnError?.Invoke();
-        //            vm.SetProblemServerUnavailable();
-        //        }
-        //    });
-        //}
         void UploadInfoToServer(string logToSend, Action callbackOnError = null)
         {
             if (vm.CanUpload == false)
@@ -189,9 +155,6 @@ namespace MTGAHelper.Tracker.WPF.Views
                         return;
                     }
 
-                    //if (api.IsLocalTrackerUpToDate() == false)
-                    //    MustDownloadNewVersion();
-
                     OutputLogResult result = null;
                     Guid? errorId = null;
                     using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(logToSend ?? "")))
@@ -200,29 +163,20 @@ namespace MTGAHelper.Tracker.WPF.Views
                         {
                             (result, errorId) = reader.LoadFileContent(configApp.UserId, ms);
 
-                            //if (result.CollectionByDate.Any(i => i.DateTime == default(DateTime)))
-                            //    SendErrorReport()
-
                             if (result.CollectionByDate.Any(i => i.DateTime == default(DateTime)))
                                 api.LogErrorRemoteFile(configApp.UserId, logToSend, $"_NODATE_outputlog_{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip");
 
                             if (errorId.HasValue)
                                 api.LogErrorRemoteFile(configApp.UserId, logToSend, $"_parsererror_{errorId}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip");
-
-                            //return result;
                         }
                         catch (Exception ex)
                         {
-                            //throw new ParseCollectionInvalidZipFileException(ex);
                             Log.Error(ex, "Problem processing log piece ({logSize})", logToSend.Length);
-                            //return new OutputLogResult();
                             api.LogErrorRemoteFile(configApp.UserId, logToSend, $"_unknownError{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip");
                         }
                     }
 
                     var collection = result.GetLastCollection();
-                    //Log.Information("Uploading processed log: {collectionCount} cards, {matchCount} matches", collection.Info.Sum(i => i.Value), result.MatchesByDate.Sum(i => i.Info.Count));
-                    //Log.Debug(JsonConvert.SerializeObject(result));
                     vm.WrapNetworkStatus(NetworkStatusEnum.Uploading, () =>
                     {
                         var collection = api.UploadOutputLogResult(configApp.UserId, result);
@@ -284,7 +238,6 @@ namespace MTGAHelper.Tracker.WPF.Views
             {
                 messages = reader.ProcessIntoMessages("local", ms);
             }
-            //vm.SetMainWindowContext(newText, fileMonitor.LogContentToSend.Length);
 
             foreach (var msg in messages)
             {
@@ -324,20 +277,6 @@ namespace MTGAHelper.Tracker.WPF.Views
                 {
                     vm.SetMainWindowContext(MainWindowContextEnum.Playing);
                 }
-
-
-                //    if (MainWindowContext != MainWindowContextEnum.Welcome)
-                //    {
-                //        if (newText.Contains("<== Draft.MakePick") || newText.Contains("<== Draft.DraftStatus"))
-                //            MainWindowContext = MainWindowContextEnum.Drafting;
-                //        //else if (newText.Contains("Client.SceneChange") || newText.Contains("Draft.Complete"))
-                //        //    IsDrafting = false;
-
-                //        if (newText.Contains("Event.MatchCreated"))
-                //            MainWindowContext = MainWindowContextEnum.Playing;
-                //        else if (newText.Contains("DuelScene.EndOfMatchReport"))
-                //            MainWindowContext = MainWindowContextEnum.Home;
-                //    }
             }
         }
 

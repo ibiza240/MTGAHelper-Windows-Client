@@ -24,14 +24,14 @@ namespace MTGAHelper.Entity
         public int grpId { get; set; }
         public string imageCardUrl { get; set; }
         public string imageArtUrl { get; set; }
-        //public string cmc { get; set; }
-        public string artist { get; set; }
+        public string cmc { get; set; }
+        //public string artist { get; set; }
 
         // From data_cards.mtga
         public int titleId { get; set; }
         public string linkedFaceType { get; set; }
         public bool isToken { get; set; }
-        public string artistCredit { get; set; }
+        //public string artistCredit { get; set; }
 
         public Card()
         {

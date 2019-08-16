@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -36,11 +37,29 @@ namespace MTGAHelper.Tracker.WPF
 {
     public partial class App : Application
     {
+#if DEBUG
+        const string server = "https://localhost:5001";
+#else
+        const string server = "https://mtgahelper.com";
+#endif
+
         IConfiguration configuration;
         IServiceProvider provider;
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            // Get broadcast message
+            using (HttpClient client = new HttpClient())
+            {
+                var msgsRaw = client.GetAsync(server + "/api/misc/TrackerClientMessages").Result.Content.ReadAsStringAsync().Result;
+                var msgs = JsonConvert.DeserializeObject<Dictionary<string, string>>(msgsRaw);
+                var version = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion;
+                if (msgs.ContainsKey(version))
+                {
+                    MessageBox.Show(msgs[version], "Message from server");
+                }
+            }
+
 #if DEBUG || DEBUGWITHSERVER
             var folderForConfigAndLog = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 #else
@@ -85,11 +104,6 @@ namespace MTGAHelper.Tracker.WPF
                 var cacheCards = provider.GetService<CacheSingleton<ICollection<Card>>>();
                 cacheCards.PopulateIfNotSet(() =>
                 {
-#if DEBUG
-                    var server = "https://localhost:5001";
-#else
-                    var server = "https://mtgahelper.com";
-#endif
                     try
                     {
                         using (HttpClient client = new HttpClient())
@@ -127,6 +141,18 @@ namespace MTGAHelper.Tracker.WPF
 
                 var eventsScheduleManager = provider.GetService<SingletonEventsScheduleManager>();
 
+                // Date formats
+                var fileDateFormats = Path.Combine(folderForConfigAndLog, "data", "dateFormats.json");
+                if (File.Exists(fileDateFormats) == false)
+                {
+                    using (HttpClient client = new HttpClient())
+                    {
+                        var dateFormats = client.GetAsync(server + "/api/misc/dateFormats").Result.Content.ReadAsStringAsync().Result;
+                        var dateFormatsResponse = JsonConvert.DeserializeObject<GetDateFormatsResponse>(dateFormats);
+                        File.WriteAllText(fileDateFormats, JsonConvert.SerializeObject(dateFormatsResponse.DateFormats));
+                    }
+                }
+
                 Mapper.Initialize(cfg =>
                 {
                     cfg.AddProfile(new MapperProfileWebModels(cacheCards.Get(), provider));
@@ -156,7 +182,7 @@ namespace MTGAHelper.Tracker.WPF
                     }
                 }
 
-                new Business.ServerApiCaller(null).LogErrorRemote(userId, Web.UI.Model.Request.ErrorTypeEnum.Startup, ex);
+                new Business.ServerApiCaller(null, null).LogErrorRemote(userId, Web.UI.Model.Request.ErrorTypeEnum.Startup, ex);
                 Shutdown();
             }
         }

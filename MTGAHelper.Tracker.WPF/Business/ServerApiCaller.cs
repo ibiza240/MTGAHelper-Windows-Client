@@ -1,4 +1,6 @@
-﻿using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
+﻿using Microsoft.Extensions.Options;
+using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
+using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Web.Models.Request;
 using MTGAHelper.Web.Models.Response.SharedDto;
 using MTGAHelper.Web.Models.Response.User;
@@ -25,11 +27,15 @@ namespace MTGAHelper.Tracker.WPF.Business
         protected const string server = "https://mtgahelper.com";
 #endif
 
-        LogFileZipper zipper;
+        protected const string serverTest = "https://localhost:5001";
 
-        public ServerApiCaller(LogFileZipper zipper)
+        LogFileZipper zipper;
+        ConfigModelApp configApp;
+
+        public ServerApiCaller(LogFileZipper zipper, IOptionsMonitor<ConfigModelApp> configApp)
         {
             this.zipper = zipper;
+            this.configApp = configApp.CurrentValue;
         }
 
         internal TReturn PostResponseWithCookie<TReturn>(string userId, string apiEndpoint, object body)
@@ -116,8 +122,12 @@ namespace MTGAHelper.Tracker.WPF.Business
             {
                 System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
                 FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-                var latestVersion = GetResponseSimple<GetVersionTrackerResponse>("/api/Misc/VersionTracker").Version;
-                return fvi.FileVersion == latestVersion;
+                using (var w = new WebClient())
+                {
+                    var responseRaw = w.DownloadString(configApp.Test ? serverTest : server + "/api/Misc/VersionTracker");
+                    var latestVersion = JsonConvert.DeserializeObject<GetVersionTrackerResponse>(responseRaw).Version;
+                    return string.Compare(fvi.FileVersion, latestVersion) >= 0;
+                }
             }
             catch (WebException)
             {

@@ -64,6 +64,7 @@ namespace MTGAHelper.Web.UI.IoC
                 .ForMember(i => i.ImageCardUrl, i => i.MapFrom(x => x.Card.imageCardUrl))
                 .ForMember(i => i.Rarity, i => i.MapFrom(x => x.Card.GetRarityEnum(false).ToString()))
                 .ForMember(i => i.Type, i => i.MapFrom(x => x.Card.GetSimpleType()))
+                .ForMember(i => i.ManaCost, i => i.MapFrom(x => x.Card.mana_cost))
                 .ForMember(i => i.Color, i => i.MapFrom(x => x.Card.type.Contains("Land") ? "Land" : x.Card.colors == null ? "" : string.Join("", x.Card.colors)));
 
             //new DeckCardDto

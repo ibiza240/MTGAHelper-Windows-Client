@@ -6,6 +6,7 @@ using MTGAHelper.Tracker.WPF.ViewModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,6 +48,24 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         private void Menu_Options_Click(object sender, RoutedEventArgs e)
         {
             mainWindow.ShowDialogOptions();
+        }
+
+        private void Menu_About_Click(object sender, RoutedEventArgs e)
+        {
+            var about = new AboutWindow();
+            about.Owner = Window.GetWindow(this);
+            about.ShowDialog();
+        }
+
+        private void Menu_PatchNotes_Click(object sender, RoutedEventArgs e)
+        {
+            var ps = new ProcessStartInfo("https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/PatchNotes.md")
+            {
+                UseShellExecute = true,
+                Verb = "open"
+            };
+            Process.Start(ps);
+            e.Handled = true;
         }
 
         private void Menu_Exit_Click(object sender, RoutedEventArgs e)

@@ -20,11 +20,13 @@ namespace MTGAHelper.Lib.Config
         public string FolderDataDecks => Path.Combine(FolderData, "decks");
         public string FolderDataConfigUsers => Path.Combine(FolderData, "configusers");
 
-        public List<string> CardsObtainableOnlyByCrafting { get; set; } = new List<string>();
+        //public List<string> CardsObtainableOnlyByCrafting { get; set; } = new List<string>();
 
         //public ConfigLogWithGmail LogWithGmail { get; set; } = new ConfigLogWithGmail();
 
         public Dictionary<string, bool> Features { get; set; } = new Dictionary<string, bool>();
+
+        public Dictionary<string, string> TrackerClientMessages { get; set; } = new Dictionary<string, string>();
 
         public List<ConfigChangelog> Changelog { get; set; } = new List<ConfigChangelog>();
         public string LastCardsHash { get; set; }

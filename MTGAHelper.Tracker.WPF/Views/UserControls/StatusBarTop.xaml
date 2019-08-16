@@ -35,6 +35,8 @@
                     <MenuItem Header="Always on _Top" Click="Menu_AlwaysOnTop_Click" IsChecked="{Binding Path=AlwaysOnTop.Value}" x:Name="menuItemAlwaysOnTop" />
                     <MenuItem Header="_Upload log file now" Click="Menu_UploadNow_Click" />
                     <Separator />
+                    <MenuItem Header="_About" Click="Menu_About_Click" />
+                    <MenuItem Header="View _Patch notes" Click="Menu_PatchNotes_Click" />
                     <MenuItem Header="_Exit" Click="Menu_Exit_Click" />
                     <!--<Separator />
                     <MenuItem Header="Test _Drafter" Click="MenuTestDrafter_Click" />-->

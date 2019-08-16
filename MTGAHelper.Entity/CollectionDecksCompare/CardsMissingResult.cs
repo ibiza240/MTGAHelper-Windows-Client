@@ -36,20 +36,9 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
 
         public Dictionary<string, InfoCardMissingSummary[]> GetModelSummary()
         {
-            //return computedData
-            //    .Where(i => i.NbMissing > 0)
-            //    .GroupBy(i => i.Card.set)
-            //    .ToDictionary(i => i.Key, x => x.GroupBy(i => i.Card.GetRarityEnum(true)).Select(i => new InfoCardMissingSummary {
-            //        Set = x.Key,
-            //        Rarity = i.Key,
-            //        NbMissing = i.Sum(c => c.NbMissing),
-            //        MissingWeight = i.Sum(c => c.MissingWeight)
-            //    }).ToArray());
-
-            //var test = ByDeck.First().Value.ByCard.First().Value;
-
-            return ByCard
+            var ret = ByCard
                 .Where(i => i.Value.NbMissing > 0)
+                .Where(i => /*i.Value.Card.type.Contains("Land") ||*/ i.Value.MissingWeight != 0)
                 .GroupBy(i => i.Value.Card.setConsideringCraftedOnly)
                 .ToDictionary(i => i.Key, x => x
                     .OrderBy(i => i.Value.Card.GetRarityEnum(true))
@@ -61,51 +50,14 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
                         NbMissing = i.Sum(c => c.Value.NbMissing),
                         MissingWeight = i.Sum(c => c.Value.MissingWeight)
                     }).ToArray());
-
-            //var ret = new List<InfoCardMissingSummary>();
-
-            //var gBySet = ByCard
-            //    .GroupBy(i => i.Key.set)
-            //    .OrderByDescending(i => i.Sum(x => x.Value.MissingWeight));
-
-            //foreach (var g in gBySet)
-            //{
-            //    ret.Add(new InfoCardMissingSummary
-            //    {
-            //        Label = g.Key,
-            //        IsGrouping = true,
-            //        NbMissing = g.Sum(i => i.Value.NbMissing),
-            //        MissingWeightSum = g.Sum(i => i.Value.MissingWeight)
-            //    });
-
-            //    var g1 = g
-            //        //.GroupBy(i => $"{i.Key.rarity}{(i.Key.rarity == "Rare" ? $" ({(i.Key.type.Contains("Land") ? "Land" : "Nonland")})" : "")}")
-            //        .GroupBy(i => i.Key.GetRarityEnum(true))
-            //        .Where(i => i.Sum(x => x.Value.NbMissing) > 0)
-            //        ////.OrderByDescending(i => i.Sum(x => x.Value.Priority));
-            //        //.OrderBy(i => Entity.Util.GetOrderingByRarity(i.Key));
-            //        .OrderBy(i => i.Key);
-
-            //    foreach (var g2 in g1)
-            //    {
-            //        ret.Add(new InfoCardMissingSummary
-            //        {
-            //            Label = $"   {g2.Key}",
-            //            IsGrouping = false,
-            //            NbMissing = g2.Sum(i => i.Value.NbMissing),
-            //            MissingWeightSum = g2.Sum(i => i.Value.MissingWeight)
-            //        });
-            //    }
-            //}
-
-            //return ret.ToArray();
+            return ret;
         }
 
         public CardMissingDetailsModel[] GetModelDetails()
         {
-            return ByCard
+            var ret = ByCard
                 .Where(i => i.Value.NbMissing > 0)
-                .Where(i => i.Value.Card.type.Contains("Land") || i.Value.MissingWeight != 0)
+                .Where(i =>/* i.Value.Card.type.Contains("Land") ||*/ i.Value.MissingWeight != 0)
                 .Select(i => new CardMissingDetailsModel
                 {
                     CardName = i.Value.Card.name,
@@ -124,6 +76,7 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
                 .OrderByDescending(i => i.MissingWeight)
                 .ThenBy(i => i.CardName)
                 .ToArray();
+            return ret;
         }
 
         public InfoCardInDeck[] GetModelMissingCardsAllDecks()

@@ -59,7 +59,7 @@ namespace MTGAHelper.Entity
                         else if (Name.StartsWith(NAME_PREFIX_USER))
                         {
                             var id = new string(Name.Skip(NAME_PREFIX_USER.Length).ToArray());
-                            url = aetherhubAddFormat($"https://aetherhub.com/User/{id}", Format);
+                            url = aetherhubAddFormat($"https://aetherhub.com/User/{id}/Decks", Format);
                         }
                         break;
                     case ScraperTypeEnum.MtgGoldfish:

@@ -44,8 +44,8 @@
                     GridLinesVisibility="None" Background="Transparent" RowBackground="Transparent" Foreground="#aaaaaa" HeadersVisibility="None" BorderThickness="0" >
                                     <DataGrid.RowStyle>
                                     <Style TargetType="DataGridRow">
-                                        <EventSetter Event="MouseEnter" Handler="CardThumbnail_MouseEnter"/>
-                                        <EventSetter Event="MouseLeave" Handler="CardThumbnail_MouseLeave"/>
+                                        <EventSetter Event="MouseEnter" Handler="CardRow_MouseEnter"/>
+                                        <EventSetter Event="MouseLeave" Handler="CardRow_MouseLeave"/>
                                         <Setter Property="BorderThickness" Value="0,1,0,0" />
                                             <Setter Property="BorderBrush" Value="#555555" />
                                         </Style>

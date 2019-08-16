@@ -22,14 +22,16 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Label Grid.Row="0" Grid.Column="1" Margin="-3,0,0,0">Values are saved upon closing this window</Label>
+        <Label Grid.Row="0" Grid.Column="1" FontSize="14">Values are saved upon closing this window</Label>
 
         <Label Grid.Row="1" Grid.Column="1">
             <TextBlock TextWrapping="Wrap">
-                If you don't know your MTGAHelper User Id, you can view it by going to the 
+                If you don't know your MTGAHelper User Id, you can view it by going to your 
                 <Hyperlink NavigateUri="https://mtgahelper.com/profile" helpers:HyperlinkExtensions.IsExternal="true">
                     MTGAHelper website profile page
-                </Hyperlink>. This User Id is your unique identifier and will allow you to track your data over time.
+                </Hyperlink>.
+                <LineBreak/>
+                This User Id is your unique identifier and will allow you to track your data over time.
             </TextBlock>
         </Label>
 

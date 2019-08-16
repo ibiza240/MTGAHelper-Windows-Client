@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace MTGAHelper.Entity
@@ -149,6 +150,8 @@ namespace MTGAHelper.Entity
         {
             Cards = new DeckCards(cards);
             Id = GetId();
+
+            //if (Id == "aetherhub-user_mtgarenaoriginaldecks-arenastandard_2891280397") Debugger.Break();
         }
 
         //public override float CalcMissingWeight() { return Cards.Sum(i => i.MissingWeight); }

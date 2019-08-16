@@ -13,7 +13,7 @@ namespace MTGAHelper.Tracker.WPF.Business
         {
             //try
             //{
-            var shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "MTGAHelper.lnk");
+            var shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "MTGAHelper Tracker.lnk");
             var shortcutExists = System.IO.File.Exists(shortcutPath);
 
             if (runOnStartup)

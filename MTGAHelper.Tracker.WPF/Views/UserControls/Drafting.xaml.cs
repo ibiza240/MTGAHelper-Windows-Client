@@ -44,16 +44,15 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             e.Handled = true;
         }
 
-        private void CardThumbnail_MouseEnter(object sender, MouseEventArgs e)
+        private void CardRow_MouseEnter(object sender, MouseEventArgs e)
         {
             var vm = (sender as FrameworkElement)?.DataContext as CardDraftPickVM;
-            //mainWindow.windowCardPopup.imgPopupCard.Source = new ImageSource( vm.ImageCardUrl;
             mainWindow.windowCardPopupDrafting.Refresh(vm, mainWindow.vm.DraftingVM.ShowGlobalMTGAHelperSays);
             mainWindow.windowCardPopupDrafting.Visibility = Visibility.Visible;
 
         }
 
-        private void CardThumbnail_MouseLeave(object sender, MouseEventArgs e)
+        private void CardRow_MouseLeave(object sender, MouseEventArgs e)
         {
             mainWindow.windowCardPopupDrafting.Visibility = Visibility.Hidden;
         }

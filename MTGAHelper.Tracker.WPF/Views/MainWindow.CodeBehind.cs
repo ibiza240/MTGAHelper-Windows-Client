@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
@@ -30,13 +31,16 @@ namespace MTGAHelper.Tracker.WPF.Views
         {
 #if DEBUG || DEBUGWITHSERVER
 #else
-            if (configApp.SkipVersionCheck)
-                return;
-
             if (MessageBox.Show("A new version of the MTGAHelper Tracker is available, you must install it to continue. Proceed now?", "MTGAHelper", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                var updaterApp = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "MTGAHelper.Tracker.AutoUpdater.exe");
-                var ps = new ProcessStartInfo(updaterApp)
+                // Download latest auto-updater
+                var folderForConfigAndLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");
+                var fileExe = Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.exe");
+                new WebClient().DownloadFile("https://mtgahelper.com/autoupdate/MTGAHelper.Tracker.AutoUpdater.dll", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.dll"));
+                new WebClient().DownloadFile("https://mtgahelper.com/autoupdate/MTGAHelper.Tracker.AutoUpdater.exe", fileExe);
+                new WebClient().DownloadFile("https://mtgahelper.com/autoupdate/MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json"));
+
+                var ps = new ProcessStartInfo(fileExe)
                 {
                     UseShellExecute = true,
                     Verb = "runas"

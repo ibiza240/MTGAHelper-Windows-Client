@@ -12,7 +12,7 @@ namespace MTGAHelper.Tracker.WPF.Config
         public string LogFilePath { get; set; }
         public string GameFilePath { get; set; }
         public bool RunOnStartup { get; set; }
-        public bool SkipVersionCheck { get; set; }
+        public bool Test { get; set; }
 
         internal void Save()
         {
