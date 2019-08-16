@@ -1,8 +1,12 @@
-### v1.1
+### v1.1.1
 
 Bugfixes
 - Fixed incorrect parsing for Bo3
 - Fixed the Start on Windows startup option
+
+### v1.1
+
+Skipped (Obsolete)
 
 ### v1.0
 
