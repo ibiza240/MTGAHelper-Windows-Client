@@ -3,6 +3,7 @@
 Bugfixes
 - Fixed incorrect parsing for Bo3
 - Fixed the Start on Windows startup option
+- Fixed the Auto-updater
 
 ### v1.1
 
