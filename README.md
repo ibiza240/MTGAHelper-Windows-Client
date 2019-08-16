@@ -17,6 +17,8 @@ Please note that this tracker runs only on Windows for now.
 - Automatically synchronizes your log files data with the MTGAHelper servers
 - Draft helper when picking your cards during a draft
 
+##### Check the [Patch ntoes](https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/PatchNotes.md) to know about the latest changes.
+
 -----
 
 ### Installation
