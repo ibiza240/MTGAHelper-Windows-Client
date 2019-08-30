@@ -1,3 +1,9 @@
+### v1.1.2 - 2019-08-29
+
+1. Improvements to the log parsing for supporting deck stats
+2. Set the minimal transluency to 10% (to not lose the window)
+3. Main window is now resizable
+
 ### v1.1.1 - 2019-08-15
 
 Bugfixes
