@@ -25,3 +25,4 @@ packages
 /data/decks.json
 /data/events.json
 /NODATE
+*.pubxml

@@ -4,6 +4,7 @@ using MTGAHelper.Lib.UserHistory;
 using MTGAHelper.Web.UI.Model.SharedDto;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MTGAHelper.Web.UI.Model.Response.User.History
 {
@@ -34,6 +35,9 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
             Date = historyForDate.Date;
             Info = Mapper.Map<GetUserHistoryForDateResponseInfo>(historyForDate);
             Diff = Mapper.Map<GetUserHistoryForDateResponseDiff>(diff);
+
+            foreach (var m in Info.Matches.Where(i => i.DeckUsed == null))
+                    m.DeckUsed = new SimpleDeckDto();
         }
     }
 

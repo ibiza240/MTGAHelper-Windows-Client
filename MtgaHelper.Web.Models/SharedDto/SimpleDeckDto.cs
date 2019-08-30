@@ -1,8 +1,4 @@
-﻿using MTGAHelper.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace MTGAHelper.Web.UI.Model.SharedDto
 {
@@ -12,7 +8,8 @@ namespace MTGAHelper.Web.UI.Model.SharedDto
         public ICollection<CardWithAmountDto> Main { get; set; } = new CardWithAmountDto[0];
         public ICollection<CardWithAmountDto> Sideboard { get; set; } = new CardWithAmountDto[0];
 
-        public string Colors { get; set; }
+        public string Colors { get; set; } = "";
+        public string DeckImage { get; set; } = "";
 
         //internal string GetColors()
         //{

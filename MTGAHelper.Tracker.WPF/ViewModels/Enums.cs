@@ -21,6 +21,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         UpToDate = 1,
         Uploading = 2,
         Downloading = 4,
+        ProcessingLogFile = 8,
     }
 
     [Flags]

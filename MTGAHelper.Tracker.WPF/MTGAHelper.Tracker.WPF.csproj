@@ -7,16 +7,17 @@
     <ApplicationIcon>wcC.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>MTGAHelper.Tracker</AssemblyName>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <Company>MTGAHelper</Company>
     <Authors>MTGAHelper</Authors>
     <Description>MTGAHelper Local client</Description>
     <Copyright>2019 MTGAHelper</Copyright>
     <Configurations>Debug;Release;DebugWithServer</Configurations>
-    <AssemblyVersion>1.1.1.0</AssemblyVersion>
+    <AssemblyVersion>1.1.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Images\banner.jpg" />
     <None Remove="Assets\Images\loading.gif" />
     <None Remove="Assets\Images\MTGA.png" />
     <None Remove="Assets\Images\star.png" />
@@ -70,6 +71,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Images\banner.jpg" />
     <Resource Include="Assets\Images\loading.gif" />
     <Resource Include="Assets\Images\MTGA.png" />
     <Resource Include="Assets\Images\star.png" />

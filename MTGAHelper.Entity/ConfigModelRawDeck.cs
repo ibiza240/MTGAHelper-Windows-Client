@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MTGAHelper.Entity
 {
     public class ConfigModelRawDeck
     {
+        public string Id { get; set; }
+        public int DeckTileId { get; set; }
+        public DateTime LastUpdated { get; set; }
         public string Name { get; set; }
+        public string Format { get; set; }
         public Dictionary<int, int> CardsMain { get; set; }
         public Dictionary<int, int> CardsSideboard { get; set; }
     }

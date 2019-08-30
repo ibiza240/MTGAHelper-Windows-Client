@@ -27,8 +27,11 @@ namespace MTGAHelper.Web.UI.Model.Response
             foreach (var i in deckInfo.Deck.Cards.All
                 .OrderBy(i => i.Card.type.Contains("Land") ? 0 : 1)
                 .ThenBy(i => i.Card.GetSimpleType())
-                .ThenBy(i => i.Card.number))
+                .ThenBy(i => i.Card.cmc)
+                .ThenBy(i => i.Card.name))
             {
+                //if (i.Card.name.StartsWith("Treasure"))
+                //    System.Diagnostics.Debugger.Break();
 
                 var info = (
                     i.IsSideboard,
@@ -80,7 +83,8 @@ namespace MTGAHelper.Web.UI.Model.Response
                 CardsMain = cards.Where(i => i.IsSideboard == false).Select(i => i.Card).ToArray(),
                 CardsSideboard = cards.Where(i => i.IsSideboard).Select(i => i.Card).ToArray(),
                 MtgaImportFormat = deckInfo.MtgaImportFormat,
-                CompareResults = compareResults
+                CompareResults = compareResults,
+                ManaCurve = CalculateManaCurve(deckInfo)
             };
 
             if (deckInfo.Deck is DeckAverageArchetype)
@@ -96,6 +100,33 @@ namespace MTGAHelper.Web.UI.Model.Response
                     //ImageArtUrl = i.imageArtUrl,//.images["normal"]
                 }).ToArray();
             }
+        }
+
+        ICollection<DeckManaCurveDto> CalculateManaCurve(DeckTrackedDetails deckInfo)
+        {
+            var manaInfo = deckInfo.Deck.Cards.QuickCardsMain.Values
+                .Where(i => i.Card.type.Contains("Land") == false)
+                .GroupBy(i => Math.Min(7, i.Card.cmc))
+                .ToDictionary(i => i.Key, i => i);
+
+            var maxCardsForMana = manaInfo.Values.Max(i => i.Sum(x => x.Amount));
+
+            var manaCurve = new[] { 0, 1, 2, 3, 4, 5, 6, 7 }
+                .Select(i =>
+                {
+                    var nbCards = manaInfo.ContainsKey(i) ? manaInfo[i].Sum(x => x.Amount) : 0;
+
+                    return
+                        new DeckManaCurveDto
+                        {
+                            ManaCost = i,
+                            NbCards = nbCards,
+                            PctHeight = nbCards * 100 / maxCardsForMana
+                        };
+                })
+                .ToArray();
+
+            return manaCurve;
         }
     }
 }

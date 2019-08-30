@@ -14,14 +14,24 @@ namespace MTGAHelper.Entity
 
         public DeckCards(ICollection<DeckCard> Cards)
         {
-            this.All = Cards.OrderBy(i => i.Card.name).ToArray();
+            this.All = Cards
+                //.OrderBy(i => i.Card.cmc)
+                //.ThenBy(i => i.Card.name)
+                .OrderBy(i => i.Card.name)
+                .ToArray();
 
-            this.AllExceptBasicLands = All.Where(i => i.Card.type.StartsWith("Basic Land") == false).ToArray();
+            this.AllExceptBasicLands = All
+                .Where(i => i.Card.type.StartsWith("Basic Land") == false)
+                .ToArray();
 
-            this.QuickCardsMain = All.Where(i => i.IsSideboard == false).ToDictionary(i => i.Card.grpId, i => i);
+            this.QuickCardsMain = All
+                .Where(i => i.IsSideboard == false)
+                .ToDictionary(i => i.Card.grpId, i => i);
                 /*.GroupBy(i => i.Card.grpId).ToDictionary(i => i.Key, i => new DeckCard(new CardWithAmount(i.First().Card, i.Sum(x => x.Amount)), false))*/;
 
-            this.QuickCardsSideboard = All.Where(i => i.IsSideboard == true).ToDictionary(i => i.Card.grpId, i => i);
+            this.QuickCardsSideboard = All
+                .Where(i => i.IsSideboard == true)
+                .ToDictionary(i => i.Card.grpId, i => i);
         }
     }
 }

@@ -33,6 +33,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             { NetworkStatusEnum.UpToDate, "Server data is up to date" },
             { NetworkStatusEnum.Uploading, "Uploading log file to server..." },
             { NetworkStatusEnum.Downloading, "Gathering data from server..." },
+            { NetworkStatusEnum.ProcessingLogFile, "Processing log file..." },
         };
 
         Dictionary<ProblemsFlags, string> dictProblems = new Dictionary<ProblemsFlags, string>
@@ -78,7 +79,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             .Select(i => dictProblems[i])
             .ToArray();
 
-        public bool IsWorking => statusBlinker.HasFlag(NetworkStatusEnum.Uploading) || statusBlinker.HasFlag(NetworkStatusEnum.Downloading);
+        public bool IsWorking => statusBlinker.HasFlag(NetworkStatusEnum.Uploading) || statusBlinker.HasFlag(NetworkStatusEnum.Downloading) || statusBlinker.HasFlag(NetworkStatusEnum.ProcessingLogFile);
         public bool ShowLaunchMtgaGameClient => Problems.HasFlag(ProblemsFlags.GameClientFileNotFound) == false && isGameRunning == false;
         public double OpacityPct => Opacity / 100.0d;
         //public string Username => Collection.MtgaUserProfile.PlayerId;

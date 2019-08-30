@@ -12,7 +12,10 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
         public string FirstTurn { get; set; }
         public int MulliganCount { get; set; }
         public int MulliganCountOpponent { get; set; }
-        public string DeckUsed { get; set; }
+
+        //public ConfigModelRawDeck DeckUsed { get; set; }
+        public Dictionary<int, int> DeckCards { get; set; }
+
         public ICollection<CardWithAmountDto> OpponentCardsSeen { get; set; }
         public IList<ICollection<CardDto>> StartingHands { get; set; }
         public ICollection<CardTurnActionDto> CardTransfers { get; set; }

@@ -77,7 +77,7 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         {
             if (vm.IsUploading)
             {
-                MessageBox.Show($"The tracker is already uploading data, sorry for the slow speed. This waiting time can be greatly reduced with enough support, see how you can help on the website. Thanks!", "MTGAHelper");
+                MessageBox.Show($"The tracker is already uploading data, sorry for the slow speed. This waiting time can be greatly reduced, see how you can show your support on the website. Thanks!", "MTGAHelper");
                 return;
             }
 

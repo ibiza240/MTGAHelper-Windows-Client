@@ -24,7 +24,7 @@ namespace MTGAHelper.Entity
         public int grpId { get; set; }
         public string imageCardUrl { get; set; }
         public string imageArtUrl { get; set; }
-        public string cmc { get; set; }
+        public int cmc { get; set; }
         //public string artist { get; set; }
 
         // From data_cards.mtga
@@ -81,7 +81,7 @@ namespace MTGAHelper.Entity
                 simpleType = typeWords;// string.Join("", typeWords.Split(' ').Select(i => i));
             }
 
-            return simpleType;
+            return simpleType.Split(new[] { "//" }, StringSplitOptions.None)[0].Trim();
         }
         public RarityEnum GetRarityEnum(bool splitRareLands = false)
         {

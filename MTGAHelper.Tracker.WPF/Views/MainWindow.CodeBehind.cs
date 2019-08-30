@@ -36,9 +36,9 @@ namespace MTGAHelper.Tracker.WPF.Views
                 // Download latest auto-updater
                 var folderForConfigAndLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");
                 var fileExe = Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.exe");
-                new WebClient().DownloadFile("https://mtgahelper.com/autoupdate/MTGAHelper.Tracker.AutoUpdater.dll", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.dll"));
-                new WebClient().DownloadFile("https://mtgahelper.com/autoupdate/MTGAHelper.Tracker.AutoUpdater.exe", fileExe);
-                new WebClient().DownloadFile("https://mtgahelper.com/autoupdate/MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json"));
+                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/MTGAHelper.Tracker.AutoUpdater.dll?raw=true", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.dll"));
+                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/MTGAHelper.Tracker.AutoUpdater.exe?raw=true", fileExe);
+                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json?raw=true", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json"));
 
                 var ps = new ProcessStartInfo(fileExe)
                 {

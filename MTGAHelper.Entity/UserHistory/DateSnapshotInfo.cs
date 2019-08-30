@@ -9,7 +9,7 @@ namespace MTGAHelper.Lib.UserHistory
     public class DateSnapshotInfo
     {
         public DateTime Date { get; set; }
-        public ICollection<ConfigModelRawDeck> Decks { get; set; } = new ConfigModelRawDeck[0];
+        //public ICollection<ConfigModelRawDeck> Decks { get; set; } = new ConfigModelRawDeck[0];
         public ICollection<ConfigModelRankInfo> RankInfo { get; set; } = new ConfigModelRankInfo[0];
         public Inventory Inventory { get; set; } = new Inventory();
         public Dictionary<int, int> Collection { get; set; } = new Dictionary<int, int>();

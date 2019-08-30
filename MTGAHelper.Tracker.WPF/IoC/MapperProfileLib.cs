@@ -19,15 +19,7 @@ namespace MTGAHelper.Tracker.WPF.IoC
             CreateMap<CardDraftPick, CardDraftPickVM>()
                 //.ForMember(i => i.ColorGradient, i => i.MapFrom(x => x.Colors.Select;
                 .ForMember(i => i.ImageCardUrl, i => i.MapFrom(x => "https://img.scryfall.com/cards" + x.ImageCardUrl))
-
-#if DEBUG
-                .ForMember(i => i.ImageArtUrl, i => i.MapFrom(x => "https://localhost:5001/images/cardArt/thumbnail/" +
-                    x.ImageArtUrl.Split("/", StringSplitOptions.None).Last().Split("?", StringSplitOptions.None).First()))
-#else
-                .ForMember(i => i.ImageArtUrl, i => i.MapFrom(x => "https://mtgahelper.com/images/cardArt/thumbnail/" +
-                    x.ImageArtUrl.Split("/", StringSplitOptions.None).Last().Split("?", StringSplitOptions.None).First()))
-#endif
-
+                .ForMember(i => i.ImageArtUrl, i => i.MapFrom(x => new Entity.Util().GetThumbnailUrl(x.ImageArtUrl)))
                 .ForMember(i => i.CardVM, i => i.MapFrom(x => x));
         }
     }

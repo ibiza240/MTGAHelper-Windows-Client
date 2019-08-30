@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using MTGAHelper.Entity;
+using MTGAHelper.Entity.MtgaDeckStats;
 using MTGAHelper.Lib.Config.Users;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
 using MTGAHelper.Lib.UserHistory;
@@ -62,9 +63,12 @@ namespace MTGAHelper.Web.UI.IoC
             CreateMap<DeckCard, DeckCardDto>()
                 .ForMember(i => i.Name, i => i.MapFrom(x => x.Card.name))
                 .ForMember(i => i.ImageCardUrl, i => i.MapFrom(x => x.Card.imageCardUrl))
+                .ForMember(i => i.ImageThumbnail, i => i.MapFrom(x => new Util().GetThumbnailUrl(x.Card.imageArtUrl)))
                 .ForMember(i => i.Rarity, i => i.MapFrom(x => x.Card.GetRarityEnum(false).ToString()))
                 .ForMember(i => i.Type, i => i.MapFrom(x => x.Card.GetSimpleType()))
+                .ForMember(i => i.Set, i => i.MapFrom(x => x.Card.set))
                 .ForMember(i => i.ManaCost, i => i.MapFrom(x => x.Card.mana_cost))
+                .ForMember(i => i.Cmc, i => i.MapFrom(x => x.Card.cmc))
                 .ForMember(i => i.Color, i => i.MapFrom(x => x.Card.type.Contains("Land") ? "Land" : x.Card.colors == null ? "" : string.Join("", x.Card.colors)));
 
             //new DeckCardDto
@@ -81,7 +85,11 @@ namespace MTGAHelper.Web.UI.IoC
             //}
 
             CreateMap<MatchResult, MatchDto>()
+                .IncludeBase<MatchResult, MatchDtoLightweight>();
+
+            CreateMap<MatchResult, MatchDtoLightweight>()
                 .ForMember(i => i.OpponentName, i => i.MapFrom(x => x.Opponent.ScreenName))
+                .ForMember(i => i.FirstTurn, i => i.MapFrom(x => x.Games.First().FirstTurn.ToString()))
                 .ForMember(i => i.OpponentRank, i => i.MapFrom(x => $"{x.Opponent.RankingClass}_{x.Opponent.RankingTier}"))
                 //.ForMember(i => i.Outcome, i => i.MapFrom(x => string.Join('-', x.Games.Select(y => y.Outcome.ToString()[0]))))
                 .ForMember(i => i.OpponentDeckColors, i => i.MapFrom(x => x.GetOpponentDeckColors(dictAllCards)));
@@ -93,7 +101,8 @@ namespace MTGAHelper.Web.UI.IoC
             CreateMap<ConfigModelRawDeck, SimpleDeckDto>()
                 .ForMember(i => i.Main, i => i.MapFrom(x => x.CardsMain))
                 .ForMember(i => i.Sideboard, i => i.MapFrom(x => x.CardsSideboard))
-                .ForMember(i => i.Colors, i => i.ConvertUsing(rawDeckToColorConverter, x => x));
+                .ForMember(i => i.Colors, i => i.ConvertUsing(rawDeckToColorConverter, x => x))
+                .ForMember(i => i.DeckImage, i => i.MapFrom(x => dictAllCards[x.DeckTileId].imageArtUrl));
 
             CreateMap<GameDetail, GameDetailDto>();
 
@@ -120,6 +129,19 @@ namespace MTGAHelper.Web.UI.IoC
 
             CreateMap<CardForDraftPick, CardForDraftPickDto>()
                 .ForMember(i => i.IdArena, i => i.MapFrom(x => x.grpId));
+
+            CreateMap<MtgaDeckSummary, MtgaDeckSummaryDto>()
+                .ForMember(i => i.FirstPlayed, i => i.MapFrom(x => x.FirstPlayed.ToString("yyyy-MM-dd")))
+                .ForMember(i => i.LastPlayed, i => i.MapFrom(x => x.LastPlayed.ToString("yyyy-MM-dd")))
+                .ForMember(i => i.DeckColor, i => i.ConvertUsing(rawDeckToColorConverter, x => x.DeckUsed));
+
+            CreateMap<MtgaDeckDetail, MtgaDeckDetailDto>()
+                .ForMember(i => i.FirstPlayed, i => i.MapFrom(x => x.FirstPlayed.ToString("yyyy-MM-dd")))
+                .ForMember(i => i.LastPlayed, i => i.MapFrom(x => x.LastPlayed.ToString("yyyy-MM-dd")))
+                .ForMember(i => i.DeckColor, i => i.ConvertUsing(rawDeckToColorConverter, x => x.DeckUsed));
+
+            CreateMap<MtgaDeckAnalysis, MtgaDeckAnalysisDto>();
+            CreateMap<MtgaDeckAnalysisMatchInfo, MtgaDeckAnalysisMatchInfoDto>();
         }
     }
 }

@@ -161,7 +161,10 @@ namespace MTGAHelper.Tracker.WPF.Views
                     {
                         try
                         {
-                            (result, errorId) = reader.LoadFileContent(configApp.UserId, ms);
+                            vm.WrapNetworkStatus(NetworkStatusEnum.ProcessingLogFile, () =>
+                            {
+                                (result, errorId) = reader.LoadFileContent(configApp.UserId, ms);
+                            });
 
                             if (result.CollectionByDate.Any(i => i.DateTime == default(DateTime)))
                                 api.LogErrorRemoteFile(configApp.UserId, logToSend, $"_NODATE_outputlog_{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip");
@@ -186,6 +189,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                 catch (HttpRequestException ex)
                 {
                     callbackOnError?.Invoke();
+                    Log.Error(ex, "Error:");
                     vm.SetProblemServerUnavailable();
                 }
             });
@@ -248,7 +252,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                     // Refresh the drafting window to show the new picks
                     SetCardsDraft(msgDraftPack.DraftPack.Select(i => Convert.ToInt32(i)).ToArray());
 
-                if ((msg is LogInfoRequestResult logInfo && logInfo.Raw.@params.messageName == "DuelScene.EndOfMatchReport") ||
+                if ((msg is LogInfoRequestResult logInfo && (logInfo.Raw.@params.messageName == "DuelScene.EndOfMatchReport" || logInfo.Raw.@params.humanContext.Contains("Client changed scenes to Home"))) ||
                     (vm.MainWindowContext != MainWindowContextEnum.Playing && msg is GetPlayerCardsResult))
                 {
                     // Trigger to upload the stored log content

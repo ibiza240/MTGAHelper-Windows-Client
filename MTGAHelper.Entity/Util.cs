@@ -98,5 +98,12 @@ namespace MTGAHelper.Entity
         //        return hash1 + (hash2 * 1566083941);
         //    }
         //}
+
+        public string GetThumbnailUrl(string imageArtUrl)
+        {
+            var idWithQueryParams = imageArtUrl.Split(new[] { "/" }, StringSplitOptions.None).Last();
+            var id = idWithQueryParams.Split(new[] { "?" }, StringSplitOptions.None).First();
+            return "https://mtgahelper.com/images/cardArt/thumbnail/" + id;
+        }
     }
 }

@@ -38,7 +38,6 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
         {
             var ret = ByCard
                 .Where(i => i.Value.NbMissing > 0)
-                .Where(i => /*i.Value.Card.type.Contains("Land") ||*/ i.Value.MissingWeight != 0)
                 .GroupBy(i => i.Value.Card.setConsideringCraftedOnly)
                 .ToDictionary(i => i.Key, x => x
                     .OrderBy(i => i.Value.Card.GetRarityEnum(true))
@@ -57,7 +56,7 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
         {
             var ret = ByCard
                 .Where(i => i.Value.NbMissing > 0)
-                .Where(i =>/* i.Value.Card.type.Contains("Land") ||*/ i.Value.MissingWeight != 0)
+                //.Where(i =>/* i.Value.Card.type.Contains("Land") ||*/ i.Value.MissingWeight != 0)
                 .Select(i => new CardMissingDetailsModel
                 {
                     CardName = i.Value.Card.name,

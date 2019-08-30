@@ -12,7 +12,7 @@
         Loaded="Window_Loaded"
         Activated="Window_Activated" Deactivated="Window_Deactivated"
         LocationChanged="Window_LocationChanged"
-        Opacity="{Binding OpacityPct}" AllowsTransparency="True" WindowStyle="None" Background="#272b30" BorderBrush="#181b1f" BorderThickness="2">
+        Opacity="{Binding OpacityPct}" AllowsTransparency="True" ResizeMode="CanResizeWithGrip" WindowStyle="None" Background="#272b30" BorderBrush="#181b1f" BorderThickness="2">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
 
@@ -109,7 +109,7 @@
 
         </StackPanel>
         <StackPanel Grid.Row="3" DockPanel.Dock="Bottom" Orientation="Vertical">
-            <Slider Maximum="100" Value="{Binding Opacity, UpdateSourceTrigger=PropertyChanged}" Background="#181b1f"
+            <Slider Minimum="20" Maximum="100" Value="{Binding Opacity, UpdateSourceTrigger=PropertyChanged}" Background="#181b1f"
                 ValueChanged="Slider_ValueChanged" Style="{StaticResource MyCustomStyleForSlider}" LargeChange="10" />
 
             <StatusBar Background="#181b1f">

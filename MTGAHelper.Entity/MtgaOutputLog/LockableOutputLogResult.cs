@@ -7,17 +7,41 @@ using System.Linq;
 
 namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
 {
-    [Serializable]
-    public class OutputLogResult
+    public class LockableOutputLogResultData<T>
     {
-        //InfoByDate<ICollection<CardWithAmount>> lastCollectionInMemory = null;
+        object lockData = new object();
+        IList<InfoByDate<T>> data = new List<InfoByDate<T>>();
 
-        public IList<InfoByDate<ICollection<ConfigModelRankInfo>>> RankInfoByDate { get; set; } = new List<InfoByDate<ICollection<ConfigModelRankInfo>>>();
-        public IList<InfoByDate<Inventory>> InventoryByDate { get; set; } = new List<InfoByDate<Inventory>>();
-        public IList<InfoByDate<Dictionary<int, int>>> CollectionByDate { get; set; } = new List<InfoByDate<Dictionary<int, int>>>();
-        public IList<InfoByDate<IList<MatchResult>>> MatchesByDate { get; set; } = new List<InfoByDate<IList<MatchResult>>>();
-        public IList<InfoByDate<IList<MtgaDeck>>> DecksByDate { get; set; } = new List<InfoByDate<IList<MtgaDeck>>>();
-        public IList<InfoByDate<DateSnapshotDiff>> DiffByDate { get; set; } = new List<InfoByDate<DateSnapshotDiff>>();
+        public IList<InfoByDate<T>> GetData()
+        {
+            lock (lockData)
+                return data;
+        }
+
+        public void SetData(IList<InfoByDate<T>> newData)
+        {
+            lock (lockData)
+                data = newData;
+        }
+
+        public void AddData(InfoByDate<T> newData)
+        {
+            lock (lockData)
+                data.Add(newData);
+        }
+    }
+
+    [Serializable]
+    public class LockableOutputLogResult
+    {
+        public LockableOutputLogResultData<ICollection<ConfigModelRankInfo>> RankInfoByDate { get; set; } = new LockableOutputLogResultData<ICollection<ConfigModelRankInfo>>();
+        public LockableOutputLogResultData<Inventory> InventoryByDate { get; set; } = new LockableOutputLogResultData<Inventory>();
+        public LockableOutputLogResultData<Dictionary<int, int>> CollectionByDate { get; set; } = new LockableOutputLogResultData<Dictionary<int, int>>();
+        public LockableOutputLogResultData<IList<MatchResult>> MatchesByDate { get; set; } = new LockableOutputLogResultData<IList<MatchResult>>();
+        public LockableOutputLogResultData<IList<MtgaDeck>> DecksGlobal { get; set; } = new LockableOutputLogResultData<IList<MtgaDeck>>();
+        public LockableOutputLogResultData<DateSnapshotDiff> DiffByDate { get; set; } = new LockableOutputLogResultData<DateSnapshotDiff>();
+
+        //InfoByDate<ICollection<CardWithAmount>> lastCollectionInMemory = null;
 
         public uint LastUploadHash { get; set; }
 
@@ -38,19 +62,19 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
                 return info;
             };
 
-            foreach (var collection in CollectionByDate)
+            foreach (var collection in CollectionByDate.GetData())
                 CreateOrGetDateSnapshotInfo(collection.DateTime).Collection = collection.Info;
 
-            foreach (var inventory in InventoryByDate)
+            foreach (var inventory in InventoryByDate.GetData())
                 CreateOrGetDateSnapshotInfo(inventory.DateTime).Inventory = inventory.Info;
 
-            foreach (var matches in MatchesByDate)
+            foreach (var matches in MatchesByDate.GetData())
                 CreateOrGetDateSnapshotInfo(matches.DateTime).Matches = matches.Info;
 
-            foreach (var rankInfo in RankInfoByDate)
+            foreach (var rankInfo in RankInfoByDate.GetData())
                 CreateOrGetDateSnapshotInfo(rankInfo.DateTime).RankInfo = rankInfo.Info;
 
-            //foreach (var decks in DecksByDate)
+            //foreach (var decks in DecksByDate.GetData())
             //    CreateOrGetDateSnapshotInfo(decks.DateTime).Decks = decks.Info;
 
             //ICollection<ConfigModelRankInfo> previousRank = null;
@@ -77,7 +101,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
             return result;
         }
 
-        public InfoByDate<Dictionary<int, int>> GetLastCollection() => CollectionByDate.OrderBy(i => i.DateTime).LastOrDefault()
+        public InfoByDate<Dictionary<int, int>> GetLastCollection() => CollectionByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<Dictionary<int, int>>(default(DateTime), new Dictionary<int, int>());
 
         public InfoByDate<ICollection<CardWithAmount>> GetLastCollectionInMemory(RawDeckConverter converter)
@@ -93,14 +117,14 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
             return lastCollectionInMemory;
         }
 
-        public InfoByDate<ICollection<ConfigModelRankInfo>> GetLastRank() => RankInfoByDate.OrderBy(i => i.DateTime).LastOrDefault()
+        public InfoByDate<ICollection<ConfigModelRankInfo>> GetLastRank() => RankInfoByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<ICollection<ConfigModelRankInfo>>(default(DateTime),
                 new ConfigModelRankInfo[] {
                     new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Constructed),
                     new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Limited)
                 });
 
-        public InfoByDate<Inventory> GetLastInventory() => InventoryByDate.OrderBy(i => i.DateTime).LastOrDefault()
+        public InfoByDate<Inventory> GetLastInventory() => InventoryByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<Inventory>(default(DateTime), new Inventory());
 
         public (DateSnapshotInfo info, DateSnapshotDiff diff) GetForDate(DateTime dateFor)
@@ -108,14 +132,14 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
             var resultForDate = new DateSnapshotInfo
             {
                 Date = dateFor,
-                Collection = CollectionByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<int, int>(),
-                //Decks = DecksByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new ConfigModelRawDeck[0],
-                Inventory = InventoryByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Inventory(),
-                Matches = MatchesByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new MatchResult[0],
-                RankInfo = RankInfoByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new ConfigModelRankInfo[0],
+                Collection = CollectionByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<int, int>(),
+                //Decks = DecksByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new ConfigModelRawDeck[0],
+                Inventory = InventoryByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Inventory(),
+                Matches = MatchesByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new MatchResult[0],
+                RankInfo = RankInfoByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new ConfigModelRankInfo[0],
             };
 
-            var diff = DiffByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DateSnapshotDiff();
+            var diff = DiffByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DateSnapshotDiff();
 
             return (resultForDate, diff);
         }

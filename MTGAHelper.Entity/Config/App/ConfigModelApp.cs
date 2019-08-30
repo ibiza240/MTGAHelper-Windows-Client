@@ -6,6 +6,7 @@ namespace MTGAHelper.Lib.Config
     public enum ConfigAppFeatureEnum
     {
         ParseMatches,
+        RecoverDeckIdFromDeckNameForEachMatchPlayed_V0_21
     }
 
     public class ConfigModelApp
@@ -30,6 +31,10 @@ namespace MTGAHelper.Lib.Config
 
         public List<ConfigChangelog> Changelog { get; set; } = new List<ConfigChangelog>();
         public string LastCardsHash { get; set; }
+
+        public Dictionary<string, int> TotalCardsPerSet { get; set; }
+
+        public bool HasDeckIdsBeenRecoveredForEachMatch { get; set; }
 
         //public void BuildEmailConfig()
         //{

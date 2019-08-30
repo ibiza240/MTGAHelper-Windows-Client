@@ -35,7 +35,7 @@ namespace MTGAHelper.Tracker.WPF.Business
         public ServerApiCaller(LogFileZipper zipper, IOptionsMonitor<ConfigModelApp> configApp)
         {
             this.zipper = zipper;
-            this.configApp = configApp.CurrentValue;
+            this.configApp = configApp?.CurrentValue;
         }
 
         internal TReturn PostResponseWithCookie<TReturn>(string userId, string apiEndpoint, object body)
@@ -124,7 +124,7 @@ namespace MTGAHelper.Tracker.WPF.Business
                 FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
                 using (var w = new WebClient())
                 {
-                    var responseRaw = w.DownloadString(configApp.Test ? serverTest : server + "/api/Misc/VersionTracker");
+                    var responseRaw = w.DownloadString((configApp.Test ? serverTest : server) + "/api/Misc/VersionTracker");
                     var latestVersion = JsonConvert.DeserializeObject<GetVersionTrackerResponse>(responseRaw).Version;
                     return string.Compare(fvi.FileVersion, latestVersion) >= 0;
                 }

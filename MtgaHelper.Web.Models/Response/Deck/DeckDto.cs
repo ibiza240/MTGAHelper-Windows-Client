@@ -16,6 +16,8 @@ namespace MTGAHelper.Web.UI.Model.Response.Dto
         public string MtgaImportFormat { get; set; }
 
         public ICollection<DeckCompareResultDto> CompareResults { get; set; }
+
+        public ICollection<DeckManaCurveDto> ManaCurve { get; set; }
     }
 
     public class DeckCompareResultDto
@@ -23,5 +25,13 @@ namespace MTGAHelper.Web.UI.Model.Response.Dto
         public string Set { get; set; }
         public int NbMissing { get; set; }
         public float MissingWeightTotal { get; set; }
+    }
+
+
+    public class DeckManaCurveDto
+    {
+        public int ManaCost { get; set; }
+        public int NbCards { get; set; }
+        public int PctHeight { get; set; }
     }
 }

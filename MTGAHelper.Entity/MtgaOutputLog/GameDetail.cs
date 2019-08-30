@@ -1,6 +1,4 @@
-﻿using MTGAHelper.Entity;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
@@ -23,6 +21,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         FromExileToHand,
         FromGraveyardToStack,
         FromGraveyardToExile,
+        Conceded
     }
 
     public enum PlayerEnum
@@ -48,7 +47,10 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public FirstTurnEnum FirstTurn { get; set; }
         public int MulliganCount => StartingHands.Count - 1;
         public int MulliganCountOpponent { get; set; }
-        public ConfigModelRawDeck DeckUsed { get; set; }
+
+        //public ConfigModelRawDeck DeckUsed { get; set; }
+        public Dictionary<int, int> DeckCards { get; set; }
+
         public Dictionary<int, int> OpponentCardsSeen { get; set; } = new Dictionary<int, int>();
         public IList<ICollection<int>> StartingHands { get; set; } = new List<ICollection<int>>();
         public ICollection<CardTurnAction> CardTransfers { get; set; } = new CardTurnAction[0];

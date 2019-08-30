@@ -24,7 +24,7 @@ namespace MTGAHelper.Lib
 
         public CardsMissingResult CompareResult { get; set; } = new CardsMissingResult();
 
-        public OutputLogResult HistoryDetails { get; set; } = new OutputLogResult();
+        public LockableOutputLogResult HistoryDetails { get; set; } = new LockableOutputLogResult();
 
         public IList<HistorySummaryForDate> HistorySummary { get; set; } = new List<HistorySummaryForDate>();
     }

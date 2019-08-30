@@ -7,23 +7,27 @@
         xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
         mc:Ignorable="d"
         Title="About MTGAHelper" Icon="/Assets/images/wcC.png"
-        Height="400" Width="300" ResizeMode="NoResize" Background="#272b30"
+        Height="360" Width="420" ResizeMode="NoResize" Background="#272b30"
         PreviewKeyDown="Window_PreviewKeyDown">
-    <StackPanel Margin="20">
-        <TextBlock Margin="0,0,0,10" TextWrapping="WrapWithOverflow" TextAlignment="Justify">
+    <StackPanel>
+        <Image Source="/Assets/Images/banner.jpg" />
+        <StackPanel Margin="10">
+            <TextBlock TextWrapping="WrapWithOverflow" TextAlignment="Justify">
             So it happens I'm a programmer at heart and I got addicted to Magic: The Gathering Arena.
             <LineBreak />
             <LineBreak />
             I started writing programs to help me analyze data about my collection and the decks over all the web. It outgrew all my estimations and is now what is called MTGAHelper.
             <LineBreak />
             <LineBreak />
-            I wanted to share my work with all others MTGA enthusiasts out there. I hope you enjoy it!
+            I wanted to share my work with all others MTGA enthusiasts out there.
+            <LineBreak />Hopefully you enjoy using it as much as me!
             <LineBreak />
             <LineBreak />
                 If you appreciate the tools being provided, see how you can help 
                 <Hyperlink NavigateUri="https://mtgahelper.com/thanks" helpers:HyperlinkExtensions.IsExternal="true">
                     support the project
                 </Hyperlink> and improve the servers responsiveness. Thanks!
-        </TextBlock>
+            </TextBlock>
+        </StackPanel>
     </StackPanel>
 </Window>
