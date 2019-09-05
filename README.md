@@ -45,6 +45,18 @@ The first time you run the tracker, you will have to provide your MTGAHelper use
 
 You can find your user id on your [MTGAHelper website profile page](https://mtgahelper.com/profile).
 
+### Activate the detailed MTGA log
+
+To be able to use the tracker, you need to do the following in the MTGA game client:
+
+1. Press `Esc` to get the Options popup and click on **View account**
+<img src="https://i.imgur.com/NpLkJzy.png" width="420" alt="MTGA Options">
+
+2. Check the **Detailed Logs (Plugin Support)** option
+<img src="https://i.imgur.com/pWJVc7J.png" width="420" alt="MTGA Profile">
+
+3. Restart the game.
+
 ### Usage
 
 You will notice activity in the status bar any time the tracker is communicating with the servers. For example the status bar will blink and indicate `Uploading log file to server...` while it is uploading your data, which can take some time. You are NOT blocked by this activity and can continue playing the game normally.
