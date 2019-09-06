@@ -1,3 +1,7 @@
+### v1.1.3 - 2019-09-05
+
+Support the latest patch
+
 ### v1.1.2 - 2019-08-29
 
 Improvements to the log parsing for supporting deck stats
