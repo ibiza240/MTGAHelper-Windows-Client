@@ -4,7 +4,7 @@ Support the latest patch
 
 ### v1.1.2 - 2019-08-29
 
-Improvements to the log parsing for supporting deck stats
+Improvements to the log parsing for supporting MTGA deck stats
 
 Set the minimal transluency to 10% (to not lose the window)
 
