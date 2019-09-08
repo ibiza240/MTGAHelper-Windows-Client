@@ -80,6 +80,8 @@ One last thing to try is to run the tracker from a command line window by runnin
 
 This might give some information on why the tracker doesn't want to start.
 
+### Questions or Feedback
+
 If you are stuck at any moment, please reach us directly through our [Discord server](https://discord.gg/GTd3RMd) for the fastest response time or by using the [contact form](https://www.mtgahelper.com/contact) on the MTGAHelper website so we can assist you.
 
 -----
