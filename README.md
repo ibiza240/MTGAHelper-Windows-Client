@@ -47,6 +47,8 @@ You can find your user id on your [MTGAHelper website profile page](https://mtga
 
 ### Activate the detailed MTGA log
 
+**This step is now required after the Sept. 4 MTGA game patch**
+
 To be able to use the tracker, you need to do the following in the MTGA game client:
 
 1. Press `Esc` to get the Options popup and click on **View account**
