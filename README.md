@@ -71,19 +71,19 @@ Once your data is uploaded successfully, you can simply refresh the MTGAHelper w
 
 **Nothing happens when I run the MTGAHelper Tracker**
 
-1) It's probably because the program cannot find the .NET Core 3.0 framework described above. Check in your installed applications if you have this installed:
+1- It's probably because the program cannot find the .NET Core 3.0 framework described above. Check in your installed applications if you have this installed:
 
 <img src="https://i.imgur.com/dDvit1A.png" width="420" alt=".NET Core 3.0 framework in your installed applications">
 
-2) Check is that the `appsettings.json` file is present in the `%AppData%/MTGAHelper` directory. This file should be automatically created after a successful installation of the tracker.
+2- Check is that the `appsettings.json` file is present in the `%AppData%/MTGAHelper` directory. This file should be automatically created after a successful installation of the tracker.
 
-3) Try is to run the tracker from a command line window by running:
+3- Try is to run the tracker from a command line window by running:
 
     dotnet "C:\Program Files (x86)\MTGAHelper\MTGAHelper Tracker\MTGAHelper.Tracker.dll"
 
 This might give some information on why the tracker doesn't want to start.
 
-4) In the `%AppData%/MTGAHelper` directory there might be some log files (ie. log-201923.txt). You can open these text files and see if there's any helpful information.
+4- In the `%AppData%/MTGAHelper` directory there might be some log files (ie. log-201923.txt). You can open these text files and see if there's any helpful information.
 
 ### Questions or Feedback
 
