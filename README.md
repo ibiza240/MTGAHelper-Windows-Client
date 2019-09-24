@@ -75,7 +75,7 @@ Once your data is uploaded successfully, you can simply refresh the MTGAHelper w
 
 <img src="https://i.imgur.com/dDvit1A.png" width="420" alt=".NET Core 3.0 framework in your installed applications">
 
-2- Check is that the `appsettings.json` file is present in the `%AppData%/MTGAHelper` directory. This file should be automatically created after a successful installation of the tracker.
+2- Check that the `appsettings.json` file is present in the `%AppData%/MTGAHelper` directory. This file should be automatically created after a successful installation of the tracker.
 
 3- Try is to run the tracker from a command line window by running:
 
