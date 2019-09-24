@@ -17,7 +17,7 @@ Please note that this tracker runs only on Windows for now.
 - Automatically synchronizes your log files data with the MTGAHelper servers
 - Draft helper when picking your cards during a draft
 
-##### Check the [Patch ntoes](https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/PatchNotes.md) to know about the latest changes.
+##### Check the [Patch notes](https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/PatchNotes.md) to know about the latest changes.
 
 -----
 
@@ -69,18 +69,21 @@ Once your data is uploaded successfully, you can simply refresh the MTGAHelper w
 
 ### Troubleshooting
 
-If you start the tracker and nothing happens, it's probably because the program cannot find the .NET Core 3.0 framework described above. Check in your installed applications if you have this installed:
+**Nothing happens when I run the MTGAHelper Tracker**
+
+1) It's probably because the program cannot find the .NET Core 3.0 framework described above. Check in your installed applications if you have this installed:
 
 <img src="https://i.imgur.com/dDvit1A.png" width="420" alt=".NET Core 3.0 framework in your installed applications">
 
+2) Check is that the `appsettings.json` file is present in the `%AppData%/MTGAHelper` directory. This file should be automatically created after a successful installation of the tracker.
 
-Another thing to check is that the `appsettings.json` file is present in the `%AppData%/MTGAHelper` directory. This file should be automatically created after a successful installation of the tracker.
-
-One last thing to try is to run the tracker from a command line window by running:
+3) Try is to run the tracker from a command line window by running:
 
     dotnet "C:\Program Files (x86)\MTGAHelper\MTGAHelper Tracker\MTGAHelper.Tracker.dll"
 
 This might give some information on why the tracker doesn't want to start.
+
+4) In the `%AppData%/MTGAHelper` directory there might be some log files (ie. log-201923.txt). You can open these text files and see if there's any helpful information.
 
 ### Questions or Feedback
 
