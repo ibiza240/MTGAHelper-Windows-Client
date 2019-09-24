@@ -54,6 +54,9 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
                                 if (cancellationToken.IsCancellationRequested == true)
                                     throw new TaskCanceledException(task);
 
+                                if (File.Exists(filePath) == false)
+                                    continue;
+
                                 var fileSize = new FileInfo(filePath).Length;
                                 if (fileSize != lastSize)
                                 {
@@ -95,6 +98,7 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
                             catch (Exception ex)
                             {
                                 //Log.Fatal(ex, "Unexpected error:");
+                                System.Diagnostics.Debugger.Break();
                             }
                         }
                     }

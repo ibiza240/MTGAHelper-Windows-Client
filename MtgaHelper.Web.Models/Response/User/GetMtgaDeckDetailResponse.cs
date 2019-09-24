@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using AutoMapper;
 using MTGAHelper.Entity.MtgaDeckStats;
+using MTGAHelper.Web.UI.Model.Response.Dto;
 using MTGAHelper.Web.UI.Model.Response.User.History;
 
 namespace MTGAHelper.Web.Models.Response.User
@@ -23,9 +24,13 @@ namespace MTGAHelper.Web.Models.Response.User
         public string DeckImage { get; set; }
         public string DeckName { get; set; }
         public string DeckColor { get; set; }
-        public string FirstPlayed { get; set; }
-        public string LastPlayed { get; set; }
+        //public string FirstPlayed { get; set; }
+        //public string LastPlayed { get; set; }
         public ICollection<MtgaDeckStatsByFormat> StatsByFormat { get; set; }
         public ICollection<MatchDtoLightweight> Matches { get; set; }
+        public ICollection<DeckCardDto> CardsMain { get; set; }
+        public ICollection<DeckCardDto> CardsSideboard { get; set; }
+
+        public ICollection<DeckManaCurveDto> ManaCurve { get; set; }
     }
 }

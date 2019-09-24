@@ -29,7 +29,7 @@ namespace MTGAHelper.Entity
 
         // From data_cards.mtga
         public int titleId { get; set; }
-        public string linkedFaceType { get; set; }
+        public enumLinkedFace linkedFaceType { get; set; }
         public bool isToken { get; set; }
         //public string artistCredit { get; set; }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace MTGAHelper.Entity
@@ -13,8 +12,6 @@ namespace MTGAHelper.Entity
         DeckCards Cards { get; }
 
         string Id { get; }
-
-        string GetColor();
 
         bool FilterName(string filter);
         bool FilterColor(string filter);
@@ -52,25 +49,7 @@ namespace MTGAHelper.Entity
 
             return $"{ScraperType}_{id}";
         }
-
-        public string GetColor()
-        {
-            var order = new Dictionary<string, int> {
-                { "W", 1 },
-                { "U", 2 },
-                { "B", 3 },
-                { "R", 4 },
-                { "G", 5 },
-            };
-            var colors = Cards.All
-                .Where(i => i.Card.colors != null)
-                .SelectMany(i => i.Card.colors)
-                .Distinct()
-                .OrderBy(i => order[i]);
-
-            return string.Join("", colors);
-        }
-
+        
         public bool FilterSource(string scraperTypeId, string filter)
         {
             if (string.IsNullOrWhiteSpace(filter))

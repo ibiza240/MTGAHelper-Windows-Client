@@ -101,6 +101,9 @@ namespace MTGAHelper.Entity
 
         public string GetThumbnailUrl(string imageArtUrl)
         {
+            if (imageArtUrl == null)
+                return "https://mtgahelper.com/images/cardArt/thumbnail/NA.png";
+
             var idWithQueryParams = imageArtUrl.Split(new[] { "/" }, StringSplitOptions.None).Last();
             var id = idWithQueryParams.Split(new[] { "?" }, StringSplitOptions.None).First();
             return "https://mtgahelper.com/images/cardArt/thumbnail/" + id;

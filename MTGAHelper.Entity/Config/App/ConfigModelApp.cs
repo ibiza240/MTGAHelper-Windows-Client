@@ -11,6 +11,8 @@ namespace MTGAHelper.Lib.Config
 
     public class ConfigModelApp
     {
+        public const string CURRENT_SET = "M20";
+
         public string VersionTrackerClient { get; set; }
         public string FolderData { get; set; } = "./data";
         public string FolderLogs { get; set; } = "./logs";
@@ -34,7 +36,7 @@ namespace MTGAHelper.Lib.Config
 
         public Dictionary<string, int> TotalCardsPerSet { get; set; }
 
-        public bool HasDeckIdsBeenRecoveredForEachMatch { get; set; }
+        public string CurrentSet { get; set; }
 
         //public void BuildEmailConfig()
         //{

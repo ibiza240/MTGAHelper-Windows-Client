@@ -7,13 +7,14 @@
     <ApplicationIcon>wcC.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>MTGAHelper.Tracker</AssemblyName>
-    <Version>1.1.2</Version>
+    <Version>1.2.0</Version>
     <Company>MTGAHelper</Company>
     <Authors>MTGAHelper</Authors>
     <Description>MTGAHelper Local client</Description>
     <Copyright>2019 MTGAHelper</Copyright>
     <Configurations>Debug;Release;DebugWithServer</Configurations>
-    <AssemblyVersion>1.1.2.0</AssemblyVersion>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,7 @@
     <None Remove="Assets\Images\loading.gif" />
     <None Remove="Assets\Images\MTGA.png" />
     <None Remove="Assets\Images\star.png" />
+    <None Remove="Assets\Images\thumbnailUnknown.png" />
     <None Remove="Assets\Images\Treasure.png" />
     <None Remove="Assets\Images\wcC.ico" />
     <None Remove="Assets\Images\wcC.png" />
@@ -59,7 +61,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.1.1" />
-    <PackageReference Include="Microsoft.WindowsDesktop.App" Version="3.0.0-preview7-27912-14" />
     <PackageReference Include="Serilog" Version="2.8.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
     <PackageReference Include="WpfAnimatedGif" Version="1.4.18" />
@@ -75,6 +76,7 @@
     <Resource Include="Assets\Images\loading.gif" />
     <Resource Include="Assets\Images\MTGA.png" />
     <Resource Include="Assets\Images\star.png" />
+    <Resource Include="Assets\Images\thumbnailUnknown.png" />
     <Resource Include="Assets\Images\Treasure.png" />
     <Resource Include="Assets\Images\wcC.ico" />
     <Resource Include="Assets\Images\wcC.png" />

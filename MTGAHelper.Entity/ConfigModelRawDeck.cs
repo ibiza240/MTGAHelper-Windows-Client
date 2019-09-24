@@ -10,7 +10,8 @@ namespace MTGAHelper.Entity
         public DateTime LastUpdated { get; set; }
         public string Name { get; set; }
         public string Format { get; set; }
-        public Dictionary<int, int> CardsMain { get; set; }
-        public Dictionary<int, int> CardsSideboard { get; set; }
+        public string ArchetypeId { get; set; }
+        public Dictionary<int, int> CardsMain { get; set; } = new Dictionary<int, int>();
+        public Dictionary<int, int> CardsSideboard { get; set; } = new Dictionary<int, int>();
     }
 }

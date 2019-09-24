@@ -47,10 +47,11 @@ namespace MTGAHelper.Tracker.WPF.Views
             this.vm.SetDraftCard(cardVM, showGlobalMTGAHelperSays);
         }
 
-        public void SetCardPopupPosition(double top, double left)
+        public void SetCardPopupPosition(int top, int left, int width)
         {
+            var leftAdjusted = left < SystemParameters.WorkArea.Width / 2 ? left + Width : left - width;
             Top = top;
-            Left = left;
+            Left = leftAdjusted;
         }
     }
 }

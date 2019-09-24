@@ -27,7 +27,6 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
 
         public GetUserHistoryForDateResponseData()
         {
-
         }
 
         public GetUserHistoryForDateResponseData(DateSnapshotInfo historyForDate, DateSnapshotDiff diff)
@@ -37,7 +36,7 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
             Diff = Mapper.Map<GetUserHistoryForDateResponseDiff>(diff);
 
             foreach (var m in Info.Matches.Where(i => i.DeckUsed == null))
-                    m.DeckUsed = new SimpleDeckDto();
+                m.DeckUsed = new SimpleDeckDto();
         }
     }
 

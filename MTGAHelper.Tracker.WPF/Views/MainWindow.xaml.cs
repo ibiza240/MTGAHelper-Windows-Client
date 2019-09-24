@@ -5,6 +5,7 @@ using MTGAHelper.Lib.Cache;
 using MTGAHelper.Lib.IO.Reader;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
+using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
 using MTGAHelper.Tracker.WPF.Business;
 using MTGAHelper.Tracker.WPF.Business.Monitoring;
 using MTGAHelper.Tracker.WPF.Config;
@@ -40,7 +41,7 @@ namespace MTGAHelper.Tracker.WPF.Views
         DraftHelper draftHelper;
         //LogProcessor logProcessor;
         ReaderMtgaOutputLog reader;
-
+        InGameTracker inGameTracker;
 
         public CardPopupDrafting windowCardPopupDrafting = new CardPopupDrafting();
 
@@ -57,7 +58,8 @@ namespace MTGAHelper.Tracker.WPF.Views
             DraftHelper draftHelper,
             //LogProcessor logProcessor,
             ReaderMtgaOutputLog readerMtgaOutputLog,
-            CacheSingleton<ICollection<Card>> allCards
+            CacheSingleton<ICollection<Card>> allCards,
+            InGameTracker inMatchTracker
             )
         {
             this.configApp = configApp.CurrentValue;
@@ -73,6 +75,10 @@ namespace MTGAHelper.Tracker.WPF.Views
             fileMonitor.OnFileSizeChangedNewText += OnFileSizeChangedNewText;
             this.draftHelper = draftHelper;
             //this.logProcessor = logProcessor;
+            this.inGameTracker = inMatchTracker;
+
+            this.resourcesLocator.LocateLogFilePath(this.configApp);
+            this.resourcesLocator.LocateGameClientFilePath(this.configApp);
 
             fileMonitor.SetFilePath(this.configApp.LogFilePath);
             viewModel.ValidateUserId(this.configApp.UserId);
@@ -84,6 +90,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             statusBarTop.Init(this, vm, /*draftHelper, logProcessor, this.configApp.UserId,*/ allCards.Get());
             ucReady.Init(this.configApp.GameFilePath);
             ucDraftHelper.Init(vm.DraftingVM);
+            ucPlaying.Init(vm);
 
             this.processMonitor.Start(new System.Threading.CancellationToken());
             this.fileMonitor.Start(new System.Threading.CancellationToken());
@@ -93,6 +100,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             timer.Tick += (object sender, EventArgs e) =>
             {
                 vm.SetCardsDraftFromBuffered();
+                vm.SetCardsInMatchTrackingFromBuffered();
             };
             timer.Start();
         }
@@ -210,6 +218,11 @@ namespace MTGAHelper.Tracker.WPF.Views
             });
         }
 
+        internal void SetAlwaysOnTop(bool alwaysOnTop)
+        {
+            statusBarTop.SetAlwaysOnTop(alwaysOnTop);
+        }
+
         public void UploadLogFile(Action callbackOnError = null)
         {
             if (File.Exists(configApp.LogFilePath) && new FileInfo(configApp.LogFilePath).Length > 0)
@@ -243,19 +256,43 @@ namespace MTGAHelper.Tracker.WPF.Views
                 messages = reader.ProcessIntoMessages("local", ms);
             }
 
+            //if (messages.Count == 20) System.Diagnostics.Debugger.Break();
+
+            Action GoHome = () =>
+            {
+                vm.SetMainWindowContext(MainWindowContextEnum.Home);
+            };
+
             foreach (var msg in messages)
             {
                 if (msg is IResultCardPool msgCardPool)
-                    // Refresh the drafting window to show whole card pool
-                    SetCardsDraft(msgCardPool.CardPool);
+                {
+                    var isDrafting = true;
+                    if (msg is GetEventPlayerCourseV2Result playerCourse) isDrafting = playerCourse.Raw.InternalEventName.Contains("Draft");
+
+                    if (isDrafting)
+                    {
+                        // Refresh the drafting window to show whole card pool
+                        SetCardsDraft(msgCardPool.CardPool);
+                        vm.SetMainWindowContext(MainWindowContextEnum.Drafting);
+                    }
+                }
                 else if (msg is IResultDraftPick msgDraftPack && msgDraftPack.DraftPack != null)
                     // Refresh the drafting window to show the new picks
                     SetCardsDraft(msgDraftPack.DraftPack.Select(i => Convert.ToInt32(i)).ToArray());
 
-                if ((msg is LogInfoRequestResult logInfo && (logInfo.Raw.@params.messageName == "DuelScene.EndOfMatchReport" || logInfo.Raw.@params.humanContext.Contains("Client changed scenes to Home"))) ||
-                    (vm.MainWindowContext != MainWindowContextEnum.Playing && msg is GetPlayerCardsResult))
+                if (msg is LogInfoRequestResult logInfo)
                 {
-                    // Trigger to upload the stored log content
+                    if (logInfo.Raw.@params.messageName == "DuelScene.EndOfMatchReport" || logInfo.Raw.@params.humanContext.Contains("Client changed scenes to Home"))
+                    {
+                        // Trigger to upload the stored log content
+                        UploadLogFragment();
+                    }
+                }
+
+                if (vm.MainWindowContext != MainWindowContextEnum.Playing && msg is GetPlayerCardsResult)
+                {
+                    // Safety trigger to upload the stored log content
                     UploadLogFragment();
                 }
 
@@ -269,17 +306,29 @@ namespace MTGAHelper.Tracker.WPF.Views
                             if (prms.humanContext.Contains("Client changed scene") &&
                                 ((string)prms.payloadObject.context).Contains("Draft") == false && ((string)prms.payloadObject.context) != "deck builder")
                             {
-                                vm.SetMainWindowContext(MainWindowContextEnum.Home);
+                                GoHome();
                             }
                             break;
                         case "DuelScene.EndOfMatchReport":
-                            vm.SetMainWindowContext(MainWindowContextEnum.Home);
+                            GoHome();
                             break;
                     }
+                }
+                else if (msg is StateChangedResult stateChanged)
+                {
+                    if (msg.Part.Contains("MatchCompleted"))
+                        GoHome();
+
                 }
                 else if (msg is MatchCreatedResult matchCreated)
                 {
                     vm.SetMainWindowContext(MainWindowContextEnum.Playing);
+                }
+
+                if (vm.MainWindowContext == MainWindowContextEnum.Playing)
+                {
+                    inGameTracker.ProcessMessage(msg);
+                    vm.SetInMatchStateBuffered(inGameTracker.State);
                 }
             }
         }
@@ -301,7 +350,6 @@ namespace MTGAHelper.Tracker.WPF.Views
                 });
             }
         }
-
     }
     #endregion
 }

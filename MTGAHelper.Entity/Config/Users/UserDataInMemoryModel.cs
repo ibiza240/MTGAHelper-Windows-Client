@@ -27,5 +27,7 @@ namespace MTGAHelper.Lib
         public LockableOutputLogResult HistoryDetails { get; set; } = new LockableOutputLogResult();
 
         public IList<HistorySummaryForDate> HistorySummary { get; set; } = new List<HistorySummaryForDate>();
+
+        public IList<ConfigModelRawDeck> MtgaDeckHistory { get; set; } = new List<ConfigModelRawDeck>();
     }
 }

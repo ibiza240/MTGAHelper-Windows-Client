@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using MTGAHelper.Web.Models;
 using MTGAHelper.Web.UI.Shared;
 
 namespace MtgaHelper.Web.Models.IoC
@@ -9,7 +10,8 @@ namespace MtgaHelper.Web.Models.IoC
         {
             return services
                 .AddTransient<AutoMapperRawDeckConverter>()
-                .AddTransient<AutoMapperRawDeckToColorConverter>();
+                .AddTransient<AutoMapperRawDeckToColorConverter>()
+                .AddTransient<UtilManaCurve>();
         }
     }
 }

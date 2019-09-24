@@ -5,6 +5,14 @@ using System.Collections.Generic;
 
 namespace MTGAHelper.Lib.Config
 {
+    public enum UserPreferenceEnum
+    {
+        Unknown,
+        ThemeIsDark,
+        CollectionSetsOrder,
+        LandsPickAll,
+    }
+
     [Serializable]
     public class ConfigModelUser : IConfigModel
     {
@@ -14,8 +22,15 @@ namespace MTGAHelper.Lib.Config
         public string Id { get; set; } = USER_LOCAL;
         public string LastUploadHash { get; set; } = "";
 
+        public bool HasDeckIdsBeenRecoveredForEachMatch { get; set; }
+
         public DateTime DateCreatedUtc { get; set; } = DateTime.UtcNow;
+
+        // Preferences, to refactor
         public bool ThemeIsDark { get; set; } = true;
+        public string CollectionSetsOrder { get; set; } = "PctOwned";
+        public bool LandsPickAll { get; set; } = false;
+
         public DateTime LastLoginUtc { get; set; } = DateTime.UtcNow;
         public int NbLogin { get; set; }
         public Dictionary<RarityEnum, UserWeightDto> Weights { get; set; } = new Dictionary<RarityEnum, UserWeightDto>

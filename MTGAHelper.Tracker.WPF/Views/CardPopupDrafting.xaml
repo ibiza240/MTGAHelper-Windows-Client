@@ -25,8 +25,8 @@
             <TextBlock Foreground="White" Visibility="{Binding Card.TopCommonCard.Rank, Converter={StaticResource IntToVisConverter}}">
                 <TextBlock.Text>
                     <MultiBinding StringFormat="This card is the Top {0} common card in {1} for this set">
-                        <Binding Path="TopCommonCard.Rank" />
-                        <Binding Path="TopCommonCard.Name" />
+                        <Binding Path="Card.TopCommonCard.Rank" />
+                        <Binding Path="Card.TopCommonCard.Name" />
                     </MultiBinding>
                 </TextBlock.Text>
             </TextBlock>
@@ -66,6 +66,14 @@
             </StackPanel>
         </StackPanel>
 
-        <Image x:Name="imgPopupCard" Source="{Binding Card.ImageCardUrl}" />
+        <Image x:Name="imgPopupCard">
+            <Image.Source>
+                <Binding Path="Card.ImageCardUrl">
+                    <Binding.TargetNullValue>
+                        <ImageSource>/Assets/Images/thumbnailUnknown.png</ImageSource>
+                    </Binding.TargetNullValue>
+                </Binding>
+            </Image.Source>
+        </Image>
     </StackPanel>
 </Window>

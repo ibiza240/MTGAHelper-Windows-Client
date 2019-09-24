@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Text.RegularExpressions;
 using MTGAHelper.Entity;
 
 namespace MTGAHelper.Tracker.WPF.Models
 {
+    public class CardWithAmount : Card
+    {
+        public int Amount { get; set; }
+    }
+
     public class Card
     {
         public int ArenaId { get; set; }
@@ -12,7 +18,28 @@ namespace MTGAHelper.Tracker.WPF.Models
         public string Rarity { get; set; }
         public string ImageCardUrl { get; set; }
         public string ImageArtUrl { get; set; }
-        public ICollection<string> Colors { get; set; }
+        public ICollection<string> Colors { get; set; } = new string[0];
+        public string ManaCost { get; set; }
+        public int Cmc { get; set; }
+        public string Type { get; set; }
+
+        static Regex regexCmcImages = new Regex(@"{([^}]+)}", RegexOptions.Compiled);
+
+        public ICollection<string> CmcImages
+        {
+            get
+            {
+                var matches = regexCmcImages.Matches(ManaCost);
+                if (matches.Count == 0) return new string[0];
+
+                var ret = matches
+                    .Select(i => i.Value.Replace("{", "").Replace("}", "").Replace("/", ""))
+                    .Select(i => $"https://www.mtgahelper.com/images/manaIcons/{i}.png")
+                    .ToArray();
+
+                return ret;
+            }
+        }
     }
 
     public class CardDraftPick : Card
@@ -29,9 +56,12 @@ namespace MTGAHelper.Tracker.WPF.Models
 
         public string Description { get; set; }
         public string Rating { get; set; }
-        public DraftRatingTopCard TopCommonCard { get; set; }
+        public DraftRatingTopCard TopCommonCard { get; set; } = new DraftRatingTopCard(0, "");
 
         public float RatingFloat => float.TryParse(Rating.Substring(0, 3), out float f) ? f : 0f;
+
+        //public bool ShowMtgaHelperSays => Weight > 0 || RareDraftPickEnum != Entity.RaredraftPickReasonEnum.None;
+        public string NbDecksUsedInfo => $"Played in {NbDecksUsedMain} tracked deck{(NbDecksUsedMain == 1 ? "" : "s")} and {NbDecksUsedSideboard} sideboard{(NbDecksUsedSideboard == 1 ? "" : "s")}";
 
         public string RareDraftPickReason
         {

@@ -16,7 +16,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public IList<InfoByDate<Inventory>> InventoryByDate { get; set; } = new List<InfoByDate<Inventory>>();
         public IList<InfoByDate<Dictionary<int, int>>> CollectionByDate { get; set; } = new List<InfoByDate<Dictionary<int, int>>>();
         public IList<InfoByDate<IList<MatchResult>>> MatchesByDate { get; set; } = new List<InfoByDate<IList<MatchResult>>>();
-        public IList<InfoByDate<IList<MtgaDeck>>> DecksByDate { get; set; } = new List<InfoByDate<IList<MtgaDeck>>>();
+        public IList<InfoByDate<IList<ConfigModelRawDeck>>> DecksByDate { get; set; } = new List<InfoByDate<IList<ConfigModelRawDeck>>>();
         public IList<InfoByDate<DateSnapshotDiff>> DiffByDate { get; set; } = new List<InfoByDate<DateSnapshotDiff>>();
 
         public uint LastUploadHash { get; set; }

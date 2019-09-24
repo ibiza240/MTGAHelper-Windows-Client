@@ -7,7 +7,7 @@
         xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
         mc:Ignorable="d"
         Title="About MTGAHelper" Icon="/Assets/images/wcC.png"
-        Height="360" Width="420" ResizeMode="NoResize" Background="#272b30"
+        Height="360" Width="420" ResizeMode="NoResize" Background="{StaticResource BackgroundBrush}"
         PreviewKeyDown="Window_PreviewKeyDown">
     <StackPanel>
         <Image Source="/Assets/Images/banner.jpg" />

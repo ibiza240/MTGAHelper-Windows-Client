@@ -16,6 +16,7 @@ using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.IoC;
 using MTGAHelper.Tracker.WPF.Logging;
 using MTGAHelper.Tracker.WPF.Views;
+using MTGAHelper.Web.Models;
 using MTGAHelper.Web.Models.Response.Misc;
 using MTGAHelper.Web.Models.Response.SharedDto;
 using MTGAHelper.Web.UI.IoC;
@@ -45,6 +46,9 @@ namespace MTGAHelper.Tracker.WPF
 
         IConfiguration configuration;
         IServiceProvider provider;
+
+        MainWindow mainWindow;
+        ConfigModelApp configApp;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -98,8 +102,10 @@ namespace MTGAHelper.Tracker.WPF
 
                 provider = serviceCollection.BuildServiceProvider();
 
-                var configApp = provider.GetService<IOptionsMonitor<MTGAHelper.Lib.Config.ConfigModelApp>>();
-                configApp.CurrentValue.FolderData = Path.Combine(folderForConfigAndLog, "data");
+                var configAppLib = provider.GetService<IOptionsMonitor<MTGAHelper.Lib.Config.ConfigModelApp>>();
+                configAppLib.CurrentValue.FolderData = Path.Combine(folderForConfigAndLog, "data");
+
+                configApp = provider.GetService<IOptionsMonitor<ConfigModelApp>>().CurrentValue;
 
                 var cacheCards = provider.GetService<CacheSingleton<ICollection<Card>>>();
                 cacheCards.PopulateIfNotSet(() =>
@@ -108,18 +114,22 @@ namespace MTGAHelper.Tracker.WPF
                     {
                         using (HttpClient client = new HttpClient())
                         {
-                            Directory.CreateDirectory(configApp.CurrentValue.FolderData);
-                            var fileOnDisk = Path.Combine(configApp.CurrentValue.FolderData, "AllCardsCached.json");
+                            Directory.CreateDirectory(configAppLib.CurrentValue.FolderData);
+                            var fileOnDisk = Path.Combine(configAppLib.CurrentValue.FolderData, "AllCardsCached.json");
                             if (File.Exists(fileOnDisk))
                             {
-                                var fileContent = File.ReadAllText(fileOnDisk);
-                                var lastCardsHashLocal = new Util().To32BitFnv1aHash(fileContent);
-                                var lastCardsHashRemoteRaw = client.GetAsync(server + "/api/misc/lastcardshash").Result.Content.ReadAsStringAsync().Result;
-                                var lastCardsHashRemote = Convert.ToUInt32(JsonConvert.DeserializeObject<LastHashResponse>(lastCardsHashRemoteRaw).LastHash);
-                                if (lastCardsHashLocal == lastCardsHashRemote)
+                                using (FileStream fs = new FileStream(fileOnDisk, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                                using (var sr = new StreamReader(fs))
                                 {
-                                    // Local file for cards is up-to-date
-                                    return JsonConvert.DeserializeObject<ICollection<Card>>(fileContent);
+                                    var fileContent = sr.ReadToEnd();
+                                    var lastCardsHashLocal = new Entity.Util().To32BitFnv1aHash(fileContent);
+                                    var lastCardsHashRemoteRaw = client.GetAsync(server + "/api/misc/lastcardshash").Result.Content.ReadAsStringAsync().Result;
+                                    var lastCardsHashRemote = Convert.ToUInt32(JsonConvert.DeserializeObject<LastHashResponse>(lastCardsHashRemoteRaw).LastHash);
+                                    if (lastCardsHashLocal == lastCardsHashRemote)
+                                    {
+                                        // Local file for cards is up-to-date
+                                        return JsonConvert.DeserializeObject<ICollection<Card>>(fileContent);
+                                    }
                                 }
                             }
 
@@ -153,15 +163,33 @@ namespace MTGAHelper.Tracker.WPF
                     }
                 }
 
+                var utilManaCurve = provider.GetService<UtilManaCurve>();
+
                 Mapper.Initialize(cfg =>
                 {
-                    cfg.AddProfile(new MapperProfileWebModels(cacheCards.Get(), provider));
+                    cfg.AddProfile(new MapperProfileEntity(cacheCards));
+                    cfg.AddProfile(new MapperProfileWebModels(cacheCards.Get(), provider, utilManaCurve));
                     cfg.AddProfile<MapperProfileTrackerWpf>();
                     cfg.AddProfile<MapperProfileLibOutputLogParser>();
                     cfg.AddProfile(new MapperProfileLibCardConvert(cacheCards, provider.GetService<DeckListConverter>(), eventsScheduleManager));
                 });
 
-                var mainWindow = provider.GetRequiredService<MainWindow>();
+                mainWindow = provider.GetRequiredService<MainWindow>();
+                mainWindow.SetAlwaysOnTop(configApp.AlwaysOnTop);
+
+                if ((configApp.WindowSettings?.Position?.X ?? 0) != 0 ||
+                    (configApp.WindowSettings?.Position?.Y ?? 0) != 0 ||
+                    (configApp.WindowSettings?.Size?.X ?? 0) != 0 ||
+                    (configApp.WindowSettings?.Size?.Y ?? 0) != 0)
+                {
+                    mainWindow.Width = (double)configApp.WindowSettings?.Size?.X;
+                    mainWindow.Height = (double)configApp.WindowSettings?.Size?.Y;
+
+                    mainWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+                    mainWindow.Left = (double)configApp.WindowSettings?.Position?.X;
+                    mainWindow.Top = (double)configApp.WindowSettings?.Position?.Y;
+                }
+
                 mainWindow.Show();
             }
             catch (Exception ex)
@@ -184,6 +212,21 @@ namespace MTGAHelper.Tracker.WPF
 
                 new Business.ServerApiCaller(null, null).LogErrorRemote(userId, Web.UI.Model.Request.ErrorTypeEnum.Startup, ex);
                 Shutdown();
+            }
+        }
+
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            if (configApp != null && mainWindow != null)
+            {
+                configApp.AlwaysOnTop = mainWindow.Topmost;
+                configApp.WindowSettings = new WindowSettings
+                {
+                    Position = new Config.Point((int)mainWindow.Left, (int)mainWindow.Top),
+                    Size = new Config.Point((int)mainWindow.Width, (int)mainWindow.Height),
+                };
+
+                configApp.Save();
             }
         }
     }

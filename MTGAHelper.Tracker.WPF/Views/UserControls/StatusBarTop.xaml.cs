@@ -93,10 +93,15 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
 
         private void Menu_AlwaysOnTop_Click(object sender, RoutedEventArgs e)
         {
-            menuItemAlwaysOnTop.IsChecked = !menuItemAlwaysOnTop.IsChecked;
-            vm.AlwaysOnTop.Value = menuItemAlwaysOnTop.IsChecked;
-            mainWindow.Topmost = menuItemAlwaysOnTop.IsChecked;
+            SetAlwaysOnTop(!menuItemAlwaysOnTop.IsChecked);
             mainWindow.Activate();
+        }
+
+        internal void SetAlwaysOnTop(bool alwaysOnTop)
+        {
+            menuItemAlwaysOnTop.IsChecked = alwaysOnTop;
+            vm.AlwaysOnTop.Value = alwaysOnTop;
+            mainWindow.Topmost = alwaysOnTop;
         }
 
         //int i = 0;

@@ -6,13 +6,40 @@ using System.Text;
 
 namespace MTGAHelper.Tracker.WPF.Config
 {
+    public class Point
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+
+        public Point()
+        {
+            // For Serialization
+        }
+
+        public Point(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+    }
+
+    public class WindowSettings
+    {
+        public Point Position { get; set; }
+        public Point Size { get; set; }
+    }
+
     public class ConfigModelApp
     {
         public string UserId { get; set; }
         public string LogFilePath { get; set; }
         public string GameFilePath { get; set; }
         public bool RunOnStartup { get; set; }
+        public bool AlwaysOnTop { get; set; }
+
         public bool Test { get; set; }
+
+        public WindowSettings WindowSettings { get; set; }
 
         internal void Save()
         {

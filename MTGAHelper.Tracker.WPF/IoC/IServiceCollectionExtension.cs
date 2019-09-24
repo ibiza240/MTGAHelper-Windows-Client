@@ -18,6 +18,7 @@ namespace MTGAHelper.Tracker.WPF.IoC
                 .AddOptions()
                 .AddSingleton<MainWindow>()
                 .AddSingleton<MainWindowVM>()
+                .AddSingleton<InMatchTrackerStateVM>()
                 .AddSingleton<ProcessMonitor>()
                 .AddSingleton<FileMonitor>()
 

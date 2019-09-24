@@ -39,7 +39,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
                 var defeats = Games.Count(i => i.Outcome == GameOutcomeEnum.Defeat);
 
                 if (wins == 0 && defeats == 0)
-                    return GameOutcomeEnum.Unknown;
+                    return Games.All(i => i.Outcome == GameOutcomeEnum.Draw) ? GameOutcomeEnum.Draw : GameOutcomeEnum.Unknown;
 
                 return wins > defeats ? GameOutcomeEnum.Victory : wins == defeats ? GameOutcomeEnum.Draw : GameOutcomeEnum.Defeat;
             }
@@ -53,27 +53,9 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         //public string DeckColors { get; set; }
         //public string OpponentDeckColors { get; set; }
 
-        public string GetOpponentDeckColors(Dictionary<int, Card> dictAllCards)
+        public ICollection<int> GetOpponentCardsSeen()
         {
-            //try
-            //{
-            var cards = Games
-                .SelectMany(i => i.OpponentCardsSeen.Keys)
-                .GroupBy(i => i)
-                .Select(i => new DeckCard(new CardWithAmount(dictAllCards[i.Key], i.Count()), false))
-                .ToArray();
-
-            if (cards.Length == 0)
-                return "";
-
-            var deck = new Deck("", null, cards);
-            return deck.GetColor();
-            //}
-            //catch (Exception ex)
-            //{
-            //    System.Diagnostics.Debugger.Break();
-            //    return "";
-            //}
+            return Games.SelectMany(i => i.OpponentCardsSeen.Keys).ToArray();
         }
 
         public static MatchResult CreateDefault()

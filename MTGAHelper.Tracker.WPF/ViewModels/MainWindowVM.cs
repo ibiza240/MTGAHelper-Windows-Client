@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using AutoMapper;
+using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
 using MTGAHelper.Tracker.WPF.Business;
 using MTGAHelper.Tracker.WPF.Business.Monitoring;
 using MTGAHelper.Tracker.WPF.Models;
@@ -52,6 +53,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public bool CanUpload => isInitialSetupDone && IsUploading == false;
 
         #region Bindings
+        public InMatchTrackerStateVM InMatchState { get; set; }
+
         public ObservableProperty<bool> AlwaysOnTop { get; set; } = new ObservableProperty<bool>(true);
         public CollectionResponse Collection { get; set; } = new CollectionResponse();
         public ProblemsFlags Problems { get; private set; } = ProblemsFlags.None;
@@ -59,11 +62,11 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public DraftingVM DraftingVM { get; set; } = new DraftingVM();
 
-        public ICollection<CardVM> CardsDeck { get; set; } = new CardVM[]
-        {
-            new CardVM { ImageArtUrl = "/Assets/Images/MTGA.png", Name = "Test 1" },
-            new CardVM { ImageArtUrl = "https://www.gravatar.com/avatar/c41cb884edf04a01fa5fc5f5a7960637?s=328&d=identicon&r=PG", Name = "Test 2" },
-        };
+        //public ICollection<CardVM> CardsDeck { get; set; } = new CardVM[]
+        //{
+        //    new CardVM { ImageArtUrl = "/Assets/Images/MTGA.png", Name = "Test 1" },
+        //    new CardVM { ImageArtUrl = "https://www.gravatar.com/avatar/c41cb884edf04a01fa5fc5f5a7960637?s=328&d=identicon&r=PG", Name = "Test 2" },
+        //};
 
         public MainWindowContextEnum MainWindowContext { get; set; } = MainWindowContextEnum.Welcome;
 
@@ -88,10 +91,12 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             string.Empty : $"{Environment.NewLine}as of {Collection.CollectionDate}";
         #endregion
 
-        public MainWindowVM(StatusBlinker statusBlinker)
+        public MainWindowVM(StatusBlinker statusBlinker, InMatchTrackerStateVM inMatchState)
         {
             this.statusBlinker = statusBlinker;
             statusBlinker.EmitStatus += StatusBlinkerEmitStatus;
+
+            this.InMatchState = inMatchState;
         }
 
         public NetworkStatusEnum GetFlagsNetworkStatus() => statusBlinker.GetFlags();
@@ -210,16 +215,20 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         internal void SetCardsDraftBuffered(ICollection<CardDraftPick> cards)
         {
             DraftingVM.SetCardsDraftBuffered(cards);
-            MainWindowContext = MainWindowContextEnum.Drafting;
-            RaisePropertyChangedEvent(nameof(MainWindowContext));
         }
-
         internal void SetCardsDraftFromBuffered()
         {
-            if (DraftingVM.updateCardsDraftBuffered)
-            {
-                DraftingVM.SetCardsDraftFromBuffered();
-            }
+            DraftingVM.SetCardsDraftFromBuffered();
+        }
+
+        internal void SetInMatchStateBuffered(InGameTrackerState state)
+        {
+            InMatchState.SetInMatchStateBuffered(state);
+        }
+        internal void SetCardsInMatchTrackingFromBuffered()
+        {
+            InMatchState.SetCardsDraftFromBuffered();
+            //RaisePropertyChangedEvent(nameof(InMatchState));
         }
 
         #region Event handlers

@@ -15,7 +15,8 @@ namespace MTGAHelper.Entity.IoC
                 .AddSingleton<CacheDictionarySingleton<string, ConfigModelUser>>()
                 .AddSingleton<CacheSingleton<DraftRatings>>()
                 .AddTransient<RawDeckConverter>()
-                .AddTransient<LogSplitter>();
+                .AddTransient<LogSplitter>()
+                .AddTransient<UtilColors>();
         }
     }
 }

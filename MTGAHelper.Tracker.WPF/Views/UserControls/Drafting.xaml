@@ -20,7 +20,7 @@
             <Setter Property="ToolTipService.InitialShowDelay" Value="50" />
         </Style>
     </UserControl.Resources>
-        <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
+    <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
         <Label Padding="0" FontSize="20" FontWeight="Bold">
             <TextBlock>Draft picks</TextBlock>
         </Label>
@@ -43,10 +43,10 @@
                                 <DataGrid ItemsSource="{Binding Value}" AutoGenerateColumns="False" CanUserAddRows="False" Margin="0,0,0,5"
                     GridLinesVisibility="None" Background="Transparent" RowBackground="Transparent" Foreground="#aaaaaa" HeadersVisibility="None" BorderThickness="0" >
                                     <DataGrid.RowStyle>
-                                    <Style TargetType="DataGridRow">
-                                        <EventSetter Event="MouseEnter" Handler="CardRow_MouseEnter"/>
-                                        <EventSetter Event="MouseLeave" Handler="CardRow_MouseLeave"/>
-                                        <Setter Property="BorderThickness" Value="0,1,0,0" />
+                                        <Style TargetType="DataGridRow">
+                                            <EventSetter Event="MouseEnter" Handler="CardRow_MouseEnter"/>
+                                            <EventSetter Event="MouseLeave" Handler="CardRow_MouseLeave"/>
+                                            <Setter Property="BorderThickness" Value="0,1,0,0" />
                                             <Setter Property="BorderBrush" Value="#555555" />
                                         </Style>
                                     </DataGrid.RowStyle>
@@ -72,7 +72,15 @@
 
                                                         <Rectangle Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                             <Rectangle.Fill>
-                                                                <ImageBrush ImageSource="{Binding ImageArtUrl}" Stretch="UniformToFill" />
+                                                                <ImageBrush>
+                                                                    <ImageBrush.ImageSource>
+                                                                        <Binding Path="ImageArtUrl">
+                                                                            <Binding.TargetNullValue>
+                                                                                <ImageSource>/Assets/Images/thumbnailUnknown.png</ImageSource>
+                                                                            </Binding.TargetNullValue>
+                                                                        </Binding>
+                                                                    </ImageBrush.ImageSource>
+                                                                </ImageBrush>
                                                             </Rectangle.Fill>
                                                         </Rectangle>
                                                     </Border>
@@ -99,14 +107,18 @@
                                                                     <TextBlock Foreground="Black">Weight of missing copies (based on your MTGAHelper tracked decks)</TextBlock>
                                                                 </Label.ToolTip>
                                                                 <TextBlock Text="{Binding Weight, StringFormat='Weight: {0}'}"  />
-                                                                --><!--Foreground="{Binding Path=IsRareDraftPick, Converter={StaticResource IsRareDraftPickColorConverter}}"--><!--
+                                                                -->
+                                                            <!--Foreground="{Binding Path=IsRareDraftPick, Converter={StaticResource IsRareDraftPickColorConverter}}"-->
+                                                            <!--
                                                             </Label>-->
                                                             <!--<Label Padding="10,0,0,0">
                                                                 <Label.ToolTip>
                                                                     <TextBlock Foreground="Black">M: Missing copies (based on your MTGAHelper tracked decks)</TextBlock>
                                                                 </Label.ToolTip>
                                                                 <TextBlock Text="{Binding NbMissingTrackedDecks, StringFormat='M: {0}'}"  />
-                                                                --><!--Foreground="{Binding Path=IsRareDraftPick, Converter={StaticResource IsRareDraftPickColorConverter}}"--><!--
+                                                                -->
+                                                            <!--Foreground="{Binding Path=IsRareDraftPick, Converter={StaticResource IsRareDraftPickColorConverter}}"-->
+                                                            <!--
                                                             </Label>-->
                                                         </StackPanel>
                                                     </StackPanel>
@@ -120,8 +132,8 @@
                                                         <Border HorizontalAlignment="Right" ToolTipService.InitialShowDelay="50">
                                                             <Border.ToolTip>
                                                                 <TextBlock Foreground="Black"  Text="Raredraft choice" />
-                                                        </Border.ToolTip>
-                                                        <Image Source="/Assets/Images/Treasure.png" Width="20"
+                                                            </Border.ToolTip>
+                                                            <Image Source="/Assets/Images/Treasure.png" Width="20"
                                                                 Opacity="{Binding DataContext.RaredraftOpacity, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
                                             Visibility="{Binding RareDraftPickEnum, Converter={StaticResource BoolToVisHiddenConverter}}" />
                                                         </Border>

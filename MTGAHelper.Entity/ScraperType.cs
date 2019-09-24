@@ -81,6 +81,8 @@ namespace MTGAHelper.Entity
                             url = "https://www.mtggoldfish.com/articles/search?tag=stream+highlights";
                         else if (Name == MtgGoldfishArticleEnum.BudgetArena.ToString().ToLower())
                             url = "https://www.mtggoldfish.com/articles/search?tag=budget+arena";
+                        else if (Name == MtgGoldfishArticleEnum.SingleScoop.ToString().ToLower())
+                            url = "https://www.mtggoldfish.com/articles/search?author=93";
 
                         break;
                     case ScraperTypeEnum.MtgDecks:
@@ -95,6 +97,8 @@ namespace MTGAHelper.Entity
                         //}
                         url = "https://mtgdecks.net/Standard";
                         break;
+
+                    // WHAT?!????????????
                     case ScraperTypeEnum.MtgTop8:
                         if (Name == MtgTop8ListingEnum.DecksToBeat.ToString().ToLower())
                             url = "https://www.mtggoldfish.com/metagame/{mtgGoldfishAddFormat(Format)}/full";

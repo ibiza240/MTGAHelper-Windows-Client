@@ -38,7 +38,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public LockableOutputLogResultData<Inventory> InventoryByDate { get; set; } = new LockableOutputLogResultData<Inventory>();
         public LockableOutputLogResultData<Dictionary<int, int>> CollectionByDate { get; set; } = new LockableOutputLogResultData<Dictionary<int, int>>();
         public LockableOutputLogResultData<IList<MatchResult>> MatchesByDate { get; set; } = new LockableOutputLogResultData<IList<MatchResult>>();
-        public LockableOutputLogResultData<IList<MtgaDeck>> DecksGlobal { get; set; } = new LockableOutputLogResultData<IList<MtgaDeck>>();
+        //public LockableOutputLogResultData<IList<MtgaDeck>> DecksGlobal { get; set; } = new LockableOutputLogResultData<IList<MtgaDeck>>();
         public LockableOutputLogResultData<DateSnapshotDiff> DiffByDate { get; set; } = new LockableOutputLogResultData<DateSnapshotDiff>();
 
         //InfoByDate<ICollection<CardWithAmount>> lastCollectionInMemory = null;

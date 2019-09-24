@@ -20,6 +20,7 @@
         StreamHighlights,
         MuchAbrew,
         BudgetArena,
+        SingleScoop,
     }
 
     public enum MtgTop8ListingEnum

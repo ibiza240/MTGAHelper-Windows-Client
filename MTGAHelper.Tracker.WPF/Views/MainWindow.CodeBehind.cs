@@ -7,6 +7,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace MTGAHelper.Tracker.WPF.Views
 {
@@ -17,14 +19,13 @@ namespace MTGAHelper.Tracker.WPF.Views
     {
         void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            windowCardPopupDrafting.SetCardPopupPosition(this.Top, this.Width);
+            windowCardPopupDrafting.SetCardPopupPosition((int)this.Top, (int)this.Left, (int)windowCardPopupDrafting.Width);
 
             if (api.IsLocalTrackerUpToDate() == false)
                 MustDownloadNewVersion();
 
-            resourcesLocator.LocateLogFilePath(configApp);
-            resourcesLocator.LocateGameClientFilePath(configApp);
             InitialServerApiCalls();
+            //InitStoryBoard();
         }
 
         void MustDownloadNewVersion()
@@ -36,9 +37,9 @@ namespace MTGAHelper.Tracker.WPF.Views
                 // Download latest auto-updater
                 var folderForConfigAndLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");
                 var fileExe = Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.exe");
-                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/MTGAHelper.Tracker.AutoUpdater.dll?raw=true", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.dll"));
-                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/MTGAHelper.Tracker.AutoUpdater.exe?raw=true", fileExe);
-                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json?raw=true", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json"));
+                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.dll", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.dll"));
+                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.exe", fileExe);
+                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json"));
 
                 var ps = new ProcessStartInfo(fileExe)
                 {
@@ -97,6 +98,11 @@ namespace MTGAHelper.Tracker.WPF.Views
             //}
         }
 
+        void Window_Closed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
         void StatusBarTop_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
@@ -104,6 +110,32 @@ namespace MTGAHelper.Tracker.WPF.Views
             // Begin dragging the window
             this.DragMove();
         }
+
+        //Storyboard storyboardHighlightCard = new Storyboard();
+        //private void InitStoryBoard()
+        //{
+        //    // Create a NameScope for the page so
+        //    // that Storyboards can be used.
+        //    NameScope.SetNameScope(this, new NameScope());
+
+        //    // Background="#272b30"
+        //    var animatedBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#272b30"));
+        //    this.Background = animatedBrush;
+
+        //    // Register the brush's name with the page
+        //    // so that it can be targeted by storyboards.
+        //    this.RegisterName("MyAnimatedBrush", animatedBrush);
+
+        //    ColorAnimation highlightCardColorAnimation = new ColorAnimation();
+        //    highlightCardColorAnimation.From = Colors.Blue;
+        //    //highlightCardColorAnimation.To = Colors.Red;
+        //    highlightCardColorAnimation.Duration = TimeSpan.FromSeconds(1);
+        //    Storyboard.SetTargetName(highlightCardColorAnimation, "MyAnimatedBrush");
+        //    Storyboard.SetTargetProperty(highlightCardColorAnimation, new PropertyPath(SolidColorBrush.ColorProperty));
+        //    storyboardHighlightCard.Children.Add(highlightCardColorAnimation);
+
+        //    storyboardHighlightCard.Begin(this);
+        //}
 
         void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -115,8 +147,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             if (double.IsNaN(Application.Current.MainWindow.Top) || double.IsNaN(Application.Current.MainWindow.Left))
                 return;
 
-            var left = (int)(this.Left < SystemParameters.WorkArea.Width / 2 ? this.Left + Width : this.Left - windowCardPopupDrafting.Width);
-            windowCardPopupDrafting.SetCardPopupPosition((int)this.Top, left);
+            windowCardPopupDrafting.SetCardPopupPosition((int)this.Top, (int)this.Left, (int)windowCardPopupDrafting.Width);
         }
     }
 }

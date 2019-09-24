@@ -5,6 +5,17 @@ using System.Linq;
 
 namespace MTGAHelper.Entity
 {
+    public enum enumLinkedFace
+    {
+        None = 0,
+        DFC_Front = 1,
+        DFC_Back = 2,
+        MeldCard = 3,
+        MeldedPermanent = 4,
+        SplitCard = 5,
+        SplitHalf = 6,
+    }
+
     public class RawDeckConverter
     {
         public Dictionary<int, int> ResultRaw { get; private set; }
@@ -53,8 +64,8 @@ namespace MTGAHelper.Entity
             return cards.Values
                 .Where(i => i.Card.type.StartsWith("Basic Land") == false)
                 .Where(i => i.Card.isToken == false)
-                .Where(i => i.Card.linkedFaceType != "SplitCard")
-                .Where(i => i.Card.linkedFaceType != "DFC_Front")
+                .Where(i => i.Card.linkedFaceType != enumLinkedFace.SplitCard)
+                .Where(i => i.Card.linkedFaceType != enumLinkedFace.DFC_Front)
                 .OrderBy(i => i.Card.name)
                 .ToArray();
         }

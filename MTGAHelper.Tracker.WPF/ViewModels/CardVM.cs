@@ -22,10 +22,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public ObservableProperty<GradientStopCollection> ColorGradient { get; set; } = new ObservableProperty<GradientStopCollection>(new GradientStopCollection());
 
-        internal void SetColorGradiant()
+        public void SetColorBorder()
         {
-            //ColorGradient.Value.Freeze();
-            //Dispatcher.CurrentDispatcher.Invoke(() => ColorGradient.Value = CreateGradient());
             ColorGradient.Value = CreateGradient();
         }
 

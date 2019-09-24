@@ -8,11 +8,12 @@
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
         Title="MTGAHelper" Icon="/Assets/images/wcC.png"
-        Top="0" Left="0" Height="900" Width="250"
+        Top="0" Left="0" Height="900" Width="320"
         Loaded="Window_Loaded"
         Activated="Window_Activated" Deactivated="Window_Deactivated"
         LocationChanged="Window_LocationChanged"
-        Opacity="{Binding OpacityPct}" AllowsTransparency="True" ResizeMode="CanResizeWithGrip" WindowStyle="None" Background="#272b30" BorderBrush="#181b1f" BorderThickness="2">
+        Closed="Window_Closed"
+        Opacity="{Binding OpacityPct}" AllowsTransparency="True" ResizeMode="CanResizeWithGrip" Background="{StaticResource BackgroundBrush}" WindowStyle="None" BorderBrush="#181b1f" BorderThickness="2">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
 
@@ -63,15 +64,15 @@
                 </Setter.Value>
             </Setter>
         </Style>
-    </Window.Resources>
 
+    </Window.Resources>
     <Grid DockPanel.Dock="Top">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
             
         <uc:StatusBarTop Grid.Row="0" x:Name="statusBarTop" MouseLeftButtonDown="StatusBarTop_OnMouseLeftButtonDown" />
@@ -95,32 +96,27 @@
 
         <uc:Playing Grid.Row="1" x:Name="ucPlaying" />
 
-        <StackPanel Grid.Row="2" DockPanel.Dock="Bottom" Orientation="Vertical">
+        <ItemsControl Grid.Row="2" Name="lstProblems" ItemsSource="{Binding ProblemsList, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Label>
+                        <TextBlock Text="{Binding .}" Foreground="Red" />
+                    </Label>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
-            <ItemsControl Name="lstProblems" ItemsSource="{Binding ProblemsList, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Label>
-                            <TextBlock Text="{Binding .}" Foreground="Red" />
-                        </Label>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-        </StackPanel>
-        <StackPanel Grid.Row="3" DockPanel.Dock="Bottom" Orientation="Vertical">
-            <Slider Minimum="20" Maximum="100" Value="{Binding Opacity, UpdateSourceTrigger=PropertyChanged}" Background="#181b1f"
+        <Slider Grid.Row="3" Minimum="20" Maximum="100" Value="{Binding Opacity, UpdateSourceTrigger=PropertyChanged}" Background="#181b1f"
                 ValueChanged="Slider_ValueChanged" Style="{StaticResource MyCustomStyleForSlider}" LargeChange="10" />
 
-            <StatusBar Background="#181b1f">
-                <StatusBarItem>
-                    <Image gif:ImageBehavior.AnimatedSource="/Assets/Images/loading.gif" Width="16" Visibility="{Binding IsWorking, Converter={StaticResource BoolToVisConverter}}" />
-                </StatusBarItem>
-                <StatusBarItem>
-                    <TextBlock Text="{Binding Path=NetworkStatusDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-                </StatusBarItem>
-            </StatusBar>
-        </StackPanel>
+        <StatusBar Grid.Row="4" Background="#181b1f">
+            <StatusBarItem>
+                <Image gif:ImageBehavior.AnimatedSource="/Assets/Images/loading.gif" Width="16" Visibility="{Binding IsWorking, Converter={StaticResource BoolToVisConverter}}" />
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="{Binding Path=NetworkStatusDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+            </StatusBarItem>
+        </StatusBar>
 
     </Grid>
 </Window>

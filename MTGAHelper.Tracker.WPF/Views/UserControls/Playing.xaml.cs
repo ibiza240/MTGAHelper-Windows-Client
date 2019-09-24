@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MTGAHelper.Tracker.WPF.ViewModels;
 
 namespace MTGAHelper.Tracker.WPF.Views.UserControls
 {
@@ -21,6 +22,14 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         public Playing()
         {
             InitializeComponent();
+        }
+
+        public void Init(MainWindowVM vm)
+        {
+            DataContext = vm;
+            CardsLibrary.SetDataContext(vm.InMatchState.MyLibrary);
+            CardsOpponent.SetDataContext(vm.InMatchState.OpponentCardsSeen);
+            //FullDeck.SetDataContext(vm.InMatchState.FullDeck);
         }
     }
 }

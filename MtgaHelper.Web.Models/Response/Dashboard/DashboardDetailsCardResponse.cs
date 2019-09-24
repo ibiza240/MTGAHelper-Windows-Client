@@ -17,7 +17,8 @@ namespace MTGAHelper.Web.UI.Model.Response
         //}
 
         public static DashboardDetailsCardResponse Build(ICollection<ConfigModelDeck> configDecks,
-            Card c, Dictionary<string, IDeck> decks, KeyValuePair<string, CardRequiredInfoByDeck>[] decksInfo)
+            Card c, Dictionary<string, IDeck> decks, KeyValuePair<string, CardRequiredInfoByDeck>[] decksInfo,
+            UtilColors utilColors)
         {
             var ret = new DashboardDetailsCardResponse();
             var dictDecks = configDecks.ToDictionary(i => i.Id, i => i);
@@ -29,7 +30,7 @@ namespace MTGAHelper.Web.UI.Model.Response
                     DeckName = decks[i.Key].Name,
                     NbMain = i.Value.ByCard[c.name].NbRequiredMain,
                     NbSideboard = i.Value.ByCard[c.name].NbRequiredSideboard,
-                    DeckColor = decks[i.Key].GetColor(),
+                    DeckColor = utilColors.FromDeck(decks[i.Key]),
                     DeckDateCreated = dictDecks[i.Key].DateCreatedUtc,
                     DeckScraperTypeId = decks[i.Key].ScraperType.Id,
                 })

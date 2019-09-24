@@ -17,7 +17,6 @@ namespace MTGAHelper.Lib.Config
     {
         public const string SOURCE_SYSTEM = "automatic";
         public const string SOURCE_USERCUSTOM = "usercustom";
-        public string Id { get; set; }
         public DateTime DateScrapedUtc { get; set; }
         public DateTime DateCreatedUtc { get; set; }
         public string ScraperTypeId { get; set; }

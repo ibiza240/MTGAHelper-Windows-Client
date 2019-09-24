@@ -5,6 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using Microsoft.Win32;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace MTGAHelper.Tracker.WPF.AutoUpdater
 {
@@ -44,9 +46,8 @@ namespace MTGAHelper.Tracker.WPF.AutoUpdater
             pInstall.StartInfo.UseShellExecute = true;
             pInstall.Start();
             pInstall.WaitForExit();
-            // Keep the appsettings.json
-            File.Copy(fileAppSettingsCopy, fileAppSettings, true);
-            File.Delete(fileAppSettingsCopy);
+            // Keep the appsettings.json settings
+            KeepAppSettings(fileAppSettingsCopy, fileAppSettings);
             Console.WriteLine("Installation complete! Enjoy the latest version of MTGAHelper Tracker :)");
 
             Thread.Sleep(1000);
@@ -55,6 +56,22 @@ namespace MTGAHelper.Tracker.WPF.AutoUpdater
             pTracker.StartInfo.FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MTGAHelper Tracker.lnk");
             pTracker.StartInfo.UseShellExecute = true;
             pTracker.Start();
+        }
+
+        private static void KeepAppSettings(string fileAppSettingsCopy, string fileAppSettings)
+        {
+            //File.Copy(fileAppSettingsCopy, fileAppSettings, true);
+            //File.Delete(fileAppSettingsCopy);
+
+            var oldSettings = JObject.Parse(File.ReadAllText(fileAppSettingsCopy));
+            var newSettings = JObject.Parse(File.ReadAllText(fileAppSettings));
+            foreach (var keyValue in oldSettings)
+            {
+                newSettings[keyValue.Key] = keyValue.Value;
+            }
+
+            File.WriteAllText(fileAppSettings, JsonConvert.SerializeObject(newSettings));
+            File.Delete(fileAppSettingsCopy);
         }
 
         private static void DownloadLatest(string localFilepath)
