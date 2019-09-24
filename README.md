@@ -27,8 +27,8 @@ Please note that this tracker runs only on Windows for now.
 The application uses the very recent framework known as Microsoft .NET Core 3.0.
 
 You will require to install:
-- [This version if you have a 64-bit Operating System (x64-based processor)](https://dotnet.microsoft.com/download/thank-you/dotnet-sdk-3.0.100-preview7-windows-x64-installer)
-- [This version if you have a 32-bit Operating System (x86-based processor)](https://dotnet.microsoft.com/download/thank-you/dotnet-sdk-3.0.100-preview7-windows-x86-installer)
+- [This version if you have a 64-bit Operating System (x64-based processor)](https://dotnet.microsoft.com/download/thank-you/dotnet-sdk-3.0.100-windows-x64-installer)
+- [This version if you have a 32-bit Operating System (x86-based processor)](https://dotnet.microsoft.com/download/thank-you/dotnet-sdk-3.0.100-windows-x86-installer)
 
 > Note: If you are on Windows 7, you will most likely also need this Update for Windows 7 (KB2533623):
 > - [This version if you have a 64-bit Operating System (x64-based processor)](https://www.microsoft.com/en-us/download/details.aspx?id=26764)
@@ -73,7 +73,7 @@ Once your data is uploaded successfully, you can simply refresh the MTGAHelper w
 
 1- It's probably because the program cannot find the .NET Core 3.0 framework described above. Check in your installed applications if you have this installed:
 
-<img src="https://i.imgur.com/dDvit1A.png" width="420" alt=".NET Core 3.0 framework in your installed applications">
+<img src="https://i.imgur.com/tkQv2TZ.png" width="420" alt=".NET Core 3.0 framework in your installed applications">
 
 2- Check that the `appsettings.json` file is present in the `%AppData%/MTGAHelper` directory. This file should be automatically created after a successful installation of the tracker.
 
