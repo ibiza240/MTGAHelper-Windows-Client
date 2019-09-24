@@ -4,10 +4,10 @@
 
 /.vs
 *.dll
+*.csproj.user
 *.user
 *.pdb
 *.bak*
-*.user
 Debug
 DebugWithServer
 Release

@@ -17,18 +17,20 @@ Please note that this tracker runs only on Windows for now.
 - Automatically synchronizes your log files data with the MTGAHelper servers
 - Draft helper when picking your cards during a draft
 
-##### Check the [Patch ntoes](https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/PatchNotes.md) to know about the latest changes.
+##### Check the [Patch notes](https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/PatchNotes.md) to know about the latest changes.
 
 -----
 
 ### Installation
 
+<img src="https://icon-library.net/images/important-icon-png/important-icon-png-1.jpg" width="16" /> **Important!** If you installed the preview7 version of the Microsoft .NET Core 3.0 framework (prior to Sept. 24),<br />please refer to [this short guide to update it to the latest version](https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/.NET%20Framework%20Upgrade%20Guide.MD) <img src="https://icon-library.net/images/important-icon-png/important-icon-png-1.jpg" width="16" />
+
 ##### Step 1. Microsoft .NET Core 3.0 framework
 The application uses the very recent framework known as Microsoft .NET Core 3.0.
 
 You will require to install:
-- [This version if you have a 64-bit Operating System (x64-based processor)](https://dotnet.microsoft.com/download/thank-you/dotnet-sdk-3.0.100-preview7-windows-x64-installer)
-- [This version if you have a 32-bit Operating System (x86-based processor)](https://dotnet.microsoft.com/download/thank-you/dotnet-sdk-3.0.100-preview7-windows-x86-installer)
+- [This version if you have a 64-bit Operating System (x64-based processor)](https://dotnet.microsoft.com/download/thank-you/dotnet-sdk-3.0.100-windows-x64-installer)
+- [This version if you have a 32-bit Operating System (x86-based processor)](https://dotnet.microsoft.com/download/thank-you/dotnet-sdk-3.0.100-windows-x86-installer)
 
 > Note: If you are on Windows 7, you will most likely also need this Update for Windows 7 (KB2533623):
 > - [This version if you have a 64-bit Operating System (x64-based processor)](https://www.microsoft.com/en-us/download/details.aspx?id=26764)
@@ -45,6 +47,20 @@ The first time you run the tracker, you will have to provide your MTGAHelper use
 
 You can find your user id on your [MTGAHelper website profile page](https://mtgahelper.com/profile).
 
+### Activate the detailed MTGA log
+
+**This step is now required after the Sept. 4 MTGA game patch**
+
+To be able to use the tracker, you need to do the following in the MTGA game client:
+
+1. Press `Esc` to get the Options popup and click on **View account**
+<img src="https://i.imgur.com/NpLkJzy.png" width="420" alt="MTGA Options">
+
+2. Check the **Detailed Logs (Plugin Support)** option
+<img src="https://i.imgur.com/pWJVc7J.png" width="420" alt="MTGA Profile">
+
+3. Restart the game.
+
 ### Usage
 
 You will notice activity in the status bar any time the tracker is communicating with the servers. For example the status bar will blink and indicate `Uploading log file to server...` while it is uploading your data, which can take some time. You are NOT blocked by this activity and can continue playing the game normally.
@@ -55,18 +71,23 @@ Once your data is uploaded successfully, you can simply refresh the MTGAHelper w
 
 ### Troubleshooting
 
-If you start the tracker and nothing happens, it's probably because the program cannot find the .NET Core 3.0 framework described above. Check in your installed applications if you have this installed:
+**Nothing happens when I run the MTGAHelper Tracker**
 
-<img src="https://i.imgur.com/dDvit1A.png" width="420" alt=".NET Core 3.0 framework in your installed applications">
+1- It's probably because the program cannot find the .NET Core 3.0 framework described above. Check in your installed applications if you have this installed:
 
+<img src="https://i.imgur.com/tkQv2TZ.png" width="420" alt=".NET Core 3.0 framework in your installed applications">
 
-Another thing to check is that the `appsettings.json` file is present in the `%AppData%/MTGAHelper` directory. This file should be automatically created after a successful installation of the tracker.
+2- Check that the `appsettings.json` file is present in the `%AppData%/MTGAHelper` directory. This file should be automatically created after a successful installation of the tracker.
 
-One last thing to try is to run the tracker from a command line window by running:
+3- Try to run the tracker from a command line window by running:
 
     dotnet "C:\Program Files (x86)\MTGAHelper\MTGAHelper Tracker\MTGAHelper.Tracker.dll"
 
 This might give some information on why the tracker doesn't want to start.
+
+4- In the `%AppData%/MTGAHelper` directory there might be some log files (ie. log-201923.txt). You can open these text files and see if there's any helpful information.
+
+### Questions or Feedback
 
 If you are stuck at any moment, please reach us directly through our [Discord server](https://discord.gg/GTd3RMd) for the fastest response time or by using the [contact form](https://www.mtgahelper.com/contact) on the MTGAHelper website so we can assist you.
 
