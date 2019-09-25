@@ -217,16 +217,16 @@ namespace MTGAHelper.Tracker.WPF
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
-            if (configApp != null && mainWindow != null)
+            if (mainWindow != null && mainWindow.configApp != null)
             {
-                configApp.AlwaysOnTop = mainWindow.Topmost;
-                configApp.WindowSettings = new WindowSettings
+                mainWindow.configApp.AlwaysOnTop = mainWindow.Topmost;
+                mainWindow.configApp.WindowSettings = new WindowSettings
                 {
                     Position = new Config.Point((int)mainWindow.Left, (int)mainWindow.Top),
                     Size = new Config.Point((int)mainWindow.Width, (int)mainWindow.Height),
                 };
 
-                configApp.Save();
+                mainWindow.configApp.Save();
             }
         }
     }

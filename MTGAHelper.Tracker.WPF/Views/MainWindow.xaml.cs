@@ -30,7 +30,7 @@ namespace MTGAHelper.Tracker.WPF.Views
     {
         public MainWindowVM vm;
 
-        ConfigModelApp configApp;
+        public ConfigModelApp configApp;
         ProcessMonitor processMonitor;
         LogFileZipper zipper;
         ServerApiCaller api;
