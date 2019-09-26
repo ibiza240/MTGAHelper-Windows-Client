@@ -9,6 +9,12 @@ namespace MTGAHelper.Lib.Config
         RecoverDeckIdFromDeckNameForEachMatchPlayed_V0_21
     }
 
+    public class ConfigModelSetInfo
+    {
+        public int NbCards { get; set; }
+        public ICollection<string> Formats { get; set; }
+    }
+
     public class ConfigModelApp
     {
         public const string CURRENT_SET = "M20";
@@ -34,7 +40,7 @@ namespace MTGAHelper.Lib.Config
         public List<ConfigChangelog> Changelog { get; set; } = new List<ConfigChangelog>();
         public string LastCardsHash { get; set; }
 
-        public Dictionary<string, int> TotalCardsPerSet { get; set; }
+        public Dictionary<string, ConfigModelSetInfo> InfoBySet { get; set; }
 
         public string CurrentSet { get; set; }
 

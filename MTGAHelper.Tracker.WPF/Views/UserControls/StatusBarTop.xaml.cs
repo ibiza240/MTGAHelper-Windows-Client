@@ -50,6 +50,11 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             mainWindow.ShowDialogOptions();
         }
 
+        private void Menu_Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.WindowState = WindowState.Minimized;
+        }
+
         private void Menu_About_Click(object sender, RoutedEventArgs e)
         {
             var about = new AboutWindow();

@@ -19,6 +19,7 @@ namespace MTGAHelper.Tracker.WPF.Views
     {
         void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            Height = Math.Min(Height, SystemParameters.PrimaryScreenHeight - 32);
             windowCardPopupDrafting.SetCardPopupPosition((int)this.Top, (int)this.Left, (int)windowCardPopupDrafting.Width);
 
             if (api.IsLocalTrackerUpToDate() == false)
@@ -37,6 +38,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                 // Download latest auto-updater
                 var folderForConfigAndLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");
                 var fileExe = Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.exe");
+                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/Newtonsoft.Json.dll", Path.Combine(folderForConfigAndLog, "Newtonsoft.Json.dll"));
                 new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.dll", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.dll"));
                 new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.exe", fileExe);
                 new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json"));

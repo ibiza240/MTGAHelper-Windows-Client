@@ -7,14 +7,14 @@
     <ApplicationIcon>wcC.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>MTGAHelper.Tracker</AssemblyName>
-    <Version>1.2.0</Version>
+    <Version>1.2.2</Version>
     <Company>MTGAHelper</Company>
     <Authors>MTGAHelper</Authors>
     <Description>MTGAHelper Local client</Description>
     <Copyright>2019 MTGAHelper</Copyright>
     <Configurations>Debug;Release;DebugWithServer</Configurations>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
+    <AssemblyVersion>1.2.2.0</AssemblyVersion>
+    <FileVersion>1.2.2.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
