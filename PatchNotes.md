@@ -1,3 +1,8 @@
+### v1.2.2 - 2019-09-26
+
+Support for the latest expansion (Throne of Eldraine)
+Added a button to minimize the tracker window
+
 ### v1.2.1 - 2019-09-25
 
 Bugfix for saving user preferences
