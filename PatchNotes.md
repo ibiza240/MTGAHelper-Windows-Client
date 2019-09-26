@@ -1,3 +1,7 @@
+### v1.2.1 - 2019-09-25
+
+Bugfix for saving user preferences
+
 ### v1.2.0 - 2019-09-24
 
 In-match tracker available during matches

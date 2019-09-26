@@ -24,8 +24,6 @@ Please note that this tracker runs only on Windows for now.
 
 ### Installation
 
-<img src="https://icon-library.net/images/important-icon-png/important-icon-png-1.jpg" width="16" /> **Important!** If you installed the preview7 version of the Microsoft .NET Core 3.0 framework (prior to Sept. 24),<br />please refer to [this short guide to update it to the latest version](https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/.NET%20Framework%20Upgrade%20Guide.MD) <img src="https://icon-library.net/images/important-icon-png/important-icon-png-1.jpg" width="16" />
-
 ##### Step 1. Microsoft .NET Core 3.0 framework
 The application uses the very recent framework known as Microsoft .NET Core 3.0.
 
@@ -76,7 +74,7 @@ Once your data is uploaded successfully, you can simply refresh the MTGAHelper w
 
 1- It's probably because the program cannot find the .NET Core 3.0 framework described above. Check in your installed applications if you have this installed:
 
-<img src="https://i.imgur.com/tkQv2TZ.png" width="420" alt=".NET Core 3.0 framework in your installed applications">
+<img src="https://i.imgur.com/UWrO39u.png" width="420" alt=".NET Core 3.0 framework in your installed applications">
 
 2- Check that the `appsettings.json` file is present in the `%AppData%/MTGAHelper` directory. This file should be automatically created after a successful installation of the tracker.
 
