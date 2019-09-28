@@ -10,7 +10,7 @@ namespace MTGAHelper.Web.Models.Response.User
         public Dictionary<UserPreferenceEnum, dynamic> UserPreferences { get; set; } = new Dictionary<UserPreferenceEnum, dynamic>
         {
             { UserPreferenceEnum.ThemeIsDark, true },
-            { UserPreferenceEnum.CollectionSetsOrder, "PctOwned" },
+            { UserPreferenceEnum.CollectionSetsOrder, "NewestFirst" },
             { UserPreferenceEnum.LandsPickAll, false },
         };
 

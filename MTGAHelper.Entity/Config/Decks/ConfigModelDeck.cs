@@ -44,6 +44,8 @@ namespace MTGAHelper.Lib.Config
 
         public ICollection<DeckCard> GetCards(ICollection<Card> allCards)
         {
+            //var test = CardsMain.Where(i => allCards.Any(x => x.grpId == i.Key) == false);
+
             var cardsMain = CardsMain.Select(i => new DeckCard(
                 new CardWithAmount(allCards.First(x => x.grpId == i.Key), i.Value), false));
             var cardsSideboard = CardsSideboard.Select(i => new DeckCard(

@@ -14,6 +14,8 @@ namespace MTGAHelper.Entity
         MeldedPermanent = 4,
         SplitCard = 5,
         SplitHalf = 6,
+        AdventureAdventure = 7,
+        AdventureCreature = 8,
     }
 
     public class RawDeckConverter

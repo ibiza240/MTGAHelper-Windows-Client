@@ -17,7 +17,7 @@ namespace MTGAHelper.Lib.Config
 
     public class ConfigModelApp
     {
-        public const string CURRENT_SET = "M20";
+        //public const string CURRENT_SET = "ELD";
 
         public string VersionTrackerClient { get; set; }
         public string FolderData { get; set; } = "./data";
@@ -26,7 +26,7 @@ namespace MTGAHelper.Lib.Config
         public string FolderInvalidZips { get; set; } = "./FailedZipFiles";
         public string FolderUserMessages { get; set; } = "./UserMessages";
 
-        public string FolderDataDecks => Path.Combine(FolderData, "decks");
+        //public string FolderDataDecks => Path.Combine(FolderData, "decks");
         public string FolderDataConfigUsers => Path.Combine(FolderData, "configusers");
 
         //public List<string> CardsObtainableOnlyByCrafting { get; set; } = new List<string>();

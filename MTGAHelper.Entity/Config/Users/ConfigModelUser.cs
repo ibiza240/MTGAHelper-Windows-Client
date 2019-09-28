@@ -3,6 +3,16 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
+namespace MTGAHelper.Entity
+{
+    public enum FormatEnum
+    {
+        Unknown,
+        Standard,
+        Historic
+    }
+}
+
 namespace MTGAHelper.Lib.Config
 {
     public enum UserPreferenceEnum
@@ -28,8 +38,9 @@ namespace MTGAHelper.Lib.Config
 
         // Preferences, to refactor
         public bool ThemeIsDark { get; set; } = true;
-        public string CollectionSetsOrder { get; set; } = "PctOwned";
+        public string CollectionSetsOrder { get; set; } = "NewestFirst";
         public bool LandsPickAll { get; set; } = false;
+        //public FormatEnum Format { get; set; } = FormatEnum.Standard;
 
         public DateTime LastLoginUtc { get; set; } = DateTime.UtcNow;
         public int NbLogin { get; set; }
