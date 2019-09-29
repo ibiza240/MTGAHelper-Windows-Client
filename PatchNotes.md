@@ -1,6 +1,6 @@
 ### v1.2.3 - 2019-09-28
 
-Support for the limited ratings to be available in Sealed
+Support for limited ratings in Sealed
 
 ### v1.2.2 - 2019-09-26
 
