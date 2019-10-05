@@ -1,6 +1,7 @@
 ### v1.2.4 (Coming up)
 
 Option to minimize to tray
+
 Remember the transparency value of the window
 
 ### v1.2.3 - 2019-09-28
