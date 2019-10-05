@@ -53,7 +53,6 @@ Skipped (Obsolete)
 
 ### v1.0 - 2019-08-10
 
-Initial program
 
 Synchronizes local log file with MTGAHelper remote servers
 
