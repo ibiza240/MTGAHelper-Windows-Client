@@ -4,6 +4,8 @@ Option to minimize to tray
 
 Remember the transparency value of the window
 
+Show card text when hovering over Library or Opponent cards
+
 ### v1.2.3 - 2019-09-28
 
 Support for limited ratings in Sealed
