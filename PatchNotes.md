@@ -1,6 +1,14 @@
+### v1.2.4 (Coming up)
+
+Option to minimize to tray
+
+Remember the transparency value of the window
+
+Show card text when hovering over Library or Opponent cards
+
 ### v1.2.3 - 2019-09-28
 
-Support for the limited ratings to be available in Sealed
+Support for limited ratings in Sealed
 
 ### v1.2.2 - 2019-09-26
 
@@ -47,7 +55,6 @@ Skipped (Obsolete)
 
 ### v1.0 - 2019-08-10
 
-Initial program
 
 Synchronizes local log file with MTGAHelper remote servers
 
