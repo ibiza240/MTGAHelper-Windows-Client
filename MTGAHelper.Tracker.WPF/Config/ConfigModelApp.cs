@@ -34,8 +34,10 @@ namespace MTGAHelper.Tracker.WPF.Config
         public string UserId { get; set; }
         public string LogFilePath { get; set; }
         public string GameFilePath { get; set; }
-        public bool RunOnStartup { get; set; }
-        public bool AlwaysOnTop { get; set; }
+        public bool RunOnStartup { get; set; } = true;
+        public bool AlwaysOnTop { get; set; } = true;
+        public bool MinimizeToSystemTray { get; set; } = false;
+        public int Opacity { get; set; } = 90;
 
         public bool Test { get; set; }
 

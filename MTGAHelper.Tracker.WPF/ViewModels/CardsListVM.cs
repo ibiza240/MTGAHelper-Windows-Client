@@ -50,7 +50,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public void ConvertCardList(Dictionary<int, int> cardsRaw)
         {
             var totalCards = cardsRaw.Sum(i => i.Value);
-            var ret = cardsRaw
+
+            var cards = cardsRaw
                 .Select(i => ConvertCard(i.Key, i.Value, totalCards))
                 .OrderBy(i => i.Type.Contains("Land") ? 0 : 1)
                 .ThenBy(i => i.Cmc)
@@ -60,7 +61,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
             if (Cards == null)
             {
-                Cards = new ObservableCollection<LibraryCardWithAmountVM>(ret);
+                Cards = new ObservableCollection<LibraryCardWithAmountVM>(cards);
                 foreach (var c in Cards)
                     c.RefreshBindings();
 
@@ -68,30 +69,37 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }
             else
             {
+                // Remove any card with 0 amount
+                for (int i = Cards.Count - 1; i >= 0; i--)
+                {
+                    if (Cards[i].Amount == 0)
+                        Cards.RemoveAt(i);
+                }
+
                 // Uglier but...Update values instead of re-binding full data for better performance
-                var retDict = ret.ToDictionary(i => i.ArenaId, i => i);
+                var dictCards = cards.ToDictionary(i => i.ArenaId, i => i);
 
                 // Modify or remove cards
                 for (int i = Cards.Count - 1; i >= 0; i--)
                 {
                     var grpId = Cards[i].ArenaId;
-                    if (retDict.ContainsKey(grpId) && retDict[grpId].Amount != 0)
+                    if (dictCards.ContainsKey(grpId))//&& dictCards[grpId].Amount != 0)
                     {
-                        if (Cards[i].DrawPercent.Value != retDict[grpId].DrawPercent.Value)
-                            Cards[i].DrawPercent.Value = retDict[grpId].DrawPercent.Value;
+                        if (Cards[i].DrawPercent.Value != dictCards[grpId].DrawPercent.Value)
+                            Cards[i].DrawPercent.Value = dictCards[grpId].DrawPercent.Value;
 
-                        if (Cards[i].Amount != retDict[grpId].Amount)
+                        if (Cards[i].Amount != dictCards[grpId].Amount)
                         {
                             // Update the numbers
-                            Cards[i].Amount = retDict[grpId].Amount;
+                            Cards[i].Amount = dictCards[grpId].Amount;
                             Cards[i].RefreshBindings();
                         }
                     }
-                    else
-                    {
-                        // Remove the entry
-                        Cards.RemoveAt(i);
-                    }
+                    //else
+                    //{
+                    //    // Remove the entry
+                    //    Cards.RemoveAt(i);
+                    //}
                 }
 
                 // Add cards
@@ -99,24 +107,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                     .Where(i => i.Value > 0)
                     .Where(i => Cards.Any(x => x.ArenaId == i.Key) == false)
                     .ToArray();
-                //if (cardsToAdd.Any())
-                //{
-                //    foreach (var c in cardsToAdd)
-                //    {
-                //        var cardToAdd = ConvertCard(c.Key, c.Value, totalCards);
-                //        Cards.Add(cardToAdd);
-                //    }
-
-                //    Cards = Cards
-                //        .OrderBy(i => i.Type.Contains("Land") ? 0 : 1)
-                //        .ThenBy(i => i.Cmc)
-                //        .ToList();
-
-                //    //// Weird hack to refresh on add
-                //    //var cardsCopy = new List<LibraryCardWithAmountVM>();
-                //    //foreach (var c in Cards) cardsCopy.Add(c);
-                //    //Cards = cardsCopy;
-                //}
                 if (cardsToAdd.Length > 0)
                 {
                     //var newCards = new List<LibraryCardWithAmountVM>(Cards);
@@ -164,8 +154,10 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             //if (grpId == 69714) System.Diagnostics.Debugger.Break();
 
             var card = Mapper.Map<Entity.Card>(grpId);
-            var cardVM = Mapper.Map<CardVM>(Mapper.Map<Card>(card));
+            var cardVM = Mapper.Map<CardVM>(Mapper.Map<CardWpf>(card));
             var util = new Entity.Util();
+
+            //if (card.name == "Swamp") System.Diagnostics.Debugger.Break();
 
             var ret = new LibraryCardWithAmountVM
             {
@@ -173,8 +165,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 Amount = amount,
                 CardVM = cardVM,
                 Colors = card.colors,
+                ColorIdentity = card.color_identity,
                 ImageArtUrl = util.GetThumbnailUrl(card.imageArtUrl),
-                ImageCardUrl = util.GetThumbnailUrl(card.imageCardUrl),
+                ImageCardUrl = "https://img.scryfall.com/cards" + card.imageCardUrl,
                 Name = card.name,
                 Rarity = card.rarity,
                 DrawPercent = new ObservableProperty<float>((float)amount / totalCards),

@@ -43,7 +43,7 @@
             <DataGridTemplateColumn IsReadOnly="True">
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate>
-                        <Border BorderThickness="2" Width="36" Height="36">
+                        <Border BorderThickness="2" Width="36" Height="36" MouseEnter="Border_MouseEnter" MouseLeave="Border_MouseLeave">
                             <Border.BorderBrush>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" GradientStops="{Binding CardVM.ColorGradient.Value}" />
                             </Border.BorderBrush>

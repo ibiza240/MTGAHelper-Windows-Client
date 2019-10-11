@@ -10,5 +10,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public string LogFilePath { get; set; } = "Test";
         public string GameFilePath { get; set; } = "Test";
         public bool RunOnStartup { get; set; } = true;
+        public bool MinimizeToSystemTray { get; set; } = false;
     }
 }

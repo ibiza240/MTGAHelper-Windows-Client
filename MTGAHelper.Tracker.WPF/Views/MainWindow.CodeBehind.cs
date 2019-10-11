@@ -20,7 +20,11 @@ namespace MTGAHelper.Tracker.WPF.Views
         void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Height = Math.Min(Height, SystemParameters.PrimaryScreenHeight - 32);
-            windowCardPopupDrafting.SetCardPopupPosition((int)this.Top, (int)this.Left, (int)windowCardPopupDrafting.Width);
+
+            var top = (int)this.Top;
+            var left = (int)this.Left;
+            windowCardPopupDrafting.SetCardPopupPosition(top, left);
+            ucPlaying.SetCardPopupPosition(top, left);
 
             if (api.IsLocalTrackerUpToDate() == false)
                 MustDownloadNewVersion();
@@ -109,6 +113,14 @@ namespace MTGAHelper.Tracker.WPF.Views
         {
             base.OnMouseLeftButtonDown(e);
 
+            if (this.WindowState == WindowState.Maximized)
+            {
+                var mousePos = PointToScreen(Mouse.GetPosition(this));
+                this.Top = 0;
+                this.Left = mousePos.X - 20;
+                this.WindowState = WindowState.Normal;
+            }
+
             // Begin dragging the window
             this.DragMove();
         }
@@ -149,7 +161,10 @@ namespace MTGAHelper.Tracker.WPF.Views
             if (double.IsNaN(Application.Current.MainWindow.Top) || double.IsNaN(Application.Current.MainWindow.Left))
                 return;
 
-            windowCardPopupDrafting.SetCardPopupPosition((int)this.Top, (int)this.Left, (int)windowCardPopupDrafting.Width);
+            var top = (int)this.Top;
+            var left = (int)this.Left;
+            windowCardPopupDrafting.SetCardPopupPosition(top, left);
+            ucPlaying.SetCardPopupPosition(top, left);
         }
     }
 }

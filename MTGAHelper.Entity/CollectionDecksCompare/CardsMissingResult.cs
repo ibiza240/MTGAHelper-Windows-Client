@@ -38,13 +38,13 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
         {
             var ret = ByCard
                 .Where(i => i.Value.NbMissing > 0)
-                .GroupBy(i => i.Value.Card.setConsideringCraftedOnly)
+                .GroupBy(i => i.Value.Card.setAndInBooster)
                 .ToDictionary(i => i.Key, x => x
                     .OrderBy(i => i.Value.Card.GetRarityEnum(true))
                     .GroupBy(i => i.Value.Card.GetRarityEnum(true)).Select(i => new InfoCardMissingSummary
                     {
                         Set = x.Key,
-                        CraftedOnly = x.Key == Card.CRAFTEDONLY,
+                        NotInBooster = x.Key == Card.NOTINBOOSTER,
                         Rarity = i.Key,
                         NbMissing = i.Sum(c => c.Value.NbMissing),
                         MissingWeight = i.Sum(c => c.Value.MissingWeight)
@@ -62,7 +62,7 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
                     CardName = i.Value.Card.name,
                     Set = i.Value.Card.set,
                     //SetId = i.Key.number,
-                    CraftedOnly = i.Value.Card.craftedOnly,
+                    NotInBooster = i.Value.Card.notInBooster,
                     ImageCardUrl = i.Value.Card.imageCardUrl,//i.Key.images["normal"],
                     Rarity = i.Value.Card.GetRarityEnum(true).ToString(),
                     Type = i.Value.Card.type,

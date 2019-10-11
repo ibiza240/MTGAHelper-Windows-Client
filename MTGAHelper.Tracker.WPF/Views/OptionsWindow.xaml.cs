@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using AutoMapper;
+using Microsoft.Extensions.Options;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.ViewModels;
 using Newtonsoft.Json;
@@ -34,14 +35,7 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         public OptionsWindow Init(ConfigModelApp configApp)
         {
-            var vm = new OptionsWindowVM
-            {
-                UserId = configApp.UserId,
-                LogFilePath = configApp.LogFilePath,
-                GameFilePath = configApp.GameFilePath,
-                RunOnStartup = configApp.RunOnStartup,
-            };
-
+            var vm = Mapper.Map<OptionsWindowVM>(configApp);
             DataContext = vm;
 
             return this;

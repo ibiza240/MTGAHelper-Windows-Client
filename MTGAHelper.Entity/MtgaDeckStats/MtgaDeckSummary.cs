@@ -14,7 +14,9 @@ namespace MTGAHelper.Entity.MtgaDeckStats
         public DateTime LastPlayed { get; set; }
         public float WinRate { get; set; }
         public string WinRateFormat { get; set; }
-        public int WinRateNbMatches { get; set; }
+        public int WinRateNbWin { get; set; }
+        public int WinRateNbLoss { get; set; }
+        public int WinRateNbOther { get; set; }
 
         //public ConfigModelRawDeck DeckUsed { get; set; }
         public string DeckColor { get; set; }

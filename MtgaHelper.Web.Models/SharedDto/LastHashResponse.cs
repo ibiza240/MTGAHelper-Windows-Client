@@ -8,6 +8,10 @@ namespace MTGAHelper.Web.Models.Response.SharedDto
     {
         public string LastHash { get; set; }
 
+        public LastHashResponse()
+        {
+        }
+
         public LastHashResponse(string lastUploadHash)
         {
             LastHash = lastUploadHash;

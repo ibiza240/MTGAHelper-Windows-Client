@@ -9,7 +9,7 @@ using System.Windows.Threading;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
-    public class CardVM : Card
+    public class CardVM : CardWpf
     {
         Dictionary<string, Color> DictColorToHex = new Dictionary<string, Color>
         {
@@ -20,6 +20,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             { "G", Color.FromRgb(34,139,34) },
         };
 
+        ICollection<string> ColorsOfTheCard => Colors != null && Colors.Any() ? Colors : ColorIdentity;
+
         public ObservableProperty<GradientStopCollection> ColorGradient { get; set; } = new ObservableProperty<GradientStopCollection>(new GradientStopCollection());
 
         public void SetColorBorder()
@@ -29,13 +31,13 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         private GradientStopCollection CreateGradient()
         {
-            if (Colors.Count == 1)
-                return CreateGradientMono(Colors.First());
-            else if (Colors.Count == 2)
+            if (ColorsOfTheCard.Count == 1)
+                return CreateGradientMono(ColorsOfTheCard.First());
+            else if (ColorsOfTheCard.Count == 2)
                 return CreateGradientDual();
-            else if (Colors.Count == 3)
+            else if (ColorsOfTheCard.Count == 3)
                 return CreateGradientTriple();
-            else if (Colors.Count > 3)
+            else if (ColorsOfTheCard.Count > 3)
                 return CreateGradientGold();
 
             // Colorless or default if any problem
@@ -53,16 +55,16 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         private GradientStopCollection CreateGradientDual()
         {
             return new GradientStopCollection(new[] {
-                new GradientStop(DictColorToHex[Colors.First()], 0d),
-                new GradientStop(DictColorToHex[Colors.Last()], 1d),
+                new GradientStop(DictColorToHex[ColorsOfTheCard.First()], 0d),
+                new GradientStop(DictColorToHex[ColorsOfTheCard.Last()], 1d),
             });
         }
 
         private GradientStopCollection CreateGradientTriple()
         {
-            var c1 = Colors.First();
-            var c2 = Colors.Skip(1).First();
-            var c3 = Colors.Last();
+            var c1 = ColorsOfTheCard.First();
+            var c2 = ColorsOfTheCard.Skip(1).First();
+            var c3 = ColorsOfTheCard.Last();
 
             return new GradientStopCollection(new[] {
                 new GradientStop(DictColorToHex[c1], 0d),

@@ -20,7 +20,6 @@
         public int MatchesLost { get; set; }
         public int MatchesDrawn { get; set; }
         public float Percentile { get; set; }
-
         public int LeaderboardPlace { get; set; }
 
         public override string ToString()

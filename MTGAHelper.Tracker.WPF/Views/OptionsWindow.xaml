@@ -7,10 +7,11 @@
         xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
         mc:Ignorable="d"
         Title="Options" Icon="/Assets/images/wcC.png"
-        Height="220" Width="800" ResizeMode="NoResize" Background="#272b30"
+        Width="800" SizeToContent="Height" ResizeMode="NoResize" Background="#272b30"
         PreviewKeyDown="Window_PreviewKeyDown">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -47,7 +48,11 @@
         <TextBox Grid.Row="4" Grid.Column="1" Height="20" x:Name="txtGameFilePath"
                      Text="{Binding Path=GameFilePath, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Margin="0,0,5,0" />
 
-        <CheckBox Grid.Row="5" Grid.Column="1" Height="20" x:Name="chkRunOnStartup" Margin="0,5,0,0"
+        <CheckBox Grid.Row="5" Grid.Column="1" Height="20" x:Name="chkMinimizeToSystemTray" Margin="0,5,0,0"
+                      Content="Minimize window to system tray"
+                      IsChecked="{Binding Path=MinimizeToSystemTray, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+        
+        <CheckBox Grid.Row="6" Grid.Column="1" Height="20" x:Name="chkRunOnStartup" Margin="0,5,0,0"
                       Content="Start MTGAHelper tracker on Windows startup"
                       IsChecked="{Binding Path=RunOnStartup, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
     </Grid>

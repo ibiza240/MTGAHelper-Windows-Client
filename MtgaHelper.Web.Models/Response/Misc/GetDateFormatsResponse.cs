@@ -6,6 +6,10 @@ namespace MTGAHelper.Web.Models.Response.Misc
     {
         public ICollection<string> DateFormats { get; set; }
 
+        public GetDateFormatsResponse()
+        {
+        }
+
         public GetDateFormatsResponse(ICollection<string> dateFormats)
         {
             DateFormats = dateFormats;

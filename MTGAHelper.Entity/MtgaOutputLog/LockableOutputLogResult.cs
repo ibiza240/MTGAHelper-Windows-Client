@@ -40,6 +40,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public LockableOutputLogResultData<IList<MatchResult>> MatchesByDate { get; set; } = new LockableOutputLogResultData<IList<MatchResult>>();
         //public LockableOutputLogResultData<IList<MtgaDeck>> DecksGlobal { get; set; } = new LockableOutputLogResultData<IList<MtgaDeck>>();
         public LockableOutputLogResultData<DateSnapshotDiff> DiffByDate { get; set; } = new LockableOutputLogResultData<DateSnapshotDiff>();
+        public LockableOutputLogResultData<Dictionary<string, PlayerProgress>> PlayerProgressByDate { get; set; } = new LockableOutputLogResultData<Dictionary<string, PlayerProgress>>();
 
         //InfoByDate<ICollection<CardWithAmount>> lastCollectionInMemory = null;
 
@@ -67,6 +68,9 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
 
             foreach (var inventory in InventoryByDate.GetData())
                 CreateOrGetDateSnapshotInfo(inventory.DateTime).Inventory = inventory.Info;
+
+            foreach (var progress in PlayerProgressByDate.GetData())
+                CreateOrGetDateSnapshotInfo(progress.DateTime).PlayerProgress = progress.Info;
 
             foreach (var matches in MatchesByDate.GetData())
                 CreateOrGetDateSnapshotInfo(matches.DateTime).Matches = matches.Info;
@@ -137,6 +141,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
                 Inventory = InventoryByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Inventory(),
                 Matches = MatchesByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new MatchResult[0],
                 RankInfo = RankInfoByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new ConfigModelRankInfo[0],
+                PlayerProgress = PlayerProgressByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<string, PlayerProgress>(),
             };
 
             var diff = DiffByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DateSnapshotDiff();

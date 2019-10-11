@@ -52,7 +52,7 @@ namespace MTGAHelper.Web.UI.IoC
 
             CreateMap<CardWithAmount, CollectionCardDto>()
                 .IncludeBase<CardWithAmount, CardWithAmountDto>()
-                .ForMember(i => i.CraftedOnly, i => i.MapFrom(x => x.Card.craftedOnly));
+                .ForMember(i => i.NotInBooster, i => i.MapFrom(x => x.Card.notInBooster));
 
 
             //CreateMap<DateSnapshotInfo, GetUserHistoryDto>();
@@ -104,7 +104,7 @@ namespace MTGAHelper.Web.UI.IoC
 
             CreateMap<MatchResult, MatchDtoLightweight>()
                 .ForMember(i => i.OpponentName, i => i.MapFrom(x => x.Opponent.ScreenName))
-                .ForMember(i => i.FirstTurn, i => i.MapFrom(x => x.Games.First().FirstTurn.ToString()))
+                .ForMember(i => i.FirstTurn, i => i.MapFrom(x => x.Games.Any() == false ? FirstTurnEnum.Unknown.ToString() : x.Games.First().FirstTurn.ToString()))
                 .ForMember(i => i.OpponentRank, i => i.MapFrom(x => $"{x.Opponent.RankingClass}_{x.Opponent.RankingTier}"))
                 //.ForMember(i => i.Outcome, i => i.MapFrom(x => string.Join('-', x.Games.Select(y => y.Outcome.ToString()[0]))))
                 .ForMember(i => i.OpponentDeckColors, i => i.MapFrom(x => utilColors.FromGrpIds(x.GetOpponentCardsSeen())));

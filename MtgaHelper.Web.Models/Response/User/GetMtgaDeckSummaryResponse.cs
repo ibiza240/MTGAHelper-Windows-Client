@@ -26,6 +26,9 @@ namespace MTGAHelper.Web.Models.Response.User
         public string LastPlayed { get; set; }
         public float WinRate { get; set; }
         public string WinRateFormat { get; set; }
-        public int WinRateNbMatches { get; set; }
+        public int WinRateNbWin { get; set; }
+        public int WinRateNbLoss { get; set; }
+        public int WinRateNbOther { get; set; }
+        public int WinRateNbMatches => WinRateNbWin + WinRateNbLoss + WinRateNbOther;
     }
 }

@@ -18,6 +18,6 @@
 
     public class CollectionCardDto : CardWithAmountDto
     {
-        public bool CraftedOnly { get; set; }
+        public bool NotInBooster { get; set; }
     }
 }

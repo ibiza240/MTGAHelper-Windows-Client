@@ -43,6 +43,8 @@ namespace MTGAHelper.Tracker.WPF.Views
         ReaderMtgaOutputLog reader;
         InGameTracker inGameTracker;
 
+         System.Windows.Forms.NotifyIcon MyNotifyIcon;
+
         public CardPopupDrafting windowCardPopupDrafting = new CardPopupDrafting();
 
         public MainWindow(
@@ -82,10 +84,15 @@ namespace MTGAHelper.Tracker.WPF.Views
 
             fileMonitor.SetFilePath(this.configApp.LogFilePath);
             viewModel.ValidateUserId(this.configApp.UserId);
+            viewModel.Opacity = this.configApp.Opacity;
             DataContext = viewModel;
             vm = viewModel;
 
             InitializeComponent();
+
+            MyNotifyIcon = new System.Windows.Forms.NotifyIcon();
+            MyNotifyIcon.Icon = new System.Drawing.Icon(Application.GetResourceStream(new Uri("pack://application:,,,/Assets/Images/wcC.ico")).Stream);
+            MyNotifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(MyNotifyIcon_MouseClick);
 
             statusBarTop.Init(this, vm, /*draftHelper, logProcessor, this.configApp.UserId,*/ allCards.Get());
             ucReady.Init(this.configApp.GameFilePath);
@@ -105,6 +112,32 @@ namespace MTGAHelper.Tracker.WPF.Views
             timer.Start();
         }
 
+        void MyNotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            this.WindowState = WindowState.Normal;
+            this.Focus();
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            if (configApp.MinimizeToSystemTray == false)
+                return;
+
+            if (this.WindowState == WindowState.Minimized)
+            {
+                this.ShowInTaskbar = false;
+                //MyNotifyIcon.BalloonTipTitle = "Minimize Sucessful";
+                //MyNotifyIcon.BalloonTipText = "Minimized the app ";
+                //MyNotifyIcon.ShowBalloonTip(400);
+                MyNotifyIcon.Visible = true;
+            }
+            else if (this.WindowState == WindowState.Normal)
+            {
+                MyNotifyIcon.Visible = false;
+                this.ShowInTaskbar = true;
+            }
+        }
+
         internal void ShowDialogOptions()
         {
             try
@@ -119,7 +152,12 @@ namespace MTGAHelper.Tracker.WPF.Views
                     UserId = optionsWindow.txtUserId.Text,
                     LogFilePath = optionsWindow.txtLogFilePath.Text,
                     GameFilePath = optionsWindow.txtGameFilePath.Text,
-                    RunOnStartup = optionsWindow.chkRunOnStartup.IsChecked ?? false,
+                    RunOnStartup = optionsWindow.chkRunOnStartup.IsChecked.Value,
+                    MinimizeToSystemTray = optionsWindow.chkMinimizeToSystemTray.IsChecked.Value,
+                    Opacity = configApp.Opacity,
+                    AlwaysOnTop = configApp.AlwaysOnTop,
+                    WindowSettings = configApp.WindowSettings,
+                    Test = configApp.Test,
                 };
 
                 if (JsonConvert.SerializeObject(configApp) != JsonConvert.SerializeObject(newConfig))
@@ -268,7 +306,16 @@ namespace MTGAHelper.Tracker.WPF.Views
                 if (msg is IResultCardPool msgCardPool)
                 {
                     var isDrafting = true;
-                    if (msg is GetEventPlayerCourseV2Result playerCourse) isDrafting = playerCourse.Raw.InternalEventName.Contains("Draft");
+                    if (msg is GetEventPlayerCourseV2Result playerCourse)
+                    {
+                        if (playerCourse.Raw.CurrentEventState == "PreMatch")
+                        {
+                            // Clear the drafting window
+                            SetCardsDraft(new int[0]);
+                        }
+
+                        isDrafting = playerCourse.Raw.InternalEventName.Contains("Draft") || playerCourse.Raw.InternalEventName.Contains("Sealed");
+                    }
 
                     if (isDrafting)
                     {
@@ -304,7 +351,9 @@ namespace MTGAHelper.Tracker.WPF.Views
                     {
                         case "Client.SceneChange":
                             if (prms.humanContext.Contains("Client changed scene") &&
-                                ((string)prms.payloadObject.context).Contains("Draft") == false && ((string)prms.payloadObject.context) != "deck builder")
+                                ((string)prms.payloadObject.context).Contains("Draft") == false &&
+                                ((string)prms.payloadObject.context).Contains("Opening sealed boosters") == false &&
+                                ((string)prms.payloadObject.context) != "deck builder")
                             {
                                 GoHome();
                             }
@@ -324,6 +373,11 @@ namespace MTGAHelper.Tracker.WPF.Views
                 {
                     vm.SetMainWindowContext(MainWindowContextEnum.Playing);
                 }
+                //else if (msg is EventClaimPrizeResult claimPrize)
+                //{
+                //    // Clear the drafting window
+                //    SetCardsDraft(new int[0]);
+                //}
 
                 if (vm.MainWindowContext == MainWindowContextEnum.Playing)
                 {

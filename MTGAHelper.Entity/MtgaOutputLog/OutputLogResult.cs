@@ -18,6 +18,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public IList<InfoByDate<IList<MatchResult>>> MatchesByDate { get; set; } = new List<InfoByDate<IList<MatchResult>>>();
         public IList<InfoByDate<IList<ConfigModelRawDeck>>> DecksByDate { get; set; } = new List<InfoByDate<IList<ConfigModelRawDeck>>>();
         public IList<InfoByDate<DateSnapshotDiff>> DiffByDate { get; set; } = new List<InfoByDate<DateSnapshotDiff>>();
+        public IList<InfoByDate<Dictionary<string, PlayerProgress>>> PlayerProgressByDate { get; set; } = new List<InfoByDate<Dictionary<string, PlayerProgress>>>();
 
         public uint LastUploadHash { get; set; }
 
@@ -43,6 +44,9 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
 
             foreach (var inventory in InventoryByDate)
                 CreateOrGetDateSnapshotInfo(inventory.DateTime).Inventory = inventory.Info;
+
+            foreach (var progress in PlayerProgressByDate)
+                CreateOrGetDateSnapshotInfo(progress.DateTime).PlayerProgress = progress.Info;
 
             foreach (var matches in MatchesByDate)
                 CreateOrGetDateSnapshotInfo(matches.DateTime).Matches = matches.Info;
@@ -113,6 +117,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
                 Inventory = InventoryByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Inventory(),
                 Matches = MatchesByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new MatchResult[0],
                 RankInfo = RankInfoByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new ConfigModelRankInfo[0],
+                PlayerProgress = PlayerProgressByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<string, PlayerProgress>(), 
             };
 
             var diff = DiffByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DateSnapshotDiff();

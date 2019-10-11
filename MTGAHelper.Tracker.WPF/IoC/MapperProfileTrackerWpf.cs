@@ -6,6 +6,7 @@ using MTGAHelper.Web.Models.Response.User;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using MTGAHelper.Tracker.WPF.Config;
 
 namespace MTGAHelper.Tracker.WPF.IoC
 {
@@ -16,11 +17,12 @@ namespace MTGAHelper.Tracker.WPF.IoC
             CreateMap<CardForDraftPickDto, CardDraftPick>()
                 .ForMember(i => i.RareDraftPickEnum, i => i.MapFrom(x => x.IsRareDraftPick));
 
-            CreateMap<Entity.Card, Card>()
+            CreateMap<Entity.Card, CardWpf>()
                 .ForMember(i => i.ArenaId, i => i.MapFrom(x => x.grpId))
+                .ForMember(i => i.ColorIdentity, i => i.MapFrom(x => x.color_identity))
                 .ForMember(i => i.ManaCost, i => i.MapFrom(x => x.mana_cost));
 
-            CreateMap<Card, CardVM>();
+            CreateMap<CardWpf, CardVM>();
 
             CreateMap<CardWithAmount, LibraryCardWithAmountVM>()
                 .ForMember(i => i.ImageArtUrl, i => i.MapFrom(x => new Util().GetThumbnailLocal(x.ImageArtUrl)));
@@ -31,6 +33,8 @@ namespace MTGAHelper.Tracker.WPF.IoC
                 .ForMember(i => i.ImageArtUrl, i => i.MapFrom(x => new Util().GetThumbnailLocal(x.ImageArtUrl)
                 ))
                 .ForMember(i => i.CardVM, i => i.MapFrom(x => x));
+
+            CreateMap<ConfigModelApp, OptionsWindowVM>();
         }
     }
 }

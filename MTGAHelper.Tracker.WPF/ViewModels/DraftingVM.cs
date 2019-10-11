@@ -18,7 +18,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public int NbCardsWheeling => Math.Max(0, CardsDraftByTier.Values.Sum(i => i.Count) - 8);
         public string CardsWheelingMessage => $"{NbCardsWheeling} cards {(NbCardsWheeling == 1 ? "is" : "are")} wheeling in this pack";
         public double RaredraftOpacity => CardsDraftByTier.Any(i => i.Value.Any(x => x.RareDraftPickEnum == Entity.RaredraftPickReasonEnum.None && x.RatingFloat != 0f)) ? 1.0d : 0.5d;
-        public bool ShowGlobalMTGAHelperSays => /*updateCardsDraftBuffered == false && */CardsDraftByTier.Sum(i => i.Value.Count) < 45;
+        public bool ShowGlobalMTGAHelperSays => /*updateCardsDraftBuffered == false && */CardsDraftByTier.Sum(i => i.Value.Count) > 0 && CardsDraftByTier.Sum(i => i.Value.Count) < 45;
         #endregion
 
         internal void SetCardsDraftBuffered(ICollection<CardDraftPick> cards)
@@ -39,7 +39,10 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             //{
             lock (lockCardsDraft)
             {
-                CardsDraftByTier = Mapper.Map<ICollection<CardDraftPickVM>>(CardsDraftBuffered)
+                var cardsVM = Mapper.Map<ICollection<CardDraftPickVM>>(CardsDraftBuffered);
+                foreach (var c in cardsVM) c.CardVM.SetColorBorder();
+
+                CardsDraftByTier = cardsVM
                     .GroupBy(i => i.RatingFloat)
                     .ToDictionary(i => i.Key, i => (ICollection<CardDraftPickVM>)i.ToArray());
 

@@ -45,11 +45,19 @@ namespace MTGAHelper.Entity
 
         IEnumerable<string> GetColorFromCards(IEnumerable<Card> cards)
         {
-            return cards
+            var landsColors = cards.Where(i => i.type.Contains("Land"))
+                .Where(i => i.color_identity != null)
+                .SelectMany(i => i.color_identity)
+                .Distinct();
+
+            var colors = cards
                 .Where(i => i.color_identity != null)
                 .SelectMany(i => i.color_identity)
                 .Distinct()
+                .Where(i => landsColors.Contains(i))
                 .OrderBy(i => order[i]);
+
+            return colors;
         }
     }
 }

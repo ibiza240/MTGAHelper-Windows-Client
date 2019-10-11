@@ -1,0 +1,21 @@
+﻿<Window x:Class="MTGAHelper.Tracker.WPF.Views.CardPopup"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MTGAHelper.Tracker.WPF.Views"
+        mc:Ignorable="d"
+        Title="Card popup" ShowInTaskbar="False"
+        Width="320" SizeToContent="Height"
+        Background="#272b30" Foreground="#aaaaaa"
+        ResizeMode="NoResize" WindowStyle="None" Topmost="True">
+    <Image x:Name="imgPopupCard">
+        <Image.Source>
+            <Binding Path="ImageCardUrl.Value">
+                <Binding.TargetNullValue>
+                    <ImageSource>/Assets/Images/thumbnailUnknown.png</ImageSource>
+                </Binding.TargetNullValue>
+            </Binding>
+        </Image.Source>
+    </Image>
+</Window>

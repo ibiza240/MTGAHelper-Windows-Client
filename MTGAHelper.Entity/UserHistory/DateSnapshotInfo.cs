@@ -13,6 +13,7 @@ namespace MTGAHelper.Lib.UserHistory
         public ICollection<ConfigModelRankInfo> RankInfo { get; set; } = new ConfigModelRankInfo[0];
         public Inventory Inventory { get; set; } = new Inventory();
         public Dictionary<int, int> Collection { get; set; } = new Dictionary<int, int>();
+        public Dictionary<string, PlayerProgress> PlayerProgress { get; set; } = new Dictionary<string, PlayerProgress>();
         public ICollection<MatchResult> Matches { get; set; } = new MatchResult[0];
 
         //public int Wins { get; set; }

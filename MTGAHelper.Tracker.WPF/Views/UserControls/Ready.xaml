@@ -47,7 +47,15 @@
 
             <Label>
                 <TextBlock TextWrapping="WrapWithOverflow">
-                It also acts as a Draft Helper while you are draft picking. You will have access to Limited ratings from ChannelFireball as well as "Raredrafting" information based on your collection and tracked decks.
+                    This window will change depending on the context:
+                    <LineBreak />
+                    <LineBreak />
+                    When playing a match, live data will be shown such as your library and opponent cards with draw probabilities.
+                    <LineBreak />
+                    <LineBreak />
+                    When draft picking, you will have access to limited ratings from ChannelFireball as well as "Raredrafting" information based on your collection and tracked decks.
+                    <LineBreak />
+                    When building a sealed deck, the limited ratings will also be available.
                 </TextBlock>
             </Label>
 

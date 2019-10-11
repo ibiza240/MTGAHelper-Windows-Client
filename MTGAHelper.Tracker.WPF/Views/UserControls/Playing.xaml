@@ -29,9 +29,9 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         
-        <Label Grid.Row="0"  FontSize="20" FontWeight="Bold" Padding="5,0,5,0">
+        <!--<Label Grid.Row="0"  FontSize="20" FontWeight="Bold" Padding="5,0,5,0">
             <TextBlock>Match in progress</TextBlock>
-        </Label>
+        </Label>-->
         
         <TabControl Grid.Row="2" TabStripPlacement="Left" Margin="0" Background="Transparent" BorderThickness="0">
             <TabControl.Resources>

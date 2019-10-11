@@ -21,9 +21,9 @@
         </Style>
     </UserControl.Resources>
     <StackPanel Orientation="Vertical" DockPanel.Dock="Top">
-        <Label Padding="0" FontSize="20" FontWeight="Bold">
-            <TextBlock>Draft picks</TextBlock>
-        </Label>
+        <!--<Label Padding="0" FontSize="20" FontWeight="Bold">
+            <TextBlock>Limited picks</TextBlock>
+        </Label>-->
         <Label Padding="0" Margin="0,5,0,5" Visibility="{Binding ShowGlobalMTGAHelperSays, Converter={StaticResource BoolToVisCollapsedConverter}}">
             <TextBlock Text="{Binding CardsWheelingMessage}" />
         </Label>

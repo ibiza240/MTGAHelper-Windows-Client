@@ -31,5 +31,11 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             CardsOpponent.SetDataContext(vm.InMatchState.OpponentCardsSeen);
             //FullDeck.SetDataContext(vm.InMatchState.FullDeck);
         }
+
+        internal void SetCardPopupPosition(int top, int left)
+        {
+            CardsLibrary.SetCardPopupPosition(top, left);
+            CardsOpponent.SetCardPopupPosition(top, left);
+        }
     }
 }

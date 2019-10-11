@@ -6,9 +6,9 @@ namespace MTGAHelper.Entity
     [Serializable]
     public class Card //: IEquatable<Card>
     {
-        public const string CRAFTEDONLY = "CraftedOnly";
+        public const string NOTINBOOSTER = "NotInBooster";
 
-        public string setConsideringCraftedOnly => craftedOnly ? CRAFTEDONLY : set;
+        public string setAndInBooster => notInBooster ? NOTINBOOSTER : set;
 
         public List<string> colors { get; set; } = new List<string>();
         public List<string> color_identity { get; set; } = new List<string>();
@@ -20,6 +20,7 @@ namespace MTGAHelper.Entity
         public string mana_cost { get; set; }
         public string type { get; set; } = string.Empty;
         public string set { get; set; }
+        public bool notInBooster { get; set; }
         public bool craftedOnly { get; set; }
         public int grpId { get; set; }
         public string imageCardUrl { get; set; }
@@ -31,6 +32,9 @@ namespace MTGAHelper.Entity
         public int titleId { get; set; }
         public enumLinkedFace linkedFaceType { get; set; }
         public bool isToken { get; set; }
+        public bool isCraftable { get; set; }
+        public string artistCredit { get; set; }
+        
         //public string artistCredit { get; set; }
 
         public Card()

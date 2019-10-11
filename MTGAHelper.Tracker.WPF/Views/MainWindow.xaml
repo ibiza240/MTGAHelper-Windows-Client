@@ -9,11 +9,12 @@
         mc:Ignorable="d"
         Title="MTGAHelper" Icon="/Assets/images/wcC.png"
         Top="0" Left="0" Height="900" Width="320"
-        Loaded="Window_Loaded"
+        Loaded="Window_Loaded" StateChanged="Window_StateChanged"
         Activated="Window_Activated" Deactivated="Window_Deactivated"
         LocationChanged="Window_LocationChanged"
         Closed="Window_Closed"
-        Opacity="{Binding OpacityPct}" AllowsTransparency="True" ResizeMode="CanResizeWithGrip" Background="{StaticResource BackgroundBrush}" WindowStyle="None" BorderBrush="#181b1f" BorderThickness="2">
+        Opacity="{Binding OpacityPct}" AllowsTransparency="True" ResizeMode="CanResizeWithGrip" Background="{StaticResource BackgroundBrush}"
+        WindowStyle="None" BorderBrush="#181b1f" BorderThickness="2">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
 
@@ -36,14 +37,12 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <Border x:Name="TrackBackground"  
- BorderThickness="1" CornerRadius="1"
- Margin="5,0" Height="4.0" Grid.Row="0" >
+                                <Border x:Name="TrackBackground" BorderThickness="1" CornerRadius="1" Margin="5,0" Height="4.0" Grid.Row="0" >
                                     <Canvas Margin="-6,-1">
                                         <Rectangle x:Name="PART_SelectionRange" Height="4.0"
- Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
- Stroke="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
- StrokeThickness="1.0"/>
+                                             Fill="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"
+                                             Stroke="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
+                                             StrokeThickness="1.0"/>
                                     </Canvas>
                                 </Border>
                                 <Track x:Name="PART_Track" Grid.Row="0">
@@ -74,7 +73,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-            
+
         <uc:StatusBarTop Grid.Row="0" x:Name="statusBarTop" MouseLeftButtonDown="StatusBarTop_OnMouseLeftButtonDown" />
 
         <uc:Ready Grid.Row="1" x:Name="ucReady" />

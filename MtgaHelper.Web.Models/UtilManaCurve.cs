@@ -22,7 +22,7 @@ namespace MTGAHelper.Web.Models
             if (manaInfo.Values.Any() == false)
                 System.Diagnostics.Debugger.Break();
 
-            var maxCardsForMana = manaInfo.Values.Max(i => i.Sum(x => x.Amount));
+            var maxCardsForMana = manaInfo.Any() ? manaInfo.Values.Max(i => i.Sum(x => x.Amount)) : 1;
 
             var manaCurve = new[] { 0, 1, 2, 3, 4, 5, 6, 7 }
                 .Select(i =>
