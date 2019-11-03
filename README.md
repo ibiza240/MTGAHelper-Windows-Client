@@ -42,9 +42,7 @@ Once the framework installed, [download the Tracker Installer](https://github.co
 
 ### Configuration
 
-The first time you run the tracker, you will have to provide your MTGAHelper user id to be able to synchronize your data with our servers.
-
-You can find your user id on your [MTGAHelper website profile page](https://mtgahelper.com/profile).
+To use the tracker, you will need to have an MTGAHelper account. You can authenticate with Google or Facebook directly, or you may also use a local account but you will first have to sign-up for one on the website.
 
 ### Activate the detailed MTGA log
 
