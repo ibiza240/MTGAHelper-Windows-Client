@@ -1,6 +1,6 @@
 ## A proper signing-in process is finally available in v1.2.5!
 
-**If you encounter any problem signing-in or retrieving your previous data, hit me up on [Discord](https://discord.gg/GTd3RMd) and I'll be there to help :)**
+**If you encounter any problem signing-in or retrieving your previous data, hit me up on [Discord](https://discord.gg/GTd3RMd) and I'll be able to help you :)**
 
 If you have an existing user id that you would like to use with your new account, here's how:
 
