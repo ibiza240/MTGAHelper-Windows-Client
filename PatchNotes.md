@@ -1,4 +1,14 @@
-### v1.2.4 (Coming up)
+### v1.2.5 (2019-11-03)
+
+Proper signing-in process with an email/account
+
+In-match tab that displays your sideboard cards
+
+Option to force the card popup position to the left or right
+
+Program will not appear in alt-tab while minimized to tray
+
+### v1.2.4 (2019-10-10)
 
 Option to minimize to tray
 
