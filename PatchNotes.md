@@ -1,3 +1,11 @@
+### v1.2.6 (Coming up)
+
+Auto-signin on startup for external providers
+
+Bugfix for missing vertical scrollbar (in-match card lists)
+
+Bugfix for number of copies owned (draft helper)
+
 ### v1.2.5 (2019-11-03)
 
 Proper signing-in process with an email/account
