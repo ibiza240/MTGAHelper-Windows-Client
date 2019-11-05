@@ -52,10 +52,14 @@ namespace MTGAHelper.Tracker.WPF.AutoUpdater
 
             Thread.Sleep(1000);
 
-            Process pTracker = new Process();
-            pTracker.StartInfo.FileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MTGAHelper Tracker.lnk");
-            pTracker.StartInfo.UseShellExecute = true;
-            pTracker.Start();
+            var pathAppLink = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MTGAHelper Tracker.lnk");
+            if (File.Exists(pathAppLink))
+            {
+                Process pTracker = new Process();
+                pTracker.StartInfo.FileName = pathAppLink;
+                pTracker.StartInfo.UseShellExecute = true;
+                pTracker.Start();
+            }
         }
 
         private static void KeepAppSettings(string fileAppSettingsCopy, string fileAppSettings)
