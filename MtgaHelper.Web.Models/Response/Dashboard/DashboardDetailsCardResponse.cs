@@ -2,6 +2,7 @@
 using MTGAHelper.Lib.Cache;
 using MTGAHelper.Lib.CollectionDecksCompare;
 using MTGAHelper.Lib.Config;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,14 +17,21 @@ namespace MTGAHelper.Web.UI.Model.Response
         //{
         //}
 
-        public static DashboardDetailsCardResponse Build(ICollection<ConfigModelDeck> configDecks,
+        public static DashboardDetailsCardResponse Build(string userId, Dictionary<string, ConfigModelDeck> dictDecks,
             Card c, Dictionary<string, IDeck> decks, KeyValuePair<string, CardRequiredInfoByDeck>[] decksInfo,
             UtilColors utilColors)
         {
             var ret = new DashboardDetailsCardResponse();
-            var dictDecks = configDecks.ToDictionary(i => i.Id, i => i);
+
+            var missing = decksInfo.Where(i => decks.ContainsKey(i.Key) == false).ToArray();
+            if (missing.Any())
+            {
+                Log.Error("User {userId} Error in DashboardDetailsCardResponse: Cannot find these decks: <{ids}>. Original ids: <{ids2}>",
+                    userId, string.Join(",", missing.Select(x => x.Key)), string.Join(",", missing.Select(x => x.Value.DeckId)));
+            }
 
             ret.InfoByDeck = decksInfo
+                .Where(i => missing.Any(x => x.Key == i.Key) == false)
                 .Select(i => new DashboardDetailsCardDto
                 {
                     DeckId = i.Key,

@@ -6,7 +6,7 @@ namespace MTGAHelper.Lib.Config
     public enum ConfigAppFeatureEnum
     {
         ParseMatches,
-        RecoverDeckIdFromDeckNameForEachMatchPlayed_V0_21
+        //RecoverDeckIdFromDeckNameForEachMatchPlayed_V0_21
     }
 
     public class ConfigModelSetInfo

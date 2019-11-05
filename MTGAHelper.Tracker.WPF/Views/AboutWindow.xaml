@@ -28,11 +28,10 @@
                 I can clearly remember thinking I had a very cool deck at the time: a white milling deck. Pretty awful in retrospect but that's how I learned to both play and love Magic...I eventually moved on to other activities and stopped playing.
                 <LineBreak />
                 <LineBreak />
-                In 2018, <Run Text="Magic: The Gathering Arena" FontWeight="Bold" />'s Beta reared its head and I was instantly hooked again by the greatest card game ever created. In all that time between high school and then, I also happened to become a programmer.
+                In 2018, <Run Text="Magic: The Gathering Arena" FontWeight="Bold" />'s Beta reared its head and I was instantly hooked again by the greatest card game ever created. In all that time between high school and then, I also happened to become a developer.
                 <LineBreak />
                 <LineBreak />
-                I started writing programs to help me analyze my data - collection, matches played, decks over all the web and such — and after a few months it came to become what is now known as MTGAHelper.
-                <LineBreak />
+                I naturally started writing programs to help me analyze data such as my collection, played matches, decks over the web I want to play — after a few months it came to become what is now known as MTGAHelper.                <LineBreak />
                 <LineBreak />
                 I wanted to share the tools I am building with all the others MTGA enthusiasts out there. I hope you enjoy it!
             </TextBlock>

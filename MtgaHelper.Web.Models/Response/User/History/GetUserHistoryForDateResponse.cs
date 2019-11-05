@@ -46,7 +46,7 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
         public int GoldChange { get; set; }
         public int GemsChange { get; set; }
         public float VaultProgressChange { get; set; }
-        public Dictionary<RarityEnum, int> WildcardsChange { get; set; }
+        public Dictionary<string, int> WildcardsChange { get; set; }
     }
 
     public class GetUserHistoryForDateResponseInfo
@@ -55,9 +55,13 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
         public int Gold { get; set; }
         public int Gems { get; set; }
         public float VaultProgress { get; set; }
-        public Dictionary<RarityEnum, int> Wildcards { get; set; }
+        public Dictionary<string, int> Wildcards { get; set; }
 
         public RankInfoDto ConstructedRank { get; set; }
         public RankInfoDto LimitedRank { get; set; }
+
+        public GetUserHistoryForDateResponseInfo()
+        {
+        }
     }
 }

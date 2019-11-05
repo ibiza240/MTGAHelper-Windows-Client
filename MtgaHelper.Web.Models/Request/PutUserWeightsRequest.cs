@@ -6,6 +6,6 @@ namespace MTGAHelper.Web.UI.Model.Request
 {
     public class PutUserWeightsRequest
     {
-        public Dictionary<RarityEnum, UserWeightDto> Weights { get; set; }
+        public Dictionary<string, UserWeightDto> Weights { get; set; }
     }
 }

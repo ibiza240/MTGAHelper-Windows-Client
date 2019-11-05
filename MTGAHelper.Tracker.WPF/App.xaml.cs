@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -32,6 +33,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -91,33 +93,35 @@ namespace MTGAHelper.Tracker.WPF
             }
             catch (ServerNotAvailableException)
             {
-                MessageBox.Show("The server is not available at this moment, please retry in a few minutes. If you want to report this downtime, please leave a message on the Discord server (https://discord.gg/GTd3RMd)");
+                MessageBox.Show("The server is not available at this moment, please retry in a few minutes. If you want to report this downtime, please leave a message on the Discord server (https://discord.gg/GTd3RMd)", "MTGAHelper");
                 Shutdown();
             }
             catch (Exception ex)
             {
-                var userId = "N/A";
-                var fileAppSettings = Path.Combine(folderForConfigAndLog, "appSettings.json");
-                if (File.Exists(fileAppSettings))
+                //var userId = "N/A";
+                //var fileAppSettings = Path.Combine(folderForConfigAndLog, "appSettings.json");
+                //if (File.Exists(fileAppSettings))
                 {
                     try
                     {
-                        string fileContent = "";
-                        using (FileStream fs = new FileStream(fileAppSettings, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                        using (var sr = new StreamReader(fs))
-                            fileContent = sr.ReadToEnd();
+                        //string fileContent = "";
+                        //using (FileStream fs = new FileStream(fileAppSettings, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        //using (var sr = new StreamReader(fs))
+                        //    fileContent = sr.ReadToEnd();
 
-                        var appSettings = TryDeserializeJson<ConfigModelApp>(fileContent, true);
-                        userId = appSettings.UserId;
+                        //var appSettings = TryDeserializeJson<ConfigModelApp>(fileContent, true);
+                        //userId = mainWindow.vm.Account.MtgaHelperUserId; //appSettings.UserId;
                         Log.Error(ex, "Error at startup:");
+                        MessageBox.Show($"Error at startup: {ex.Message}{Environment.NewLine}Please check the latest application log file for details or contact me on Discord if you need more help");
                     }
                     catch
                     {
                         // Ignore errors
+                        MessageBox.Show("Fatal error. Please contact me on the Discord server so we can troubleshoot that");
                     }
                 }
 
-                new Business.ServerApiCaller(null, null).LogErrorRemote(userId, Web.UI.Model.Request.ErrorTypeEnum.Startup, ex);
+                //new Business.ServerApiCaller(null, null).LogErrorRemote(userId, Web.UI.Model.Request.ErrorTypeEnum.Startup, ex);
                 Shutdown();
             }
         }
@@ -125,10 +129,13 @@ namespace MTGAHelper.Tracker.WPF
         void CheckForServerMessage()
         {
             var msgs = TryDownloadFromServer(DownloadTrackerClientMessages);
-            var version = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion;
-            if (msgs.ContainsKey(version))
+            if (msgs != null)
             {
-                MessageBox.Show(msgs[version], "Message from server");
+                var version = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion;
+                if (msgs.ContainsKey(version))
+                {
+                    MessageBox.Show(msgs[version], "Message from server");
+                }
             }
         }
 
@@ -143,8 +150,15 @@ namespace MTGAHelper.Tracker.WPF
 
         void ConfigureApp()
         {
+            var fileAppSettings = Path.Combine(folderForConfigAndLog, "appsettings.json");
+            if (File.Exists(fileAppSettings) == false || new FileInfo(fileAppSettings).Length == 0)
+            {
+                var defaultSettings = JsonConvert.SerializeObject(new ConfigModelApp());
+                File.WriteAllText(fileAppSettings, defaultSettings);
+            }
+
             var configuration = new ConfigurationBuilder()
-                .AddJsonFile(Path.Combine(folderForConfigAndLog, "appsettings.json"), optional: false, reloadOnChange: true)
+                .AddJsonFile(fileAppSettings, optional: false, reloadOnChange: true)
                 .Build();
 
             Log.Logger = new LoggerConfiguration()
@@ -175,9 +189,9 @@ namespace MTGAHelper.Tracker.WPF
 
             var configAppLib = provider.GetService<IOptionsMonitor<MTGAHelper.Lib.Config.ConfigModelApp>>();
             var folderData = Path.Combine(folderForConfigAndLog, "data");
+            Directory.CreateDirectory(folderData);
             configAppLib.CurrentValue.FolderData = folderData;
             configApp = provider.GetService<IOptionsMonitor<ConfigModelApp>>().CurrentValue;
-            Directory.CreateDirectory(folderData);
             filePathAllCards = Path.Combine(folderData, "AllCardsCached.json");
             filePathDateFormats = Path.Combine(folderForConfigAndLog, "data", "dateFormats.json");
         }

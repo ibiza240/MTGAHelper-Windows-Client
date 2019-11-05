@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MTGAHelper.Tracker.WPF.Views.UserControls"
         xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
         mc:Ignorable="d" 
-        d:DesignHeight="800" d:DesignWidth="400">
+        d:DesignHeight="700" d:DesignWidth="400">
 
     <UserControl.Resources>
         <helpers:BoolToStringConverter x:Key="BoolToVisConverter" TrueValue="Visible" FalseValue="Collapsed" />

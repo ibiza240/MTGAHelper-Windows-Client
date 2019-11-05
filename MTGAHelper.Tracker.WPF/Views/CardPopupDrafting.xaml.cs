@@ -14,6 +14,13 @@ using System.Windows.Threading;
 
 namespace MTGAHelper.Tracker.WPF.Views
 {
+    public enum ForceCardPopupSideEnum
+    {
+        None,
+        Left,
+        Right,
+    }
+
     /// <summary>
     /// Interaction logic for CardPopup.xaml
     /// </summary>
@@ -47,11 +54,20 @@ namespace MTGAHelper.Tracker.WPF.Views
             this.vm.SetDraftCard(cardVM, showGlobalMTGAHelperSays);
         }
 
-        public void SetCardPopupPosition(int top, int left)
+        public void SetCardPopupPosition(ForceCardPopupSideEnum side, int mainWindowTop, int mainWindowLeft, int mainWindowWidth)
         {
-            var width = (int)Width;
-            var leftAdjusted = left < SystemParameters.WorkArea.Width / 2 ? left + width : left - width;
-            Top = top;
+            var popupWidth = (int)Width;
+
+            var toLeft = mainWindowLeft - popupWidth;
+            var toRight = mainWindowLeft + mainWindowWidth;
+
+            var leftAdjusted = mainWindowLeft < SystemParameters.WorkArea.Width / 2 ? toRight : toLeft;
+            if (side == ForceCardPopupSideEnum.Left)
+                leftAdjusted = toLeft;
+            else if (side == ForceCardPopupSideEnum.Right)
+                leftAdjusted = toRight;
+
+            Top = mainWindowTop;
             Left = leftAdjusted;
         }
     }

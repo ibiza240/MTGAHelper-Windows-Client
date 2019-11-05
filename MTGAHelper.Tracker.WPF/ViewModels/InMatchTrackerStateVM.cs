@@ -57,7 +57,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         //public List<LibraryCardWithAmountVM> FullDeck => fullDeck;
         public CardsListVM MyLibrary { get; set; } = new CardsListVM();
         public CardsListVM OpponentCardsSeen { get; set; } = new CardsListVM(false);
-        public CardsListVM FullDeck { get; set; } = new CardsListVM();
+        public CardsListVM MySideboard { get; set; } = new CardsListVM(false);
+        //public CardsListVM FullDeck { get; set; } = new CardsListVM(false);
 
         public int LibraryCardsCount => MyLibrary.Cards.Sum(i => i.Amount);
         public int LibraryLandsCount => MyLibrary.Cards.Where(i => i.Type.Contains("Land")).Sum(i => i.Amount);
@@ -72,7 +73,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             priorityPlayer = 0;
             MyLibrary.ResetCards();
             OpponentCardsSeen.ResetCards();
-            FullDeck.ResetCards();
+            MySideboard.ResetCards();
+            //FullDeck.ResetCards();
 
             Stats.Refresh(new LibraryCardWithAmountVM[0]);
             TimerMe.Reset();
@@ -80,7 +82,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
             RaisePropertyChangedEvent(nameof(MyLibrary));
             RaisePropertyChangedEvent(nameof(OpponentCardsSeen));
-            RaisePropertyChangedEvent(nameof(FullDeck));
+            RaisePropertyChangedEvent(nameof(MySideboard));
+            //RaisePropertyChangedEvent(nameof(FullDeck));
         }
 
         internal void SetInMatchStateBuffered(InGameTrackerState state)
@@ -93,7 +96,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }
         }
 
-        internal void SetCardsDraftFromBuffered()
+        internal void SetInMatchStateFromBuffered()
         {
             if (updateCardsInMatchTrackingBuffered == false)
                 return;
@@ -134,7 +137,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 // Cards lists
                 if (stateBuffered.MySeatId > 0)
                 {
-                    MyLibrary.ConvertCardList(stateBuffered.CardsByZone[stateBuffered.MySeatId][ZoneSimpleEnum.ZoneType_Library].ToDictionary(i => i.Key, i => i.Value.Count));
+                    MyLibrary.ConvertCardList(stateBuffered.CardsByZone[stateBuffered.MySeatId][ZoneSimpleEnum.ZoneType_Library]
+                        .ToDictionary(i => i.Key, i => i.Value.Count));
 
                     var opponentCards = stateBuffered.OpponentCardsSeen
                         .GroupBy(i => i.GrpId)
@@ -142,7 +146,12 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
                     OpponentCardsSeen.ConvertCardList(opponentCards);
 
+                    MySideboard.ConvertCardList(stateBuffered.CardsByZone[stateBuffered.MySeatId][ZoneSimpleEnum.ZoneType_Sideboard]
+                        .ToDictionary(i => i.Key, i => i.Value.Count));
+
                     RaisePropertyChangedEvent(nameof(MyLibrary));
+                    RaisePropertyChangedEvent(nameof(MySideboard));
+                    //RaisePropertyChangedEvent(nameof(FullDeck));
                     RaisePropertyChangedEvent(nameof(LibraryCardsCount));
                     RaisePropertyChangedEvent(nameof(LibraryLandsCount));
                     RaisePropertyChangedEvent(nameof(OpponentCardsSeen));

@@ -10,6 +10,10 @@ namespace MTGAHelper.Entity
         public DateTime DateTime;
         public T Info;
 
+        public InfoByDate()
+        {
+        }
+
         public InfoByDate(DateTime datetime, T info)
         {
             DateTime = datetime;

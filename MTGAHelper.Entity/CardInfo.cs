@@ -9,7 +9,6 @@ namespace MTGAHelper.Entity
     {
         public string Set { get; set; }
         public bool NotInBooster { get; set; }
-        [JsonConverter(typeof(StringEnumConverter))]
         public RarityEnum Rarity { get; set; }
         public int NbMissing { get; set; }
         public float MissingWeight { get; set; }

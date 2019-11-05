@@ -37,8 +37,10 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
         public Dictionary<string, InfoCardMissingSummary[]> GetModelSummary()
         {
             var ret = ByCard
+                //.Where(i => i.Value.Card.setAndInBooster != Card.NOTINBOOSTER)
                 .Where(i => i.Value.NbMissing > 0)
                 .GroupBy(i => i.Value.Card.setAndInBooster)
+                .OrderByDescending(i => i.Sum(x => x.Value.MissingWeight))
                 .ToDictionary(i => i.Key, x => x
                     .OrderBy(i => i.Value.Card.GetRarityEnum(true))
                     .GroupBy(i => i.Value.Card.GetRarityEnum(true)).Select(i => new InfoCardMissingSummary

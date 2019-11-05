@@ -34,7 +34,7 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             InitializeComponent();
         }
 
-        public StatusBarTop Init(MainWindow mainWindow, MainWindowVM vm,  /*DraftHelper draftHelper,LogProcessor logProcessor, string userId,*/ ICollection<Card> allCards)
+        public StatusBarTop Init(MainWindow mainWindow, MainWindowVM vm, /*DraftHelper draftHelper,LogProcessor logProcessor, string userId,*/ ICollection<Card> allCards)
         {
             this.mainWindow = mainWindow;
             this.vm = vm;
@@ -52,7 +52,14 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
 
         private void Menu_Minimize_Click(object sender, RoutedEventArgs e)
         {
-            mainWindow.WindowState = WindowState.Minimized;
+            if (mainWindow.configApp.MinimizeToSystemTray)
+            {
+                mainWindow.ShowInTaskbar = false;
+                mainWindow.trayIcon.Visible = true;
+                mainWindow.Visibility = Visibility.Hidden;
+            }
+            else
+                mainWindow.WindowState = WindowState.Minimized;
         }
 
         private void Menu_About_Click(object sender, RoutedEventArgs e)
@@ -80,6 +87,12 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
 
         private void Menu_UploadNow_Click(object sender, RoutedEventArgs e)
         {
+            if (vm.Account.IsAuthenticated == false)
+            {
+                MessageBox.Show("Please sign-in first.", "MTGAHelper");
+                return;
+            }
+
             if (vm.IsUploading)
             {
                 MessageBox.Show($"The tracker is already uploading data, sorry for the slow speed. This waiting time can be greatly reduced, see how you can show your support on the website. Thanks!", "MTGAHelper");
@@ -107,6 +120,11 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             menuItemAlwaysOnTop.IsChecked = alwaysOnTop;
             vm.AlwaysOnTop.Value = alwaysOnTop;
             mainWindow.Topmost = alwaysOnTop;
+        }
+
+        private void Menu_Signin_Click(object sender, RoutedEventArgs e)
+        {
+            vm.SetMainWindowContext(MainWindowContextEnum.Welcome);
         }
 
         //int i = 0;

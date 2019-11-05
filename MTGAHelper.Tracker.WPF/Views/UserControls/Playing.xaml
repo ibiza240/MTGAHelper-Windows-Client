@@ -21,10 +21,8 @@
             </Style.Triggers>
         </Style>
     </UserControl.Style>
-    <Grid Margin="0">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -33,7 +31,7 @@
             <TextBlock>Match in progress</TextBlock>
         </Label>-->
         
-        <TabControl Grid.Row="2" TabStripPlacement="Left" Margin="0" Background="Transparent" BorderThickness="0">
+        <TabControl Grid.Row="0" TabStripPlacement="Left" Background="Transparent" BorderThickness="0">
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="HeaderTemplate">
@@ -87,7 +85,7 @@
                                 </TextBlock.Text>
                             </TextBlock>
                         </Label>
-                        <uc:SimpleCardsList Grid.Row="2" x:Name="CardsLibrary" />
+                        <uc:SimpleCardsList Grid.Row="2" x:Name="CardsMyLibrary" DataContext="{Binding InMatchState.MyLibrary}" />
                     </Grid>
                 </TabItem.Content>
             </TabItem>
@@ -103,6 +101,20 @@
                             <TextBlock>Opponent cards seen</TextBlock>
                         </Label>
                         <uc:SimpleCardsList Grid.Row="1" x:Name="CardsOpponent" DataContext="{Binding InMatchState.OpponentCardsSeen}" />
+                    </Grid>
+                </TabItem.Content>
+            </TabItem>
+            <TabItem Header="Sideboard">
+                <TabItem.Content>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" FontSize="16" FontWeight="Bold">
+                            <TextBlock>Your sideboard</TextBlock>
+                        </Label>
+                        <uc:SimpleCardsList Grid.Row="1" x:Name="CardsMySideboard" DataContext="{Binding InMatchState.MySideboard}" />
                     </Grid>
                 </TabItem.Content>
             </TabItem>
@@ -131,7 +143,7 @@
             </TabItem>-->
         </TabControl>
         
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />

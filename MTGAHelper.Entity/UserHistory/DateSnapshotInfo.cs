@@ -1,4 +1,5 @@
 ﻿using MTGAHelper.Entity;
+using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Lib.Config.Users;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
 using System;
@@ -15,6 +16,9 @@ namespace MTGAHelper.Lib.UserHistory
         public Dictionary<int, int> Collection { get; set; } = new Dictionary<int, int>();
         public Dictionary<string, PlayerProgress> PlayerProgress { get; set; } = new Dictionary<string, PlayerProgress>();
         public ICollection<MatchResult> Matches { get; set; } = new MatchResult[0];
+        public ICollection<PlayerQuest> PlayerQuests { get; set; } = new PlayerQuest[0];
+        public Dictionary<DateTime, InventoryUpdatedRaw> InventoryUpdates { get; set; } = new Dictionary<DateTime, InventoryUpdatedRaw>();
+        public Dictionary<DateTime, PostMatchUpdateRaw> PostMatchUpdates { get; set; } = new Dictionary<DateTime, PostMatchUpdateRaw>();
 
         //public int Wins { get; set; }
         //public int Losses { get; set; }

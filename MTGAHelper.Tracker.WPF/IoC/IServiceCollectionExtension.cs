@@ -21,16 +21,17 @@ namespace MTGAHelper.Tracker.WPF.IoC
                 .AddSingleton<InMatchTrackerStateVM>()
                 .AddSingleton<ProcessMonitor>()
                 .AddSingleton<FileMonitor>()
+                .AddSingleton<ServerApiCaller>()
 
                 //.AddTransient<Ready>()
                 //.AddTransient<StatusBarTop>()
-                .AddTransient<OptionsWindow>()
+                //.AddTransient<OptionsWindow>()
                 .AddTransient<LogFileZipper>()
-                .AddTransient<ServerApiCaller>()
                 .AddTransient<StartupShortcutManager>()
                 .AddTransient<DraftHelper>()
                 .AddTransient<StatusBlinker>()
                 .AddTransient<MtgaResourcesLocator>()
+                .AddTransient<ExternalProviderTokenManager>()
                 //.AddTransient<LogProcessor>()
                 ;
         }

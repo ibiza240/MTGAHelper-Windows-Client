@@ -9,9 +9,11 @@
         Title="Options" Icon="/Assets/images/wcC.png"
         Width="800" SizeToContent="Height" ResizeMode="NoResize" Background="#272b30"
         PreviewKeyDown="Window_PreviewKeyDown">
+    <Window.Resources>
+        <helpers:BoolToStringConverter x:Key="BoolToVisHiddenConverter" TrueValue="Visible" FalseValue="Hidden" />
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -24,7 +26,8 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Label Grid.Row="0" Grid.Column="1" FontSize="14">Values are saved upon closing this window</Label>
-
+        
+        <!--
         <Label Grid.Row="1" Grid.Column="1">
             <TextBlock TextWrapping="Wrap">
                 If you don't know your MTGAHelper User Id, you can view it by going to your 
@@ -39,21 +42,35 @@
         <Label Grid.Row="2" Grid.Column="0" HorizontalContentAlignment="Right">User Id</Label>
         <TextBox Grid.Row="2" Grid.Column="1" Height="20" x:Name="txtUserId"
                      Text="{Binding Path=UserId, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Margin="0,0,5,0" />
-        
-        <Label  Grid.Row="3" Grid.Column="0" HorizontalContentAlignment="Right">Log file full location</Label>
-        <TextBox Grid.Row="3" Grid.Column="1" Height="20" x:Name="txtLogFilePath"
-                     Text="{Binding Path=LogFilePath, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Margin="0,0,5,0" />
-        
-        <Label Grid.Row="4" Grid.Column="0" HorizontalContentAlignment="Right">MTGA game full location</Label>
-        <TextBox Grid.Row="4" Grid.Column="1" Height="20" x:Name="txtGameFilePath"
-                     Text="{Binding Path=GameFilePath, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Margin="0,0,5,0" />
+        -->
 
-        <CheckBox Grid.Row="5" Grid.Column="1" Height="20" x:Name="chkMinimizeToSystemTray" Margin="0,5,0,0"
+        <Label  Grid.Row="1" Grid.Column="0" HorizontalContentAlignment="Right">Log file full location</Label>
+        <TextBox Grid.Row="1" Grid.Column="1" Height="20" x:Name="txtLogFilePath"
+                     Text="{Binding LogFilePath}" Margin="0,0,5,0" />
+
+        <Label Grid.Row="2" Grid.Column="0" HorizontalContentAlignment="Right">MTGA game full location</Label>
+        <TextBox Grid.Row="2" Grid.Column="1" Height="20" x:Name="txtGameFilePath"
+                     Text="{Binding GameFilePath}" Margin="0,0,5,0" />
+
+        <CheckBox Grid.Row="3" Grid.Column="1" Height="20" x:Name="chkMinimizeToSystemTray" Margin="0,5,0,0"
                       Content="Minimize window to system tray"
-                      IsChecked="{Binding Path=MinimizeToSystemTray, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
-        
-        <CheckBox Grid.Row="6" Grid.Column="1" Height="20" x:Name="chkRunOnStartup" Margin="0,5,0,0"
+                      IsChecked="{Binding MinimizeToSystemTray}" />
+
+        <CheckBox Grid.Row="4" Grid.Column="1" Height="20" x:Name="chkRunOnStartup" Margin="0,5,0,0"
                       Content="Start MTGAHelper tracker on Windows startup"
-                      IsChecked="{Binding Path=RunOnStartup, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+                      IsChecked="{Binding RunOnStartup}" />
+
+        <CheckBox Grid.Row="5" Grid.Column="0" Height="20" x:Name="chkForceCardPopup"
+                    Content="Force popup position" HorizontalAlignment="Right" Margin="0,0,5,0"
+                    IsChecked="{Binding ForceCardPopup}" />
+        <ComboBox Grid.Row="5" Grid.Column="1" Height="20" x:Name="lstForceCardPopupSide" Margin="0,0,0,5" Width="200"
+                  ItemsSource="{Binding ForceCardPopupSides, Mode=OneTime}" SelectedItem="{Binding ForceCardPopupSide}"
+                  HorizontalAlignment="Left" Visibility="{Binding ForceCardPopup, Converter={StaticResource BoolToVisHiddenConverter}}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Foreground="Black" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
     </Grid>
 </Window>

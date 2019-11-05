@@ -8,18 +8,33 @@
     <ApplicationIcon>wcC.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>MTGAHelper.Tracker</AssemblyName>
-    <Version>1.2.4</Version>
+    <Version>1.2.6</Version>
     <Company>MTGAHelper</Company>
     <Authors>MTGAHelper</Authors>
     <Description>MTGAHelper Local client</Description>
     <Copyright>2019 MTGAHelper</Copyright>
     <Configurations>Debug;Release;DebugWithServer</Configurations>
-    <AssemblyVersion>1.2.4.0</AssemblyVersion>
-    <FileVersion>1.2.4.0</FileVersion>
+    <AssemblyVersion>1.2.6.0</AssemblyVersion>
+    <FileVersion>1.2.6.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <COMReference Include="IWshRuntimeLibrary.dll">
+      <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <Private>true</Private>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Assets\Images\banner.jpg" />
+    <None Remove="Assets\Images\Facebook.ico" />
+    <None Remove="Assets\Images\Google.png" />
     <None Remove="Assets\Images\loading.gif" />
     <None Remove="Assets\Images\MTGA.png" />
     <None Remove="Assets\Images\star.png" />
@@ -41,19 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <COMReference Include="IWshRuntimeLibrary.dll">
-      <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-      <Private>true</Private>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Google.Apis.Oauth2.v2" Version="1.41.1.1602" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.1.1" />
@@ -74,6 +77,8 @@
 
   <ItemGroup>
     <Resource Include="Assets\Images\banner.jpg" />
+    <Resource Include="Assets\Images\Facebook.ico" />
+    <Resource Include="Assets\Images\Google.png" />
     <Resource Include="Assets\Images\loading.gif" />
     <Resource Include="Assets\Images\MTGA.png" />
     <Resource Include="Assets\Images\star.png" />
@@ -81,12 +86,6 @@
     <Resource Include="Assets\Images\Treasure.png" />
     <Resource Include="Assets\Images\wcC.ico" />
     <Resource Include="Assets\Images\wcC.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

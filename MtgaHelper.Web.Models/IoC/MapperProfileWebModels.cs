@@ -3,12 +3,15 @@ using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.MtgaDeckStats;
+using MTGAHelper.Lib.CollectionDecksCompare;
 using MTGAHelper.Lib.Config.Users;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
 using MTGAHelper.Lib.UserHistory;
 using MTGAHelper.Web.Models;
+using MTGAHelper.Web.Models.Response.Account;
 using MTGAHelper.Web.Models.Response.User;
 using MTGAHelper.Web.Models.SharedDto;
+using MTGAHelper.Web.UI.Model.Response;
 using MTGAHelper.Web.UI.Model.Response.Dto;
 using MTGAHelper.Web.UI.Model.Response.User;
 using MTGAHelper.Web.UI.Model.Response.User.History;
@@ -162,6 +165,21 @@ namespace MTGAHelper.Web.UI.IoC
 
             CreateMap<MtgaDeckAnalysis, MtgaDeckAnalysisDto>();
             CreateMap<MtgaDeckAnalysisMatchInfo, MtgaDeckAnalysisMatchInfoDto>();
+
+            CreateMap<PlayerProgress, PlayerProgressDto>();
+
+            CreateMap<Inventory, InventoryResponseDto>();
+
+            CreateMap<DeckSummary, DeckSummaryResponseDto>();
+            CreateMap<DeckTrackedSummary, DeckTrackedSummaryResponseDto>();
+                //.ForMember(i => i.MissingWeightBase, i => i.MapFrom(x => x.MissingWeightBase == float.NaN ? 0 : x.MissingWeightBase))
+                //.ForMember(i => i.MissingWeight, i => i.MapFrom(x => x.MissingWeight == float.NaN ? 0 : x.MissingWeight))
+                //.ForMember(i => i.PriorityFactor, i => i.MapFrom(x => x.PriorityFactor == float.NaN ? 0 : x.PriorityFactor));
+
+            CreateMap<CardMissingDetailsModel, CardMissingDetailsModelResponseDto>();
+            CreateMap<InfoCardMissingSummary, InfoCardMissingSummaryResponseDto>();
+
+            CreateMap<AccountModel, AccountResponse>();
         }
     }
 }

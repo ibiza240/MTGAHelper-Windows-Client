@@ -7,14 +7,14 @@ namespace MTGAHelper.Web.Models.Response.User
 {
     public class UserPreferencesResponse
     {
-        public Dictionary<UserPreferenceEnum, dynamic> UserPreferences { get; set; } = new Dictionary<UserPreferenceEnum, dynamic>
+        public Dictionary<string, string> UserPreferences { get; set; } = new Dictionary<string, string>
         {
-            { UserPreferenceEnum.ThemeIsDark, true },
-            { UserPreferenceEnum.CollectionSetsOrder, "NewestFirst" },
-            { UserPreferenceEnum.LandsPickAll, false },
+            { UserPreferenceEnum.ThemeIsDark.ToString(), "True" },
+            { UserPreferenceEnum.CollectionSetsOrder.ToString(), "NewestFirst" },
+            { UserPreferenceEnum.LandsPickAll.ToString(), "False" },
         };
 
-        public UserPreferencesResponse(Dictionary<UserPreferenceEnum, dynamic> userPreferences)
+        public UserPreferencesResponse(Dictionary<string, string> userPreferences)
         {
             UserPreferences = userPreferences;
         }

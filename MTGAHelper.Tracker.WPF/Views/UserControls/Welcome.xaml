@@ -5,8 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MTGAHelper.Tracker.WPF.Views"
              xmlns:uc="clr-namespace:MTGAHelper.Tracker.WPF.Views.UserControls"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
+             mc:Ignorable="d">
     <UserControl.Style>
         <Style TargetType="{x:Type uc:Welcome}">
             <Setter Property="Visibility" Value="Hidden" />
@@ -24,9 +24,65 @@
 
         <Label>
             <TextBlock TextWrapping="Wrap">
-                Please start by entering your User Id in the Options menu
-                <Hyperlink Click="HyperlinkOptions_Click" FocusVisualStyle="{x:Null}">here</Hyperlink>.
+                You must first sign-in to MTGAHelper.
             </TextBlock>
         </Label>
+
+        <StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Height="32" Background="{StaticResource BackgroundBrush}" Click="SigninGoogle_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Assets/Images/Google.png" Width="16" Height="16" />
+                        <TextBlock Margin="5,0,0,0">
+                            With Google
+                        </TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button Grid.Column="1" Background="{StaticResource BackgroundBrush}" Click="SigninFacebook_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Assets/Images/Facebook.ico" Width="16" Height="16" />
+                        <TextBlock Margin="5,0,0,0">
+                            With Facebook
+                        </TextBlock>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <Label FontSize="16" FontWeight="Bold" Margin="0,10,0,0">Or with a local account</Label>
+            <Label Padding="5,0,5,0">
+                <TextBlock TextWrapping="Wrap">
+                    You will have to create a local account first on the 
+                    <Hyperlink NavigateUri="https://mtgahelper.com" helpers:HyperlinkExtensions.IsExternal="true">
+                        MTGAHelper website
+                    </Hyperlink>.
+                </TextBlock>
+            </Label>
+            <Grid Margin="0,10,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right">Email:</Label>
+                <TextBox Grid.Row="0" Grid.Column="1" Height="20" Text="{Binding SigninEmail}"></TextBox>
+
+                <Label Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right">Password:</Label>
+                <PasswordBox x:Name="txtPassword" Grid.Row="1" Grid.Column="1" Height="20"></PasswordBox>
+                <!--<TextBox Grid.Row="1" Grid.Column="1" Height="20" Text="{Binding SigninPassword}"></TextBox>-->
+
+                <Button Grid.Row="2" Grid.Column="1" Height="24" Background="{StaticResource BackgroundBrush}" Click="ButtonLoginLocal_Click">
+                    Sign-in
+                </Button>
+            </Grid>
+        </StackPanel>
     </StackPanel>
 </UserControl>

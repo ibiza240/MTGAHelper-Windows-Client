@@ -13,10 +13,11 @@ namespace MTGAHelper.Web.UI.Model.Response.User
         public string CollectionDate { get; set; }
         public string LastUploadHash { get; set; }
         public ICollection<CollectionCardDto> Cards { get; set; } = new CollectionCardDto[0];
-        public Inventory MtgaUserProfile { get; set; } = new Inventory();
+        public InventoryResponseDto MtgaUserProfile { get; set; } = new InventoryResponseDto();
 
         public RankInfoDto ConstructedRank { get; set; }
         public RankInfoDto LimitedRank { get; set; }
+        public Dictionary<string, PlayerProgressDto> PlayerProgress { get; set; }
 
         public CollectionResponse()
         {
@@ -28,7 +29,8 @@ namespace MTGAHelper.Web.UI.Model.Response.User
             string lastUploadHash,
             ICollection<CardWithAmount> collection,
             Inventory mtgaUserProfile,
-            ICollection<ConfigModelRankInfo> ranks)
+            ICollection<ConfigModelRankInfo> ranks,
+            Dictionary<string, PlayerProgress> playerProgress)
         {
             CollectionDate = date.ToString("yyyy-MM-dd HH:mm:ss");
             LastUploadHash = lastUploadHash;
@@ -40,9 +42,10 @@ namespace MTGAHelper.Web.UI.Model.Response.User
             //    System.Diagnostics.Debugger.Break();
             //}
 
-            MtgaUserProfile = mtgaUserProfile ?? new Inventory();
+            MtgaUserProfile = mtgaUserProfile == null ? new InventoryResponseDto() : Mapper.Map<InventoryResponseDto>(mtgaUserProfile);
             ConstructedRank = Mapper.Map<RankInfoDto>(ranks.First(i => i.Format == ConfigModelRankInfoFormatEnum.Constructed));
             LimitedRank = Mapper.Map<RankInfoDto>(ranks.First(i => i.Format == ConfigModelRankInfoFormatEnum.Limited));
+            PlayerProgress = Mapper.Map<Dictionary<string, PlayerProgressDto>>(playerProgress);
         }
     }
 
@@ -52,5 +55,13 @@ namespace MTGAHelper.Web.UI.Model.Response.User
         public int Level { get; set; }
         public int Step { get; set; }
         public float Percentile { get; set; }
+    }
+
+    public class PlayerProgressDto
+    {
+        public string TrackName { get; set; }
+        public int CurrentLevel { get; set; }
+        public int CurrentExp { get; set; }
+        public int CurrentOrbCount { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MTGAHelper.Entity;
+using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Lib.Config.Users;
 using MTGAHelper.Lib.UserHistory;
 using System;
@@ -16,9 +17,12 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public IList<InfoByDate<Inventory>> InventoryByDate { get; set; } = new List<InfoByDate<Inventory>>();
         public IList<InfoByDate<Dictionary<int, int>>> CollectionByDate { get; set; } = new List<InfoByDate<Dictionary<int, int>>>();
         public IList<InfoByDate<IList<MatchResult>>> MatchesByDate { get; set; } = new List<InfoByDate<IList<MatchResult>>>();
+        public IList<InfoByDate<IList<PlayerQuest>>> PlayerQuestsByDate { get; set; } = new List<InfoByDate<IList<PlayerQuest>>>();
         public IList<InfoByDate<IList<ConfigModelRawDeck>>> DecksByDate { get; set; } = new List<InfoByDate<IList<ConfigModelRawDeck>>>();
         public IList<InfoByDate<DateSnapshotDiff>> DiffByDate { get; set; } = new List<InfoByDate<DateSnapshotDiff>>();
         public IList<InfoByDate<Dictionary<string, PlayerProgress>>> PlayerProgressByDate { get; set; } = new List<InfoByDate<Dictionary<string, PlayerProgress>>>();
+        public IList<InfoByDate<Dictionary<DateTime, InventoryUpdatedRaw>>> InventoryUpdatesByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, InventoryUpdatedRaw>>>();
+        public IList<InfoByDate<Dictionary<DateTime, PostMatchUpdateRaw>>> PostMatchUpdatesByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, PostMatchUpdateRaw>>>();
 
         public uint LastUploadHash { get; set; }
 
@@ -48,11 +52,20 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
             foreach (var progress in PlayerProgressByDate)
                 CreateOrGetDateSnapshotInfo(progress.DateTime).PlayerProgress = progress.Info;
 
+            foreach (var quest in PlayerQuestsByDate)
+                CreateOrGetDateSnapshotInfo(quest.DateTime).PlayerQuests = quest.Info;
+
             foreach (var matches in MatchesByDate)
                 CreateOrGetDateSnapshotInfo(matches.DateTime).Matches = matches.Info;
 
             foreach (var rankInfo in RankInfoByDate)
                 CreateOrGetDateSnapshotInfo(rankInfo.DateTime).RankInfo = rankInfo.Info;
+
+            foreach (var inventoryUpdate in InventoryUpdatesByDate)
+                CreateOrGetDateSnapshotInfo(inventoryUpdate.DateTime).InventoryUpdates = inventoryUpdate.Info;
+
+            foreach (var postMatchUpdate in PostMatchUpdatesByDate)
+                CreateOrGetDateSnapshotInfo(postMatchUpdate.DateTime).PostMatchUpdates = postMatchUpdate.Info;
 
             //foreach (var decks in DecksByDate)
             //    CreateOrGetDateSnapshotInfo(decks.DateTime).Decks = decks.Info;
@@ -107,6 +120,9 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public InfoByDate<Inventory> GetLastInventory() => InventoryByDate.OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<Inventory>(default(DateTime), new Inventory());
 
+        public InfoByDate<IList<PlayerQuest>> GetLastPlayerQuests() => PlayerQuestsByDate.OrderBy(i => i.DateTime).LastOrDefault()
+            ?? new InfoByDate<IList<PlayerQuest>>(default(DateTime), new PlayerQuest[0]);
+
         public (DateSnapshotInfo info, DateSnapshotDiff diff) GetForDate(DateTime dateFor)
         {
             var resultForDate = new DateSnapshotInfo
@@ -116,8 +132,11 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
                 //Decks = DecksByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new ConfigModelRawDeck[0],
                 Inventory = InventoryByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Inventory(),
                 Matches = MatchesByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new MatchResult[0],
+                PlayerQuests = PlayerQuestsByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new PlayerQuest[0],
                 RankInfo = RankInfoByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new ConfigModelRankInfo[0],
-                PlayerProgress = PlayerProgressByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<string, PlayerProgress>(), 
+                PlayerProgress = PlayerProgressByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<string, PlayerProgress>(),
+                InventoryUpdates = InventoryUpdatesByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, InventoryUpdatedRaw>(),
+                PostMatchUpdates = PostMatchUpdatesByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, PostMatchUpdateRaw>(),
             };
 
             var diff = DiffByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DateSnapshotDiff();

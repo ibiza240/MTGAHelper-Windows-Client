@@ -17,7 +17,7 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
         public int GoldChange { get; set; }
         public int GemsChange { get; set; }
         public float VaultProgressChange { get; set; }
-        public Dictionary<RarityEnum, int> WildcardsChange { get; set; }
+        public Dictionary<string, int> WildcardsChange { get; set; }
         public int Wins { get; set; }
         public int Losses { get; set; }
 

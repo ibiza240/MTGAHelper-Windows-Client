@@ -8,6 +8,7 @@ namespace MTGAHelper.Lib.UserHistory
         public Dictionary<int, int> NewCards { get; set; } = new Dictionary<int, int>();
         public int GoldChange { get; set; }
         public int GemsChange { get; set; }
+        public Dictionary<string, int> XpChangeByTrack { get; set; } = new Dictionary<string, int>();
         public float VaultProgressChange { get; set; }
         public Dictionary<RarityEnum, int> WildcardsChange { get; set; } = new Dictionary<RarityEnum, int>
         {

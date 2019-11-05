@@ -29,7 +29,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
     {
         None = 0,
         LogFileNotFound = 1,
-        InvalidUserId = 2,
+        SigninRequired = 2,
         ServerUnavailable = 4,
         GameClientFileNotFound = 8,
     }

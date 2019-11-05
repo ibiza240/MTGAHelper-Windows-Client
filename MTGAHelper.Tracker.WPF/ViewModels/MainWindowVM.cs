@@ -4,18 +4,21 @@ using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using AutoMapper;
+using MTGAHelper.Entity;
 using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
 using MTGAHelper.Tracker.WPF.Business;
 using MTGAHelper.Tracker.WPF.Business.Monitoring;
 using MTGAHelper.Tracker.WPF.Models;
 using MTGAHelper.Tracker.WPF.Views;
 using MTGAHelper.Tracker.WPF.Views.Helpers;
+using MTGAHelper.Web.Models.Response.Account;
 using MTGAHelper.Web.UI.Model.Response.User;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
@@ -26,7 +29,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         NetworkStatusEnum networkStatusDisplayed;
         bool isGameRunning;
-        bool isInitialSetupDone => Problems.HasFlag(ProblemsFlags.LogFileNotFound) == false && Problems.HasFlag(ProblemsFlags.InvalidUserId) == false;
+        bool isInitialSetupDone => Problems.HasFlag(ProblemsFlags.LogFileNotFound) == false && Problems.HasFlag(ProblemsFlags.SigninRequired) == false;
 
         Dictionary<NetworkStatusEnum, string> dictStatus = new Dictionary<NetworkStatusEnum, string>
         {
@@ -40,7 +43,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         Dictionary<ProblemsFlags, string> dictProblems = new Dictionary<ProblemsFlags, string>
         {
             { ProblemsFlags.LogFileNotFound, "Log file not found" },
-            { ProblemsFlags.InvalidUserId, "Invalid User Id" },
+            { ProblemsFlags.SigninRequired, "Sign-in required" },
             { ProblemsFlags.ServerUnavailable, "Remote server unavailable" },
             { ProblemsFlags.GameClientFileNotFound, "MTGArena game not found" },
         };
@@ -53,6 +56,12 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public bool CanUpload => isInitialSetupDone && IsUploading == false;
 
         #region Bindings
+        public AccountResponse Account { get; set; } = new AccountResponse();
+
+        public string SigninEmail { get; set; }
+        public SecureString SigninPassword { get; set; }
+        public string FacebookAccessToken { get; set; }
+
         public InMatchTrackerStateVM InMatchState { get; set; }
 
         public ObservableProperty<bool> AlwaysOnTop { get; set; } = new ObservableProperty<bool>(true);
@@ -88,7 +97,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         //public string Username => Collection.MtgaUserProfile.PlayerId;
         public string CardsOwned => $"{Collection.Cards.Sum(i => i.Amount).ToString("#,##0")} cards owned{CollectionDateAsOf}";
         string CollectionDateAsOf => string.IsNullOrWhiteSpace(Collection.CollectionDate) || Collection.CollectionDate.StartsWith("0001") ?
-            string.Empty : $"{Environment.NewLine}as of {Collection.CollectionDate}";
+            string.Empty : $" as of {Collection.CollectionDate}";
         #endregion
 
         public MainWindowVM(StatusBlinker statusBlinker, InMatchTrackerStateVM inMatchState)
@@ -108,6 +117,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 WrapNetworkStatus(status, workToDo);
             });
         }
+
         internal void WrapNetworkStatus(NetworkStatusEnum status, Action workToDo)
         {
             statusBlinker.SetNetworkStatus(status, true);
@@ -146,21 +156,29 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             RaisePropertyChangedEvent(nameof(ShowLaunchMtgaGameClient));
         }
 
-        public void ValidateUserId(string userId)
+        internal void SetSignedIn(AccountResponse account)
         {
-            var isUserIdValid = Guid.TryParse(userId, out Guid g);
-            SetProblem(ProblemsFlags.InvalidUserId, isUserIdValid == false);
+            Account = account;
+
+            //void ValidateUserId(/*string userId*/)
+            //{
+            //var isUserIdValid = Guid.TryParse(userId, out Guid g);
+            SetProblem(ProblemsFlags.SigninRequired, Account.IsAuthenticated == false);
             //RaisePropertyChangedEvent(nameof(MainWindowContext));
 
-            if (isUserIdValid)
+            //if (isUserIdValid)
+            if (Account.IsAuthenticated)
                 RemoveWelcome();
+            //}
+
+            RaisePropertyChangedEvent(nameof(Account));
         }
 
         public void SetCollection(CollectionResponse collectionResponse)
         {
             Collection = collectionResponse;
             RaisePropertyChangedEvent(nameof(CardsOwned));
-            RemoveWelcome();
+            //RemoveWelcome();
         }
 
         public void RemoveWelcome()
@@ -227,7 +245,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         }
         internal void SetCardsInMatchTrackingFromBuffered()
         {
-            InMatchState.SetCardsDraftFromBuffered();
+            InMatchState.SetInMatchStateFromBuffered();
             //RaisePropertyChangedEvent(nameof(InMatchState));
         }
 

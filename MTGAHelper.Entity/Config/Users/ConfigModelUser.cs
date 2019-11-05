@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MTGAHelper.Entity
 {
@@ -66,6 +67,9 @@ namespace MTGAHelper.Lib.Config
         public List<int> LandsPreference { get; set; } = new List<int>();
 
         public List<string> NotificationsInactive { get; set; } = new List<string>();
+
+        public int NbDailyWinsExpected { get; set; } = 10;
+        public int NbWeeklyWinsExpected { get; set; } = 15;
 
         //public ICollection<ConfigModelRawDeck> MtgaDecks { get; set; }
 

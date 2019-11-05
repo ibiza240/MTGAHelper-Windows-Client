@@ -39,6 +39,8 @@
                     <MenuItem.ToolTip>
                         <ToolTip Background="#333333" Content="Menu" />
                     </MenuItem.ToolTip>
+                    <MenuItem Header="_Sign-in" Click="Menu_Signin_Click" />
+                    <Separator />
                     <MenuItem Header="_Options" Click="Menu_Options_Click" />
                     <MenuItem Header="Always on _Top" Click="Menu_AlwaysOnTop_Click" IsChecked="{Binding Path=AlwaysOnTop.Value}" x:Name="menuItemAlwaysOnTop" />
                     <MenuItem Header="_Upload log file now" Click="Menu_UploadNow_Click" />

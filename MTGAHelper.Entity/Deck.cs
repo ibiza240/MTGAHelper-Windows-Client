@@ -12,6 +12,7 @@ namespace MTGAHelper.Entity
         DeckCards Cards { get; }
 
         string Id { get; }
+        string GetId();
 
         bool FilterName(string filter);
         bool FilterColor(string filter);
@@ -38,7 +39,7 @@ namespace MTGAHelper.Entity
 
         public string Id { get; protected set; }
 
-        protected string GetId()
+        public string GetId()
         {
             var cardsMain = Cards.QuickCardsMain.Values.GroupBy(i => i.Card.name).Select(i => $"{i.Sum(x => x.Amount)} {i.Key}");
             var cardsSideboard = Cards.QuickCardsSideboard.Values.GroupBy(i => i.Card.name).Select(i => $"{i.Sum(x => x.Amount)} {i.Key}");

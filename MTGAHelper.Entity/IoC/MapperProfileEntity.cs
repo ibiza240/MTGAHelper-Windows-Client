@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AutoMapper;
+using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Lib.Cache;
 
 namespace MTGAHelper.Entity.IoC
@@ -26,6 +27,9 @@ namespace MTGAHelper.Entity.IoC
 
             CreateMap<KeyValuePair<int, int>, CardWithAmount>()
                 .ConvertUsing(i => new CardWithAmount(dictAllCards[i.Key], i.Value));
+
+            CreateMap<QuestUpdate, PlayerQuest>();
+            CreateMap<TrackDiff, PlayerProgress>();
         }
     }
 }

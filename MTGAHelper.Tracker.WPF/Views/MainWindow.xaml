@@ -9,7 +9,7 @@
         mc:Ignorable="d"
         Title="MTGAHelper" Icon="/Assets/images/wcC.png"
         Top="0" Left="0" Height="900" Width="320"
-        Loaded="Window_Loaded" StateChanged="Window_StateChanged"
+        Loaded="Window_Loaded"
         Activated="Window_Activated" Deactivated="Window_Deactivated"
         LocationChanged="Window_LocationChanged"
         Closed="Window_Closed"
@@ -76,6 +76,7 @@
 
         <uc:StatusBarTop Grid.Row="0" x:Name="statusBarTop" MouseLeftButtonDown="StatusBarTop_OnMouseLeftButtonDown" />
 
+        <!--<Label Grid.Row="1" Content="{Binding MainWindowContext}" />-->
         <uc:Ready Grid.Row="1" x:Name="ucReady" />
         <uc:Welcome Grid.Row="1" x:Name="ucWelcome" />
 
@@ -95,7 +96,7 @@
 
         <uc:Playing Grid.Row="1" x:Name="ucPlaying" />
 
-        <ItemsControl Grid.Row="2" Name="lstProblems" ItemsSource="{Binding ProblemsList, UpdateSourceTrigger=PropertyChanged}" Margin="10,0,10,0">
+        <ItemsControl Grid.Row="2" Name="lstProblems" Background="LightPink" ItemsSource="{Binding ProblemsList}" Margin="10,0,10,0">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Label>
@@ -105,7 +106,7 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <Slider Grid.Row="3" Minimum="20" Maximum="100" Value="{Binding Opacity, UpdateSourceTrigger=PropertyChanged}" Background="#181b1f"
+        <Slider Grid.Row="3" Minimum="20" Maximum="100" Value="{Binding Opacity}" Background="#181b1f"
                 ValueChanged="Slider_ValueChanged" Style="{StaticResource MyCustomStyleForSlider}" LargeChange="10" />
 
         <StatusBar Grid.Row="4" Background="#181b1f">
@@ -113,7 +114,7 @@
                 <Image gif:ImageBehavior.AnimatedSource="/Assets/Images/loading.gif" Width="16" Visibility="{Binding IsWorking, Converter={StaticResource BoolToVisConverter}}" />
             </StatusBarItem>
             <StatusBarItem>
-                <TextBlock Text="{Binding Path=NetworkStatusDisplayed, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+                <TextBlock Text="{Binding NetworkStatusDisplayed}" />
             </StatusBarItem>
         </StatusBar>
 

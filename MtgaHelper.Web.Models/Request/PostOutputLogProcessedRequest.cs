@@ -4,6 +4,10 @@ namespace MTGAHelper.Web.Models.Request
 {
     public class PostOutputLogProcessedRequest
     {
+        public PostOutputLogProcessedRequest()
+        {
+        }
+
         public PostOutputLogProcessedRequest(OutputLogResult result)
         {
             OutputLogResult = result;

@@ -1,6 +1,6 @@
 ﻿namespace MTGAHelper.Web.UI.Model.Response
 {
-    public class StatusResponse
+    public class StatusResponse : IResponse
     {
         public string Status { get; set; }
 

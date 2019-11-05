@@ -9,7 +9,7 @@ namespace MTGAHelper.Web.UI.Model.Response
 {
     public class GetUserWeightsResponse
     {
-        public Dictionary<RarityEnum, UserWeightDto> Weights;
+        public Dictionary<string, UserWeightDto> Weights { get; set; }
 
         public GetUserWeightsResponse()
         {
@@ -17,7 +17,7 @@ namespace MTGAHelper.Web.UI.Model.Response
 
         public GetUserWeightsResponse(Dictionary<RarityEnum, UserWeightDto> weights)
         {
-            Weights = weights;
+            Weights = weights.ToDictionary(i => i.Key.ToString(), i => i.Value);
         }
     }
 }

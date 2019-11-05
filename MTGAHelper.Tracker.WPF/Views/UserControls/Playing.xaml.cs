@@ -24,18 +24,20 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             InitializeComponent();
         }
 
-        public void Init(MainWindowVM vm)
-        {
-            DataContext = vm;
-            CardsLibrary.SetDataContext(vm.InMatchState.MyLibrary);
-            CardsOpponent.SetDataContext(vm.InMatchState.OpponentCardsSeen);
-            //FullDeck.SetDataContext(vm.InMatchState.FullDeck);
-        }
+        //public void Init(MainWindowVM vm)
+        //{
+        //    DataContext = vm;
+        //    //CardsMyLibrary.SetDataContext(vm.InMatchState.MyLibrary);
+        //    //CardsMySideboard.SetDataContext(vm.InMatchState.MySideboard);
+        //    //CardsOpponent.SetDataContext(vm.InMatchState.OpponentCardsSeen);
+        //    //FullDeck.SetDataContext(vm.InMatchState.FullDeck);
+        //}
 
-        internal void SetCardPopupPosition(int top, int left)
+        internal void SetCardPopupPosition(ForceCardPopupSideEnum side, int mainWindowTop, int mainWindowLeft, int mainWindowWidth)
         {
-            CardsLibrary.SetCardPopupPosition(top, left);
-            CardsOpponent.SetCardPopupPosition(top, left);
+            CardsMyLibrary.SetCardPopupPosition(side, mainWindowTop, mainWindowLeft, mainWindowWidth);
+            CardsMySideboard.SetCardPopupPosition(side, mainWindowTop, mainWindowLeft, mainWindowWidth);
+            CardsOpponent.SetCardPopupPosition(side, mainWindowTop, mainWindowLeft, mainWindowWidth);
         }
     }
 }

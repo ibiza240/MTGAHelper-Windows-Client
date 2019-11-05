@@ -34,7 +34,8 @@ namespace MTGAHelper.Tracker.WPF.IoC
                 ))
                 .ForMember(i => i.CardVM, i => i.MapFrom(x => x));
 
-            CreateMap<ConfigModelApp, OptionsWindowVM>();
+            CreateMap<ConfigModelApp, OptionsWindowVM>()
+                .ForMember(i => i.ForceCardPopupSide, i => i.MapFrom(x =>  string.IsNullOrEmpty(x.ForceCardPopupSide) ? "On the left" : x.ForceCardPopupSide));
         }
     }
 }

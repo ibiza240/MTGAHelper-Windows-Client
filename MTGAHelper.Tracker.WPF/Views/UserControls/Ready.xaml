@@ -26,45 +26,43 @@
             <Label FontSize="20" FontWeight="Bold">
                 <TextBlock>You're all set!</TextBlock>
             </Label>
+            <Label Content="{Binding Path=Account.Email}" ContentStringFormat="Connected as: {0}" />
             <!--<Label Content="{Binding Path=Username, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"></Label>-->
-            <Label Content="{Binding Path=CardsOwned, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"></Label>
+            <Label Content="{Binding CardsOwned}" />
 
             <Label>
-                <TextBlock>
+                <TextBlock TextWrapping="WrapWithOverflow" TextAlignment="Justify">
+                Your log file will be automatically parsed and uploaded to the server.
                     View all your data on the
-                    <LineBreak/>
                     <Hyperlink NavigateUri="https://mtgahelper.com" helpers:HyperlinkExtensions.IsExternal="true">
                         MTGAHelper website
                     </Hyperlink>.
                 </TextBlock>
             </Label>
 
-            <Label>
-                <TextBlock TextWrapping="WrapWithOverflow">
-                This client automatically synchronizes your collection log files with our servers.
+            <Label FontSize="14" FontWeight="Bold" Margin="0,20,0,0">
+                <TextBlock TextWrapping="Wrap">
+                    This window will change depending on the context:
                 </TextBlock>
             </Label>
-
             <Label>
-                <TextBlock TextWrapping="WrapWithOverflow">
-                    This window will change depending on the context:
+                <TextBlock TextWrapping="WrapWithOverflow" TextAlignment="Justify">
+                    When playing a match, live data will be shown such as your library with draw probabilities, sideboard and opponent cards seen.
                     <LineBreak />
                     <LineBreak />
-                    When playing a match, live data will be shown such as your library and opponent cards with draw probabilities.
+                    When draft picking, ratings from ChannelFireball and "Raredrafting" information will be displayed based on your preferences (collection and tracked decks).
                     <LineBreak />
-                    <LineBreak />
-                    When draft picking, you will have access to limited ratings from ChannelFireball as well as "Raredrafting" information based on your collection and tracked decks.
                     <LineBreak />
                     When building a sealed deck, the limited ratings will also be available.
-                </TextBlock>
-            </Label>
-
-            <Label>
-                <TextBlock TextWrapping="WrapWithOverflow">
-                    If you haven't already, go select which sources of decks you want to track on the 
+                    <LineBreak />
+                    <LineBreak />
+                    If you haven't already, go select which decks you want to track on the 
                     <Hyperlink NavigateUri="https://mtgahelper.com/my/sources" helpers:HyperlinkExtensions.IsExternal="true">
                         Decks sources page
                     </Hyperlink>.
+                    <LineBreak />
+                    <LineBreak />
+                    Hopefully this tracker can improve your experience playing Magic: The Gathering Arena :)
                 </TextBlock>
             </Label>
 

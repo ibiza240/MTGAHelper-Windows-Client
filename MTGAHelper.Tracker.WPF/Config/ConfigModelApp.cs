@@ -25,23 +25,27 @@ namespace MTGAHelper.Tracker.WPF.Config
 
     public class WindowSettings
     {
-        public Point Position { get; set; }
-        public Point Size { get; set; }
+        public Point Position { get; set; } = new Point();
+        public Point Size { get; set; } = new Point();
     }
 
     public class ConfigModelApp
     {
-        public string UserId { get; set; }
-        public string LogFilePath { get; set; }
+        //public string UserId { get; set; }
+        public string SigninProvider { get; set; }
+        public string LogFilePath { get; set; } = "E.g. C:\\xyz\\output_log.txt";
         public string GameFilePath { get; set; }
         public bool RunOnStartup { get; set; } = true;
         public bool AlwaysOnTop { get; set; } = true;
-        public bool MinimizeToSystemTray { get; set; } = false;
+        public bool MinimizeToSystemTray { get; set; }
         public int Opacity { get; set; } = 90;
 
         public bool Test { get; set; }
 
-        public WindowSettings WindowSettings { get; set; }
+        public bool ForceCardPopup { get; set; }
+        public string ForceCardPopupSide { get; set; }
+
+        public WindowSettings WindowSettings { get; set; } = new WindowSettings();
 
         internal void Save()
         {

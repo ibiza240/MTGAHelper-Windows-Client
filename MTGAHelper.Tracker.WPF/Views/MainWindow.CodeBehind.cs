@@ -17,20 +17,32 @@ namespace MTGAHelper.Tracker.WPF.Views
     /// </summary>
     public partial class MainWindow
     {
-        void Window_Loaded(object sender, RoutedEventArgs e)
+        async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            //SetSignedIn(new Web.Models.Response.Account.AccountResponse { Provider = "Google" }, null);
             Height = Math.Min(Height, SystemParameters.PrimaryScreenHeight - 32);
 
-            var top = (int)this.Top;
-            var left = (int)this.Left;
-            windowCardPopupDrafting.SetCardPopupPosition(top, left);
-            ucPlaying.SetCardPopupPosition(top, left);
+            UpdateCardPopupPosition();
 
             if (api.IsLocalTrackerUpToDate() == false)
                 MustDownloadNewVersion();
 
-            InitialServerApiCalls();
-            //InitStoryBoard();
+            //ServerApiGetCollection();
+
+            if (string.IsNullOrWhiteSpace(configApp.SigninProvider) == false)
+            {
+                string token = null;
+                switch (configApp.SigninProvider)
+                {
+                    case "Google":
+                        token = await tokenManager.GoogleSignin();
+                        break;
+                    case "Facebook":
+                        token = tokenManager.FacebookSignin(this);
+                        break;
+                }
+                ValidateExternalToken(configApp.SigninProvider, token);
+            }
         }
 
         void MustDownloadNewVersion()
@@ -57,30 +69,6 @@ namespace MTGAHelper.Tracker.WPF.Views
 
             App.Current.Shutdown();
 #endif
-        }
-
-        void InitialServerApiCalls()
-        {
-            if (vm.CanUpload == false)
-                return;
-
-            Task.Factory.StartNew(() =>
-            {
-                try
-                {
-                    vm.WrapNetworkStatus(NetworkStatusEnum.Downloading, () =>
-                    {
-                        var collection = api.GetCollection(configApp.UserId);
-                        vm.SetCollection(collection);
-                    });
-
-                    UploadLogFile();
-                }
-                catch (HttpRequestException ex)
-                {
-                    vm.SetProblemServerUnavailable();
-                }
-            });
         }
 
         void Window_Activated(object sender, EventArgs e)
@@ -158,13 +146,33 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         private void Window_LocationChanged(object sender, EventArgs e)
         {
-            if (double.IsNaN(Application.Current.MainWindow.Top) || double.IsNaN(Application.Current.MainWindow.Left))
+            if (double.IsNaN(this.Top) || double.IsNaN(this.Left))
                 return;
 
+            UpdateCardPopupPosition();
+        }
+
+        public void UpdateCardPopupPosition()
+        {
             var top = (int)this.Top;
             var left = (int)this.Left;
-            windowCardPopupDrafting.SetCardPopupPosition(top, left);
-            ucPlaying.SetCardPopupPosition(top, left);
+            var width = (int)this.Width;
+            var side = GetCardPopupSide();
+
+            windowCardPopupDrafting.SetCardPopupPosition(side, top, left, width);
+            ucPlaying.SetCardPopupPosition(side, top, left, width);
+
+        }
+
+        private ForceCardPopupSideEnum GetCardPopupSide()
+        {
+            ForceCardPopupSideEnum side = ForceCardPopupSideEnum.None;
+            if (configApp.ForceCardPopup)
+            {
+                side = configApp.ForceCardPopupSide.Contains("left") ? ForceCardPopupSideEnum.Left : ForceCardPopupSideEnum.Right;
+            }
+
+            return side;
         }
     }
 }
