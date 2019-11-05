@@ -1,4 +1,4 @@
-### v1.2.6 (Coming up)
+### v1.2.6 (2019-11-04)
 
 Auto-signin on startup for external providers
 
