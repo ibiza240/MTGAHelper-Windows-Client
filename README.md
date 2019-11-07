@@ -16,7 +16,7 @@ Please note that this tracker runs only on Windows for now.
 
 - Automatically synchronizes your log files data with the MTGAHelper servers
 - Draft helper when picking your cards during a draft
-- In-match tracker to see your draw probabilities, opponent cards played, etc.
+- In-match tracker to see your draw probabilities, sideboard, opponent cards played, etc.
 
 ##### Check the [Patch notes](https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/PatchNotes.md) to know about the latest changes.
 
