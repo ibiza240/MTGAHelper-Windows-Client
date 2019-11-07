@@ -1,10 +1,12 @@
-### v1.2.7 (Coming up)
+### v1.2.7 (2019-11-06)
 
 Option to remember email and password for auto-signin with a local account
 
 Option to auto-show the tracker on match start and auto-hide on match end
 
 Right-click on tray icon to make contextual menu appear to close the app
+
+Prevents running the app more than once
 
 ### v1.2.6 (2019-11-04)
 
