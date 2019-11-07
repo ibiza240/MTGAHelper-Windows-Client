@@ -23,8 +23,6 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         MainWindow mainWindow;// => (MainWindow)Window.GetWindow(this);
         MainWindowVM vm;
 
-        ICollection<Card> allCards;
-
         //DraftHelper draftHelper;
         //LogProcessor logProcessor;
         //string userId;
@@ -34,14 +32,14 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             InitializeComponent();
         }
 
-        public StatusBarTop Init(MainWindow mainWindow, MainWindowVM vm, /*DraftHelper draftHelper,LogProcessor logProcessor, string userId,*/ ICollection<Card> allCards)
+        public StatusBarTop Init(MainWindow mainWindow, MainWindowVM vm/*, DraftHelper draftHelper,LogProcessor logProcessor, string userId,*/)
         {
             this.mainWindow = mainWindow;
             this.vm = vm;
             //this.draftHelper = draftHelper;
             //this.logProcessor = logProcessor;
             //this.userId = userId;
-            this.allCards = allCards;
+            //this.allCards = allCards;
             return this;
         }
 
@@ -51,6 +49,11 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         }
 
         private void Menu_Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            MinimizeWindow();
+        }
+
+        public void MinimizeWindow()
         {
             if (mainWindow.configApp.MinimizeToSystemTray)
             {

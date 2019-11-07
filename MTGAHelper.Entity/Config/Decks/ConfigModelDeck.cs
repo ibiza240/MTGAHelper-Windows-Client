@@ -42,14 +42,14 @@ namespace MTGAHelper.Lib.Config
             DateCreatedUtc = dateCreatedUtc;
         }
 
-        public ICollection<DeckCard> GetCards(ICollection<Card> allCards)
+        public ICollection<DeckCard> GetCards(Dictionary<int, Card> allCards)
         {
             //var test = CardsMain.Where(i => allCards.Any(x => x.grpId == i.Key) == false);
 
             var cardsMain = CardsMain.Select(i => new DeckCard(
-                new CardWithAmount(allCards.First(x => x.grpId == i.Key), i.Value), false));
+                new CardWithAmount(allCards[i.Key], i.Value), false));
             var cardsSideboard = CardsSideboard.Select(i => new DeckCard(
-                new CardWithAmount(allCards.First(x => x.grpId == i.Key), i.Value), true));
+                new CardWithAmount(allCards[i.Key], i.Value), true));
 
             return cardsMain.Union(cardsSideboard).ToArray();
         }

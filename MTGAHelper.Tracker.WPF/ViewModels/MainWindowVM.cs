@@ -58,7 +58,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         #region Bindings
         public AccountResponse Account { get; set; } = new AccountResponse();
 
-        public string SigninEmail { get; set; }
+        public ObservableProperty<string> SigninEmail { get; set; } = new ObservableProperty<string>("");
         public SecureString SigninPassword { get; set; }
         public string FacebookAccessToken { get; set; }
 

@@ -43,6 +43,26 @@ namespace MTGAHelper.Tracker.WPF.Views
                 }
                 ValidateExternalToken(configApp.SigninProvider, token);
             }
+            else if (string.IsNullOrWhiteSpace(configApp.SigninEmail) == false)
+            {
+                if (string.IsNullOrWhiteSpace(configApp.SigninPassword) == false)
+                {
+                    var info = api.AutoSigninLocalUser(configApp.SigninEmail, configApp.SigninPassword);
+                    if (info == null)
+                    {
+                        MessageBox.Show("Cannot auto-signin the local account", "MTGAHelper");
+                    }
+                    else if (info.IsAuthenticated)
+                    {
+                        SetSignedIn(info);
+                    }
+                }
+                else
+                {
+                    vm.SigninEmail.Value = configApp.SigninEmail;
+                    ucWelcome.SetRememberEmail();
+                }
+            }
         }
 
         void MustDownloadNewVersion()

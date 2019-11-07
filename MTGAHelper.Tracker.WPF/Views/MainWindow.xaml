@@ -96,7 +96,7 @@
 
         <uc:Playing Grid.Row="1" x:Name="ucPlaying" />
 
-        <ItemsControl Grid.Row="2" Name="lstProblems" Background="LightPink" ItemsSource="{Binding ProblemsList}" Margin="10,0,10,0">
+        <ItemsControl Grid.Row="2" Name="lstProblems" ItemsSource="{Binding ProblemsList}" Margin="10,0,10,0">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Label>

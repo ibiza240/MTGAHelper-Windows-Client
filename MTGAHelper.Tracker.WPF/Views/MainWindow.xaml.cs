@@ -50,6 +50,7 @@ namespace MTGAHelper.Tracker.WPF.Views
         ReaderMtgaOutputLog reader;
         InGameTracker inGameTracker;
         ExternalProviderTokenManager tokenManager;
+        PasswordHasher passwordHasher;
 
         public System.Windows.Forms.NotifyIcon trayIcon;
 
@@ -69,9 +70,10 @@ namespace MTGAHelper.Tracker.WPF.Views
             DraftHelper draftHelper,
             //LogProcessor logProcessor,
             ReaderMtgaOutputLog readerMtgaOutputLog,
-            CacheSingleton<ICollection<Card>> allCards,
+            //CacheSingleton<ICollection<Card>> allCards,
             InGameTracker inMatchTracker,
-            ExternalProviderTokenManager tokenManager
+            ExternalProviderTokenManager tokenManager,
+            PasswordHasher passwordHasher
             )
         {
             this.configApp = configApp.CurrentValue;
@@ -93,6 +95,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             //this.logProcessor = logProcessor;
             this.inGameTracker = inMatchTracker;
             this.tokenManager = tokenManager;
+            this.passwordHasher = passwordHasher;
 
             this.resourcesLocator.LocateLogFilePath(this.configApp);
             this.resourcesLocator.LocateGameClientFilePath(this.configApp);
@@ -109,9 +112,13 @@ namespace MTGAHelper.Tracker.WPF.Views
 
             trayIcon = new System.Windows.Forms.NotifyIcon { Text = "MTGAHelper Tracker" };
             trayIcon.Icon = new System.Drawing.Icon(Application.GetResourceStream(new Uri("pack://application:,,,/Assets/Images/wcC.ico")).Stream);
-            trayIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(MyNotifyIcon_MouseClick);
+            trayIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(TrayIcon_MouseClick);
+            trayIcon.ContextMenu = new System.Windows.Forms.ContextMenu(new System.Windows.Forms.MenuItem[]
+            {
+                new System.Windows.Forms.MenuItem("Quit", new EventHandler(TrayIcon_Quit))
+            });
 
-            statusBarTop.Init(this, vm, /*draftHelper, logProcessor, this.configApp.UserId,*/ allCards.Get());
+            statusBarTop.Init(this, vm/*, draftHelper, logProcessor, this.configApp.UserId,*/);
             ucReady.Init(this.configApp.GameFilePath);
             ucDraftHelper.Init(vm.DraftingVM);
             //ucPlaying.Init(vm);
@@ -137,18 +144,31 @@ namespace MTGAHelper.Tracker.WPF.Views
             timerTokenRefresh.Start();
         }
 
-        void MyNotifyIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void TrayIcon_Quit(object sender, EventArgs e)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            App.Current.Shutdown();
+        }
+
+        void TrayIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                trayIcon.Visible = false;
-                this.Visibility = Visibility.Visible;
-                //this.WindowState = WindowState.Normal;
-                this.ShowInTaskbar = true;
-                //this.Show();
-                //this.Focus();
-                this.Activate();
-            });
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    ShowWindowFromTray();
+                });
+            }
+        }
+
+        public void ShowWindowFromTray()
+        {
+            trayIcon.Visible = false;
+            this.Visibility = Visibility.Visible;
+            //this.WindowState = WindowState.Normal;
+            this.ShowInTaskbar = true;
+            //this.Show();
+            //this.Focus();
+            this.Activate();
         }
 
         //private void Window_StateChanged(object sender, EventArgs e)
@@ -200,26 +220,37 @@ namespace MTGAHelper.Tracker.WPF.Views
             }
         }
 
-        internal void ValidateLocalUser(string password)
+        internal void ValidateLocalUser(string password, bool rememberEmail, bool rememberPassword)
         {
             vm.SigninPassword = new SecureString();
             foreach (var c in password) vm.SigninPassword.AppendChar(c);
             vm.SigninPassword.MakeReadOnly();
 
-            if (string.IsNullOrWhiteSpace(vm.SigninEmail) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(vm.SigninEmail.Value) || string.IsNullOrWhiteSpace(password))
             {
                 MessageBox.Show("Invalid email/password", "MTGAHelper");
                 return;
             }
 
-            var info = api.ValidateLocalUser(vm.SigninEmail, password);
+            var info = api.ValidateLocalUser(vm.SigninEmail.Value, password);
             if (info == null)
             {
                 MessageBox.Show("Cannot sign-in", "MTGAHelper");
             }
             else if (info.IsAuthenticated)
             {
-                SetSignedIn(info);
+                var signinPassword = "";
+                if (rememberPassword)
+                {
+                    var salt = api.GetAccountSalt(vm.SigninEmail.Value);
+                    signinPassword = passwordHasher.Hash(password, salt);
+                }
+
+                configApp.SigninEmail = rememberEmail || rememberPassword ? vm.SigninEmail.Value : "";
+                configApp.SigninPassword = signinPassword;
+                
+                SetSignedIn(info); // This saves the configApp
+
             }
             else
             {
@@ -277,6 +308,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                     GameFilePath = optionsWindow.txtGameFilePath.Text.Trim(),
                     RunOnStartup = optionsWindow.chkRunOnStartup.IsChecked.Value,
                     MinimizeToSystemTray = optionsWindow.chkMinimizeToSystemTray.IsChecked.Value,
+                    AutoShowHideForMatch = optionsWindow.chkAutoShowHideForMatch.IsChecked.Value,
                     Opacity = configApp.Opacity,
                     AlwaysOnTop = configApp.AlwaysOnTop,
                     WindowSettings = configApp.WindowSettings,
@@ -392,7 +424,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             if (vm.Account.Provider == null)
             {
                 var password = SecureStringToString(vm.SigninPassword);
-                api.ValidateLocalUser(vm.SigninEmail, password);
+                api.ValidateLocalUser(vm.SigninEmail.Value, password);
             }
             else
             {
@@ -444,7 +476,6 @@ namespace MTGAHelper.Tracker.WPF.Views
                 callbackOnError?.Invoke();
         }
 
-        #region Event handlers
         void OnProcessMonitorStatusChanged(object sender, bool isRunning)
         {
             vm.SetIsGameRunning(isRunning);
@@ -470,6 +501,14 @@ namespace MTGAHelper.Tracker.WPF.Views
             Action GoHome = () =>
             {
                 vm.SetMainWindowContext(MainWindowContextEnum.Home);
+
+                if (configApp.AutoShowHideForMatch)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        statusBarTop.MinimizeWindow();
+                    });
+                }
             };
 
             foreach (var msg in messages)
@@ -543,6 +582,17 @@ namespace MTGAHelper.Tracker.WPF.Views
                 else if (msg is MatchCreatedResult matchCreated)
                 {
                     vm.SetMainWindowContext(MainWindowContextEnum.Playing);
+
+                    if (configApp.AutoShowHideForMatch)
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            if (configApp.MinimizeToSystemTray)
+                                ShowWindowFromTray();
+                            else
+                                WindowState = WindowState.Normal;
+                        });
+                    }
                 }
                 //else if (msg is EventClaimPrizeResult claimPrize)
                 //{
@@ -582,5 +632,4 @@ namespace MTGAHelper.Tracker.WPF.Views
             }
         }
     }
-    #endregion
 }

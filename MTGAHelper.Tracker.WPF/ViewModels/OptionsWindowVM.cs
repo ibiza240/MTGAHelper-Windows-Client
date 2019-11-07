@@ -12,6 +12,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public string GameFilePath { get; set; } = "Test";
         public bool RunOnStartup { get; set; } = true;
         public bool MinimizeToSystemTray { get; set; } = false;
+        public bool AutoShowHideForMatch { get; set; }
         public bool ForceCardPopup { get; set; } = false;
         public string ForceCardPopupSide { get; set; } = "On the left";
 

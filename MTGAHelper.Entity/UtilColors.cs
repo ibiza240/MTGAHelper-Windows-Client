@@ -16,11 +16,12 @@ namespace MTGAHelper.Entity
 
         public Dictionary<int, Card> dictAllCards;
 
-        public UtilColors(CacheSingleton<ICollection<Card>> allCards)
+        public UtilColors(CacheSingleton<Dictionary<int, Card>> allCards)
         {
-            var value = allCards.Get();
-            if (value != null)
-                dictAllCards = value.ToDictionary(i => i.grpId, i => i);
+            //var value = allCards.Get();
+            //if (value != null)
+            //    dictAllCards = value.ToDictionary(i => i.grpId, i => i);
+            dictAllCards = allCards.Get();
         }
 
         public string FromGrpIds(ICollection<int> grpIds)

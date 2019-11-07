@@ -8,14 +8,15 @@
     <ApplicationIcon>wcC.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>MTGAHelper.Tracker</AssemblyName>
-    <Version>1.2.6</Version>
+    <Version>1.2.7</Version>
     <Company>MTGAHelper</Company>
     <Authors>MTGAHelper</Authors>
     <Description>MTGAHelper Local client</Description>
     <Copyright>2019 MTGAHelper</Copyright>
     <Configurations>Debug;Release;DebugWithServer</Configurations>
-    <AssemblyVersion>1.2.6.0</AssemblyVersion>
-    <FileVersion>1.2.6.0</FileVersion>
+    <AssemblyVersion>1.2.7.0</AssemblyVersion>
+    <FileVersion>1.2.7.0</FileVersion>
+    <StartupObject>MTGAHelper.Tracker.WPF.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

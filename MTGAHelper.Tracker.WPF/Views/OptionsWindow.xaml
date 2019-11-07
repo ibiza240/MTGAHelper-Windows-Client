@@ -20,6 +20,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -60,10 +61,14 @@
                       Content="Start MTGAHelper tracker on Windows startup"
                       IsChecked="{Binding RunOnStartup}" />
 
-        <CheckBox Grid.Row="5" Grid.Column="0" Height="20" x:Name="chkForceCardPopup"
+        <CheckBox Grid.Row="5" Grid.Column="1" Height="20" x:Name="chkAutoShowHideForMatch" Margin="0,5,0,0"
+                      Content="Automatically show in-match and minimize when not in-match"
+                      IsChecked="{Binding AutoShowHideForMatch}" />
+
+        <CheckBox Grid.Row="6" Grid.Column="0" Height="20" x:Name="chkForceCardPopup"
                     Content="Force popup position" HorizontalAlignment="Right" Margin="0,0,5,0"
                     IsChecked="{Binding ForceCardPopup}" />
-        <ComboBox Grid.Row="5" Grid.Column="1" Height="20" x:Name="lstForceCardPopupSide" Margin="0,0,0,5" Width="200"
+        <ComboBox Grid.Row="6" Grid.Column="1" Height="20" x:Name="lstForceCardPopupSide" Margin="0,0,0,5" Width="200"
                   ItemsSource="{Binding ForceCardPopupSides, Mode=OneTime}" SelectedItem="{Binding ForceCardPopupSide}"
                   HorizontalAlignment="Left" Visibility="{Binding ForceCardPopup, Converter={StaticResource BoolToVisHiddenConverter}}">
             <ComboBox.ItemTemplate>

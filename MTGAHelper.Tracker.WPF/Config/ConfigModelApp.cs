@@ -33,11 +33,14 @@ namespace MTGAHelper.Tracker.WPF.Config
     {
         //public string UserId { get; set; }
         public string SigninProvider { get; set; }
+        public string SigninEmail { get; set; }
+        public string SigninPassword { get; set; }
         public string LogFilePath { get; set; } = "E.g. C:\\xyz\\output_log.txt";
         public string GameFilePath { get; set; }
         public bool RunOnStartup { get; set; } = true;
         public bool AlwaysOnTop { get; set; } = true;
         public bool MinimizeToSystemTray { get; set; }
+        public bool AutoShowHideForMatch { get; set; }
         public int Opacity { get; set; } = 90;
 
         public bool Test { get; set; }

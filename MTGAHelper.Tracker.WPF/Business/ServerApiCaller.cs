@@ -123,6 +123,11 @@ namespace MTGAHelper.Tracker.WPF.Business
             return GetResponseWithCookie<AccountResponse>($"api/Account/Signin?email={System.Web.HttpUtility.UrlEncode(email)}&password={System.Web.HttpUtility.UrlEncode(password)}");
         }
 
+        internal AccountResponse AutoSigninLocalUser(string email, string hash)
+        {
+            return GetResponseWithCookie<AccountResponse>($"api/WpfLogin/AutoSigninLocalUser?email={System.Web.HttpUtility.UrlEncode(email)}&hash={System.Web.HttpUtility.UrlEncode(hash)}");
+        }
+
         //internal TReturn PostResponseWithCookie<TReturn>(string userId, string apiEndpoint, object body)
         //{
         //    var baseAddress = new Uri(server);
@@ -189,6 +194,10 @@ namespace MTGAHelper.Tracker.WPF.Business
                     var response = client.GetAsync(apiEndpoint).Result;
                     response.EnsureSuccessStatusCode();
                     var strResponse = response.Content.ReadAsStringAsync().Result;
+
+                    if (typeof(T) == typeof(string))
+                        return (T)Convert.ChangeType(strResponse, typeof(T));
+
                     var parsed = JsonConvert.DeserializeObject<T>(strResponse);
                     return parsed;
                 }
@@ -202,6 +211,11 @@ namespace MTGAHelper.Tracker.WPF.Business
                     return default(T);
                 }
             }
+        }
+
+        internal string GetAccountSalt(string signinEmail)
+        {
+            return GetResponseWithCookie<string>("api/WpfLogin/AccountSalt");
         }
 
         //T ParseResponseGet<T>(string apiEndpoint)

@@ -8,7 +8,6 @@ namespace MTGAHelper.Entity
     {
         string Name { get; set; }
         ScraperType ScraperType { get; }
-        string DisplayMember { get; }
         DeckCards Cards { get; }
 
         string Id { get; }
@@ -34,8 +33,6 @@ namespace MTGAHelper.Entity
         public ScraperType ScraperType { get; protected set; }
 
         public DeckCards Cards { get; protected set; }
-
-        public string DisplayMember { get { return $"{Name}"; } }
 
         public string Id { get; protected set; }
 

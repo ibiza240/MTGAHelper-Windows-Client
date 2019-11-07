@@ -73,10 +73,15 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             //var token = appTokenQueryResponse.access_token;
         }
 
+        internal void SetRememberEmail()
+        {
+            chkRememberEmail.IsChecked = true;
+        }
+
         private void ButtonLoginLocal_Click(object sender, RoutedEventArgs e)
         {
             var mainWindow = (MainWindow)Window.GetWindow(this);
-            mainWindow.ValidateLocalUser(this.txtPassword.Password);
+            mainWindow.ValidateLocalUser(txtPassword.Password, chkRememberEmail.IsChecked == true, chkRememberPassword.IsChecked == true);
         }
     }
 }

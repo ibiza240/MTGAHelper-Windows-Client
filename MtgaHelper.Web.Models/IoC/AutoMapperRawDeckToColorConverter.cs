@@ -13,9 +13,9 @@ namespace MTGAHelper.Web.UI.Shared
         Dictionary<int, Card> dictAllCards;
         UtilColors utilColors;
 
-        public AutoMapperRawDeckToColorConverter(CacheSingleton<ICollection<Card>> cacheCards, UtilColors utilColors)
+        public AutoMapperRawDeckToColorConverter(CacheSingleton<Dictionary<int, Card>> cacheCards, UtilColors utilColors)
         {
-            this.dictAllCards = cacheCards.Get().ToDictionary(i => i.grpId, i => i);
+            this.dictAllCards = cacheCards.Get();
             this.utilColors = utilColors;
         }
 

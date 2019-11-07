@@ -22,9 +22,9 @@ namespace MTGAHelper.Entity
     {
         public Dictionary<int, int> ResultRaw { get; private set; }
 
-        ICollection<Card> allCards;
+        Dictionary<int, Card> allCards;
 
-        public RawDeckConverter Init(ICollection<Card> allCards)
+        public RawDeckConverter Init(Dictionary<int, Card> allCards)
         {
             this.allCards = allCards;
             return this;
@@ -44,7 +44,7 @@ namespace MTGAHelper.Entity
             //if (allCards == null)
             //    System.Diagnostics.Debugger.Break();
 
-            var grpIdsKnown = allCards.Select(i => i.grpId).ToArray();
+            var grpIdsKnown = allCards.Keys;
             var grpIdsNotFound = info.Keys.Where(i => grpIdsKnown.Contains(i) == false).ToArray();
 
             var cards = new Dictionary<string, CardWithAmount>();
@@ -53,7 +53,7 @@ namespace MTGAHelper.Entity
                 try
                 {
 
-                    var cardMapping = allCards.Single(i => i.grpId == kv.Key);
+                    var cardMapping = allCards[kv.Key];
                     var card = cardMapping;
                     cards.Add(card.grpId.ToString(), new CardWithAmount(card, kv.Value));
                 }

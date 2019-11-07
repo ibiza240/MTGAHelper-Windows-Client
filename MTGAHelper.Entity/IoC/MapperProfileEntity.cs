@@ -5,14 +5,15 @@ using System.Text;
 using AutoMapper;
 using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Lib.Cache;
+using MTGAHelper.Lib.Config;
 
 namespace MTGAHelper.Entity.IoC
 {
     public class MapperProfileEntity : Profile
     {
-        public MapperProfileEntity(CacheSingleton<ICollection<Card>> allCards)
+        public MapperProfileEntity(CacheSingleton<Dictionary<int, Card>> cacheCards)
         {
-            var dictAllCards = allCards.Get().ToDictionary(i => i.grpId, i => i);
+            var dictAllCards = cacheCards.Get();
 
             // grpId to Card
             CreateMap<int, Card>().ConvertUsing(i => dictAllCards.ContainsKey(i) ? dictAllCards[i] :
@@ -30,6 +31,10 @@ namespace MTGAHelper.Entity.IoC
 
             CreateMap<QuestUpdate, PlayerQuest>();
             CreateMap<TrackDiff, PlayerProgress>();
+
+            CreateMap<ConfigModelRawDeck, ConfigModelDeck>()
+                .ForMember(i => i.ScraperTypeId, i => i.MapFrom(x => "scrapertypeid-mtgadeck"))
+                .ForMember(i => i.UrlDeckList, i => i.MapFrom(x => (string)null));
         }
     }
 }

@@ -26,16 +26,14 @@ namespace MTGAHelper.Web.UI.IoC
     public class MapperProfileWebModels : Profile
     {
         public MapperProfileWebModels(
-            ICollection<Card> allCards,
+            Dictionary<int, Card> dictAllCards,
             IServiceProvider provider,
             UtilManaCurve utilManaCurve)
         {
             var rawDeckConverter = provider.GetService<AutoMapperRawDeckConverter>();
             var rawDeckToColorConverter = provider.GetService<AutoMapperRawDeckToColorConverter>();
             var utilColors = provider.GetService<UtilColors>();
-
-            var dictAllCards = allCards.ToDictionary(i => i.grpId, i => i);
-
+            
             CreateMap<Card, CardDto>()
                 .ForMember(i => i.IdArena, i => i.MapFrom(x => x.grpId));
 
@@ -117,7 +115,7 @@ namespace MTGAHelper.Web.UI.IoC
                 .ForMember(i => i.Main, i => i.MapFrom(x => x.CardsMain))
                 .ForMember(i => i.Sideboard, i => i.MapFrom(x => x.CardsSideboard))
                 .ForMember(i => i.Colors, i => i.ConvertUsing(rawDeckToColorConverter, x => x))
-                .ForMember(i => i.DeckImage, i => i.MapFrom(x => dictAllCards[x.DeckTileId].imageArtUrl));
+                .ForMember(i => i.DeckImage, i => i.MapFrom(x => (string)dictAllCards[x.DeckTileId].imageArtUrl));
 
             CreateMap<GameDetail, GameDetailDto>();
 
