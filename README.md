@@ -72,7 +72,7 @@ Once your data is uploaded successfully, you can simply refresh the MTGAHelper w
 
 1- The server might be unresponsive. Try to go on https://mtgahelper.com and if the site cannot load, the tracker won't be able to start. You can report this downtime on the Discord server.
 
-2- The program might not find the .NET Core 3.0 framework described above. Check in your installed applications if you have this installed:
+2- Maybe the program is not able to find the .NET Core 3.0 framework described above. Check in your installed applications if you have this installed:
 
 <img src="https://i.imgur.com/UWrO39u.png" width="420" alt=".NET Core 3.0 framework in your installed applications">
 
