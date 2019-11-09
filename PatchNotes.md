@@ -1,4 +1,4 @@
-### v1.2.8 (2019-11-08)
+### v1.2.8 (Coming up)
 
 Sign-in screen: Hitting the Enter key in the password box for local account sends the credentials  
 
