@@ -1,3 +1,15 @@
+### v1.2.8 (2019-11-08)
+
+Sign-in screen: Hitting the Enter key in the password box for local account sends the credentials  
+
+Draft helper: Pack X pick Y label
+
+Draft helper: New popup showing the cards that didn't wheel from a previously seen pack
+
+Draft helper: Support for multiple Ratings sources (new: DraftSim)
+
+Bugfix for a problem that made the tracker crash
+
 ### v1.2.7 (2019-11-06)
 
 Option to remember email and password for auto-signin with a local account
