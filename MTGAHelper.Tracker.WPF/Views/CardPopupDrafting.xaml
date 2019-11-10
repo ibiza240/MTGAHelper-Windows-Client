@@ -19,17 +19,19 @@
     </Window.Resources>
     <StackPanel>
         <StackPanel Margin="10">
-            <TextBlock FontSize="16" FontWeight="Bold" Text="LSV from ChannelFireball says" TextWrapping="WrapWithOverflow" />
-            <TextBlock Text="{Binding Card.Rating, StringFormat='Limited Rating: {0}'}" FontWeight="Bold" Margin="0,5,0,0" />
-            <TextBlock Text="{Binding Card.Description}" TextWrapping="WrapWithOverflow" Margin="0,5,0,0" />
-            <TextBlock Foreground="White" Visibility="{Binding Card.TopCommonCard.Rank, Converter={StaticResource IntToVisConverter}}">
-                <TextBlock.Text>
-                    <MultiBinding StringFormat="This card is the Top {0} common card in {1} for this set">
-                        <Binding Path="Card.TopCommonCard.Rank" />
-                        <Binding Path="Card.TopCommonCard.Name" />
-                    </MultiBinding>
-                </TextBlock.Text>
-            </TextBlock>
+            <StackPanel Visibility="{Binding ShowRatingsSource, Converter={StaticResource BoolToVisConverter}}">
+                <TextBlock FontSize="16" FontWeight="Bold" Text="{Binding RatingsSource, StringFormat={}{0} says}" TextWrapping="WrapWithOverflow" />
+                <TextBlock Text="{Binding Card.Rating, StringFormat='Limited Rating: {0}'}" FontWeight="Bold" Margin="0,5,0,0" />
+                <TextBlock Text="{Binding Card.Description}" TextWrapping="WrapWithOverflow" Margin="0,5,0,0" />
+                <TextBlock Foreground="White" Visibility="{Binding Card.TopCommonCard.Rank, Converter={StaticResource IntToVisConverter}}">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="This card is the Top {0} common card in {1} for this set">
+                            <Binding Path="Card.TopCommonCard.Rank" />
+                            <Binding Path="Card.TopCommonCard.Name" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </StackPanel>
 
             <StackPanel Visibility="{Binding ShowGlobalMTGAHelperSays.Value, Converter={StaticResource BoolToVisConverter}}">
                 <TextBlock FontSize="16" FontWeight="Bold" Text="MTGAHelper says" Margin="0,10,0,0" />

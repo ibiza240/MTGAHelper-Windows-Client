@@ -14,6 +14,7 @@ namespace MTGAHelper.Entity
         Aetherhub,
         Tappedout,
         MtgTop8,
+        UserDeck,
     }
 
     public enum ScraperTypeFormatEnum

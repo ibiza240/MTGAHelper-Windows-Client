@@ -9,7 +9,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         Unknown,
         Welcome,
         Home,
-        InCollection,
+        //InCollection,
         Drafting,
         Playing,
     }

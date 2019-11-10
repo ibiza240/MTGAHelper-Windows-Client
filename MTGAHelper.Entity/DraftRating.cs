@@ -4,6 +4,12 @@ using System.Text;
 
 namespace MTGAHelper.Entity
 {
+    //public enum DraftRatingSourceEnum
+    //{
+    //    ChannelFireballLSV,
+    //    DraftSim,
+    //}
+
     public class DraftRatingTopCard
     {
         public int Rank { get; set; }
@@ -24,17 +30,15 @@ namespace MTGAHelper.Entity
         public string Description { get; set; }
     }
 
-    /// <summary>
-    /// Dictionary is by Set
-    /// </summary>
-    public class DraftRatings : Dictionary<string, DraftRatingScraperResultForSet>
-    {
-        public Dictionary<Card, DraftRating> DictRatingByCard { get; set; } = new Dictionary<Card, DraftRating>();
-    }
-
     public class DraftRatingScraperResultForSet
     {
         public ICollection<DraftRating> Ratings { get; set; } = new DraftRating[0];
         public Dictionary<string, ICollection<DraftRatingTopCard>> TopCommonCardsByColor { get; set; } = new Dictionary<string, ICollection<DraftRatingTopCard>>();
+    }
+
+    public class DraftRatings
+    {
+        public Dictionary<string, DraftRatingScraperResultForSet> RatingsBySet { get; set; } = new Dictionary<string, DraftRatingScraperResultForSet>();
+        public Dictionary<Card, DraftRating> DictRatingByCard { get; set; } = new Dictionary<Card, DraftRating>();
     }
 }

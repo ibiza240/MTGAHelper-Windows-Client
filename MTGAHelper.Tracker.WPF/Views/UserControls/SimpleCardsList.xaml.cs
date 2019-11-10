@@ -24,12 +24,21 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         public SimpleCardsList()
         {
             InitializeComponent();
+
+            gridCards.RowStyle = (Style)FindResource("DataGridRowCardNotification");
+
         }
 
-        public void SetDataContext(CardsListVM dataContext)
+        public void DisableRowStyleHighlight()
         {
-            DataContext = dataContext;
+            gridCards.RowStyle = new Style(typeof(DataGridRow));
+            gridCards.RowStyle.Setters.Add(new Setter(BackgroundProperty, new SolidColorBrush(Color.FromArgb(0x27, 0x2b, 0x30, 0))));
         }
+
+        //public void SetDataContext(CardsListVM dataContext)
+        //{
+        //    DataContext = dataContext;
+        //}
 
         private void Border_MouseEnter(object sender, MouseEventArgs e)
         {

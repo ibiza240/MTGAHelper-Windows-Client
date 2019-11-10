@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
-    public class LibraryCardWithAmountVM : CardWithAmount
+    public class LibraryCardWithAmountVM : CardWithAmountWpf
     {
         public delegate void CardNotificationHandler(object sender, EventArgs e);
 

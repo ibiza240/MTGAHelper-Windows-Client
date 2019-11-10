@@ -9,7 +9,7 @@
             <Setter Property="Foreground" Value ="#aaaaaa"/>
         </Style>
         <Style TargetType="Hyperlink">
-            <Setter Property="Foreground" Value ="aquamarine"/>
+            <Setter Property="Foreground" Value ="Aquamarine"/>
         </Style>
 
         <SolidColorBrush x:Key="BackgroundBrush" Color="#272b30" />

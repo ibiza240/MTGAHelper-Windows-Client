@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using AutoMapper;
+using Microsoft.Extensions.Options;
 using Microsoft.Win32;
 using MTGAHelper.Entity;
 using MTGAHelper.Lib.Cache;
@@ -54,11 +55,10 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         public System.Windows.Forms.NotifyIcon trayIcon;
 
-        public CardPopupDrafting windowCardPopupDrafting = new CardPopupDrafting();
-
         public MainWindow(
             //OptionsWindow optionsWindow,
             IOptionsMonitor<ConfigModelApp> configApp,
+            ICollection<Card> allCards,
             MainWindowVM viewModel,
             ProcessMonitor processMonitor,
             LogFileZipper zipper,
@@ -120,8 +120,10 @@ namespace MTGAHelper.Tracker.WPF.Views
 
             statusBarTop.Init(this, vm/*, draftHelper, logProcessor, this.configApp.UserId,*/);
             ucReady.Init(this.configApp.GameFilePath);
-            ucDraftHelper.Init(vm.DraftingVM);
+            ucDraftHelper.Init(allCards, vm.DraftingVM);
             //ucPlaying.Init(vm);
+
+            ucDraftHelper.SetPopupRatingsSource(this.configApp.ShowLimitedRatings, this.configApp.ShowLimitedRatingsSource);
 
             this.processMonitor.Start(new System.Threading.CancellationToken());
             this.fileMonitor.Start(new System.Threading.CancellationToken());
@@ -222,9 +224,7 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         internal void ValidateLocalUser(string password, bool rememberEmail, bool rememberPassword)
         {
-            vm.SigninPassword = new SecureString();
-            foreach (var c in password) vm.SigninPassword.AppendChar(c);
-            vm.SigninPassword.MakeReadOnly();
+            vm.SigninPassword = password;
 
             if (string.IsNullOrWhiteSpace(vm.SigninEmail.Value) || string.IsNullOrWhiteSpace(password))
             {
@@ -248,7 +248,7 @@ namespace MTGAHelper.Tracker.WPF.Views
 
                 configApp.SigninEmail = rememberEmail || rememberPassword ? vm.SigninEmail.Value : "";
                 configApp.SigninPassword = signinPassword;
-                
+
                 SetSignedIn(info); // This saves the configApp
 
             }
@@ -301,26 +301,31 @@ namespace MTGAHelper.Tracker.WPF.Views
                 optionsWindow.ShowDialog();
 
                 // The code will continue here only when the options window gets closed
-                var newConfig = new ConfigModelApp
-                {
-                    //UserId = optionsWindow.txtUserId.Text.Trim(),
-                    LogFilePath = optionsWindow.txtLogFilePath.Text.Trim(),
-                    GameFilePath = optionsWindow.txtGameFilePath.Text.Trim(),
-                    RunOnStartup = optionsWindow.chkRunOnStartup.IsChecked.Value,
-                    MinimizeToSystemTray = optionsWindow.chkMinimizeToSystemTray.IsChecked.Value,
-                    AutoShowHideForMatch = optionsWindow.chkAutoShowHideForMatch.IsChecked.Value,
-                    Opacity = configApp.Opacity,
-                    AlwaysOnTop = configApp.AlwaysOnTop,
-                    WindowSettings = configApp.WindowSettings,
-                    Test = configApp.Test,
-                    ForceCardPopup = optionsWindow.chkForceCardPopup.IsChecked.Value,
-                    ForceCardPopupSide = optionsWindow.lstForceCardPopupSide?.SelectedValue?.ToString() ?? configApp.ForceCardPopupSide
-                };
+                var newConfig = JsonConvert.DeserializeObject<ConfigModelApp>(JsonConvert.SerializeObject(configApp));
+                newConfig.LogFilePath = optionsWindow.txtLogFilePath.Text.Trim();
+                newConfig.GameFilePath = optionsWindow.txtGameFilePath.Text.Trim();
+                newConfig.RunOnStartup = optionsWindow.chkRunOnStartup.IsChecked.Value;
+                newConfig.MinimizeToSystemTray = optionsWindow.chkMinimizeToSystemTray.IsChecked.Value;
+                newConfig.AutoShowHideForMatch = optionsWindow.chkAutoShowHideForMatch.IsChecked.Value;
+                newConfig.ForceCardPopup = optionsWindow.chkForceCardPopup.IsChecked.Value;
+                newConfig.ForceCardPopupSide = optionsWindow.lstForceCardPopupSide?.SelectedValue?.ToString() ?? configApp.ForceCardPopupSide;
+                newConfig.ShowLimitedRatingsSource = optionsWindow.lstShowLimitedRatingsSource?.SelectedValue?.ToString() ?? configApp.ShowLimitedRatingsSource;
 
                 if (JsonConvert.SerializeObject(configApp) != JsonConvert.SerializeObject(newConfig))
                 {
+                    var oldLimitedRatings = configApp.ShowLimitedRatings;
+                    var oldLimitedRatingsSource = configApp.ShowLimitedRatingsSource;
                     newConfig.Save();
                     configApp = newConfig;
+
+                    if (vm.MainWindowContext == MainWindowContextEnum.Drafting &&
+                        (configApp.ShowLimitedRatings != oldLimitedRatings || configApp.ShowLimitedRatingsSource != oldLimitedRatingsSource))
+                    {
+                        if (configApp.ShowLimitedRatingsSource != oldLimitedRatingsSource)
+                            SetCardsDraft(vm.DraftingVM.CurrentDraftPickProgress);
+
+                        ucDraftHelper.SetPopupRatingsSource(configApp.ShowLimitedRatings, configApp.ShowLimitedRatingsSource);
+                    }
 
                     resourcesLocator.LocateLogFilePath(configApp);
                     resourcesLocator.LocateGameClientFilePath(configApp);
@@ -407,24 +412,9 @@ namespace MTGAHelper.Tracker.WPF.Views
             if (vm.Account.IsAuthenticated == false)
                 return;
 
-            string SecureStringToString(SecureString value)
-            {
-                IntPtr valuePtr = IntPtr.Zero;
-                try
-                {
-                    valuePtr = Marshal.SecureStringToGlobalAllocUnicode(value);
-                    return Marshal.PtrToStringUni(valuePtr);
-                }
-                finally
-                {
-                    Marshal.ZeroFreeGlobalAllocUnicode(valuePtr);
-                }
-            };
-
             if (vm.Account.Provider == null)
             {
-                var password = SecureStringToString(vm.SigninPassword);
-                api.ValidateLocalUser(vm.SigninEmail.Value, password);
+                api.ValidateLocalUser(vm.SigninEmail.Value, vm.SigninPassword);
             }
             else
             {
@@ -455,7 +445,9 @@ namespace MTGAHelper.Tracker.WPF.Views
                     .Where(i => flags.HasFlag(i))
                     .ToArray();
 
-                Log.Warning("FileSizeChangedNewText() Could not upload data. Status:{status} - Problems:{problems}", string.Join(',', activeStatus), vm.ProblemsList);
+                // Only log when the problem is not that it just is already uploading
+                if (activeStatus.Length != 1 || activeStatus[0] != NetworkStatusEnum.Uploading)
+                    Log.Warning("FileSizeChangedNewText() Could not upload data. Status:{status} - Problems:{problems}", string.Join(',', activeStatus), vm.ProblemsList);
             });
         }
 
@@ -500,15 +492,7 @@ namespace MTGAHelper.Tracker.WPF.Views
 
             Action GoHome = () =>
             {
-                vm.SetMainWindowContext(MainWindowContextEnum.Home);
-
-                if (configApp.AutoShowHideForMatch)
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        statusBarTop.MinimizeWindow();
-                    });
-                }
+                SetMainWindowContext(MainWindowContextEnum.Home);
             };
 
             foreach (var msg in messages)
@@ -521,7 +505,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                         if (playerCourse.Raw.CurrentEventState == "PreMatch")
                         {
                             // Clear the drafting window
-                            SetCardsDraft(new int[0]);
+                            SetCardsDraft(new DraftPickProgress(new int[0]));
                         }
 
                         isDrafting = playerCourse.Raw.InternalEventName.Contains("Draft") || playerCourse.Raw.InternalEventName.Contains("Sealed");
@@ -530,13 +514,16 @@ namespace MTGAHelper.Tracker.WPF.Views
                     if (isDrafting)
                     {
                         // Refresh the drafting window to show whole card pool
-                        SetCardsDraft(msgCardPool.CardPool);
-                        vm.SetMainWindowContext(MainWindowContextEnum.Drafting);
+                        SetCardsDraft(new DraftPickProgress(msgCardPool.CardPool));
+                        SetMainWindowContext(MainWindowContextEnum.Drafting);
                     }
                 }
-                else if (msg is IResultDraftPick msgDraftPack && msgDraftPack.DraftPack != null)
+                else if (msg is IResultDraftPick msgDraftPack && msgDraftPack.Raw.draftPack != null)
+                {
                     // Refresh the drafting window to show the new picks
-                    SetCardsDraft(msgDraftPack.DraftPack.Select(i => Convert.ToInt32(i)).ToArray());
+                    var draftInfo = Mapper.Map<DraftPickProgress>(msgDraftPack.Raw);
+                    SetCardsDraft(draftInfo);
+                }
 
                 if (msg is LogInfoRequestResult logInfo)
                 {
@@ -581,18 +568,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                 }
                 else if (msg is MatchCreatedResult matchCreated)
                 {
-                    vm.SetMainWindowContext(MainWindowContextEnum.Playing);
-
-                    if (configApp.AutoShowHideForMatch)
-                    {
-                        Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            if (configApp.MinimizeToSystemTray)
-                                ShowWindowFromTray();
-                            else
-                                WindowState = WindowState.Normal;
-                        });
-                    }
+                    SetMainWindowContext(MainWindowContextEnum.Playing);
                 }
                 //else if (msg is EventClaimPrizeResult claimPrize)
                 //{
@@ -614,20 +590,45 @@ namespace MTGAHelper.Tracker.WPF.Views
             }
         }
 
-        void SetCardsDraft(ICollection<int> cardPool)
+        void SetMainWindowContext(MainWindowContextEnum context)
         {
+            if (configApp.AutoShowHideForMatch)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (context == MainWindowContextEnum.Home)
+                    {
+                        statusBarTop.MinimizeWindow();
+                    }
+                    else
+                    {
+                        if (configApp.MinimizeToSystemTray)
+                            ShowWindowFromTray();
+                        else
+                            WindowState = WindowState.Normal;
+                    }
+                });
+            }
+
+            vm.SetMainWindowContext(context);
+        }
+
+        void SetCardsDraft(DraftPickProgress draftInfo)
+        {
+            var cardPool = draftInfo?.DraftPack;
+
             if (cardPool != null)
             {
                 vm.WrapNetworkStatusInNewTask(NetworkStatusEnum.Downloading, () =>
                 {
-                    var cardsInfo = draftHelper.GetDraftPicksForCards(vm.Account.MtgaHelperUserId, cardPool);
+                    var cardsInfoFromServer = draftHelper.GetDraftPicksForCards(vm.Account.MtgaHelperUserId, cardPool, configApp.ShowLimitedRatingsSource);
 
                     //if (msg is GetEventPlayerCourseV2Result course)
                     //{
                     //    course.Raw.CourseDeck.
                     //}
 
-                    vm.SetCardsDraftBuffered(cardsInfo);
+                    vm.SetCardsDraftBuffered(draftInfo, cardsInfoFromServer);
                 });
             }
         }

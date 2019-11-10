@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
-    public class CardDraftPickVM : CardDraftPick
+    public class CardDraftPickVM : CardDraftPickWpf
     {
         public CardVM CardVM { get; set; }
     }

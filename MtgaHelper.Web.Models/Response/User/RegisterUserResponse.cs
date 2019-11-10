@@ -5,13 +5,15 @@ namespace MTGAHelper.Web.UI.Model.Response
     public class RegisterUserResponse : ErrorResponse
     {
         public string UserId { get; set; }
+        public string Email { get; set; }
         public int NbLogin { get; set; }
         public bool ChangesSinceLastLogin { get; set; }
         public ICollection<string> NotificationsInactive { get; set; } = new string[0];
 
-        public RegisterUserResponse(string userId, int nbLogin, bool changesSinceLastLogin)
+        public RegisterUserResponse(string userId, string email, int nbLogin, bool changesSinceLastLogin)
         {
             UserId = userId;
+            Email = email;
             NbLogin = nbLogin;
             ChangesSinceLastLogin = changesSinceLastLogin;
         }

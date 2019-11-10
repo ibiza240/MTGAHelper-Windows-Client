@@ -59,7 +59,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public AccountResponse Account { get; set; } = new AccountResponse();
 
         public ObservableProperty<string> SigninEmail { get; set; } = new ObservableProperty<string>("");
-        public SecureString SigninPassword { get; set; }
+        public string SigninPassword { get; set; }
         public string FacebookAccessToken { get; set; }
 
         public InMatchTrackerStateVM InMatchState { get; set; }
@@ -230,9 +230,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         //    RaisePropertyChangedEvent(nameof(MainWindowContext));
         //}
 
-        internal void SetCardsDraftBuffered(ICollection<CardDraftPick> cards)
+        internal void SetCardsDraftBuffered(DraftPickProgress draftProgress, ICollection<CardDraftPickWpf> ratingsInfo)
         {
-            DraftingVM.SetCardsDraftBuffered(cards);
+            DraftingVM.SetCardsDraftBuffered(draftProgress, ratingsInfo);
         }
         internal void SetCardsDraftFromBuffered()
         {

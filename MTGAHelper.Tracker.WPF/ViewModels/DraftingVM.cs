@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MTGAHelper.Entity;
 using MTGAHelper.Tracker.WPF.Models;
 using System;
 using System.Collections.Generic;
@@ -7,27 +8,92 @@ using System.Text;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
+    public class DraftInfoBuffered
+    {
+        public DraftPickProgress DraftProgress { get; set; } = new DraftPickProgress();
+        public ICollection<CardDraftPickWpf> CardsDraftBuffered { get; set; } = new CardDraftPickWpf[0];
+    }
+
     public class DraftingVM : ObservableObject
     {
-        internal bool updateCardsDraftBuffered { get; private set; }// = true;
-        object lockCardsDraft = new object();
-        ICollection<CardDraftPick>  CardsDraftBuffered { get; set; } = new CardDraftPick[0];
+        const int POD_SIZE = 8;
 
-        #region Bindings
+        ICollection<Card> allCards = new Card[0];
+
+        bool updateCardsDraftBuffered;
+        object lockCardsDraft = new object();
+        DraftInfoBuffered draftInfoBuffered = new DraftInfoBuffered();
+        List<DraftPickProgress> draftPicksHistory = new List<DraftPickProgress>();
+
+        int nbCardsWheeling => Math.Max(0, CardsDraftByTier.Values.Sum(i => i.Count) - POD_SIZE);
+
         public Dictionary<float, ICollection<CardDraftPickVM>> CardsDraftByTier { get; set; } = new Dictionary<float, ICollection<CardDraftPickVM>>();
-        public int NbCardsWheeling => Math.Max(0, CardsDraftByTier.Values.Sum(i => i.Count) - 8);
-        public string CardsWheelingMessage => $"{NbCardsWheeling} cards {(NbCardsWheeling == 1 ? "is" : "are")} wheeling in this pack";
+        public string PackPickMessage => draftInfoBuffered.DraftProgress.DraftId == default(string) ? "" : $"Pack {draftInfoBuffered.DraftProgress.PackNumber + 1} pick {draftInfoBuffered.DraftProgress.PickNumber + 1}";
+
+        public ICollection<int> CardsThatDidntWheel { get; set; } = new int[0];
+        public string CardChosenThatDidntWheel { get; private set; }
+
+        internal void Init(ICollection<Card> allCards)
+        {
+            this.allCards = allCards;
+        }
+
+        //public string CardsWheelingMessage => nbCardsWheeling == 0 ?
+        //    (CurrentDraftPickProgress.PickNumber < POD_SIZE - 1 ? $"{CardsWheeled.Count} cards wheeled from this pack" : "This pack won't wheel") :
+        //    $"{nbCardsWheeling} cards {(nbCardsWheeling == 1 ? "is" : "are")} wheeling in this pack";
+        public string CardsWheelingMessage => CardsThatDidntWheel.Count > 0 ? $"{CardsThatDidntWheel.Count} cards didn't wheel from this pack" :
+            (/*CurrentDraftPickProgress.PickNumber >= POD_SIZE ? "This pack won't wheel" :*/ $"{(nbCardsWheeling == 0 ? "No" : nbCardsWheeling.ToString())} card{(nbCardsWheeling == 1 ? " is" : "s are")} wheeling in this pack");
+        public bool IsVisibleWhenCardsDidntWheel => CardsThatDidntWheel.Count > 0;
+        public bool IsHiddenWhenCardsDidntWheel => !IsVisibleWhenCardsDidntWheel;
+
         public double RaredraftOpacity => CardsDraftByTier.Any(i => i.Value.Any(x => x.RareDraftPickEnum == Entity.RaredraftPickReasonEnum.None && x.RatingFloat != 0f)) ? 1.0d : 0.5d;
         public bool ShowGlobalMTGAHelperSays => /*updateCardsDraftBuffered == false && */CardsDraftByTier.Sum(i => i.Value.Count) > 0 && CardsDraftByTier.Sum(i => i.Value.Count) < 42;
-        #endregion
 
-        internal void SetCardsDraftBuffered(ICollection<CardDraftPick> cards)
+        public ObservableProperty<bool> ShowCardListThatDidntWheel { get; set; } = new ObservableProperty<bool>(false);
+
+        public DraftPickProgress CurrentDraftPickProgress => draftInfoBuffered.DraftProgress;
+        public CardsListVM CardsThatDidntWheelVM { get; set; } = new CardsListVM(false);
+
+        internal void SetCardsDraftBuffered(DraftPickProgress draftProgress, ICollection<CardDraftPickWpf> ratingsInfo)
         {
             lock (lockCardsDraft)
             {
-                CardsDraftBuffered = cards;
+                // Manage the packs history, this is all for the "previously seen cards that didn't wheel" feature
+                // (this if condition is only there to manage the case where the ratings source was changed, thus triggering an update here
+                //  and we don't want that to affect the history)
+                if (draftProgress.PackNumber != CurrentDraftPickProgress.PackNumber || draftProgress.PickNumber != CurrentDraftPickProgress.PickNumber)
+                {
+                    CardsThatDidntWheel = new int[0];
+
+                    // Reset the progress history if it is a new draft
+                    if (draftProgress.DraftId != default(string) && draftPicksHistory.Count > 0 && draftProgress.DraftId != draftPicksHistory[0].DraftId)
+                    {
+                        draftPicksHistory = new List<DraftPickProgress> { draftProgress };
+                    }
+
+                    // Try to find the original pack that wheeled to extract the cards that didn't wheel
+                    var originalPack = draftPicksHistory.FirstOrDefault(i => i.PackNumber == draftProgress.PackNumber && i.PickNumber == draftProgress.PickNumber - POD_SIZE);
+                    if (originalPack != null)
+                    {
+                        CardsThatDidntWheel = originalPack.DraftPack.Where(i => draftProgress.DraftPack.Contains(i) == false).ToArray();
+                        var packFollowing = draftPicksHistory.FirstOrDefault(i => i.PackNumber == originalPack.PackNumber && i.PickNumber == originalPack.PickNumber + 1);
+                        if (packFollowing != null)
+                            CardChosenThatDidntWheel = Mapper.Map<Card>(packFollowing.PickedCards.Last()).name;
+                    }
+
+                    draftPicksHistory.Add(draftProgress);
+                }
+
+                draftInfoBuffered.DraftProgress = draftProgress;
+                draftInfoBuffered.CardsDraftBuffered = ratingsInfo;
+
                 updateCardsDraftBuffered = true;
             }
+        }
+
+        internal void ToggleShowHideCardListPopupThatDidntWheel()
+        {
+            ShowCardListThatDidntWheel.Value = !ShowCardListThatDidntWheel.Value;
         }
 
         internal void SetCardsDraftFromBuffered()
@@ -39,7 +105,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             //{
             lock (lockCardsDraft)
             {
-                var cardsVM = Mapper.Map<ICollection<CardDraftPickVM>>(CardsDraftBuffered);
+                var cardsVM = Mapper.Map<ICollection<CardDraftPickVM>>(draftInfoBuffered.CardsDraftBuffered);
                 foreach (var c in cardsVM) c.CardVM.SetColorBorder();
 
                 CardsDraftByTier = cardsVM
@@ -49,7 +115,18 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 updateCardsDraftBuffered = false;
                 RaisePropertyChangedEvent(nameof(CardsDraftByTier));
                 RaisePropertyChangedEvent(nameof(CardsWheelingMessage));
+                RaisePropertyChangedEvent(nameof(PackPickMessage));
                 RaisePropertyChangedEvent(nameof(ShowGlobalMTGAHelperSays));
+                RaisePropertyChangedEvent(nameof(IsVisibleWhenCardsDidntWheel));
+                RaisePropertyChangedEvent(nameof(IsHiddenWhenCardsDidntWheel));
+
+                // Setup the cardlist popup content
+                var cardsWheeled = allCards
+                    .Where(i => CardsThatDidntWheel.Contains(i.grpId))
+                    .Select(i => Mapper.Map<CardWpf>(i))
+                    .ToArray();
+                CardsThatDidntWheelVM.SetCards(CardChosenThatDidntWheel, cardsWheeled);
+                RaisePropertyChangedEvent(nameof(CardsThatDidntWheelVM));
             }
             //}
         }

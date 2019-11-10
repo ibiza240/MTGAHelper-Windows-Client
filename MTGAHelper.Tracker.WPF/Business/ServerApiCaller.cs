@@ -22,6 +22,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
+using System.Web;
 using WebApplication1.Model.Account;
 
 namespace MTGAHelper.Tracker.WPF.Business
@@ -312,12 +313,12 @@ namespace MTGAHelper.Tracker.WPF.Business
             return latestUploadHash == uploadHash.ToString();
         }
 
-        internal GetCardsForDraftPickResponse GetCardsForDraftPick(string userId, ICollection<int> grpIds)
+        internal GetCardsForDraftPickResponse GetCardsForDraftPick(string userId, ICollection<int> grpIds, string source)
         {
             if (grpIds == null || grpIds.Count == 0)
                 return new GetCardsForDraftPickResponse(new Entity.CardForDraftPick[0]);
 
-            return GetResponseWithCookie<GetCardsForDraftPickResponse>($"/api/User/DraftPick?grpIds={string.Join(',', grpIds)}");
+            return GetResponseWithCookie<GetCardsForDraftPickResponse>($"/api/User/DraftPick?grpIds={string.Join(',', grpIds)}&source={HttpUtility.UrlEncode(source)}");
 
         }
 

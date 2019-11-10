@@ -31,8 +31,22 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public bool ShowDrawPct { get; set; } = true;
 
+        public string CardChosen { get; set; } = "TEST";
+
         public CardsListVM()
         {
+        }
+
+        internal void SetCards(string cardChosen, ICollection<CardWpf> cards)
+        {
+            CardChosen = cardChosen;
+
+            var data = cards.Select(i => ConvertCard(i.ArenaId, 1, cards.Count));
+            Cards = new ObservableCollection<LibraryCardWithAmountVM>(data);
+            foreach (var c in Cards) c.RefreshBindings();
+
+            RaisePropertyChangedEvent(nameof(CardChosen));
+            RaisePropertyChangedEvent(nameof(Cards));
         }
 
         public CardsListVM(bool showDrawPct)

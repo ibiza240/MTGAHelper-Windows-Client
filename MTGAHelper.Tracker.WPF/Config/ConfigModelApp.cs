@@ -46,7 +46,10 @@ namespace MTGAHelper.Tracker.WPF.Config
         public bool Test { get; set; }
 
         public bool ForceCardPopup { get; set; }
-        public string ForceCardPopupSide { get; set; }
+        public string ForceCardPopupSide { get; set; } = "On the left";
+
+        public bool ShowLimitedRatings { get; set; } = true;
+        public string ShowLimitedRatingsSource { get; set; } = "ChannelFireball (LSV)";
 
         public WindowSettings WindowSettings { get; set; } = new WindowSettings();
 

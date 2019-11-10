@@ -19,6 +19,7 @@ namespace MTGAHelper.Lib.UserHistory
         public ICollection<PlayerQuest> PlayerQuests { get; set; } = new PlayerQuest[0];
         public Dictionary<DateTime, InventoryUpdatedRaw> InventoryUpdates { get; set; } = new Dictionary<DateTime, InventoryUpdatedRaw>();
         public Dictionary<DateTime, PostMatchUpdateRaw> PostMatchUpdates { get; set; } = new Dictionary<DateTime, PostMatchUpdateRaw>();
+        public ICollection<DraftPickProgress> DraftPickProgress { get; set; } = new DraftPickProgress[0];
 
         //public int Wins { get; set; }
         //public int Losses { get; set; }

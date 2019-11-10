@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:MTGAHelper.Tracker.WPF.Views"
              xmlns:uc="clr-namespace:MTGAHelper.Tracker.WPF.Views.UserControls"
              xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
-             mc:Ignorable="d" 
+             mc:Ignorable="d" GotFocus="UserControl_GotFocus"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <!--<helpers:BoolToStringConverter x:Key="IsRareDraftPickBorderThicknessConverter" TrueValue="1,1,1,1" FalseValue="0,1,0,0" />
@@ -24,9 +24,34 @@
         <!--<Label Padding="0" FontSize="20" FontWeight="Bold">
             <TextBlock>Limited picks</TextBlock>
         </Label>-->
-        <Label Padding="0" Margin="0,5,0,5" Visibility="{Binding ShowGlobalMTGAHelperSays, Converter={StaticResource BoolToVisCollapsedConverter}}">
-            <TextBlock Text="{Binding CardsWheelingMessage}" />
-        </Label>
+        <Grid Visibility="{Binding ShowGlobalMTGAHelperSays, Converter={StaticResource BoolToVisCollapsedConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" Padding="0,5,0,5" FontWeight="Bold" FontSize="13">
+                <TextBlock Text="{Binding PackPickMessage}" />
+            </Label>
+            <Label Grid.Column="1" Padding="10,5,0,5" Visibility="{Binding IsVisibleWhenCardsDidntWheel, Converter={StaticResource BoolToVisCollapsedConverter}}"
+                    Cursor="Hand" MouseLeftButtonUp="ShowHideCardsThatDidntWheel_MouseLeftButtonUp">
+                <TextBlock Text="{Binding CardsWheelingMessage}" TextDecorations="Underline" Foreground="Aquamarine">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowCardListThatDidntWheel.Value}"
+                                 Value="True">
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Label>
+            <Label Grid.Column="1" Padding="10,5,0,5" Visibility="{Binding IsHiddenWhenCardsDidntWheel, Converter={StaticResource BoolToVisCollapsedConverter}}">
+                <TextBlock Text="{Binding CardsWheelingMessage}" />
+            </Label>
+        </Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto" PreviewMouseWheel="ScrollViewer_PreviewMouseWheel" Height="788">
             <StackPanel Orientation="Vertical">
                 <ItemsControl ItemsSource="{Binding CardsDraftByTier}">

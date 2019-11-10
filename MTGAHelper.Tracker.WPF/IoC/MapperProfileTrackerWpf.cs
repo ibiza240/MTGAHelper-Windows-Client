@@ -14,7 +14,7 @@ namespace MTGAHelper.Tracker.WPF.IoC
     {
         public MapperProfileTrackerWpf()
         {
-            CreateMap<CardForDraftPickDto, CardDraftPick>()
+            CreateMap<CardForDraftPickDto, CardDraftPickWpf>()
                 .ForMember(i => i.RareDraftPickEnum, i => i.MapFrom(x => x.IsRareDraftPick));
 
             CreateMap<Entity.Card, CardWpf>()
@@ -24,18 +24,18 @@ namespace MTGAHelper.Tracker.WPF.IoC
 
             CreateMap<CardWpf, CardVM>();
 
-            CreateMap<CardWithAmount, LibraryCardWithAmountVM>()
+            CreateMap<CardWithAmountWpf, LibraryCardWithAmountVM>()
                 .ForMember(i => i.ImageArtUrl, i => i.MapFrom(x => new Util().GetThumbnailLocal(x.ImageArtUrl)));
 
-            CreateMap<CardDraftPick, CardDraftPickVM>()
+            CreateMap<CardDraftPickWpf, CardDraftPickVM>()
                 //.ForMember(i => i.ColorGradient, i => i.MapFrom(x => x.Colors.Select;
                 .ForMember(i => i.ImageCardUrl, i => i.MapFrom(x => "https://img.scryfall.com/cards" + x.ImageCardUrl))
                 .ForMember(i => i.ImageArtUrl, i => i.MapFrom(x => new Util().GetThumbnailLocal(x.ImageArtUrl)
                 ))
                 .ForMember(i => i.CardVM, i => i.MapFrom(x => x));
 
-            CreateMap<ConfigModelApp, OptionsWindowVM>()
-                .ForMember(i => i.ForceCardPopupSide, i => i.MapFrom(x =>  string.IsNullOrEmpty(x.ForceCardPopupSide) ? "On the left" : x.ForceCardPopupSide));
+            CreateMap<ConfigModelApp, OptionsWindowVM>();
+                //.ForMember(i => i.ForceCardPopupSide, i => i.MapFrom(x =>  string.IsNullOrEmpty(x.ForceCardPopupSide) ? "On the left" : x.ForceCardPopupSide));
         }
     }
 }

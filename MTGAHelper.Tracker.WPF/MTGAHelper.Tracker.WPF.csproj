@@ -8,14 +8,14 @@
     <ApplicationIcon>wcC.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>MTGAHelper.Tracker</AssemblyName>
-    <Version>1.2.7</Version>
+    <Version>1.2.8</Version>
     <Company>MTGAHelper</Company>
     <Authors>MTGAHelper</Authors>
     <Description>MTGAHelper Local client</Description>
     <Copyright>2019 MTGAHelper</Copyright>
     <Configurations>Debug;Release;DebugWithServer</Configurations>
-    <AssemblyVersion>1.2.7.0</AssemblyVersion>
-    <FileVersion>1.2.7.0</FileVersion>
+    <AssemblyVersion>1.2.8.0</AssemblyVersion>
+    <FileVersion>1.2.8.0</FileVersion>
     <StartupObject>MTGAHelper.Tracker.WPF.Program</StartupObject>
   </PropertyGroup>
 
@@ -87,6 +87,12 @@
     <Resource Include="Assets\Images\Treasure.png" />
     <Resource Include="Assets\Images\wcC.ico" />
     <Resource Include="Assets\Images\wcC.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\CardListPopup.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

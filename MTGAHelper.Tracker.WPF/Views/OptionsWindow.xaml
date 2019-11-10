@@ -21,13 +21,16 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Label Grid.Row="0" Grid.Column="1" FontSize="14">Values are saved upon closing this window</Label>
-        
+        <Label Grid.Row="0" Grid.Column="1" FontSize="14" TextBlock.Foreground="White">
+            Values are saved upon closing this window
+        </Label>
+
         <!--
         <Label Grid.Row="1" Grid.Column="1">
             <TextBlock TextWrapping="Wrap">
@@ -71,6 +74,21 @@
         <ComboBox Grid.Row="6" Grid.Column="1" Height="20" x:Name="lstForceCardPopupSide" Margin="0,0,0,5" Width="200"
                   ItemsSource="{Binding ForceCardPopupSides, Mode=OneTime}" SelectedItem="{Binding ForceCardPopupSide}"
                   HorizontalAlignment="Left" Visibility="{Binding ForceCardPopup, Converter={StaticResource BoolToVisHiddenConverter}}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Foreground="Black" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <!--<CheckBox Grid.Row="7" Grid.Column="0" Height="20" x:Name="chkShowLimitedRatings"
+                    Content="Show limited ratings" HorizontalAlignment="Right" Margin="0,0,5,0"
+                    IsChecked="{Binding ShowLimitedRatings}" />-->
+        <Label Grid.Row="7" Grid.Column="0" Height="20" Margin="0,0,5,0" Padding="0"
+            Content="Limited ratings source" HorizontalAlignment="Right" />
+        <ComboBox Grid.Row="7" Grid.Column="1" Height="20" x:Name="lstShowLimitedRatingsSource" Margin="0,0,0,5" Width="200"
+                  ItemsSource="{Binding ShowLimitedRatingsSources, Mode=OneTime}" SelectedItem="{Binding ShowLimitedRatingsSource}"
+                  HorizontalAlignment="Left" Visibility="{Binding ShowLimitedRatings, Converter={StaticResource BoolToVisHiddenConverter}}">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding}" Foreground="Black" />

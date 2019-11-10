@@ -70,5 +70,10 @@ namespace MTGAHelper.Tracker.WPF.Views
             Top = mainWindowTop;
             Left = leftAdjusted;
         }
+
+        public void SetPopupRatingsSource(bool showRatingsSource, string source)
+        {
+            vm.SetPopupRatingsSource(showRatingsSource, source);
+        }
     }
 }

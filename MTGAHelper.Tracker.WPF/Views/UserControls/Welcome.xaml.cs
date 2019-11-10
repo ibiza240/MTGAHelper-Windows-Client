@@ -80,6 +80,17 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
 
         private void ButtonLoginLocal_Click(object sender, RoutedEventArgs e)
         {
+            LoginLocal();
+        }
+
+        private void txtPassword_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                LoginLocal();
+        }
+
+        private void LoginLocal()
+        {
             var mainWindow = (MainWindow)Window.GetWindow(this);
             mainWindow.ValidateLocalUser(txtPassword.Password, chkRememberEmail.IsChecked == true, chkRememberPassword.IsChecked == true);
         }

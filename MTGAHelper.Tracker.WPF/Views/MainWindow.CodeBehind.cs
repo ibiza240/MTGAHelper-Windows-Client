@@ -114,6 +114,7 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         void Window_Closed(object sender, EventArgs e)
         {
+            trayIcon.Visible = false;
             Application.Current.Shutdown();
         }
 
@@ -179,7 +180,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             var width = (int)this.Width;
             var side = GetCardPopupSide();
 
-            windowCardPopupDrafting.SetCardPopupPosition(side, top, left, width);
+            ucDraftHelper.SetCardPopupPosition(side, top, left, width);
             ucPlaying.SetCardPopupPosition(side, top, left, width);
 
         }

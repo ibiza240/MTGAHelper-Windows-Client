@@ -75,7 +75,7 @@ namespace MTGAHelper.Tracker.WPF.AutoUpdater
             }
 
             File.WriteAllText(fileAppSettings, JsonConvert.SerializeObject(newSettings));
-            File.Delete(fileAppSettingsCopy);
+            //File.Delete(fileAppSettingsCopy);
         }
 
         private static void DownloadLatest(string localFilepath)

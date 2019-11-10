@@ -24,10 +24,10 @@ namespace MTGAHelper.Tracker.WPF.Business
             this.api = api;
         }
 
-        public ICollection<CardDraftPick> GetDraftPicksForCards(string userId, ICollection<int> grpIds)
+        public ICollection<CardDraftPickWpf> GetDraftPicksForCards(string userId, ICollection<int> grpIds, string source)
         {
-            var apiResponse = api.GetCardsForDraftPick(userId, grpIds);
-            return Mapper.Map<ICollection<CardDraftPick>>(apiResponse.CardsForDraft);
+            var apiResponse = api.GetCardsForDraftPick(userId, grpIds, source);
+            return Mapper.Map<ICollection<CardDraftPickWpf>>(apiResponse.CardsForDraft);
         }
 
         //public ICollection<CardDraftPick> ParseDraftMakePick(string userId, string text)

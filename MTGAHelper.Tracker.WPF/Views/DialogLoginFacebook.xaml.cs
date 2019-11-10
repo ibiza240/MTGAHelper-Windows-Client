@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Web;
 using System.Windows;
@@ -77,7 +78,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                         break;
                     case "expires_in":
                         double expires = 0;
-                        if (double.TryParse(name_value[1], out expires))
+                        if (double.TryParse(name_value[1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out expires))
                         {
                             this.p_token_expires = DateTime.Now.AddSeconds(expires);
                         }

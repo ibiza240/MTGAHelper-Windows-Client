@@ -45,7 +45,8 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public LockableOutputLogResultData<Dictionary<string, PlayerProgress>> PlayerProgressByDate { get; set; } = new LockableOutputLogResultData<Dictionary<string, PlayerProgress>>();
         public LockableOutputLogResultData<Dictionary<DateTime, InventoryUpdatedRaw>> InventoryUpdatesByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, InventoryUpdatedRaw>>();
         public LockableOutputLogResultData<Dictionary<DateTime, PostMatchUpdateRaw>> PostMatchUpdatesByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, PostMatchUpdateRaw>>();
-
+        public LockableOutputLogResultData<IList<DraftPickProgress>> DraftPickProgressByDate { get; set; } = new LockableOutputLogResultData<IList<DraftPickProgress>>();
+        
         //InfoByDate<ICollection<CardWithAmount>> lastCollectionInMemory = null;
 
         public uint LastUploadHash { get; set; }
@@ -90,6 +91,9 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
 
             foreach (var postMatchUpdate in PostMatchUpdatesByDate.GetData())
                 CreateOrGetDateSnapshotInfo(postMatchUpdate.DateTime).PostMatchUpdates = postMatchUpdate.Info;
+
+            foreach (var draftPicks in DraftPickProgressByDate.GetData())
+                CreateOrGetDateSnapshotInfo(draftPicks.DateTime).DraftPickProgress = draftPicks.Info;
 
             //foreach (var decks in DecksByDate.GetData())
             //    CreateOrGetDateSnapshotInfo(decks.DateTime).Decks = decks.Info;
@@ -156,6 +160,9 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public InfoByDate<IList<PlayerQuest>> GetLastQuests() => PlayerQuestsByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<IList<PlayerQuest>>(default(DateTime), new List<PlayerQuest>());
 
+        public InfoByDate<IList<DraftPickProgress>> GetLastDraftPickProgress() => DraftPickProgressByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
+            ?? new InfoByDate<IList<DraftPickProgress>>(default(DateTime), new List<DraftPickProgress>());
+
         public (DateSnapshotInfo info, DateSnapshotDiff diff) GetForDate(DateTime dateFor)
         {
             var resultForDate = new DateSnapshotInfo
@@ -170,6 +177,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
                 InventoryUpdates = InventoryUpdatesByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, InventoryUpdatedRaw>(),
                 PostMatchUpdates = PostMatchUpdatesByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, PostMatchUpdateRaw>(),
                 PlayerQuests = PlayerQuestsByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new PlayerQuest[0],
+                DraftPickProgress = DraftPickProgressByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DraftPickProgress[0],
             };
 
             var diff = DiffByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DateSnapshotDiff();
