@@ -15,8 +15,13 @@ Please note that this tracker runs only on Windows for now.
 ### Features
 
 - Automatically synchronizes your log files data with the MTGAHelper servers
-- Draft helper when picking your cards during a draft
 - In-match tracker to see your draw probabilities, sideboard, opponent cards played, etc.
+- Draft helper when picking your cards during a Draft or with Sealed boosters:
+   - Displays Limited ratings from your prefered source (LSV, DraftSim) to help you win more
+   - Gives you Raredrafting information about each card, based on your collection
+      - Number of copies currently owned
+      - How many decks and sideboards the card is played in
+      - A calculated Weight that shows its priority regarding Raredrafting for  Constructed
 
 ##### Check the [Patch notes](https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/PatchNotes.md) to know about the latest changes.
 
@@ -44,9 +49,7 @@ Once the framework installed, [download the Tracker Installer](https://github.co
 
 To use the tracker, you will need to have an MTGAHelper account. You can authenticate with Google or Facebook directly, or you may also use a local account but you will first have to sign-up for one on the website.
 
-### Activate the detailed MTGA log
-
-**This step is now required after the Sept. 4 MTGA game patch**
+### Activate the detailed MTGA log <span style="color:red;">(important!)</span>
 
 To be able to use the tracker, you need to do the following in the MTGA game client:
 
