@@ -21,7 +21,7 @@ Please note that this tracker runs only on Windows for now.
    - Gives you Raredrafting information based on your collection to help you determine if it's worth it to raredraft
       - Number of copies currently owned
       - How many decks and sideboards the card is played in
-      - A calculated Weight that shows its priority regarding Raredrafting for  Constructed
+      - A calculated score that shows its priority for Constructed
 
 ##### Check the [Patch notes](https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/PatchNotes.md) to know about the latest changes.
 
