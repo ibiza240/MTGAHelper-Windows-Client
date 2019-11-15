@@ -1,3 +1,7 @@
+### v1.2.9 (Coming up)
+
+Improved version upgrade process
+
 ### v1.2.8 (2019-11-09)
 
 Sign-in screen: Hitting the Enter key in the password box for local account sends the credentials  
