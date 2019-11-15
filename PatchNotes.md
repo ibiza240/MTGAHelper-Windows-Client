@@ -1,6 +1,6 @@
 ### v1.2.9 (Coming up)
 
-Improved version upgrade process
+Improved auto-update process
 
 ### v1.2.8 (2019-11-09)
 
