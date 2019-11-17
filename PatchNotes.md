@@ -1,4 +1,4 @@
-### v1.2.9 (Coming up)
+### v1.2.9 (2019-11-17)
 
 Improved auto-update process
 
