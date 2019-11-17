@@ -49,7 +49,7 @@ namespace MTGAHelper.Entity.OutputLogParsing
     public class Update
     {
         public Delta delta { get; set; }
-        public List<AetherizedCard> aetherizedCards { get; set; }
+        public ICollection<AetherizedCard> aetherizedCards { get; set; }
         public int xpGained { get; set; }
         public Context context { get; set; }
     }
@@ -57,6 +57,6 @@ namespace MTGAHelper.Entity.OutputLogParsing
     public class InventoryUpdatedRaw
     {
         public string context { get; set; }
-        public List<Update> updates { get; set; }
+        public ICollection<Update> updates { get; set; }
     }
 }

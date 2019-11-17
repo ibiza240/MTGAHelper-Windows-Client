@@ -44,7 +44,7 @@ namespace MTGAHelper.Tracker.WPF
 {
     static class Program
     {
-        static Mutex mutex = new Mutex(true, "{8F6F0AC4-B9A1-45fd-A8CF-72F04E6BDE8F}");
+        static Mutex mutex;
         [STAThread]
         static void Main()
         {
@@ -128,7 +128,7 @@ namespace MTGAHelper.Tracker.WPF
                 // This requires cacheCards to be ready
                 Mapper.Initialize(cfg =>
                 {
-                    cfg.AddProfile(new MapperProfileEntity(cacheCards));
+                    cfg.AddProfile(provider.GetService<MapperProfileEntity>());
                     cfg.AddProfile(new MapperProfileWebModels(cacheCards.Get(), provider, provider.GetService<UtilManaCurve>()));
                     cfg.AddProfile<MapperProfileTrackerWpf>();
                     cfg.AddProfile<MapperProfileLibOutputLogParser>();
@@ -161,7 +161,7 @@ namespace MTGAHelper.Tracker.WPF
                         //var appSettings = TryDeserializeJson<ConfigModelApp>(fileContent, true);
                         //userId = mainWindow.vm.Account.MtgaHelperUserId; //appSettings.UserId;
                         Log.Error(ex, "Error at startup:");
-                        MessageBox.Show($"Error at startup: {ex.Message}{Environment.NewLine}Please check the latest application log file for details or contact me on Discord if you need more help");
+                        MessageBox.Show($"Error at startup: {ex.Message}{Environment.NewLine}{Environment.NewLine}Maybe the server is down? Go check https://mtgahelper.com and if that is the case, please retry later.{Environment.NewLine}{Environment.NewLine}You can check the latest application log file for details or contact me on Discord if you need more help.", "MTGAHelper");
                     }
                     catch
                     {
@@ -323,7 +323,7 @@ namespace MTGAHelper.Tracker.WPF
                 }
                 else
                 {
-                    Log.Information("Local cards out of date, must redownload");
+                    Log.Information("Local cards out of date ({localHash}), must redownload ({remoteHash})", hashAllCardsLocal, hashAllCardsRemote);
                     File.Delete(filePathAllCards);
                 }
             }

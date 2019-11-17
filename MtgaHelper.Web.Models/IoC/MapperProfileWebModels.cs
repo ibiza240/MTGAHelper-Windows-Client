@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.MtgaDeckStats;
+using MTGAHelper.Entity.UserHistory;
 using MTGAHelper.Lib.CollectionDecksCompare;
 using MTGAHelper.Lib.Config.Users;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
@@ -128,11 +129,12 @@ namespace MTGAHelper.Web.UI.IoC
 
             CreateMap<HistorySummaryForDate, GetUserHistorySummaryDto>()
                 .ForMember(i => i.Wins, i => i.MapFrom(x => x.OutcomesByMode.Values.Sum(y => y.Wins)))
-                .ForMember(i => i.Losses, i => i.MapFrom(x => x.OutcomesByMode.Values.Sum(y => y.Losses)));
+                .ForMember(i => i.Losses, i => i.MapFrom(x => x.OutcomesByMode.Values.Sum(y => y.Losses)))
+                .ForMember(i => i.BoostersChange, i => i.MapFrom(x => x.BoostersChange.Select(b => new KeyValuePair<string, int>(b.Key, b.Value))));
 
             CreateMap<DateSnapshotInfo, GetUserHistoryForDateResponseInfo>()
-                .ForMember(i => i.ConstructedRank, i => i.MapFrom(x => x.RankInfo.FirstOrDefault(y => y.Format == ConfigModelRankInfoFormatEnum.Constructed) ?? new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Constructed)))
-                .ForMember(i => i.LimitedRank, i => i.MapFrom(x => x.RankInfo.FirstOrDefault(y => y.Format == ConfigModelRankInfoFormatEnum.Limited) ?? new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Limited)))
+                .ForMember(i => i.ConstructedRank, i => i.MapFrom(x => x.RankSynthetic.FirstOrDefault(y => y.Format == ConfigModelRankInfoFormatEnum.Constructed) ?? new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Constructed)))
+                .ForMember(i => i.LimitedRank, i => i.MapFrom(x => x.RankSynthetic.FirstOrDefault(y => y.Format == ConfigModelRankInfoFormatEnum.Limited) ?? new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Limited)))
                 .ForMember(i => i.Gold, i => i.MapFrom(x => x.Inventory.Gold))
                 .ForMember(i => i.Gems, i => i.MapFrom(x => x.Inventory.Gems))
                 .ForMember(i => i.Wildcards, i => i.MapFrom(x => x.Inventory.Wildcards))

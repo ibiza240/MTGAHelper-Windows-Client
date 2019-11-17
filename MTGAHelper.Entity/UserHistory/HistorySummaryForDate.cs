@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MTGAHelper.Lib.UserHistory
+namespace MTGAHelper.Entity.UserHistory
 {
     public class Outcomes
     {
@@ -36,5 +36,9 @@ namespace MTGAHelper.Lib.UserHistory
             { RarityEnum.Uncommon, 0 },
             { RarityEnum.Common, 0 },
         };
+
+        // V2
+        public int XpChange { get; set; }
+        public Dictionary<string, int> BoostersChange { get; set; }
     }
 }

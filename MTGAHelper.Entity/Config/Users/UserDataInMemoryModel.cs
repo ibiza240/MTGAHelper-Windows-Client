@@ -1,4 +1,5 @@
 ﻿using MTGAHelper.Entity;
+using MTGAHelper.Entity.UserHistory;
 using MTGAHelper.Lib.CollectionDecksCompare;
 using MTGAHelper.Lib.Config;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
@@ -30,6 +31,9 @@ namespace MTGAHelper.Lib
         public LockableOutputLogResult HistoryDetails { get; set; } = new LockableOutputLogResult();
 
         IList<HistorySummaryForDate> HistorySummary { get; set; } = new List<HistorySummaryForDate>();
+
+        IList<ConfigModelRawDeck> MtgaDecks { get; set; } = new List<ConfigModelRawDeck>();
+
         public IList<HistorySummaryForDate> GetHistorySummary()
         {
             lock (lockHistorySummary)
@@ -45,17 +49,15 @@ namespace MTGAHelper.Lib
             lock (lockHistorySummary)
                 HistorySummary.Add(summary);
         }
-
-        IList<ConfigModelRawDeck> MtgaDeckHistory { get; set; } = new List<ConfigModelRawDeck>();
-        public IList<ConfigModelRawDeck> GetMtgaDeckHistory()
+        public IList<ConfigModelRawDeck> GetMtgaDecks()
         {
             lock (lockMtgaDeckHistory)
-                return MtgaDeckHistory;
+                return MtgaDecks;
         }
-        public void SetMtgaDeckHistory(IList<ConfigModelRawDeck> list)
+        public void SetMtgaDecks(IList<ConfigModelRawDeck> list)
         {
             lock (lockMtgaDeckHistory)
-                MtgaDeckHistory = list;
+                MtgaDecks = list;
         }
     }
 }

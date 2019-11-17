@@ -30,7 +30,9 @@ namespace MTGAHelper.Lib.Config
         public const string USER_LOCAL = "localuser";
         public const string DEFAULT_SCRAPER = "mtggoldfish-meta-standard";
 
+        public string PlayerName { get; set; } = "";
         public string Id { get; set; } = USER_LOCAL;
+
         public string LastUploadHash { get; set; } = "";
 
         public bool HasDeckIdsBeenRecoveredForEachMatch { get; set; }

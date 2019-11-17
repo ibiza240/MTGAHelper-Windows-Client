@@ -30,4 +30,11 @@
         LastEvents,
     }
 
+
+    public enum MtgaToolFormatEnum
+    {
+        Unknown,
+        Bo1,
+        Bo3
+    }
 }

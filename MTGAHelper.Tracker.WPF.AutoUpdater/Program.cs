@@ -26,47 +26,52 @@ namespace MTGAHelper.Tracker.WPF.AutoUpdater
             Console.WriteLine($"Download complete ({localFilepath})");
             Console.WriteLine("----------------------------------------");
 
-            if (IsSoftwareInstalled("MTGAHelper Tracker"))
-            {
-                Console.WriteLine("Uninstalling the current version...");
-                // Keep the appsettings.json
+            // Keep the appsettings.json
+            var keepAppSettings = File.Exists(fileAppSettings);
+            if (keepAppSettings)
                 File.Copy(fileAppSettings, fileAppSettingsCopy, true);
-                Process pUninstall = new Process();
-                pUninstall.StartInfo.FileName = "msiexec.exe";
-                pUninstall.StartInfo.Arguments = "/x {36D1B5B8-2ED5-4588-A127-B9122E1E4D3A}";
-                pUninstall.Start();
-                pUninstall.WaitForExit();
-                Console.WriteLine("MTGAHelper has been uninstalled");
-                Console.WriteLine("----------------------------------------");
-            }
 
             Console.WriteLine("Installing the latest version...");
             Process pInstall = new Process();
-            pInstall.StartInfo.FileName = localFilepath;
-            pInstall.StartInfo.UseShellExecute = true;
+            var folderInstalled = GetFolderInstalled("MTGAHelper.Tracker.dll");
+            var processFileName = localFilepath;
+            if (folderInstalled == null)
+            {
+                Console.WriteLine("No previous version was found installed");
+                pInstall.StartInfo.UseShellExecute = true;
+                pInstall.StartInfo.FileName = processFileName;
+            }
+            else
+            {
+                Console.WriteLine($"Upgrading the version found at '{folderInstalled}'");
+                pInstall.StartInfo.FileName = "msiexec";
+                pInstall.StartInfo.Arguments = $"/i \"{localFilepath}\" /passive TARGETDIR=\"{folderInstalled}\"";
+                
+            }
             pInstall.Start();
             pInstall.WaitForExit();
-            // Keep the appsettings.json settings
-            KeepAppSettings(fileAppSettingsCopy, fileAppSettings);
-            Console.WriteLine("Installation complete! Enjoy the latest version of MTGAHelper Tracker :)");
 
-            Thread.Sleep(1000);
+            // Keep the appsettings.json settings
+            if (keepAppSettings)
+                KeepAppSettings(fileAppSettingsCopy, fileAppSettings);
+
+            Console.WriteLine("Installation complete! Enjoy the latest version of MTGAHelper Tracker :)");
 
             var pathAppLink = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "MTGAHelper Tracker.lnk");
             if (File.Exists(pathAppLink))
             {
+                Console.WriteLine("Launching the program...");
                 Process pTracker = new Process();
                 pTracker.StartInfo.FileName = pathAppLink;
                 pTracker.StartInfo.UseShellExecute = true;
                 pTracker.Start();
             }
+
+            Thread.Sleep(1000);
         }
 
         private static void KeepAppSettings(string fileAppSettingsCopy, string fileAppSettings)
         {
-            //File.Copy(fileAppSettingsCopy, fileAppSettings, true);
-            //File.Delete(fileAppSettingsCopy);
-
             var oldSettings = JObject.Parse(File.ReadAllText(fileAppSettingsCopy));
             var newSettings = JObject.Parse(File.ReadAllText(fileAppSettings));
             foreach (var keyValue in oldSettings)
@@ -75,7 +80,6 @@ namespace MTGAHelper.Tracker.WPF.AutoUpdater
             }
 
             File.WriteAllText(fileAppSettings, JsonConvert.SerializeObject(newSettings));
-            //File.Delete(fileAppSettingsCopy);
         }
 
         private static void DownloadLatest(string localFilepath)
@@ -86,18 +90,24 @@ namespace MTGAHelper.Tracker.WPF.AutoUpdater
             }
         }
 
-        static bool IsSoftwareInstalled(string softwareName)
+        static string GetFolderInstalled(string file)
         {
-            var key = Registry.LocalMachine.OpenSubKey(
-                @"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall") ?? Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall");
+            var keyFolder = @"SOFTWARE\Microsoft\Installer\Assemblies";
+            var key = Registry.CurrentUser.OpenSubKey(keyFolder);
 
             if (key == null)
-                return false;
+                return null;
 
-            return key.GetSubKeyNames()
+            var dllKey = key.GetSubKeyNames()
                 .Select(keyName => key.OpenSubKey(keyName))
-                .Select(subkey => subkey.GetValue("DisplayName") as string)
-                .Any(displayName => displayName != null && displayName.Contains(softwareName));
+                .FirstOrDefault(i => i.Name.Contains(file));
+
+            if (dllKey == null)
+                return null;
+
+            var filePath = dllKey.Name.Replace(@$"HKEY_CURRENT_USER\{keyFolder}\", "").Replace("|", @"\");
+            var installationFolder = Path.GetDirectoryName(filePath);
+            return installationFolder;
         }
     }
 }

@@ -11,6 +11,7 @@ namespace MTGAHelper.Entity
         public ICollection<DeckCard> AllExceptBasicLands { get; protected set; }
         public Dictionary<int, DeckCard> QuickCardsMain { get; protected set; }
         public Dictionary<int, DeckCard> QuickCardsSideboard { get; protected set; }
+        public DeckCard QuickCardCommander { get; protected set; }
 
         public DeckCards(ICollection<DeckCard> Cards)
         {
@@ -25,13 +26,15 @@ namespace MTGAHelper.Entity
                 .ToArray();
 
             this.QuickCardsMain = All
-                .Where(i => i.IsSideboard == false)
+                .Where(i => i.Zone == DeckCardZoneEnum.Deck)
                 .ToDictionary(i => i.Card.grpId, i => i);
                 /*.GroupBy(i => i.Card.grpId).ToDictionary(i => i.Key, i => new DeckCard(new CardWithAmount(i.First().Card, i.Sum(x => x.Amount)), false))*/;
 
             this.QuickCardsSideboard = All
-                .Where(i => i.IsSideboard == true)
+                .Where(i => i.Zone == DeckCardZoneEnum.Sideboard)
                 .ToDictionary(i => i.Card.grpId, i => i);
+
+            QuickCardCommander = All.FirstOrDefault(i => i.Zone == DeckCardZoneEnum.Commander);
         }
     }
 }

@@ -98,7 +98,7 @@ namespace MTGAHelper.Entity
             {
                 return this.Cards.All
                     .Where(i => i.Card.colors != null)
-                    .Where(i => i.IsSideboard == false)
+                    .Where(i => i.Zone != DeckCardZoneEnum.Sideboard) //.Where(i => i.IsSideboard == false)
                     .All(i => i.Card.colors.All(c => colors.Contains(c)));
             }
         }

@@ -26,9 +26,9 @@ namespace MTGAHelper.Web.UI.Shared
 
             try
             {
-                var cards = sourceMember.CardsMain.Keys//.Union(sourceMember.CardsSideboard.Keys)
+                var cards = sourceMember.CardsMainWithCommander.Keys//.Union(sourceMember.CardsSideboard.Keys)
                     .Where(i => dictAllCards.ContainsKey(i))
-                    .Select(i => new DeckCard(new CardWithAmount(dictAllCards[i]), false))
+                    .Select(i => new DeckCard(new CardWithAmount(dictAllCards[i]), DeckCardZoneEnum.Deck))
                     .ToArray();
 
                 var deck = new Deck(sourceMember.Name, null, cards);

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MTGAHelper.Lib;
+using MTGAHelper.Entity.UserHistory;
 
 namespace MTGAHelper.Web.UI.Model.Response.User.History
 {
@@ -16,6 +17,8 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
         public int NewCardsCount { get; set; }
         public int GoldChange { get; set; }
         public int GemsChange { get; set; }
+        public int XpChange { get; set; }
+        public ICollection<KeyValuePair<string, int>> BoostersChange { get; set; }
         public float VaultProgressChange { get; set; }
         public Dictionary<string, int> WildcardsChange { get; set; }
         public int Wins { get; set; }
@@ -30,6 +33,7 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
     public class GetUserHistorySummaryResponse
     {
         public ICollection<GetUserHistorySummaryDto> History { get; set; }
+        public ICollection<GetUserHistorySummaryDto> History2 { get; set; }
 
         //public GetUserHistoryResponse(ICollection<DateSnapshot> details)
         //{
@@ -38,9 +42,13 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
         //        .ToArray();
         //}
 
-        public GetUserHistorySummaryResponse(ICollection<HistorySummaryForDate> summary)
+        public GetUserHistorySummaryResponse(HistorySummaryForDate[] summary, ICollection<HistorySummaryForDate> summary2)
         {
             History = summary
+                .Select(i => Mapper.Map<GetUserHistorySummaryDto>(i))
+                .ToArray();
+
+            History2 = summary2
                 .Select(i => Mapper.Map<GetUserHistorySummaryDto>(i))
                 .ToArray();
         }

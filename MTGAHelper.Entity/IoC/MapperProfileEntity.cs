@@ -6,7 +6,6 @@ using AutoMapper;
 using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Lib.Cache;
 using MTGAHelper.Lib.Config;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
 
 namespace MTGAHelper.Entity.IoC
 {
@@ -35,7 +34,7 @@ namespace MTGAHelper.Entity.IoC
             CreateMap<DraftMakePickRaw, DraftPickProgress>();
 
             CreateMap<ConfigModelRawDeck, ConfigModelDeck>()
-                .ForMember(i => i.ScraperTypeId, i => i.MapFrom(x => "userdeck-mtgadeck"))
+                .ForMember(i => i.ScraperTypeId, i => i.MapFrom(x => Constants.USERDECK_SOURCE_MTGADECK))
                 .ForMember(i => i.UrlDeckList, i => i.MapFrom(x => (string)null));
 
 

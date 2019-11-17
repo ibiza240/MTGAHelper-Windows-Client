@@ -46,12 +46,11 @@ namespace MTGAHelper.Lib.Config
         {
             //var test = CardsMain.Where(i => allCards.Any(x => x.grpId == i.Key) == false);
 
-            var cardsMain = CardsMain.Select(i => new DeckCard(
-                new CardWithAmount(allCards[i.Key], i.Value), false));
-            var cardsSideboard = CardsSideboard.Select(i => new DeckCard(
-                new CardWithAmount(allCards[i.Key], i.Value), true));
+            var cardCommander = CardCommander == default(int) ? new DeckCard[0] : new[] { new DeckCard(new CardWithAmount(allCards[CardCommander], 1), DeckCardZoneEnum.Commander) };
+            var cardsMain = CardsMain.Select(i => new DeckCard(new CardWithAmount(allCards[i.Key], i.Value), DeckCardZoneEnum.Deck));
+            var cardsSideboard = CardsSideboard.Select(i => new DeckCard(new CardWithAmount(allCards[i.Key], i.Value), DeckCardZoneEnum.Sideboard));
 
-            return cardsMain.Union(cardsSideboard).ToArray();
+            return cardCommander.Union(cardsMain).Union(cardsSideboard).ToArray();
         }
     }
 }

@@ -5,7 +5,7 @@ namespace MTGAHelper.Entity
 {
     public class DeckAverageArchetypeOtherMainCard : Card, IDeckCard
     {
-        public bool IsSideboard => false;
+        public DeckCardZoneEnum Zone => DeckCardZoneEnum.Deck;
         public int NbMissing => 0;
         public float MissingWeight => 0.0f;
 

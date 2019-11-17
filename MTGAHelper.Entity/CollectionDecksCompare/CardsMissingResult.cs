@@ -105,9 +105,7 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
         {
             if (ByDeck.ContainsKey(deckId) == false)
             {
-                return new Dictionary<RarityEnum, int>
-                {
-                };
+                return new Dictionary<RarityEnum, int>();
             }
 
             var ret = new Dictionary<RarityEnum, int>();

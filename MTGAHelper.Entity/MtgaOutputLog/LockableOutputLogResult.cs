@@ -1,5 +1,6 @@
 ﻿using MTGAHelper.Entity;
 using MTGAHelper.Entity.OutputLogParsing;
+using MTGAHelper.Entity.UserHistory;
 using MTGAHelper.Lib.Config.Users;
 using MTGAHelper.Lib.UserHistory;
 using System;
@@ -8,7 +9,14 @@ using System.Linq;
 
 namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
 {
-    public class LockableOutputLogResultData<T>
+    public interface ILockableOutputLogResultData<T>
+    {
+        IList<InfoByDate<T>> GetData();
+        void SetData(IList<InfoByDate<T>> newData);
+        void AddData(InfoByDate<T> newData);
+    }
+
+    public class LockableOutputLogResultData<T> : ILockableOutputLogResultData<T>
     {
         object lockData = new object();
         IList<InfoByDate<T>> data = new List<InfoByDate<T>>();
@@ -35,18 +43,34 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
     [Serializable]
     public class LockableOutputLogResult
     {
-        public LockableOutputLogResultData<ICollection<ConfigModelRankInfo>> RankInfoByDate { get; set; } = new LockableOutputLogResultData<ICollection<ConfigModelRankInfo>>();
+        //public Dictionary<InfoByDateKeyEnum, ILockableOutputLogResultData<object>> Data { get; private set; } = new Dictionary<InfoByDateKeyEnum, ILockableOutputLogResultData<object>>
+        //{
+        //    { InfoByDateKeyEnum.Rank,  new LockableOutputLogResultData<object>()  }
+        //};
+
+        public LockableOutputLogResultData<ICollection<ConfigModelRankInfo>> RankSyntheticByDate { get; set; } = new LockableOutputLogResultData<ICollection<ConfigModelRankInfo>>();
         public LockableOutputLogResultData<Inventory> InventoryByDate { get; set; } = new LockableOutputLogResultData<Inventory>();
         public LockableOutputLogResultData<Dictionary<int, int>> CollectionByDate { get; set; } = new LockableOutputLogResultData<Dictionary<int, int>>();
         public LockableOutputLogResultData<IList<MatchResult>> MatchesByDate { get; set; } = new LockableOutputLogResultData<IList<MatchResult>>();
         public LockableOutputLogResultData<IList<PlayerQuest>> PlayerQuestsByDate { get; set; } = new LockableOutputLogResultData<IList<PlayerQuest>>();
-        //public LockableOutputLogResultData<IList<MtgaDeck>> DecksGlobal { get; set; } = new LockableOutputLogResultData<IList<MtgaDeck>>();
+        public LockableOutputLogResultData<Dictionary<DateTime, CrackBoosterRaw>> CrackedBoostersByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, CrackBoosterRaw>>();
+        public LockableOutputLogResultData<HashSet<string>> MtgaDecksFoundByDate { get; set; } = new LockableOutputLogResultData<HashSet<string>>();
         public LockableOutputLogResultData<DateSnapshotDiff> DiffByDate { get; set; } = new LockableOutputLogResultData<DateSnapshotDiff>();
         public LockableOutputLogResultData<Dictionary<string, PlayerProgress>> PlayerProgressByDate { get; set; } = new LockableOutputLogResultData<Dictionary<string, PlayerProgress>>();
+        public LockableOutputLogResultData<Dictionary<DateTime, GetPlayerProgressRaw>> PlayerProgressIntradayByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, GetPlayerProgressRaw>>();
         public LockableOutputLogResultData<Dictionary<DateTime, InventoryUpdatedRaw>> InventoryUpdatesByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, InventoryUpdatedRaw>>();
         public LockableOutputLogResultData<Dictionary<DateTime, PostMatchUpdateRaw>> PostMatchUpdatesByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, PostMatchUpdateRaw>>();
-        public LockableOutputLogResultData<IList<DraftPickProgress>> DraftPickProgressByDate { get; set; } = new LockableOutputLogResultData<IList<DraftPickProgress>>();
-        
+        public LockableOutputLogResultData<IList<DraftMakePickRaw>> DraftPickProgressByDate { get; set; } = new LockableOutputLogResultData<IList<DraftMakePickRaw>>();
+        public LockableOutputLogResultData<Dictionary<DateTime, DraftMakePickRaw>> DraftPickProgressIntradayByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, DraftMakePickRaw>>();
+        public LockableOutputLogResultData<Dictionary<DateTime, CompleteVaultRaw>> VaultsOpenedByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, CompleteVaultRaw>>();
+        public LockableOutputLogResultData<Dictionary<DateTime, Dictionary<int, int>>> CollectionIntradayByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, Dictionary<int, int>>>();
+        public LockableOutputLogResultData<Dictionary<DateTime, Inventory>> InventoryIntradayByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, Inventory>>();
+        public LockableOutputLogResultData<Dictionary<DateTime, EventClaimPrizeRaw>> EventClaimPriceByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, EventClaimPrizeRaw>>();
+        public LockableOutputLogResultData<Dictionary<DateTime, MythicRatingUpdatedRaw>> MythicRatingUpdatedByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, MythicRatingUpdatedRaw>>();
+        public LockableOutputLogResultData<Dictionary<DateTime, PayEntryRaw>> PayEntryByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, PayEntryRaw>>();
+        public LockableOutputLogResultData<Dictionary<DateTime, GetCombinedRankInfoRaw>> CombinedRankInfoByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, GetCombinedRankInfoRaw>>();
+        public LockableOutputLogResultData<Dictionary<DateTime, RankUpdatedRaw>> RankUpdatedByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, RankUpdatedRaw>>();
+
         //InfoByDate<ICollection<CardWithAmount>> lastCollectionInMemory = null;
 
         public uint LastUploadHash { get; set; }
@@ -68,6 +92,12 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
                 return info;
             };
 
+            //foreach (var dataType in Data.Keys)
+            //{
+            //    foreach (var data in Data[dataType].GetData())
+            //        CreateOrGetDateSnapshotInfo(data.DateTime).
+            //}
+
             foreach (var collection in CollectionByDate.GetData())
                 CreateOrGetDateSnapshotInfo(collection.DateTime).Collection = collection.Info;
 
@@ -77,14 +107,20 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
             foreach (var progress in PlayerProgressByDate.GetData())
                 CreateOrGetDateSnapshotInfo(progress.DateTime).PlayerProgress = progress.Info;
 
+            foreach (var progress in PlayerProgressIntradayByDate.GetData())
+                CreateOrGetDateSnapshotInfo(progress.DateTime).PlayerProgressIntraday = progress.Info;
+
             foreach (var matches in MatchesByDate.GetData())
                 CreateOrGetDateSnapshotInfo(matches.DateTime).Matches = matches.Info;
 
             foreach (var quests in PlayerQuestsByDate.GetData())
                 CreateOrGetDateSnapshotInfo(quests.DateTime).PlayerQuests = quests.Info;
 
-            foreach (var rankInfo in RankInfoByDate.GetData())
-                CreateOrGetDateSnapshotInfo(rankInfo.DateTime).RankInfo = rankInfo.Info;
+            foreach (var boosters in CrackedBoostersByDate.GetData())
+                CreateOrGetDateSnapshotInfo(boosters.DateTime).CrackedBoosters = boosters.Info;
+
+            foreach (var rankInfo in RankSyntheticByDate.GetData())
+                CreateOrGetDateSnapshotInfo(rankInfo.DateTime).RankSynthetic = rankInfo.Info;
 
             foreach (var inventoryUpdate in InventoryUpdatesByDate.GetData())
                 CreateOrGetDateSnapshotInfo(inventoryUpdate.DateTime).InventoryUpdates = inventoryUpdate.Info;
@@ -94,6 +130,36 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
 
             foreach (var draftPicks in DraftPickProgressByDate.GetData())
                 CreateOrGetDateSnapshotInfo(draftPicks.DateTime).DraftPickProgress = draftPicks.Info;
+
+            foreach (var draftPicks in DraftPickProgressIntradayByDate.GetData())
+                CreateOrGetDateSnapshotInfo(draftPicks.DateTime).DraftPickProgressIntraday = draftPicks.Info;
+
+            foreach (var payEntry in PayEntryByDate.GetData())
+                CreateOrGetDateSnapshotInfo(payEntry.DateTime).PayEntry = payEntry.Info;
+
+            foreach (var mythicRatingUpdated in MythicRatingUpdatedByDate.GetData())
+                CreateOrGetDateSnapshotInfo(mythicRatingUpdated.DateTime).MythicRatingUpdated = mythicRatingUpdated.Info;
+
+            foreach (var combinedRankInfo in CombinedRankInfoByDate.GetData())
+                CreateOrGetDateSnapshotInfo(combinedRankInfo.DateTime).CombinedRankInfo = combinedRankInfo.Info;
+
+            foreach (var rankUpdated in RankUpdatedByDate.GetData())
+                CreateOrGetDateSnapshotInfo(rankUpdated.DateTime).RankUpdated = rankUpdated.Info;
+
+            foreach (var eventClaimPrice in EventClaimPriceByDate.GetData())
+                CreateOrGetDateSnapshotInfo(eventClaimPrice.DateTime).EventClaimPrize = eventClaimPrice.Info;
+
+            foreach (var mtgaDecksfound in MtgaDecksFoundByDate.GetData())
+                CreateOrGetDateSnapshotInfo(mtgaDecksfound.DateTime).MtgaDecksFound = mtgaDecksfound.Info;
+
+            foreach (var vaultsOpened in VaultsOpenedByDate.GetData())
+                CreateOrGetDateSnapshotInfo(vaultsOpened.DateTime).VaultsOpened = vaultsOpened.Info;
+
+            foreach (var collectionIntraday in CollectionIntradayByDate.GetData())
+                CreateOrGetDateSnapshotInfo(collectionIntraday.DateTime).CollectionIntraday = collectionIntraday.Info;
+
+            foreach (var inventoryIntraday in InventoryIntradayByDate.GetData())
+                CreateOrGetDateSnapshotInfo(inventoryIntraday.DateTime).InventoryIntraday = inventoryIntraday.Info;
 
             //foreach (var decks in DecksByDate.GetData())
             //    CreateOrGetDateSnapshotInfo(decks.DateTime).Decks = decks.Info;
@@ -138,7 +204,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
             return lastCollectionInMemory;
         }
 
-        public InfoByDate<ICollection<ConfigModelRankInfo>> GetLastRankInfo() => RankInfoByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
+        public InfoByDate<ICollection<ConfigModelRankInfo>> GetLastRankInfo() => RankSyntheticByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<ICollection<ConfigModelRankInfo>>(default(DateTime),
                 new ConfigModelRankInfo[] {
                     new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Constructed),
@@ -160,8 +226,17 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public InfoByDate<IList<PlayerQuest>> GetLastQuests() => PlayerQuestsByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<IList<PlayerQuest>>(default(DateTime), new List<PlayerQuest>());
 
-        public InfoByDate<IList<DraftPickProgress>> GetLastDraftPickProgress() => DraftPickProgressByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
-            ?? new InfoByDate<IList<DraftPickProgress>>(default(DateTime), new List<DraftPickProgress>());
+        public InfoByDate<Dictionary<DateTime, CrackBoosterRaw>> GetLastCrackedBoosters() => CrackedBoostersByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
+            ?? new InfoByDate<Dictionary<DateTime, CrackBoosterRaw>>(default(DateTime), new Dictionary<DateTime, CrackBoosterRaw>());
+
+        public InfoByDate<IList<DraftMakePickRaw>> GetLastDraftPickProgress() => DraftPickProgressByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
+            ?? new InfoByDate<IList<DraftMakePickRaw>>(default(DateTime), new List<DraftMakePickRaw>());
+
+        public InfoByDate<Dictionary<DateTime, DraftMakePickRaw>> GetLastDraftPickProgressIntraday() => DraftPickProgressIntradayByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
+            ?? new InfoByDate<Dictionary<DateTime, DraftMakePickRaw>>(default(DateTime), new Dictionary<DateTime, DraftMakePickRaw>());
+
+        public InfoByDate<HashSet<string>> GetLastMtgaDecksFound() => MtgaDecksFoundByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
+            ?? new InfoByDate<HashSet<string>>(default(DateTime), new HashSet<string>());
 
         public (DateSnapshotInfo info, DateSnapshotDiff diff) GetForDate(DateTime dateFor)
         {
@@ -172,12 +247,24 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
                 //Decks = DecksByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new ConfigModelRawDeck[0],
                 Inventory = InventoryByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Inventory(),
                 Matches = MatchesByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new MatchResult[0],
-                RankInfo = RankInfoByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new ConfigModelRankInfo[0],
+                RankSynthetic = RankSyntheticByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new ConfigModelRankInfo[0],
                 PlayerProgress = PlayerProgressByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<string, PlayerProgress>(),
+                PlayerProgressIntraday = PlayerProgressIntradayByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, GetPlayerProgressRaw>(),
                 InventoryUpdates = InventoryUpdatesByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, InventoryUpdatedRaw>(),
                 PostMatchUpdates = PostMatchUpdatesByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, PostMatchUpdateRaw>(),
                 PlayerQuests = PlayerQuestsByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new PlayerQuest[0],
-                DraftPickProgress = DraftPickProgressByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DraftPickProgress[0],
+                CrackedBoosters = CrackedBoostersByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, CrackBoosterRaw>(),
+                DraftPickProgress = DraftPickProgressByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DraftMakePickRaw[0],
+                DraftPickProgressIntraday = DraftPickProgressIntradayByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, DraftMakePickRaw>(),
+                MtgaDecksFound = MtgaDecksFoundByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new HashSet<string>(),
+                VaultsOpened = VaultsOpenedByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, CompleteVaultRaw>(),
+                CollectionIntraday = CollectionIntradayByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, Dictionary<int, int>>(),
+                InventoryIntraday = InventoryIntradayByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, Inventory>(),
+                CombinedRankInfo = CombinedRankInfoByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, GetCombinedRankInfoRaw>(),
+                EventClaimPrize = EventClaimPriceByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, EventClaimPrizeRaw>(),
+                PayEntry = PayEntryByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, PayEntryRaw>(),
+                RankUpdated = RankUpdatedByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, RankUpdatedRaw>(),
+                MythicRatingUpdated = MythicRatingUpdatedByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, MythicRatingUpdatedRaw>(),
             };
 
             var diff = DiffByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DateSnapshotDiff();

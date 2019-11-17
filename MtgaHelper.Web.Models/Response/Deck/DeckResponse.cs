@@ -35,7 +35,7 @@ namespace MTGAHelper.Web.UI.Model.Response
                 //    System.Diagnostics.Debugger.Break();
 
                 var info = (
-                    i.IsSideboard,
+                    i.Zone == DeckCardZoneEnum.Sideboard,
                     //new DeckCardDto
                     //{
                     //    Name = i.Card.name,
@@ -52,12 +52,12 @@ namespace MTGAHelper.Web.UI.Model.Response
                 );
 
                 info.Item2.NbMissing =
-                            hCards[i.IsSideboard].Contains(i.Card.name) ? 0 : (deckInfo.CardsRequired.ByCard.ContainsKey(i.Card.name) ?
-                            (i.IsSideboard ? deckInfo.CardsRequired.ByCard[i.Card.name].NbMissingSideboard : deckInfo.CardsRequired.ByCard[i.Card.name].NbMissingMain) : 0);
+                    hCards[i.Zone == DeckCardZoneEnum.Sideboard].Contains(i.Card.name) ? 0 : (deckInfo.CardsRequired.ByCard.ContainsKey(i.Card.name) ?
+                    (i.Zone == DeckCardZoneEnum.Sideboard ? deckInfo.CardsRequired.ByCard[i.Card.name].NbMissingSideboard : deckInfo.CardsRequired.ByCard[i.Card.name].NbMissingMain) : 0);
 
                 //if (i.Card.name.Contains("Guildgate"))
                 //    System.Diagnostics.Debugger.Break();
-                if (hCards[i.IsSideboard].Contains(i.Card.name) == false) hCards[i.IsSideboard].Add(i.Card.name);
+                if (hCards[i.Zone == DeckCardZoneEnum.Sideboard].Contains(i.Card.name) == false) hCards[i.Zone == DeckCardZoneEnum.Sideboard].Add(i.Card.name);
 
                 cards.Add(info);
             }

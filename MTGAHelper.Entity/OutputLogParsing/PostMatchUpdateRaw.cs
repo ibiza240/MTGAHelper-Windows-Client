@@ -42,32 +42,43 @@ namespace MTGAHelper.Entity.OutputLogParsing
         public int count { get; set; }
     }
 
-    public class ArtSkin
-    {
-        public int artId { get; set; }
-        public string ccv { get; set; }
-    }
+    //public class ArtSkin
+    //{
+    //    public int artId { get; set; }
+    //    public string ccv { get; set; }
+    //}
 
     public class Delta
     {
-        public int gemsDelta { get; set; }
-        public int goldDelta { get; set; }
-        public List<BoosterDelta> boosterDelta { get; set; }
         public List<int> cardsAdded { get; set; }
+        public List<BoosterDelta> boosterDelta { get; set; }
         public List<object> decksAdded { get; set; }
         public List<object> starterDecksAdded { get; set; }
-        public List<object> vanityItemsAdded { get; set; }
-        public List<object> vanityItemsRemoved { get; set; }
-        public int draftTokensDelta { get; set; }
-        public int sealedTokensDelta { get; set; }
-        public double vaultProgressDelta { get; set; }
+        public List<object> voucherItemsDelta { get; set; }
         public int wcCommonDelta { get; set; }
         public int wcUncommonDelta { get; set; }
         public int wcRareDelta { get; set; }
         public int wcMythicDelta { get; set; }
-        public List<ArtSkin> artSkinsAdded { get; set; }
-        public List<ArtSkin> artSkinsRemoved { get; set; }
-        public List<object> voucherItemsDelta { get; set; }
+        public int goldDelta { get; set; }
+        public int gemsDelta { get; set; }
+        public int earnedGemsDelta { get; set; }
+        public int draftTokensDelta { get; set; }
+        public int sealedTokensDelta { get; set; }
+        public int wcTrackPosition { get; set; }
+        public float vaultProgressDelta { get; set; }
+        public int newNValCommon { get; set; }
+        public int newNValUncommon { get; set; }
+        public int newNValRare { get; set; }
+        public int newNValMythic { get; set; }
+        public List<object> vanityItemsAdded { get; set; }
+        public List<object> vanityItemsRemoved { get; set; }
+        public List<CardSkin> artSkinsAdded { get; set; }
+        public List<CardSkin> artSkinsRemoved { get; set; }
+        public object basicLandSet { get; set; }
+        public string invEtag { get; set; }
+        public string cardEtag { get; set; }
+        public string cosmeticEtag { get; set; }
+        public int storeBoostersOpened { get; set; }
     }
 
     //public class Context
@@ -112,13 +123,13 @@ namespace MTGAHelper.Entity.OutputLogParsing
     //    public string sourceId { get; set; }
     //}
 
-    public class TimeframeWinUpdate
-    {
-        public Delta delta { get; set; }
-        public List<AetherizedCard> aetherizedCards { get; set; }
-        public int xpGained { get; set; }
-        public Context context { get; set; }
-    }
+    //public class TimeframeWinUpdate
+    //{
+    //    public Delta delta { get; set; }
+    //    public List<AetherizedCard> aetherizedCards { get; set; }
+    //    public int xpGained { get; set; }
+    //    public Context context { get; set; }
+    //}
 
     public class TrackDiff
     {
@@ -189,8 +200,8 @@ namespace MTGAHelper.Entity.OutputLogParsing
     public class PostMatchUpdateRaw
     {
         public List<QuestUpdate> questUpdate { get; set; }
-        public List<TimeframeWinUpdate> dailyWinUpdates { get; set; }
-        public List<TimeframeWinUpdate> weeklyWinUpdates { get; set; }
+        public List<Update> dailyWinUpdates { get; set; }
+        public List<Update> weeklyWinUpdates { get; set; }
         public BattlePassUpdate eppUpdate { get; set; }
         public BattlePassUpdate battlePassUpdate { get; set; }
     }

@@ -14,7 +14,8 @@ namespace MTGAHelper.Entity
         Aetherhub,
         Tappedout,
         MtgTop8,
-        UserDeck,
+        UserDeckSource,
+        MtgaTool,
     }
 
     public enum ScraperTypeFormatEnum
@@ -98,6 +99,10 @@ namespace MTGAHelper.Entity
                         //}
                         url = "https://mtgdecks.net/Standard";
                         break;
+                    case ScraperTypeEnum.MtgaTool:
+                        var format = Name == MtgaToolFormatEnum.Bo1.ToString().ToLower() ? "Bo1" : "Bo2";
+                        url = "http://mtgatool.com/metagame/{format}";
+                        break;
 
                     // WHAT?!????????????
                     case ScraperTypeEnum.MtgTop8:
@@ -145,6 +150,8 @@ namespace MTGAHelper.Entity
         void SetIsByUser()
         {
             IsByUser = Name != null && (Name.StartsWith(NAME_PREFIX_USER) || Type == ScraperTypeEnum.Streamdecker);
+
+            //if (IsByUser) System.Diagnostics.Debugger.Break();
         }
 
         private ScraperTypeEnum DecodeType(string strType)

@@ -28,6 +28,7 @@ namespace MTGAHelper.Lib.Config
 
         //public string FolderDataDecks => Path.Combine(FolderData, "decks");
         public string FolderDataConfigUsers => Path.Combine(FolderData, "configusers");
+        public string FolderDataAccounts => Path.Combine(FolderData, "accounts");
 
         //public List<string> CardsObtainableOnlyByCrafting { get; set; } = new List<string>();
 

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.Win32;
 using MTGAHelper.Entity;
+using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Lib.Cache;
 using MTGAHelper.Lib.IO.Reader;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
@@ -547,10 +548,11 @@ namespace MTGAHelper.Tracker.WPF.Views
                     switch (prms.messageName)
                     {
                         case "Client.SceneChange":
+                            var context = prms.payloadObject.context?.ToString();   // SceneChange_PayloadObject
                             if (prms.humanContext.Contains("Client changed scene") &&
-                                ((string)prms.payloadObject.context).Contains("Draft") == false &&
-                                ((string)prms.payloadObject.context).Contains("Opening sealed boosters") == false &&
-                                ((string)prms.payloadObject.context) != "deck builder")
+                                context.Contains("Draft") == false &&
+                                context.Contains("Opening sealed boosters") == false &&
+                                context != "deck builder")
                             {
                                 GoHome();
                             }

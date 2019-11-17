@@ -29,5 +29,7 @@ namespace MTGAHelper.Entity
         public string Email { get; set; }
         //public string MtgaUsername { get; set; }
         public string MtgaHelperUserId { get; set; }
+
+        //public DateTime LastLogin { get; set; }
     }
 }

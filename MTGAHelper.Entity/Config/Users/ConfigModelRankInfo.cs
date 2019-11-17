@@ -29,6 +29,7 @@
 
         public ConfigModelRankInfo()
         {
+            // For serialization
         }
 
         public ConfigModelRankInfo(ConfigModelRankInfoFormatEnum format)

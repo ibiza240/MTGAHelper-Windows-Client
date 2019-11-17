@@ -10,8 +10,8 @@ namespace MTGAHelper.Entity
         public DeckAverageArchetype(string name, ScraperType scraperType, IEnumerable<DeckCard> cardsMain, IEnumerable<Card> cardsMainOther, IEnumerable<Card> cardsSideboard)
             : base(name, scraperType)
         {
-            Cards = new DeckCards(cardsMain.Select(i => new DeckCard(i, false))
-                .Union(cardsSideboard.Select(i => new DeckCard(new CardWithAmount(i, 1), true)))
+            Cards = new DeckCards(cardsMain.Select(i => new DeckCard(i, DeckCardZoneEnum.Deck))
+                .Union(cardsSideboard.Select(i => new DeckCard(new CardWithAmount(i, 1), DeckCardZoneEnum.Sideboard)))
                 .ToArray());
 
             CardsMainOther = cardsMainOther.Select(i => new DeckAverageArchetypeOtherMainCard(i, 0)).ToArray();
