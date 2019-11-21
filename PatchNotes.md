@@ -1,3 +1,9 @@
+### v1.2.10 (Coming up)
+
+Support for the new WotC patch that changed the log format
+
+Improvements on startup for when the program starts but does nothing
+
 ### v1.2.9 (2019-11-17)
 
 Improved auto-update process
