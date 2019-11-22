@@ -1,4 +1,4 @@
-### v1.2.10 (Coming up)
+### v1.3.0 (2019-11-22)
 
 Support for the new WotC patch that changed the log format
 
