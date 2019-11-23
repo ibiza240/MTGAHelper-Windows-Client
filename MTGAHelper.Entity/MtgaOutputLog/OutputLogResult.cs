@@ -2,6 +2,7 @@
 using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Entity.UserHistory;
 using MTGAHelper.Lib.Config.Users;
+using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
 using MTGAHelper.Lib.UserHistory;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public IList<InfoByDate<Dictionary<int, int>>> CollectionByDate { get; set; } = new List<InfoByDate<Dictionary<int, int>>>();
         public IList<InfoByDate<IList<MatchResult>>> MatchesByDate { get; set; } = new List<InfoByDate<IList<MatchResult>>>();
         public IList<InfoByDate<IList<PlayerQuest>>> PlayerQuestsByDate { get; set; } = new List<InfoByDate<IList<PlayerQuest>>>();
-        public IList<InfoByDate<DateSnapshotDiff>> DiffByDate { get; set; } = new List<InfoByDate<DateSnapshotDiff>>();
+        //public IList<InfoByDate<DateSnapshotDiff>> DiffByDate { get; set; } = new List<InfoByDate<DateSnapshotDiff>>();
         public IList<InfoByDate<Dictionary<string, PlayerProgress>>> PlayerProgressByDate { get; set; } = new List<InfoByDate<Dictionary<string, PlayerProgress>>>();
         public IList<InfoByDate<Dictionary<DateTime, GetPlayerProgressRaw>>> PlayerProgressIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, GetPlayerProgressRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, InventoryUpdatedRaw>>> InventoryUpdatesByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, InventoryUpdatedRaw>>>();
@@ -37,6 +38,8 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public IList<InfoByDate<Dictionary<DateTime, GetCombinedRankInfoRaw>>> CombinedRankInfoByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, GetCombinedRankInfoRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, Inventory>>> InventoryIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, Inventory>>>();
         public IList<InfoByDate<Dictionary<DateTime, Dictionary<int, int>>>> CollectionIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, Dictionary<int, int>>>>();
+
+        public GetSeasonAndRankDetailRaw SeasonAndRankDetail { get; set; } = new GetSeasonAndRankDetailRaw { currentSeason = new CurrentSeason() };
 
         public string PlayerName { get; set; }
         public uint LastUploadHash { get; set; }
@@ -167,8 +170,8 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public InfoByDate<ICollection<ConfigModelRankInfo>> GetLastRank() => RankSyntheticByDate.OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<ICollection<ConfigModelRankInfo>>(default(DateTime),
                 new ConfigModelRankInfo[] {
-                    new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Constructed),
-                    new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Limited)
+                    new ConfigModelRankInfo(RankFormatEnum.Constructed),
+                    new ConfigModelRankInfo(RankFormatEnum.Limited)
                 });
 
         public InfoByDate<Inventory> GetLastInventory() => InventoryByDate.OrderBy(i => i.DateTime).LastOrDefault()
@@ -186,7 +189,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public InfoByDate<Dictionary<DateTime, DraftMakePickRaw>> GetLastDraftPickProgressIntraday() => DraftPickProgressIntradayByDate.OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<Dictionary<DateTime, DraftMakePickRaw>>(default(DateTime), new Dictionary<DateTime, DraftMakePickRaw>());
 
-        public (DateSnapshotInfo info, DateSnapshotDiff diff) GetForDate(DateTime dateFor)
+        public DateSnapshotInfo GetForDate(DateTime dateFor)
         {
             var resultForDate = new DateSnapshotInfo
             {
@@ -215,9 +218,10 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
                 PayEntry = PayEntryByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, PayEntryRaw>(),
             };
 
-            var diff = DiffByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DateSnapshotDiff();
+            //var diff = DiffByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DateSnapshotDiff();
 
-            return (resultForDate, diff);
+            //return (resultForDate, diff);
+            return resultForDate;
         }
     }
 }

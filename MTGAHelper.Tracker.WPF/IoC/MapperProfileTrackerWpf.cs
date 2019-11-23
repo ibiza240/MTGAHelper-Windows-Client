@@ -24,14 +24,13 @@ namespace MTGAHelper.Tracker.WPF.IoC
 
             CreateMap<CardWpf, CardVM>();
 
-            CreateMap<CardWithAmountWpf, LibraryCardWithAmountVM>()
-                .ForMember(i => i.ImageArtUrl, i => i.MapFrom(x => new Util().GetThumbnailLocal(x.ImageArtUrl)));
+            CreateMap<CardWithAmountWpf, LibraryCardWithAmountVM>();
+                //.ForMember(i => i.ImageArtUrl, i => i.MapFrom(x => new Util().GetThumbnailLocal(x.ImageArtUrl)));
 
             CreateMap<CardDraftPickWpf, CardDraftPickVM>()
                 //.ForMember(i => i.ColorGradient, i => i.MapFrom(x => x.Colors.Select;
-                .ForMember(i => i.ImageCardUrl, i => i.MapFrom(x => "https://img.scryfall.com/cards" + x.ImageCardUrl))
-                .ForMember(i => i.ImageArtUrl, i => i.MapFrom(x => new Util().GetThumbnailLocal(x.ImageArtUrl)
-                ))
+                //.ForMember(i => i.ImageCardUrl, i => i.MapFrom(x => "https://img.scryfall.com/cards" + x.ImageCardUrl))
+                //.ForMember(i => i.ImageArtUrl, i => i.MapFrom(x => new Util().GetThumbnailLocal(x.ImageArtUrl)))
                 .ForMember(i => i.CardVM, i => i.MapFrom(x => x));
 
             CreateMap<ConfigModelApp, OptionsWindowVM>();

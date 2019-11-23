@@ -1,67 +1,88 @@
 ﻿using AutoMapper;
 using MTGAHelper.Entity;
+using MTGAHelper.Entity.UserHistory;
 using MTGAHelper.Lib.UserHistory;
+using MTGAHelper.Web.Models.Response.User.History;
+using MTGAHelper.Web.Models.SharedDto;
+using MTGAHelper.Web.UI.Model.Response.User.History;
 using MTGAHelper.Web.UI.Model.SharedDto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MTGAHelper.Web.UI.Model.Response.User.History
+namespace MTGAHelper.Web.Model.Response.User.History
 {
     public class GetUserHistoryForDateResponse
     {
-        public GetUserHistoryForDateResponseData History { get; set; }
+        DateTime dateNewHistory = new DateTime(2019, 11, 18);
 
-        public GetUserHistoryForDateResponse(DateSnapshotInfo historyForDate, DateSnapshotDiff diff)
+        public GetUserHistoryForDateResponseData History { get; set; }
+        public GetUserHistoryForDateResponseData History2 { get; set; }
+
+        public GetUserHistoryForDateResponse(DateSnapshotInfo historyForDate, DateSnapshotDiff diff, ICollection<EconomyEvent> economyEvents, ICollection<RankDelta> rankUpdates)
         {
             History = new GetUserHistoryForDateResponseData(historyForDate, diff);
-        }
-    }
 
-    public class GetUserHistoryForDateResponseData
-    {
-        public DateTime Date { get; set; }
+            var economyEventsDto = Mapper.Map<ICollection<EconomyEventDto>>(economyEvents);
 
-        public GetUserHistoryForDateResponseDiff Diff { get; set; }
-        public GetUserHistoryForDateResponseInfo Info { get; set; }
+            // V2
+            if (historyForDate.Date < dateNewHistory)
+            {
+                if (History.Diff.NewCards.Count > 0)
+                    economyEventsDto = new[]
+                    {
+                        new EconomyEventDto
+                        {
+                            DateTime = historyForDate.Date,
+                            Context = "New cards",
+                            NewCards = History.Diff.NewCards,
+                        }
+                    };
+                else
+                    economyEventsDto = new[]
+                    {
+                    new EconomyEventDto
+                    {
+                        DateTime = historyForDate.Date,
+                        Context = "N/A",
+                    }
+                };
+            }
 
-        public GetUserHistoryForDateResponseData()
-        {
-        }
+            History2 = new GetUserHistoryForDateResponseData
+            {
+                EconomyEvents = economyEventsDto,
+                RankUpdates = Mapper.Map<ICollection<RankDeltaDto>>(rankUpdates),
+                Matches = Mapper.Map<ICollection<MatchDto>>(historyForDate.Matches),
+            };
 
-        public GetUserHistoryForDateResponseData(DateSnapshotInfo historyForDate, DateSnapshotDiff diff)
-        {
-            Date = historyForDate.Date;
-            Info = Mapper.Map<GetUserHistoryForDateResponseInfo>(historyForDate);
-            Diff = Mapper.Map<GetUserHistoryForDateResponseDiff>(diff);
+            // ASSOCIATE RANK CHANGES WITH MATCHES
+            if (rankUpdates.Any())
+            {
+                foreach (var m in History2.Matches)
+                {
+                    var matchEnd = m.StartDateTime.AddSeconds(m.SecondsCount);
 
-            foreach (var m in Info.Matches.Where(i => i.DeckUsed == null))
-                m.DeckUsed = new SimpleDeckDto();
-        }
-    }
+                    var bestRankUpdated = rankUpdates
+                        .Select(i => new { timeDiff = Math.Abs((i.DateTime - matchEnd).TotalSeconds), i.DeltaSteps, i.RankEnd.Format })
+                        .OrderBy(i => i.timeDiff)
+                        .First();
 
-    public class GetUserHistoryForDateResponseDiff
-    {
-        public ICollection<CardWithAmountDto> NewCards { get; set; }
-        public int GoldChange { get; set; }
-        public int GemsChange { get; set; }
-        public float VaultProgressChange { get; set; }
-        public Dictionary<string, int> WildcardsChange { get; set; }
-    }
+                    if (bestRankUpdated.timeDiff < 5d)
+                    {
+                        m.RankDelta = new MatchRankDeltaDto
+                        {
+                            Format = bestRankUpdated.Format.ToString(),
+                            StepsDelta = bestRankUpdated.DeltaSteps,
+                        };
+                    }
 
-    public class GetUserHistoryForDateResponseInfo
-    {
-        public ICollection<MatchDto> Matches { get; set; }
-        public int Gold { get; set; }
-        public int Gems { get; set; }
-        public float VaultProgress { get; set; }
-        public Dictionary<string, int> Wildcards { get; set; }
 
-        public RankInfoDto ConstructedRank { get; set; }
-        public RankInfoDto LimitedRank { get; set; }
-
-        public GetUserHistoryForDateResponseInfo()
-        {
+                    // Patch brought back from V1
+                    if (m.DeckUsed == null)
+                        m.DeckUsed = new SimpleDeckDto();
+                }
+            }
         }
     }
 }

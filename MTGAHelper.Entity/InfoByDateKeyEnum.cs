@@ -12,7 +12,12 @@ namespace MTGAHelper.Entity
         Matches,
         Inventory,
         Decks,
+
+        /// <summary>
+        /// OBSOLETE, DO NOT USE
+        /// </summary>
         Diff,
+
         PlayerProgress,
         PlayerProgressIntraday,
         PlayerQuests,

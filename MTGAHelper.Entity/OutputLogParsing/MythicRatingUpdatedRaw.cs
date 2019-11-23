@@ -6,9 +6,10 @@ namespace MTGAHelper.Entity.OutputLogParsing
 {
     public class MythicRatingUpdatedRaw
     {
-        public double oldMythicPercentile { get; set; }
-        public double newMythicPercentile { get; set; }
-        //public double newMythicLeaderboardPlacement { get; set; }
-        //public string context { get; set; }
+        public float oldMythicPercentile { get; set; }
+        public float newMythicPercentile { get; set; }
+        public float oldMythicLeaderboardPlacement { get; set; }
+        public float newMythicLeaderboardPlacement { get; set; }
+        public string context { get; set; }
     }
 }

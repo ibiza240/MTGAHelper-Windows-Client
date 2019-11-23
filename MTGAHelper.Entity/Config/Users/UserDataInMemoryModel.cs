@@ -44,11 +44,11 @@ namespace MTGAHelper.Lib
             lock (lockHistorySummary)
                 HistorySummary = list;
         }
-        public void AddHistorySummary(HistorySummaryForDate summary)
-        {
-            lock (lockHistorySummary)
-                HistorySummary.Add(summary);
-        }
+        //public void AddHistorySummary(HistorySummaryForDate summary)
+        //{
+        //    lock (lockHistorySummary)
+        //        HistorySummary.Add(summary);
+        //}
         public IList<ConfigModelRawDeck> GetMtgaDecks()
         {
             lock (lockMtgaDeckHistory)

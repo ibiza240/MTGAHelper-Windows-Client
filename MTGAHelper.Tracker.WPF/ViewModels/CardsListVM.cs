@@ -169,7 +169,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
             var card = Mapper.Map<Entity.Card>(grpId);
             var cardVM = Mapper.Map<CardVM>(Mapper.Map<CardWpf>(card));
-            var util = new Entity.Util();
+            var util = new Util();
 
             //if (card.name == "Swamp") System.Diagnostics.Debugger.Break();
 
@@ -180,8 +180,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 CardVM = cardVM,
                 Colors = card.colors,
                 ColorIdentity = card.color_identity,
-                ImageArtUrl = util.GetThumbnailUrl(card.imageArtUrl),
-                ImageCardUrl = "https://img.scryfall.com/cards" + card.imageCardUrl,
+                ImageArtUrl = util.GetThumbnailLocal(card.imageArtUrl),
+                ImageCardUrl = /*"https://img.scryfall.com/cards" +*/ card.imageCardUrl,
                 Name = card.name,
                 Rarity = card.rarity,
                 DrawPercent = new ObservableProperty<float>((float)amount / totalCards),

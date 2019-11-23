@@ -38,15 +38,17 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
         {
             var ret = ByCard
                 //.Where(i => i.Value.Card.setAndInBooster != Card.NOTINBOOSTER)
+                .Where(i => i.Value.Card.isCollectible)
                 .Where(i => i.Value.NbMissing > 0)
-                .GroupBy(i => i.Value.Card.setAndInBooster)
+                //.GroupBy(i => i.Value.Card.setAndInBooster)
+                .GroupBy(i => i.Value.Card.set)
                 .OrderByDescending(i => i.Sum(x => x.Value.MissingWeight))
                 .ToDictionary(i => i.Key, x => x
                     .OrderBy(i => i.Value.Card.GetRarityEnum(true))
                     .GroupBy(i => i.Value.Card.GetRarityEnum(true)).Select(i => new InfoCardMissingSummary
                     {
                         Set = x.Key,
-                        NotInBooster = x.Key == Card.NOTINBOOSTER,
+                        //NotInBooster = x.Key == Card.NOTINBOOSTER,
                         Rarity = i.Key,
                         NbMissing = i.Sum(c => c.Value.NbMissing),
                         MissingWeight = i.Sum(c => c.Value.MissingWeight)

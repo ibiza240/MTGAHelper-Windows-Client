@@ -40,7 +40,22 @@
                 </TextBlock>
             </Label>
 
-            <Label FontSize="14" FontWeight="Bold" Margin="0,20,0,0">
+            <Label FontSize="14" Margin="0,20,0,0">
+                <TextBlock TextWrapping="Wrap" Foreground="LightGray" TextAlignment="Justify">
+                    Always start the tracker BEFORE starting the game and close the tracker AFTER closing the game. Otherwise, tracking might be incorrect for that session.
+                </TextBlock>
+            </Label>
+
+            <StackPanel Orientation="Horizontal" Visibility="{Binding ShowLaunchMtgaGameClient, Converter={StaticResource BoolToVisConverter}}">
+                <Image Source="/Assets/Images/MTGA.png" Width="18" Margin="0,6" />
+                <Label>
+                    <Hyperlink Click="HyperlinkLaunchGame_Click">
+                        Launch the MTGArena game client
+                    </Hyperlink>
+                </Label>
+            </StackPanel>
+
+            <Label FontSize="14" Margin="0,20,0,0">
                 <TextBlock TextWrapping="Wrap">
                     This window will change depending on the context:
                 </TextBlock>
@@ -65,22 +80,6 @@
                     Hopefully this tracker can improve your experience playing Magic: The Gathering Arena :)
                 </TextBlock>
             </Label>
-
-            <StackPanel Orientation="Horizontal" Visibility="{Binding ShowLaunchMtgaGameClient, Converter={StaticResource BoolToVisConverter}}" Margin="0,20">
-                <Image Source="/Assets/Images/MTGA.png" Width="18" Margin="0,6" />
-                <Label>
-                    <Hyperlink Click="HyperlinkLaunchGame_Click">
-                        Launch the MTGArena game client
-                    </Hyperlink>
-                </Label>
-            </StackPanel>
-        </StackPanel>
-        <StackPanel  DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
-            <!--<Label>
-                <TextBlock TextWrapping="WrapWithOverflow">
-                    Processing your log file may take some time. With enough support, the servers will be much faster. Thanks for your understanding!
-                </TextBlock>
-            </Label>-->
         </StackPanel>
     </DockPanel>
 </UserControl>

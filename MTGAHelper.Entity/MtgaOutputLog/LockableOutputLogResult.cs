@@ -2,6 +2,7 @@
 using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Entity.UserHistory;
 using MTGAHelper.Lib.Config.Users;
+using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
 using MTGAHelper.Lib.UserHistory;
 using System;
 using System.Collections.Generic;
@@ -55,7 +56,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public LockableOutputLogResultData<IList<PlayerQuest>> PlayerQuestsByDate { get; set; } = new LockableOutputLogResultData<IList<PlayerQuest>>();
         public LockableOutputLogResultData<Dictionary<DateTime, CrackBoosterRaw>> CrackedBoostersByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, CrackBoosterRaw>>();
         public LockableOutputLogResultData<HashSet<string>> MtgaDecksFoundByDate { get; set; } = new LockableOutputLogResultData<HashSet<string>>();
-        public LockableOutputLogResultData<DateSnapshotDiff> DiffByDate { get; set; } = new LockableOutputLogResultData<DateSnapshotDiff>();
+        //public LockableOutputLogResultData<DateSnapshotDiff> DiffByDate { get; set; } = new LockableOutputLogResultData<DateSnapshotDiff>();
         public LockableOutputLogResultData<Dictionary<string, PlayerProgress>> PlayerProgressByDate { get; set; } = new LockableOutputLogResultData<Dictionary<string, PlayerProgress>>();
         public LockableOutputLogResultData<Dictionary<DateTime, GetPlayerProgressRaw>> PlayerProgressIntradayByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, GetPlayerProgressRaw>>();
         public LockableOutputLogResultData<Dictionary<DateTime, InventoryUpdatedRaw>> InventoryUpdatesByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, InventoryUpdatedRaw>>();
@@ -207,12 +208,12 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public InfoByDate<ICollection<ConfigModelRankInfo>> GetLastRankInfo() => RankSyntheticByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<ICollection<ConfigModelRankInfo>>(default(DateTime),
                 new ConfigModelRankInfo[] {
-                    new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Constructed),
-                    new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Limited)
+                    new ConfigModelRankInfo(RankFormatEnum.Constructed),
+                    new ConfigModelRankInfo(RankFormatEnum.Limited)
                 });
 
-        public InfoByDate<Inventory> GetLastInventory() => InventoryByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
-            ?? new InfoByDate<Inventory>(default(DateTime), new Inventory());
+        //public InfoByDate<Inventory> GetLastInventory() => InventoryByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
+        //    ?? new InfoByDate<Inventory>(default(DateTime), new Inventory());
 
         public InfoByDate<Dictionary<DateTime, InventoryUpdatedRaw>> GetLastInventoryUpdates() => InventoryUpdatesByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<Dictionary<DateTime, InventoryUpdatedRaw>>(default(DateTime), new Dictionary<DateTime, InventoryUpdatedRaw>());
@@ -238,7 +239,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public InfoByDate<HashSet<string>> GetLastMtgaDecksFound() => MtgaDecksFoundByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<HashSet<string>>(default(DateTime), new HashSet<string>());
 
-        public (DateSnapshotInfo info, DateSnapshotDiff diff) GetForDate(DateTime dateFor)
+        public DateSnapshotInfo GetForDate(DateTime dateFor)
         {
             var resultForDate = new DateSnapshotInfo
             {
@@ -267,9 +268,10 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
                 MythicRatingUpdated = MythicRatingUpdatedByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, MythicRatingUpdatedRaw>(),
             };
 
-            var diff = DiffByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DateSnapshotDiff();
+            //var diff = DiffByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DateSnapshotDiff();
 
-            return (resultForDate, diff);
+            //return (resultForDate, diff);
+            return resultForDate;
         }
     }
 }

@@ -1,21 +1,11 @@
-﻿namespace MTGAHelper.Lib.Config.Users
-{
-    public enum ConfigModelRankInfoFormatEnum
-    {
-        Unknown,
-        Constructed,
-        Limited
-    }
+﻿using MTGAHelper.Entity;
 
-    public class ConfigModelRankInfo
+namespace MTGAHelper.Lib.Config.Users
+{
+    public class ConfigModelRankInfo : Rank
     {
         public const string UNKNOWN = "_0_0";
 
-        public ConfigModelRankInfoFormatEnum Format { get; set; }
-        public int SeasonOrdinal { get; set; }
-        public string Class { get; set; }
-        public int Level { get; set; }
-        public int Step { get; set; }
         public int MatchesWon { get; set; }
         public int MatchesLost { get; set; }
         public int MatchesDrawn { get; set; }
@@ -32,7 +22,7 @@
             // For serialization
         }
 
-        public ConfigModelRankInfo(ConfigModelRankInfoFormatEnum format)
+        public ConfigModelRankInfo(RankFormatEnum format)
         {
             Format = format;
         }

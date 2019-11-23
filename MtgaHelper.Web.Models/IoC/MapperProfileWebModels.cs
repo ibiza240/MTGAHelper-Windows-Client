@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.MtgaDeckStats;
 using MTGAHelper.Entity.UserHistory;
+using MTGAHelper.Lib.Cache;
 using MTGAHelper.Lib.CollectionDecksCompare;
 using MTGAHelper.Lib.Config.Users;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
@@ -11,6 +12,7 @@ using MTGAHelper.Lib.UserHistory;
 using MTGAHelper.Web.Models;
 using MTGAHelper.Web.Models.Response.Account;
 using MTGAHelper.Web.Models.Response.User;
+using MTGAHelper.Web.Models.Response.User.History;
 using MTGAHelper.Web.Models.SharedDto;
 using MTGAHelper.Web.UI.Model.Response;
 using MTGAHelper.Web.UI.Model.Response.Dto;
@@ -34,7 +36,8 @@ namespace MTGAHelper.Web.UI.IoC
             var rawDeckConverter = provider.GetService<AutoMapperRawDeckConverter>();
             var rawDeckToColorConverter = provider.GetService<AutoMapperRawDeckToColorConverter>();
             var utilColors = provider.GetService<UtilColors>();
-            
+            var setsByCollationId = provider.GetService<CacheSingleton<Dictionary<int, Set>>>()?.Get();
+
             CreateMap<Card, CardDto>()
                 .ForMember(i => i.IdArena, i => i.MapFrom(x => x.grpId));
 
@@ -133,8 +136,8 @@ namespace MTGAHelper.Web.UI.IoC
                 .ForMember(i => i.BoostersChange, i => i.MapFrom(x => x.BoostersChange.Select(b => new KeyValuePair<string, int>(b.Key, b.Value))));
 
             CreateMap<DateSnapshotInfo, GetUserHistoryForDateResponseInfo>()
-                .ForMember(i => i.ConstructedRank, i => i.MapFrom(x => x.RankSynthetic.FirstOrDefault(y => y.Format == ConfigModelRankInfoFormatEnum.Constructed) ?? new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Constructed)))
-                .ForMember(i => i.LimitedRank, i => i.MapFrom(x => x.RankSynthetic.FirstOrDefault(y => y.Format == ConfigModelRankInfoFormatEnum.Limited) ?? new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Limited)))
+                .ForMember(i => i.ConstructedRank, i => i.MapFrom(x => x.RankSynthetic.FirstOrDefault(y => y.Format == RankFormatEnum.Constructed) ?? new ConfigModelRankInfo(RankFormatEnum.Constructed)))
+                .ForMember(i => i.LimitedRank, i => i.MapFrom(x => x.RankSynthetic.FirstOrDefault(y => y.Format == RankFormatEnum.Limited) ?? new ConfigModelRankInfo(RankFormatEnum.Limited)))
                 .ForMember(i => i.Gold, i => i.MapFrom(x => x.Inventory.Gold))
                 .ForMember(i => i.Gems, i => i.MapFrom(x => x.Inventory.Gems))
                 .ForMember(i => i.Wildcards, i => i.MapFrom(x => x.Inventory.Wildcards))
@@ -168,7 +171,11 @@ namespace MTGAHelper.Web.UI.IoC
 
             CreateMap<PlayerProgress, PlayerProgressDto>();
 
-            CreateMap<Inventory, InventoryResponseDto>();
+            CreateMap<Inventory, InventoryResponseDto>()
+                .ForMember(i => i.Boosters, i => i.MapFrom(x => x.Boosters));
+
+            CreateMap<InventoryBooster, InventoryBoosterDto>()
+                .ForMember(i => i.Set, i => i.MapFrom(x => setsByCollationId[x.CollationId].Code));
 
             CreateMap<DeckSummary, DeckSummaryResponseDto>();
             CreateMap<DeckTrackedSummary, DeckTrackedSummaryResponseDto>();
@@ -180,6 +187,14 @@ namespace MTGAHelper.Web.UI.IoC
             CreateMap<InfoCardMissingSummary, InfoCardMissingSummaryResponseDto>();
 
             CreateMap<AccountModel, AccountResponse>();
+
+            CreateMap<EconomyEvent, EconomyEventDto>()
+                .ForMember(i => i.Context, i => i.MapFrom(x => x.Context.Replace("PlayerInventory.", "")));
+
+            CreateMap<EconomyEventChange, EconomyEventChangeDto>();
+
+            CreateMap<Rank, RankDto>();
+            CreateMap<RankDelta, RankDeltaDto>();
         }
     }
 }

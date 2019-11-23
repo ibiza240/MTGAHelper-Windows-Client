@@ -19,8 +19,8 @@ namespace MTGAHelper.Web.Models
                 .GroupBy(i => Math.Min(7, i.Card.cmc))
                 .ToDictionary(i => i.Key, i => i);
 
-            if (manaInfo.Values.Any() == false)
-                System.Diagnostics.Debugger.Break();
+            //if (manaInfo.Values.Any() == false)
+            //    System.Diagnostics.Debugger.Break();
 
             var maxCardsForMana = manaInfo.Any() ? manaInfo.Values.Max(i => i.Sum(x => x.Amount)) : 1;
 

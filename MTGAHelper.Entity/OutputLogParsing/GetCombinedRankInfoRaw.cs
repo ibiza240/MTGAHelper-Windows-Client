@@ -30,7 +30,7 @@ namespace MTGAHelper.Entity.OutputLogParsing
         {
             return new[]
             {
-                new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Constructed)
+                new ConfigModelRankInfo(RankFormatEnum.Constructed)
                 {
                     SeasonOrdinal = constructedSeasonOrdinal,
                     Class = constructedClass,
@@ -42,7 +42,7 @@ namespace MTGAHelper.Entity.OutputLogParsing
                     Percentile = constructedPercentile,
                     LeaderboardPlace = constructedLeaderboardPlace,
                 },
-                new ConfigModelRankInfo(ConfigModelRankInfoFormatEnum.Limited)
+                new ConfigModelRankInfo(RankFormatEnum.Limited)
                 {
                     SeasonOrdinal = limitedSeasonOrdinal,
                     Class = limitedClass,

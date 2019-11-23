@@ -5,6 +5,12 @@ using MTGAHelper.Entity;
 
 namespace MTGAHelper.Web.UI.Model.Response.User
 {
+    public class InventoryBoosterDto
+    {
+        public string Set { get; set; }
+        public int Count { get; set; }
+    }
+
     public class InventoryResponseDto
     {
         public string PlayerId { get; set; }
@@ -15,7 +21,7 @@ namespace MTGAHelper.Web.UI.Model.Response.User
         public int WcTrackPosition { get; set; }
         public float VaultProgress { get; set; }
 
-        public ICollection<InventoryBooster> Boosters { get; set; }
+        public ICollection<InventoryBoosterDto> Boosters { get; set; }
 
         public Dictionary<string, int> Wildcards { get; set; } = new Dictionary<string, int>
         {

@@ -264,7 +264,7 @@ namespace MTGAHelper.Tracker.WPF.Business
                 {
                     var responseRaw = w.DownloadString((configApp.Test ? serverTest : server) + "/api/Misc/VersionTracker");
                     var latestVersion = JsonConvert.DeserializeObject<GetVersionTrackerResponse>(responseRaw).Version;
-                    return string.Compare(fvi.FileVersion, latestVersion) >= 0;
+                    return new Version(fvi.FileVersion) >= new Version(latestVersion);
                 }
             }
             catch (WebException)

@@ -13,6 +13,7 @@ namespace MTGAHelper.Entity.IoC
                 .AddSingleton<CacheSingleton<ICollection<ConfigModelDeck>>>()
                 .AddSingleton<CacheSingleton<Dictionary<int, Card>>>()
                 .AddSingleton<ICollection<Card>>(p => p.GetService<CacheSingleton<Dictionary<int, Card>>>().Get().Values)
+                .AddSingleton<CacheSingleton<Dictionary<int, Set>>>()
                 .AddSingleton<CacheSingleton<Dictionary<string, ConfigModelUser>>>()
                 .AddSingleton<CacheSingleton<DraftRatings>>()
                 .AddSingleton<MapperProfileEntity>()

@@ -37,33 +37,11 @@ namespace MTGAHelper.Entity.IoC
                 .ForMember(i => i.ScraperTypeId, i => i.MapFrom(x => Constants.USERDECK_SOURCE_MTGADECK))
                 .ForMember(i => i.UrlDeckList, i => i.MapFrom(x => (string)null));
 
-
-            //public class ConfigModelRawDeck
-            //{
-            //    public string Id { get; set; }
-            //    public int DeckTileId { get; set; }
-            //    public DateTime LastUpdated { get; set; }
-            //    public string Name { get; set; }
-            //    public string Format { get; set; }
-            //    public string ArchetypeId { get; set; }
-            //    public Dictionary<int, int> CardsMain { get; set; } = new Dictionary<int, int>();
-            //    public Dictionary<int, int> CardsSideboard { get; set; } = new Dictionary<int, int>();
-            //}
-
-            //public class ConfigModelDeck : ConfigModelRawDeck, IConfigModel
-            //{
-            //    public const string SOURCE_SYSTEM = "automatic";
-            //    public const string SOURCE_USERCUSTOM = "usercustom";
-            //    public DateTime DateScrapedUtc { get; set; }
-            //    public DateTime DateCreatedUtc { get; set; }
-            //    public string ScraperTypeId { get; set; }
-            //    public int? ScraperTypeOrderIndex { get; set; }
-            //    public string Url { get; set; }
-            //    public string UrlDeckList { get; set; }
-
-            //    [JsonIgnore]
-            //    public IDeck Deck { get; set; }
-
+            CreateMap<RankUpdatedRaw, Rank>()
+                .ForMember(i => i.Format, i => i.MapFrom(x => Enum.Parse(typeof(RankFormatEnum), x.rankUpdateType)))
+                .ForMember(i => i.Class, i => i.MapFrom(x => x.newClass))
+                .ForMember(i => i.Level, i => i.MapFrom(x => x.newLevel))
+                .ForMember(i => i.Step, i => i.MapFrom(x => x.newStep));
         }
     }
 }

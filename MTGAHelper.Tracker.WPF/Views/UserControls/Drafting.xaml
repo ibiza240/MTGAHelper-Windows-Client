@@ -12,6 +12,7 @@
         <!--<helpers:BoolToStringConverter x:Key="IsRareDraftPickBorderThicknessConverter" TrueValue="1,1,1,1" FalseValue="0,1,0,0" />
         <helpers:BoolToStringConverter x:Key="IsRareDraftPickBorderBrushConverter" TrueValue="#ccac00" FalseValue="#555555" />
         <helpers:BoolToStringConverter x:Key="IsRareDraftPickColorConverter" TrueValue="#ccac00" FalseValue="#aaaaaa" />-->
+        <helpers:IntToVisibilityConverter x:Key="IntToVisibilityConverter" Threshold="0" />
         <helpers:BoolToStringConverter x:Key="BoolToVisHiddenConverter" TrueValue="Visible" FalseValue="Hidden" />
         <helpers:BoolToStringConverter x:Key="BoolToVisCollapsedConverter" TrueValue="Visible" FalseValue="Collapsed" />
         <helpers:RatingFloatToColorScaleConverter x:Key="RatingToColorConverter" />
@@ -153,22 +154,25 @@
                                         <DataGridTemplateColumn IsReadOnly="True" Width="*">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <StackPanel Visibility="{Binding DataContext.ShowGlobalMTGAHelperSays, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVisCollapsedConverter}}">
-                                                        <Border HorizontalAlignment="Right" ToolTipService.InitialShowDelay="50">
-                                                            <Border.ToolTip>
-                                                                <TextBlock Foreground="Black"  Text="Raredraft choice" />
-                                                            </Border.ToolTip>
-                                                            <Image Source="/Assets/Images/Treasure.png" Width="20"
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="{Binding DataContext.ShowGlobalMTGAHelperSays, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVisCollapsedConverter}}">
+                                                        <Label Content="{Binding NbMissingCollection}" ContentStringFormat="{}{0} missing" Visibility="{Binding NbMissingCollection, Converter={StaticResource IntToVisibilityConverter}}" />
+                                                        <StackPanel>
+                                                            <Border ToolTipService.InitialShowDelay="50">
+                                                                <Border.ToolTip>
+                                                                    <TextBlock Foreground="Black"  Text="Raredraft choice" />
+                                                                </Border.ToolTip>
+                                                                <Image Source="/Assets/Images/Treasure.png" Width="20"
                                                                 Opacity="{Binding DataContext.RaredraftOpacity, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
                                             Visibility="{Binding RareDraftPickEnum, Converter={StaticResource BoolToVisHiddenConverter}}" />
-                                                        </Border>
-                                                        <Border HorizontalAlignment="Right" ToolTipService.InitialShowDelay="50" Margin="0,2,4,0">
-                                                            <Border.ToolTip>
-                                                                <TextBlock Foreground="Black" Text="Used in your tracked decks" />
-                                                            </Border.ToolTip>
-                                                            <Image Source="/Assets/Images/star.png" Width="12"
+                                                            </Border>
+                                                            <Border ToolTipService.InitialShowDelay="50" Margin="0,2,4,0">
+                                                                <Border.ToolTip>
+                                                                    <TextBlock Foreground="Black" Text="Used in your tracked decks" />
+                                                                </Border.ToolTip>
+                                                                <Image Source="/Assets/Images/star.png" Width="12"
                                                 Visibility="{Binding Weight, Converter={StaticResource ShowWeightConverter}}" />
-                                                        </Border>
+                                                            </Border>
+                                                        </StackPanel>
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>

@@ -10,18 +10,18 @@ namespace MTGAHelper.Entity
 
         public string setAndInBooster => notInBooster ? NOTINBOOSTER : set;
 
-        public List<string> colors { get; set; } = new List<string>();
-        public List<string> color_identity { get; set; } = new List<string>();
-        public string layout { get; set; }
+        public ICollection<string> colors { get; set; } = new List<string>();
+        public ICollection<string> color_identity { get; set; } = new List<string>();
+        //public string layout { get; set; }
         public string name { get; set; }
-        public int mtgo_id { get; set; }
+        //public int mtgo_id { get; set; }
         public string number { get; set; }
         public string rarity { get; set; }
         public string mana_cost { get; set; }
         public string type { get; set; } = string.Empty;
         public string set { get; set; }
         public bool notInBooster { get; set; }
-        public bool craftedOnly { get; set; }
+        //public bool craftedOnly { get; set; }
         public int grpId { get; set; }
         public string imageCardUrl { get; set; }
         public string imageArtUrl { get; set; }
@@ -29,10 +29,11 @@ namespace MTGAHelper.Entity
         //public string artist { get; set; }
 
         // From data_cards.mtga
-        public int titleId { get; set; }
+        //public int titleId { get; set; }
         public enumLinkedFace linkedFaceType { get; set; }
         public bool isToken { get; set; }
         public bool isCraftable { get; set; }
+        public bool isCollectible { get; set; }
         public string artistCredit { get; set; }
         
         //public string artistCredit { get; set; }

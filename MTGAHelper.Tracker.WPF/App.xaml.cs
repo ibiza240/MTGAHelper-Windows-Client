@@ -72,7 +72,7 @@ namespace MTGAHelper.Tracker.WPF
                 }
                 catch (TimeoutException)
                 {
-                    MessageBox.Show("MTGAHelper is already running, shutting down...", "MTGAHelper");
+                    MessageBox.Show("Cannot run MTGAHelper more than once", "MTGAHelper");
                 }
                 finally
                 {
@@ -94,14 +94,13 @@ namespace MTGAHelper.Tracker.WPF
         MainWindow mainWindow;
         ConfigModelApp configApp;
         IServiceProvider provider;
+        HttpClientFactory httpClientFactory = new HttpClientFactory();
 
         string folderForConfigAndLog;
         string filePathAllCards;
         string filePathDateFormats;
 
         CacheSingleton<Dictionary<int, Card>> cacheCards;
-
-        static Mutex mutex;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -117,10 +116,9 @@ namespace MTGAHelper.Tracker.WPF
 #else
              folderForConfigAndLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");
 #endif
+                ConfigureApp();
 
                 CheckForServerMessage();
-
-                ConfigureApp();
 
                 SetDateFormats();
                 cacheCards = SetAllCards();
@@ -142,7 +140,7 @@ namespace MTGAHelper.Tracker.WPF
             }
             catch (ServerNotAvailableException)
             {
-                MessageBox.Show("The server is not available at this moment, please retry in a few minutes. If you want to report this downtime, please leave a message on the Discord server (https://discord.gg/GTd3RMd)", "MTGAHelper");
+                //MessageBox.Show("The server is not available at this moment, please retry in a few minutes. If you want to report this downtime, please leave a message on the Discord server (https://discord.gg/GTd3RMd)", "MTGAHelper");
                 Shutdown();
             }
             catch (Exception ex)
@@ -161,7 +159,7 @@ namespace MTGAHelper.Tracker.WPF
                         //var appSettings = TryDeserializeJson<ConfigModelApp>(fileContent, true);
                         //userId = mainWindow.vm.Account.MtgaHelperUserId; //appSettings.UserId;
                         Log.Error(ex, "Error at startup:");
-                        MessageBox.Show($"Error at startup: {ex.Message}{Environment.NewLine}{Environment.NewLine}Maybe the server is down? Go check https://mtgahelper.com and if that is the case, please retry later.{Environment.NewLine}{Environment.NewLine}You can check the latest application log file for details or contact me on Discord if you need more help.", "MTGAHelper");
+                        MessageBox.Show($"Error at startup: {ex.Message}{Environment.NewLine}{Environment.NewLine}You can check the latest application log file for details or contact me on Discord if you need more help.", "MTGAHelper");
                     }
                     catch
                     {
@@ -177,7 +175,13 @@ namespace MTGAHelper.Tracker.WPF
 
         void CheckForServerMessage()
         {
-            var msgs = TryDownloadFromServer(DownloadTrackerClientMessages);
+            var msgs = TryDownloadFromServer(() =>
+                {
+                    var raw = HttpClientGet_WithTimeoutNotification(server + "/api/misc/TrackerClientMessages", 15).Result;
+                    return TryDeserializeJson<Dictionary<string, string>>(raw, true);
+                }
+            );
+
             if (msgs != null)
             {
                 var version = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion;
@@ -188,22 +192,29 @@ namespace MTGAHelper.Tracker.WPF
             }
         }
 
-        Dictionary<string, string> DownloadTrackerClientMessages()
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                var msgsRaw = client.GetAsync(server + "/api/misc/TrackerClientMessages").Result.Content.ReadAsStringAsync().Result;
-                return TryDeserializeJson<Dictionary<string, string>>(msgsRaw, true);
-            }
-        }
-
         void ConfigureApp()
         {
-            var fileAppSettings = Path.Combine(folderForConfigAndLog, "appsettings.json");
-            if (File.Exists(fileAppSettings) == false || new FileInfo(fileAppSettings).Length == 0)
+            void RecreateAppSettings(string fileAppSettings)
             {
                 var defaultSettings = JsonConvert.SerializeObject(new ConfigModelApp());
                 File.WriteAllText(fileAppSettings, defaultSettings);
+            }
+
+            var fileAppSettings = Path.Combine(folderForConfigAndLog, "appsettings.json");
+            string fileContent = "";
+            if (File.Exists(fileAppSettings) == false || new FileInfo(fileAppSettings).Length == 0)
+            {
+                RecreateAppSettings(fileAppSettings);
+            }
+            try
+            {
+                 fileContent = File.ReadAllText(fileAppSettings);
+                var appSettings = JsonConvert.DeserializeObject<ConfigModelApp>(fileContent);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"AppSettings file was invalid:{Environment.NewLine}{fileContent}", fileContent);
+                RecreateAppSettings(fileAppSettings);
             }
 
             var configuration = new ConfigurationBuilder()
@@ -264,18 +275,15 @@ namespace MTGAHelper.Tracker.WPF
 
             if (mustDownload)
             {
-                var dateFormatsResponse = TryDownloadFromServer(DownloadDateFormats);
+                var dateFormatsResponse = TryDownloadFromServer(() =>
+                {
+                    var raw = HttpClientGet_WithTimeoutNotification(server + "/api/misc/dateFormats", 15).Result;
+                    var response = TryDeserializeJson<GetDateFormatsResponse>(raw);
+                    return response;
+                });
+
                 if (dateFormatsResponse != null)
                     File.WriteAllText(filePathDateFormats, JsonConvert.SerializeObject(dateFormatsResponse.DateFormats));
-            }
-        }
-
-        GetDateFormatsResponse DownloadDateFormats()
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                var dateFormats = client.GetAsync(server + "/api/misc/dateFormats").Result.Content.ReadAsStringAsync().Result;
-                return TryDeserializeJson<GetDateFormatsResponse>(dateFormats);
             }
         }
 
@@ -333,20 +341,41 @@ namespace MTGAHelper.Tracker.WPF
 
         uint DownloadHashAllCards()
         {
-            using (HttpClient client = new HttpClient())
-            {
-                var lastCardsHashRemoteRaw = client.GetAsync(server + "/api/misc/lastcardshash").Result.Content.ReadAsStringAsync().Result;
-                return Convert.ToUInt32(TryDeserializeJson<LastHashResponse>(lastCardsHashRemoteRaw, true).LastHash);
-            }
+            var raw = HttpClientGet_WithTimeoutNotification(server + "/api/misc/lastcardshash", 15).Result;
+            var response = TryDeserializeJson<LastHashResponse>(raw);
+            return Convert.ToUInt32(response.LastHash);
         }
 
         GetCardsResponse DownloadAllCards()
         {
-            using (HttpClient client = new HttpClient())
+            var raw = HttpClientGet_WithTimeoutNotification(server + "/api/misc/cards", 60).Result;
+            var response = TryDeserializeJson<GetCardsResponse>(raw);
+            return response;
+        }
+
+        public async Task<string> HttpClientGet_WithTimeoutNotification(string requestUri, double timeout)
+        {
+            using (HttpClient client = httpClientFactory.Create(timeout))
             {
-                var cardsRaw = client.GetAsync(server + "/api/misc/cards").Result.Content.ReadAsStringAsync().Result;
-                var cardsResponse = TryDeserializeJson<GetCardsResponse>(cardsRaw);
-                return cardsResponse;
+                var doRequest = true;
+                while (doRequest)
+                {
+                    try
+                    {
+                        var raw = await client.GetAsync(requestUri).Result.Content.ReadAsStringAsync();
+                        return raw;
+                    }
+                    catch (Exception ex)
+                    {
+                        doRequest = MessageBox.Show($"It appears the server didn't reply in time ({timeout} seconds). Do you want to retry? Choosing No will stop the program.{Environment.NewLine}{Environment.NewLine}Maybe the server is down? Go check https://mtgahelper.com and if that is the case, please retry later.",
+                            "MTGAHelper", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+
+                        if (doRequest == false)
+                            throw new ServerNotAvailableException();
+                    }
+                }
+
+                return "";
             }
         }
 
@@ -420,9 +449,11 @@ namespace MTGAHelper.Tracker.WPF
             }
             catch (AggregateException ex)
             {
-                if (ex.InnerExceptions.First() is HttpRequestException)
+                var subEx = ex.InnerExceptions.First();
+                if (subEx is HttpRequestException)
                     throw new ServerNotAvailableException(ex);
-
+                else if (subEx is ServerNotAvailableException)
+                    throw subEx;
                 throw;
             }
         }

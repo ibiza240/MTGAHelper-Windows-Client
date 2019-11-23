@@ -1,10 +1,17 @@
-﻿using MTGAHelper.Web.UI.Model.SharedDto;
+﻿using MTGAHelper.Web.Models.SharedDto;
+using MTGAHelper.Web.UI.Model.SharedDto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace MTGAHelper.Web.UI.Model.Response.User.History
 {
+    public class MatchRankDeltaDto
+    {
+        public string Format { get; set; }
+        public int StepsDelta { get; set; }
+    }
+
     public class MatchDtoLightweight
     {
         public string MatchId { get; set; }
@@ -16,6 +23,7 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
         public DateTime StartDateTime { get; set; }
         public string OpponentDeckColors { get; set; }
         public string FirstTurn { get; set; }
+        public MatchRankDeltaDto RankDelta { get; set; }
     }
 
     public class MatchDto : MatchDtoLightweight

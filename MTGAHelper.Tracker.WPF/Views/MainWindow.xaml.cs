@@ -346,7 +346,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             }
         }
 
-        void UploadInfoToServer(string logToSend, Action callbackOnError = null)
+        void UploadInfoToServer(bool isLive, string logToSend, Action callbackOnError = null)
         {
             if (vm.CanUpload == false)
             {
@@ -362,11 +362,11 @@ namespace MTGAHelper.Tracker.WPF.Views
                 try
                 {
                     var uploadHash = logSplitter.GetLastUploadHash(logToSend);
-                    if (api.IsSameLastUploadHash(vm.Account.MtgaHelperUserId, uploadHash))
-                    {
-                        vm.WrapNetworkStatus(NetworkStatusEnum.UpToDate, () => Task.Delay(5000).Wait());
-                        return;
-                    }
+                    //if (api.IsSameLastUploadHash(vm.Account.MtgaHelperUserId, uploadHash))
+                    //{
+                    //    vm.WrapNetworkStatus(NetworkStatusEnum.UpToDate, () => Task.Delay(5000).Wait());
+                    //    return;
+                    //}
 
                     OutputLogResult result = null;
                     Guid? errorId = null;
@@ -376,7 +376,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                         {
                             vm.WrapNetworkStatus(NetworkStatusEnum.ProcessingLogFile, () =>
                             {
-                                (result, errorId) = reader.LoadFileContent(vm.Account.MtgaHelperUserId, ms);
+                                (result, errorId) = reader.LoadFileContent(isLive, vm.Account.MtgaHelperUserId, ms);
                             });
 
                             if (result.CollectionByDate.Any(i => i.DateTime == default(DateTime)))
@@ -438,7 +438,7 @@ namespace MTGAHelper.Tracker.WPF.Views
         public void UploadLogFragment(Action callbackOnError = null)
         {
             var logToSend = fileMonitor.LogContentToSend.ToString();
-            UploadInfoToServer(logToSend, () =>
+            UploadInfoToServer(true, logToSend, () =>
             {
                 var flags = vm.GetFlagsNetworkStatus();
                 var activeStatus = Enum.GetValues(typeof(NetworkStatusEnum)).Cast<NetworkStatusEnum>()
@@ -462,7 +462,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             if (File.Exists(configApp.LogFilePath) && new FileInfo(configApp.LogFilePath).Length > 0)
             {
                 var logContent = zipper.ReadLogFile(configApp.LogFilePath);
-                UploadInfoToServer(logContent, callbackOnError);
+                UploadInfoToServer(false, logContent, callbackOnError);
                 reader.ResetPreparer();
             }
             else
@@ -481,12 +481,13 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         public void OnFileSizeChangedNewText(object sender, string newText)
         {
+            vm.SetProblem(ProblemsFlags.LogFileNotFound, false);
             vm.SizeOfLogToSend = fileMonitor.LogContentToSend.Length;
 
             ICollection<IMtgaOutputLogPartResult> messages = new IMtgaOutputLogPartResult[0];
             using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(newText ?? "")))
             {
-                messages = reader.ProcessIntoMessages("local", ms);
+                messages = reader.ProcessIntoMessages(true, "local", ms);
             }
 
             //if (messages.Count == 20) System.Diagnostics.Debugger.Break();
@@ -496,6 +497,8 @@ namespace MTGAHelper.Tracker.WPF.Views
                 SetMainWindowContext(MainWindowContextEnum.Home);
             };
 
+            var mustUpload = false;
+
             foreach (var msg in messages)
             {
                 if (msg is IResultCardPool msgCardPool)
@@ -503,13 +506,13 @@ namespace MTGAHelper.Tracker.WPF.Views
                     var isDrafting = true;
                     if (msg is GetEventPlayerCourseV2Result playerCourse)
                     {
-                        if (playerCourse.Raw.CurrentEventState == "PreMatch")
+                        if (playerCourse.Raw.payload.CurrentEventState == "PreMatch")
                         {
                             // Clear the drafting window
                             SetCardsDraft(new DraftPickProgress(new int[0]));
                         }
 
-                        isDrafting = playerCourse.Raw.InternalEventName.Contains("Draft") || playerCourse.Raw.InternalEventName.Contains("Sealed");
+                        isDrafting = playerCourse.Raw.payload.InternalEventName.Contains("Draft") || playerCourse.Raw.payload.InternalEventName.Contains("Sealed");
                     }
 
                     if (isDrafting)
@@ -519,32 +522,24 @@ namespace MTGAHelper.Tracker.WPF.Views
                         SetMainWindowContext(MainWindowContextEnum.Drafting);
                     }
                 }
-                else if (msg is IResultDraftPick msgDraftPack && msgDraftPack.Raw.draftPack != null)
+                else if (msg is IResultDraftPick msgDraftPack && msgDraftPack.Raw.payload.draftPack != null)
                 {
                     // Refresh the drafting window to show the new picks
-                    var draftInfo = Mapper.Map<DraftPickProgress>(msgDraftPack.Raw);
+                    var draftInfo = Mapper.Map<DraftPickProgress>(msgDraftPack.Raw.payload);
                     SetCardsDraft(draftInfo);
                 }
-
-                if (msg is LogInfoRequestResult logInfo)
+                else if (msg is LogInfoRequestResult logInfoContainer)
                 {
-                    if (logInfo.Raw.@params.messageName == "DuelScene.EndOfMatchReport" || logInfo.Raw.@params.humanContext.Contains("Client changed scenes to Home"))
+                    var logInfo = JsonConvert.DeserializeObject<LogInfoRequestInnerRaw>(logInfoContainer.Raw.request);
+                    if (logInfo.@params.messageName == "DuelScene.EndOfMatchReport" || logInfo.@params.humanContext.Contains("Client changed scenes to Home"))
                     {
-                        // Trigger to upload the stored log content
-                        UploadLogFragment();
+                        //// Trigger to upload the stored log content
+                        //UploadLogFragment();
+                        mustUpload = true;
                     }
-                }
 
-                if (vm.MainWindowContext != MainWindowContextEnum.Playing && msg is GetPlayerCardsResult)
-                {
-                    // Safety trigger to upload the stored log content
-                    UploadLogFragment();
-                }
-
-                // Change MainWindowContext
-                if (msg is LogInfoRequestResult logInfo2)
-                {
-                    var prms = logInfo2.Raw.@params;
+                    // Change MainWindowContext
+                    var prms = logInfo.@params;
                     switch (prms.messageName)
                     {
                         case "Client.SceneChange":
@@ -564,7 +559,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                 }
                 else if (msg is StateChangedResult stateChanged)
                 {
-                    if (msg.Part.Contains("MatchCompleted"))
+                    if (msg.Part.Contains("\"new\":8}"))
                         GoHome();
 
                 }
@@ -583,12 +578,27 @@ namespace MTGAHelper.Tracker.WPF.Views
                         connectResp.Raw.systemSeatIds.First(),
                         connectResp.Raw.connectResp.deckMessage.sideboardCards);
                 }
+                else if (msg is GetPlayerInventoryResult || msg is GetPlayerCardsResult ||
+                    msg is PostMatchUpdateResult || msg is RankUpdatedResult ||
+                    msg is GetCombinedRankInfoResult)
+                {
+                    mustUpload = true;
+                }
+                else if (msg is InventoryUpdatedResult)
+                {
+                    mustUpload = true;
+                }
 
                 if (vm.MainWindowContext == MainWindowContextEnum.Playing)
                 {
                     inGameTracker.ProcessMessage(msg);
                     vm.SetInMatchStateBuffered(inGameTracker.State);
                 }
+            }
+
+            if (mustUpload)
+            {
+                UploadLogFragment();
             }
         }
 
