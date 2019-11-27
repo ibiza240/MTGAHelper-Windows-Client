@@ -1,3 +1,7 @@
+### v1.3.3 (2019-11-26)
+
+Hotfix for matches tracking
+
 ### v1.3.2 (2019-11-23)
 
 Hotfix for untracked inventory changes in History
