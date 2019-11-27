@@ -1,3 +1,13 @@
+### v1.3.3 (2019-11-26)
+
+Hotfix for matches tracking
+
+### v1.3.2 (2019-11-23)
+
+Hotfix for untracked inventory changes in History
+
+Draft helper: Display the number of copies missing directly in the main window
+
 ### v1.3.1 (2019-11-22)
 
 Hotfix for Draft ratings during card picking process
