@@ -1,3 +1,13 @@
+### v1.3.4 (Comming up)
+
+Separate window for Opponent cards seen
+
+Reduced lag when draft picking
+
+Improved UI readability
+
+Updated for .Net Core 3.1 (Long-Term Supported) - It is recommended but not required to upgrade your .Net Core to 3.1
+
 ### v1.3.3 (2019-11-26)
 
 Hotfix for matches tracking
