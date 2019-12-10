@@ -1,4 +1,4 @@
-### v1.3.4 (Comming up)
+### v1.3.4 (Coming up)
 
 Separate window for Opponent cards seen
 
