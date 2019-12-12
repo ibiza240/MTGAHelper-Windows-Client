@@ -1,8 +1,8 @@
-### v1.3.4 (Coming up)
+### v1.3.4 (2019-12-12)
 
 Separate window for Opponent cards seen
 
-Reduced lag when draft picking
+No-lag when draft picking!
 
 Improved UI readability
 
