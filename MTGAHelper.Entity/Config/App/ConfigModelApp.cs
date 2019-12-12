@@ -40,7 +40,6 @@ namespace MTGAHelper.Lib.Config
         public Dictionary<string, string> TrackerClientMessages { get; set; } = new Dictionary<string, string>();
 
         public List<ConfigChangelog> Changelog { get; set; } = new List<ConfigChangelog>();
-        public string LastCardsHash { get; set; }
 
         public Dictionary<string, ConfigModelSetInfo> InfoBySet { get; set; }
 
@@ -55,6 +54,10 @@ namespace MTGAHelper.Lib.Config
         //    LogWithGmail.Username = creds[0];
         //    LogWithGmail.Password = creds[1];
         //}
+
+        public ConfigModelApp()
+        {
+        }
 
         public bool IsFeatureEnabled(ConfigAppFeatureEnum feature)
         {

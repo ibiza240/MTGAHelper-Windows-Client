@@ -35,5 +35,7 @@ namespace MTGAHelper.Entity
         MythicRatingUpdated,
         CombinedRankInfo,
         EventClaimPrice,
+
+        DatesWithData,
     }
 }

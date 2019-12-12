@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:MTGAHelper.Tracker.WPF.Views"
              xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
              mc:Ignorable="d">
-    <StatusBar Background="#181b1f">
+    <StatusBar Background="#0b0d0e">
         <StatusBar.ItemsPanel>
             <ItemsPanelTemplate>
                 <Grid>
@@ -30,16 +30,16 @@
         </StatusBarItem>
         <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Right">
             <Menu>
-                <MenuItem Header="⇣" Click="Menu_Minimize_Click" Background="#181b1f" BorderBrush="#444444">
+                <MenuItem Header="⇣" Click="Menu_Minimize_Click" Background="#0b0d0e" BorderBrush="#444444">
                     <MenuItem.ToolTip>
                         <ToolTip Background="#333333" Content="Minimize" />
                     </MenuItem.ToolTip>
                 </MenuItem>
-                <MenuItem Header="≡" Background="#181b1f" BorderBrush="#444444">
+                <MenuItem Header="≡" Background="#0b0d0e" BorderBrush="#444444">
                     <MenuItem.ToolTip>
                         <ToolTip Background="#333333" Content="Menu" />
                     </MenuItem.ToolTip>
-                    <MenuItem Header="_Sign-in" Click="Menu_Signin_Click" />
+                    <MenuItem Header="_Switch user" Click="Menu_Signin_Click" />
                     <Separator />
                     <MenuItem Header="_Options" Click="Menu_Options_Click" />
                     <MenuItem Header="Always on _Top" Click="Menu_AlwaysOnTop_Click" IsChecked="{Binding Path=AlwaysOnTop.Value}" x:Name="menuItemAlwaysOnTop" />

@@ -25,9 +25,11 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         DraftInfoBuffered draftInfoBuffered = new DraftInfoBuffered();
         List<DraftPickProgress> draftPicksHistory = new List<DraftPickProgress>();
 
-        int nbCardsWheeling => Math.Max(0, CardsDraftByTier.Values.Sum(i => i.Count) - POD_SIZE);
+        //int nbCardsWheeling => Math.Max(0, CardsDraftByTier.Values.Sum(i => i.Count) - POD_SIZE);
+        int nbCardsWheeling => Math.Max(0, CardsDraft.Count - POD_SIZE);
 
-        public Dictionary<float, ICollection<CardDraftPickVM>> CardsDraftByTier { get; set; } = new Dictionary<float, ICollection<CardDraftPickVM>>();
+        //public Dictionary<float, ICollection<CardDraftPickVM>> CardsDraftByTier { get; set; } = new Dictionary<float, ICollection<CardDraftPickVM>>();
+        public ICollection<CardDraftPickVM> CardsDraft { get; set; } = new CardDraftPickVM[0];
         public string PackPickMessage => draftInfoBuffered.DraftProgress.DraftId == default(string) ? "" : $"Pack {draftInfoBuffered.DraftProgress.PackNumber + 1} pick {draftInfoBuffered.DraftProgress.PickNumber + 1}";
 
         public ICollection<int> CardsThatDidntWheel { get; set; } = new int[0];
@@ -46,13 +48,13 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public bool IsVisibleWhenCardsDidntWheel => CardsThatDidntWheel.Count > 0;
         public bool IsHiddenWhenCardsDidntWheel => !IsVisibleWhenCardsDidntWheel;
 
-        public double RaredraftOpacity => CardsDraftByTier.Any(i => i.Value.Any(x => x.RareDraftPickEnum == Entity.RaredraftPickReasonEnum.None && x.RatingFloat != 0f)) ? 1.0d : 0.5d;
-        public bool ShowGlobalMTGAHelperSays => /*updateCardsDraftBuffered == false && */CardsDraftByTier.Sum(i => i.Value.Count) > 0 && CardsDraftByTier.Sum(i => i.Value.Count) < 42;
+        public double RaredraftOpacity => CardsDraft.Any(x => x.RareDraftPickEnum == Entity.RaredraftPickReasonEnum.None && x.RatingFloat != 0f) ? 1.0d : 0.5d;
+        public bool ShowGlobalMTGAHelperSays => /*updateCardsDraftBuffered == false && */CardsDraft.Count > 0 && CardsDraft.Count  < 42;
 
         public ObservableProperty<bool> ShowCardListThatDidntWheel { get; set; } = new ObservableProperty<bool>(false);
 
         public DraftPickProgress CurrentDraftPickProgress => draftInfoBuffered.DraftProgress;
-        public CardsListVM CardsThatDidntWheelVM { get; set; } = new CardsListVM(false);
+        public CardsListVM CardsThatDidntWheelVM { get; set; } = new CardsListVM(false, false);
 
         internal void SetCardsDraftBuffered(DraftPickProgress draftProgress, ICollection<CardDraftPickWpf> ratingsInfo)
         {
@@ -108,12 +110,13 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 var cardsVM = Mapper.Map<ICollection<CardDraftPickVM>>(draftInfoBuffered.CardsDraftBuffered);
                 foreach (var c in cardsVM) c.CardVM.SetColorBorder();
 
-                CardsDraftByTier = cardsVM
-                    .GroupBy(i => i.RatingFloat)
-                    .ToDictionary(i => i.Key, i => (ICollection<CardDraftPickVM>)i.ToArray());
+                //CardsDraftByTier = cardsVM
+                //    .GroupBy(i => i.RatingFloat)
+                //    .ToDictionary(i => i.Key, i => (ICollection<CardDraftPickVM>)i.ToArray());
+                CardsDraft = cardsVM;
 
                 updateCardsDraftBuffered = false;
-                RaisePropertyChangedEvent(nameof(CardsDraftByTier));
+                RaisePropertyChangedEvent(nameof(CardsDraft));
                 RaisePropertyChangedEvent(nameof(CardsWheelingMessage));
                 RaisePropertyChangedEvent(nameof(PackPickMessage));
                 RaisePropertyChangedEvent(nameof(ShowGlobalMTGAHelperSays));

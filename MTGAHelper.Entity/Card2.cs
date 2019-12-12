@@ -18,6 +18,7 @@ namespace MTGAHelper.Entity
         public int Cmc { get; set; }
         public string Rarity { get; set; }
         public enumLinkedFace LinkedFaceType { get; set; }
+        public int LinkedCardGrpId { get; set; }
 
         // From MTGA but with custom logic
         public string Set { get; set; }

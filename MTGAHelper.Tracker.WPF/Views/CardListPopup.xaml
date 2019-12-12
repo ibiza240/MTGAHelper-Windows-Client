@@ -11,7 +11,7 @@
         Background="#272b30" Foreground="#aaaaaa"
         ResizeMode="NoResize" WindowStyle="None">
     <StackPanel>
-        <Label Content="{Binding CardChosen}" ContentStringFormat="You chose: {0}" />
+        <Label Content="{Binding CardChosen}" ContentStringFormat="You chose: {0}" FontWeight="Bold" Background="#0b0d0e" HorizontalContentAlignment="Center" />
         <uc:SimpleCardsList x:Name="CardsInPopup" DataContext="{Binding}" />
     </StackPanel>
 </Window>

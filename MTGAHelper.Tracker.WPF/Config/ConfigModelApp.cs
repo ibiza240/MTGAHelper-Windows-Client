@@ -52,6 +52,7 @@ namespace MTGAHelper.Tracker.WPF.Config
         public string ShowLimitedRatingsSource { get; set; } = "ChannelFireball (LSV)";
 
         public WindowSettings WindowSettings { get; set; } = new WindowSettings();
+        public WindowSettings WindowSettingsOpponentCards { get; set; } = new WindowSettings();
 
         internal void Save()
         {

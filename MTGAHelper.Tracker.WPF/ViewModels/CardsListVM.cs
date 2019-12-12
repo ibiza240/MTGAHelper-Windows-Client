@@ -29,12 +29,21 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public ObservableCollection<LibraryCardWithAmountVM> Cards { get; set; }
 
-        public bool ShowDrawPct { get; set; } = true;
+        public bool ShowDrawPctAndAmount { get; set; } = true;
+        public bool ShowAmount { get; set; } = true;
 
         public string CardChosen { get; set; } = "TEST";
 
+        Stats withStats;
+
         public CardsListVM()
         {
+        }
+
+        public CardsListVM(bool showDrawPctAndAmount, bool showAmount)
+        {
+            ShowDrawPctAndAmount = showDrawPctAndAmount;
+            ShowAmount = showAmount;
         }
 
         internal void SetCards(string cardChosen, ICollection<CardWpf> cards)
@@ -43,22 +52,24 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
             var data = cards.Select(i => ConvertCard(i.ArenaId, 1, cards.Count));
             Cards = new ObservableCollection<LibraryCardWithAmountVM>(data);
-            foreach (var c in Cards) c.RefreshBindings();
+            foreach (var c in Cards) c.RefreshBindings(withStats?.AmountOriginalByGrpId[c.ArenaId]);
 
             RaisePropertyChangedEvent(nameof(CardChosen));
             RaisePropertyChangedEvent(nameof(Cards));
-        }
-
-        public CardsListVM(bool showDrawPct)
-        {
-            ShowDrawPct = showDrawPct;
         }
 
         public void ResetCards()
         {
             Cards = null;
             RaisePropertyChangedEvent(nameof(Cards));
-            RaisePropertyChangedEvent(nameof(ShowDrawPct));
+            RaisePropertyChangedEvent(nameof(ShowDrawPctAndAmount));
+            RaisePropertyChangedEvent(nameof(ShowAmount));
+        }
+
+        public void ResetCards(Stats withStats)
+        {
+            this.withStats = withStats;
+            ResetCards();
         }
 
         public void ConvertCardList(Dictionary<int, int> cardsRaw)
@@ -75,11 +86,20 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
             if (Cards == null)
             {
-                Cards = new ObservableCollection<LibraryCardWithAmountVM>(cards);
-                foreach (var c in Cards)
-                    c.RefreshBindings();
+                if (cards.Any())
+                {
+                    Cards = new ObservableCollection<LibraryCardWithAmountVM>(cards);
+                    if (withStats != null)
+                    {
+                        withStats.TotalLandsInitial.Value = Cards.Where(i => i.Type.Contains("Land")).Sum(i => i.Amount);
+                        withStats.Refresh(Cards);
+                    }
 
-                RaisePropertyChangedEvent(nameof(Cards));
+                    foreach (var c in Cards)
+                        c.RefreshBindings(withStats?.AmountOriginalByGrpId[c.ArenaId]);
+
+                    RaisePropertyChangedEvent(nameof(Cards));
+                }
             }
             else
             {
@@ -106,7 +126,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                         {
                             // Update the numbers
                             Cards[i].Amount = dictCards[grpId].Amount;
-                            Cards[i].RefreshBindings();
+                            Cards[i].RefreshBindings(withStats?.AmountOriginalByGrpId[Cards[i].ArenaId]);
                         }
                     }
                     //else
@@ -127,7 +147,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                     Action<int, LibraryCardWithAmountVM> InsertRow = (i, cardToAdd) =>
                     {
                         Cards.Insert(i, cardToAdd);
-                        cardToAdd.RefreshBindings();
+                        cardToAdd.RefreshBindings(withStats?.AmountOriginalByGrpId[cardToAdd.ArenaId]);
                     };
 
                     foreach (var c in cardsToAdd)

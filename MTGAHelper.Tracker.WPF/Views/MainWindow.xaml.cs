@@ -54,7 +54,11 @@ namespace MTGAHelper.Tracker.WPF.Views
         ExternalProviderTokenManager tokenManager;
         PasswordHasher passwordHasher;
 
-        public System.Windows.Forms.NotifyIcon trayIcon;
+        public NotifyIconManager notifyIconManager;
+
+        //public System.Windows.Forms.NotifyIcon trayIcon;
+
+        ICollection<CardCompareInfo> raredraftingInfo;
 
         public MainWindow(
             //OptionsWindow optionsWindow,
@@ -74,7 +78,8 @@ namespace MTGAHelper.Tracker.WPF.Views
             //CacheSingleton<ICollection<Card>> allCards,
             InGameTracker inMatchTracker,
             ExternalProviderTokenManager tokenManager,
-            PasswordHasher passwordHasher
+            PasswordHasher passwordHasher,
+            NotifyIconManager notifyIconManager
             )
         {
             this.configApp = configApp.CurrentValue;
@@ -97,6 +102,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             this.inGameTracker = inMatchTracker;
             this.tokenManager = tokenManager;
             this.passwordHasher = passwordHasher;
+            this.notifyIconManager = notifyIconManager;
 
             this.resourcesLocator.LocateLogFilePath(this.configApp);
             this.resourcesLocator.LocateGameClientFilePath(this.configApp);
@@ -110,14 +116,15 @@ namespace MTGAHelper.Tracker.WPF.Views
             InitializeComponent();
 
             ucWelcome.Init(tokenManager);
+            ucPlaying.Init(vm, this.configApp.WindowSettingsOpponentCards);
 
-            trayIcon = new System.Windows.Forms.NotifyIcon { Text = "MTGAHelper Tracker" };
-            trayIcon.Icon = new System.Drawing.Icon(Application.GetResourceStream(new Uri("pack://application:,,,/Assets/Images/wcC.ico")).Stream);
-            trayIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(TrayIcon_MouseClick);
-            trayIcon.ContextMenu = new System.Windows.Forms.ContextMenu(new System.Windows.Forms.MenuItem[]
-            {
-                new System.Windows.Forms.MenuItem("Quit", new EventHandler(TrayIcon_Quit))
-            });
+            //trayIcon = new System.Windows.Forms.NotifyIcon { Text = "MTGAHelper Tracker" };
+            //trayIcon.Icon = new System.Drawing.Icon(Application.GetResourceStream(new Uri("pack://application:,,,/Assets/Images/wcC.ico")).Stream);
+            //trayIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(TrayIcon_MouseClick);
+            //trayIcon.ContextMenu = new System.Windows.Forms.ContextMenu(new System.Windows.Forms.MenuItem[]
+            //{
+            //    new System.Windows.Forms.MenuItem("Quit", new EventHandler(TrayIcon_Quit))
+            //});
 
             statusBarTop.Init(this, vm/*, draftHelper, logProcessor, this.configApp.UserId,*/);
             ucReady.Init(this.configApp.GameFilePath);
@@ -147,62 +154,14 @@ namespace MTGAHelper.Tracker.WPF.Views
             timerTokenRefresh.Start();
         }
 
-        private void TrayIcon_Quit(object sender, EventArgs e)
+        internal void UpdateWindowOpponentCardsPosition(int top, int left, int width)
         {
-            App.Current.Shutdown();
-        }
-
-        void TrayIcon_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            configApp.WindowSettingsOpponentCards = new WindowSettings
             {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    ShowWindowFromTray();
-                });
-            }
+                Position = new Config.Point(left, top),
+                Size = new Config.Point(width, 0),
+            };
         }
-
-        public void ShowWindowFromTray()
-        {
-            trayIcon.Visible = false;
-            this.Visibility = Visibility.Visible;
-            //this.WindowState = WindowState.Normal;
-            this.ShowInTaskbar = true;
-            //this.Show();
-            //this.Focus();
-            this.Activate();
-        }
-
-        //private void Window_StateChanged(object sender, EventArgs e)
-        //{
-        //    if (configApp.MinimizeToSystemTray == false)
-        //        return;
-
-        //    if (this.WindowState == WindowState.Minimized)
-        //    {
-        //        this.ShowInTaskbar = false;
-        //        trayIcon.Visible = true;
-        //        Visibility = Visibility.Hidden;
-        //    }
-        //    else if (trayIcon.Visible)
-        //    {
-        //        this.ShowInTaskbar = true;
-        //        trayIcon.Visible = false;
-        //        Visibility = Visibility.Visible;
-        //        this.WindowState = WindowState.Normal;
-        //        this.Activate();
-        //    }
-        //}
-        //private void Window_StateChanged(object sender, EventArgs e)
-        //{
-        //    if (configApp.MinimizeToSystemTray && this.WindowState == WindowState.Minimized)
-        //    {
-        //        this.ShowInTaskbar = false;
-        //        trayIcon.Visible = true;
-        //        this.Visibility = Visibility.Hidden;
-        //    }
-        //}
 
         internal void ValidateExternalToken(string provider, string accessToken)
         {
@@ -281,6 +240,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                         {
                             var collection = api.GetCollection(vm.Account.MtgaHelperUserId);
                             vm.SetCollection(collection);
+                            RefreshRaredraftingInfo();
                         });
 
                         UploadLogFile();
@@ -291,6 +251,14 @@ namespace MTGAHelper.Tracker.WPF.Views
                     }
                 });
             }
+        }
+
+        private void RefreshRaredraftingInfo()
+        {
+            vm.WrapNetworkStatus(NetworkStatusEnum.Downloading, () =>
+            {
+                raredraftingInfo = api.GetRaredraftingInfo(vm.Account.MtgaHelperUserId).Data;
+            });
         }
 
         internal void ShowDialogOptions()
@@ -311,6 +279,15 @@ namespace MTGAHelper.Tracker.WPF.Views
                 newConfig.ForceCardPopup = optionsWindow.chkForceCardPopup.IsChecked.Value;
                 newConfig.ForceCardPopupSide = optionsWindow.lstForceCardPopupSide?.SelectedValue?.ToString() ?? configApp.ForceCardPopupSide;
                 newConfig.ShowLimitedRatingsSource = optionsWindow.lstShowLimitedRatingsSource?.SelectedValue?.ToString() ?? configApp.ShowLimitedRatingsSource;
+
+                ShowInTaskbar = !newConfig.MinimizeToSystemTray;
+                if (configApp.MinimizeToSystemTray != newConfig.MinimizeToSystemTray)
+                {
+                    if (newConfig.MinimizeToSystemTray)
+                        notifyIconManager.AddNotifyIcon(this);
+                    else
+                        notifyIconManager.RemoveNotifyIcon();
+                }
 
                 if (JsonConvert.SerializeObject(configApp) != JsonConvert.SerializeObject(newConfig))
                 {
@@ -383,7 +360,9 @@ namespace MTGAHelper.Tracker.WPF.Views
                                 api.LogErrorRemoteFile(vm.Account.MtgaHelperUserId, logToSend, $"_NODATE_outputlog_{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip");
 
                             if (errorId.HasValue)
+                            {
                                 api.LogErrorRemoteFile(vm.Account.MtgaHelperUserId, logToSend, $"_parsererror_{errorId}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.zip");
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -397,6 +376,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                     {
                         var collection = api.UploadOutputLogResult(vm.Account.MtgaHelperUserId, result);
                         vm.SetCollection(collection);
+                        RefreshRaredraftingInfo();
                     });
                 }
                 catch (HttpRequestException ex)
@@ -410,28 +390,35 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         private void RefreshAccessToken()
         {
-            if (vm.Account.IsAuthenticated == false)
-                return;
+            try
+            {
+                if (vm.Account.IsAuthenticated == false)
+                    return;
 
-            if (vm.Account.Provider == null)
-            {
-                api.ValidateLocalUser(vm.SigninEmail.Value, vm.SigninPassword);
-            }
-            else
-            {
-                string token = null;
-                switch (vm.Account.Provider)
+                if (vm.Account.Provider == null)
                 {
-                    case "Google":
-                        token = tokenManager.GoogleRefresh();
-                        break;
-                    case "Facebook":
-                        //token = tokenManager.FacebookRefresh();
-                        // Always re-use the long-lived token
-                        token = vm.FacebookAccessToken;
-                        break;
+                    api.ValidateLocalUser(vm.SigninEmail.Value, vm.SigninPassword);
                 }
-                api.ValidateExternalToken(vm.Account.Provider, token);
+                else
+                {
+                    string token = null;
+                    switch (vm.Account.Provider)
+                    {
+                        case "Google":
+                            token = tokenManager.GoogleRefresh();
+                            break;
+                        case "Facebook":
+                            //token = tokenManager.FacebookRefresh();
+                            // Always re-use the long-lived token
+                            token = vm.FacebookAccessToken;
+                            break;
+                    }
+                    api.ValidateExternalToken(vm.Account.Provider, token);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Remote server was not accessible for token refresh");
             }
         }
 
@@ -455,6 +442,7 @@ namespace MTGAHelper.Tracker.WPF.Views
         internal void SetAlwaysOnTop(bool alwaysOnTop)
         {
             statusBarTop.SetAlwaysOnTop(alwaysOnTop);
+            ucPlaying.SetAlwaysOnTop(alwaysOnTop);
         }
 
         public void UploadLogFile(Action callbackOnError = null)
@@ -554,6 +542,8 @@ namespace MTGAHelper.Tracker.WPF.Views
                             break;
                         case "DuelScene.EndOfMatchReport":
                             GoHome();
+                            inGameTracker.Reset();
+                            vm.SetInMatchStateBuffered(inGameTracker.State);
                             break;
                     }
                 }
@@ -615,12 +605,14 @@ namespace MTGAHelper.Tracker.WPF.Views
                     else
                     {
                         if (configApp.MinimizeToSystemTray)
-                            ShowWindowFromTray();
+                            notifyIconManager.ShowWindowFromTray();
                         else
                             WindowState = WindowState.Normal;
                     }
                 });
             }
+
+            ucPlaying.ShowHideOpponentCards(context == MainWindowContextEnum.Playing);
 
             vm.SetMainWindowContext(context);
         }
@@ -631,17 +623,14 @@ namespace MTGAHelper.Tracker.WPF.Views
 
             if (cardPool != null)
             {
-                vm.WrapNetworkStatusInNewTask(NetworkStatusEnum.Downloading, () =>
-                {
-                    var cardsInfoFromServer = draftHelper.GetDraftPicksForCards(vm.Account.MtgaHelperUserId, cardPool, configApp.ShowLimitedRatingsSource);
+                var draftingInfo = draftHelper.GetDraftPicksForCards(
+                    vm.Account.MtgaHelperUserId,
+                    cardPool,
+                    configApp.ShowLimitedRatingsSource,
+                    vm.Collection.Cards.Where(i => i.IdArena != 0).ToDictionary(i => i.IdArena, i => i.Amount),
+                    raredraftingInfo);
 
-                    //if (msg is GetEventPlayerCourseV2Result course)
-                    //{
-                    //    course.Raw.CourseDeck.
-                    //}
-
-                    vm.SetCardsDraftBuffered(draftInfo, cardsInfoFromServer);
-                });
+                vm.SetCardsDraftBuffered(draftInfo, draftingInfo);
             }
         }
     }

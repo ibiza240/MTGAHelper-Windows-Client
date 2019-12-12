@@ -26,9 +26,9 @@ namespace MTGAHelper.Entity.OutputLogParsing
         public float limitedPercentile { get; set; }
         public int limitedLeaderboardPlace { get; set; }
 
-        public ICollection<ConfigModelRankInfo> ToConfig()
+        public List<ConfigModelRankInfo> ToConfig()
         {
-            return new[]
+            return new List<ConfigModelRankInfo>
             {
                 new ConfigModelRankInfo(RankFormatEnum.Constructed)
                 {

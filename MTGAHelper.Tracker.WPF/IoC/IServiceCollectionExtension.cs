@@ -22,6 +22,7 @@ namespace MTGAHelper.Tracker.WPF.IoC
                 .AddSingleton<ProcessMonitor>()
                 .AddSingleton<FileMonitor>()
                 .AddSingleton<ServerApiCaller>()
+                .AddSingleton<NotifyIconManager>()
 
                 //.AddTransient<Ready>()
                 //.AddTransient<StatusBarTop>()

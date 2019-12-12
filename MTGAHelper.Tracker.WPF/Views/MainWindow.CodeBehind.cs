@@ -24,9 +24,6 @@ namespace MTGAHelper.Tracker.WPF.Views
 
             UpdateCardPopupPosition();
 
-            if (api.IsLocalTrackerUpToDate() == false)
-                MustDownloadNewVersion();
-
             //ServerApiGetCollection();
 
             if (string.IsNullOrWhiteSpace(configApp.SigninProvider) == false)
@@ -65,32 +62,6 @@ namespace MTGAHelper.Tracker.WPF.Views
             }
         }
 
-        void MustDownloadNewVersion()
-        {
-#if DEBUG || DEBUGWITHSERVER
-#else
-            if (MessageBox.Show("A new version of the MTGAHelper Tracker is available, you must install it to continue. Proceed now?", "MTGAHelper", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            {
-                // Download latest auto-updater
-                var folderForConfigAndLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");
-                var fileExe = Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.exe");
-                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/Newtonsoft.Json.dll", Path.Combine(folderForConfigAndLog, "Newtonsoft.Json.dll"));
-                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.dll", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.dll"));
-                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.exe", fileExe);
-                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json"));
-
-                var ps = new ProcessStartInfo(fileExe)
-                {
-                    UseShellExecute = true,
-                    Verb = "runas"
-                };
-                Process.Start(ps);
-            }
-
-            App.Current.Shutdown();
-#endif
-        }
-
         void Window_Activated(object sender, EventArgs e)
         {
             Topmost = vm.AlwaysOnTop.Value;
@@ -114,7 +85,8 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         void Window_Closed(object sender, EventArgs e)
         {
-            trayIcon.Visible = false;
+            //trayIcon.Visible = false;
+            notifyIconManager.RemoveNotifyIcon();
             Application.Current.Shutdown();
         }
 
@@ -167,14 +139,20 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         private void Window_LocationChanged(object sender, EventArgs e)
         {
-            if (double.IsNaN(this.Top) || double.IsNaN(this.Left))
-                return;
+            UpdateCardPopupPosition();
+        }
 
+        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
             UpdateCardPopupPosition();
         }
 
         public void UpdateCardPopupPosition()
         {
+            if (double.IsNaN(this.Top) || double.IsNaN(this.Left) ||
+                double.IsNaN(this.Width) || double.IsNaN(this.Height))
+                return;
+
             var top = (int)this.Top;
             var left = (int)this.Left;
             var width = (int)this.Width;
@@ -182,10 +160,9 @@ namespace MTGAHelper.Tracker.WPF.Views
 
             ucDraftHelper.SetCardPopupPosition(side, top, left, width);
             ucPlaying.SetCardPopupPosition(side, top, left, width);
-
         }
 
-        private ForceCardPopupSideEnum GetCardPopupSide()
+        public ForceCardPopupSideEnum GetCardPopupSide()
         {
             ForceCardPopupSideEnum side = ForceCardPopupSideEnum.None;
             if (configApp.ForceCardPopup)

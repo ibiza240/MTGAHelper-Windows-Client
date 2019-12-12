@@ -5,10 +5,22 @@ using System.Text;
 using AutoMapper;
 using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Lib.Cache;
+using MTGAHelper.Lib.CollectionDecksCompare;
 using MTGAHelper.Lib.Config;
 
 namespace MTGAHelper.Entity.IoC
 {
+    public class MapperProfileOldCardFormat : Profile
+    {
+        public MapperProfileOldCardFormat()
+        {
+            CreateMap<Card2, Card>()
+                .ForMember(i => i.type, i => i.MapFrom(x => x.Type_line))
+                .ForMember(i => i.notInBooster, i => i.MapFrom(x => !x.IsInBooster))
+                .ForMember(i => i.artistCredit, i => i.MapFrom(x => x.Artist));
+        }
+    }
+
     public class MapperProfileEntity : Profile
     {
         public MapperProfileEntity(CacheSingleton<Dictionary<int, Card>> cacheCards)
@@ -42,6 +54,24 @@ namespace MTGAHelper.Entity.IoC
                 .ForMember(i => i.Class, i => i.MapFrom(x => x.newClass))
                 .ForMember(i => i.Level, i => i.MapFrom(x => x.newLevel))
                 .ForMember(i => i.Step, i => i.MapFrom(x => x.newStep));
+
+            CreateMap<CardRequiredInfoByCard, CardCompareInfo>()
+                .ForMember(i => i.GrpId, i => i.MapFrom(x => x.Card.grpId))
+                .ForMember(i => i.MissingWeight, i => i.MapFrom(x => x.MissingWeight))
+                .ForMember(i => i.NbDecksMain, i => i.MapFrom(x => x.ByDeck.Count(y => y.Value.NbMissingMain > 0)))
+                .ForMember(i => i.NbDecksSideboardOnly, i => i.MapFrom(x => x.NbDecks - x.ByDeck.Count(y => y.Value.NbMissingMain > 0)))
+                .ForMember(i => i.NbMissing, i => i.MapFrom(x => x.NbMissing));
+
+            CreateMap<Card, CardForDraftPick>()
+                .ForMember(i => i.Rating, i => i.Ignore())
+                .ForMember(i => i.Description, i => i.Ignore())
+                .ForMember(i => i.Weight, i => i.Ignore())
+                .ForMember(i => i.NbDecksUsedMain, i => i.Ignore())
+                .ForMember(i => i.NbDecksUsedSideboard, i => i.Ignore())
+                .ForMember(i => i.IsRareDraftPick, i => i.Ignore())
+                .ForMember(i => i.NbMissingTrackedDecks, i => i.Ignore())
+                .ForMember(i => i.NbMissingCollection, i => i.Ignore())
+                .ForMember(i => i.TopCommonCard, i => i.Ignore());
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Google.Apis.Auth.OAuth2;
+using Hardcodet.Wpf.TaskbarNotification;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -7,6 +8,7 @@ using MtgaHelper.Web.Models.IoC;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.IoC;
 using MTGAHelper.Lib.Cache;
+using MTGAHelper.Lib.CacheLoaders;
 using MTGAHelper.Lib.EventsSchedule;
 using MTGAHelper.Lib.IO.Reader;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
@@ -22,6 +24,7 @@ using MTGAHelper.Web.Models;
 using MTGAHelper.Web.Models.Response.Misc;
 using MTGAHelper.Web.Models.Response.SharedDto;
 using MTGAHelper.Web.UI.IoC;
+using MTGAHelper.Web.UI.Model.Response.Misc;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
@@ -32,6 +35,7 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -39,50 +43,11 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace MTGAHelper.Tracker.WPF
 {
-    static class Program
-    {
-        static Mutex mutex;
-        [STAThread]
-        static void Main()
-        {
-            // https://stackoverflow.com/questions/229565/what-is-a-good-pattern-for-using-a-global-mutex-in-c
-            string mutexId = "Global\\{24eb5c47-62c6-4822-b305-b6265a3fbea3}";
-            using (mutex = new Mutex(false, mutexId, out bool createdNew))
-            {
-                var hasHandle = false;
-                try
-                {
-                    try
-                    {
-                        hasHandle = mutex.WaitOne(1000, false);
-                        if (hasHandle == false)
-                            throw new TimeoutException("Timeout waiting for exclusive access");
-                    }
-                    catch (AbandonedMutexException)
-                    {
-                        hasHandle = true;
-                    }
-
-                    var application = new App();
-                    application.InitializeComponent();
-                    application.Run();
-                }
-                catch (TimeoutException)
-                {
-                    MessageBox.Show("Cannot run MTGAHelper more than once", "MTGAHelper");
-                }
-                finally
-                {
-                    if (hasHandle)
-                        mutex.ReleaseMutex();
-                }
-            }
-        }
-    }
-
     public partial class App : Application
     {
 #if DEBUG
@@ -92,22 +57,26 @@ namespace MTGAHelper.Tracker.WPF
 #endif
 
         MainWindow mainWindow;
+        NotifyIconManager notifyIconManager;
         ConfigModelApp configApp;
         IServiceProvider provider;
         HttpClientFactory httpClientFactory = new HttpClientFactory();
 
         string folderForConfigAndLog;
         string filePathAllCards;
+        string filePathDraftRatings;
         string filePathDateFormats;
 
-        CacheSingleton<Dictionary<int, Card>> cacheCards;
+        string folderData => Path.Combine(folderForConfigAndLog, "data");
+
+        //CacheSingleton<Dictionary<int, Card>> cacheCards;
 
         protected override void OnStartup(StartupEventArgs e)
         {
             StartApp();
         }
 
-        private void StartApp()
+        private async Task StartApp()
         {
             try
             {
@@ -119,11 +88,20 @@ namespace MTGAHelper.Tracker.WPF
                 ConfigureApp();
 
                 CheckForServerMessage();
+                CheckForUpdate();
 
                 SetDateFormats();
-                cacheCards = SetAllCards();
+
+                // Get the local file up-to-date
+                await CheckDataAndDownloadIfOutOfDate(DataFileTypeEnum.AllCardsCached2);
+                await CheckDataAndDownloadIfOutOfDate(DataFileTypeEnum.draftRatings);
+
+                // Set cache content from local file
+                provider.GetService<CacheLoaderAllCards>().Init(folderData).Load();
+                provider.GetService<CacheLoaderDraftRatings>().Init(folderData).Load();
 
                 // This requires cacheCards to be ready
+                var cacheCards = provider.GetService<CacheSingleton<Dictionary<int, Card>>>();
                 Mapper.Initialize(cfg =>
                 {
                     cfg.AddProfile(provider.GetService<MapperProfileEntity>());
@@ -135,7 +113,6 @@ namespace MTGAHelper.Tracker.WPF
                         provider.GetService<SingletonEventsScheduleManager>()));
                 });
 
-                mainWindow = provider.GetRequiredService<MainWindow>();
                 LoadMainWindow();
             }
             catch (ServerNotAvailableException)
@@ -159,7 +136,7 @@ namespace MTGAHelper.Tracker.WPF
                         //var appSettings = TryDeserializeJson<ConfigModelApp>(fileContent, true);
                         //userId = mainWindow.vm.Account.MtgaHelperUserId; //appSettings.UserId;
                         Log.Error(ex, "Error at startup:");
-                        MessageBox.Show($"Error at startup: {ex.Message}{Environment.NewLine}{Environment.NewLine}You can check the latest application log file for details or contact me on Discord if you need more help.", "MTGAHelper");
+                        MessageBox.Show($"Error at startup: Check the latest application log file for details or contact me on Discord if you need more help.{Environment.NewLine}{Environment.NewLine}{ex.Message}", "MTGAHelper");
                     }
                     catch
                     {
@@ -171,6 +148,48 @@ namespace MTGAHelper.Tracker.WPF
                 //new Business.ServerApiCaller(null, null).LogErrorRemote(userId, Web.UI.Model.Request.ErrorTypeEnum.Startup, ex);
                 Shutdown();
             }
+        }
+
+        void CheckForUpdate()
+        {
+            var latestVersion = TryDownloadFromServer(() =>
+            {
+                var raw = HttpClientGet_WithTimeoutNotification(server + "/api/misc/VersionTracker", 15).Result;
+                return TryDeserializeJson<GetVersionTrackerResponse>(raw).Version;
+            });
+
+            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+
+            if (new Version(fvi.FileVersion) < new Version(latestVersion))
+                MustDownloadNewVersion();
+
+        }
+
+        void MustDownloadNewVersion()
+        {
+#if DEBUG || DEBUGWITHSERVER
+#else
+            if (MessageBox.Show("A new version of the MTGAHelper Tracker is available, you must install it to continue. Proceed now?", "MTGAHelper", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                // Download latest auto-updater
+                var folderForConfigAndLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");
+                var fileExe = Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.exe");
+                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/Newtonsoft.Json.dll", Path.Combine(folderForConfigAndLog, "Newtonsoft.Json.dll"));
+                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.dll", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.dll"));
+                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.exe", fileExe);
+                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json"));
+
+                var ps = new ProcessStartInfo(fileExe)
+                {
+                    UseShellExecute = true,
+                    Verb = "runas"
+                };
+                Process.Start(ps);
+            }
+
+            App.Current.Shutdown();
+#endif
         }
 
         void CheckForServerMessage()
@@ -208,7 +227,7 @@ namespace MTGAHelper.Tracker.WPF
             }
             try
             {
-                 fileContent = File.ReadAllText(fileAppSettings);
+                fileContent = File.ReadAllText(fileAppSettings);
                 var appSettings = JsonConvert.DeserializeObject<ConfigModelApp>(fileContent);
             }
             catch (Exception ex)
@@ -248,11 +267,11 @@ namespace MTGAHelper.Tracker.WPF
             provider = serviceCollection.BuildServiceProvider();
 
             var configAppLib = provider.GetService<IOptionsMonitor<MTGAHelper.Lib.Config.ConfigModelApp>>();
-            var folderData = Path.Combine(folderForConfigAndLog, "data");
             Directory.CreateDirectory(folderData);
             configAppLib.CurrentValue.FolderData = folderData;
             configApp = provider.GetService<IOptionsMonitor<ConfigModelApp>>().CurrentValue;
             filePathAllCards = Path.Combine(folderData, "AllCardsCached.json");
+            filePathDraftRatings = Path.Combine(folderData, "draftRatings.json");
             filePathDateFormats = Path.Combine(folderForConfigAndLog, "data", "dateFormats.json");
         }
 
@@ -287,70 +306,107 @@ namespace MTGAHelper.Tracker.WPF
             }
         }
 
-        CacheSingleton<Dictionary<int, Card>> SetAllCards()
+        async Task CheckDataAndDownloadIfOutOfDate(DataFileTypeEnum dataFileType)
         {
-            var cacheCards = provider.GetService<CacheSingleton<Dictionary<int, Card>>>();
+            // Load file content and calculate hash
+            var fileContent = "";
+            var filePath = Path.Combine(folderData, $"{dataFileType}.json");
+            if (File.Exists(filePath))
+                fileContent = File.ReadAllText(filePath);
 
-            // First try to get all cards from the local file
-            ICollection<Card> allCards = GetAllCardsFromDisk();
-            if (allCards == null)
+            var hashLocal = new Entity.Util().To32BitFnv1aHash(fileContent);
+
+            // Compare hash to server
+            var isUpToDate = TryDownloadFromServer(() =>
             {
-                // We need to download all cards remotely
-                var cardsResponse = TryDownloadFromServer(DownloadAllCards);
-                if (cardsResponse != null)
+                var raw = HttpClientGet_WithTimeoutNotification(server + $"/api/misc/filehash?id={dataFileType}&hash={hashLocal}", 15).Result;
+                var response = TryDeserializeJson<bool>(raw);
+                return response;
+            });
+
+            // Download if out of date
+            if (isUpToDate == false)
+            {
+                Log.Information("Data [{dataType}] out of date, redownloading", dataFileType);
+                await TryDownloadFromServer<Task<object>>(async () =>
                 {
-                    // Cannot use AutoMapper since at this point it has not been initialized yet
-                    //allCards = Mapper.Map<ICollection<Card>>(cardsResponse.Cards);
-                    allCards = JsonConvert.DeserializeObject<ICollection<Card>>(JsonConvert.SerializeObject(cardsResponse.Cards));
-                    SaveAllCardsToDisk(allCards);
+                    await HttpClientDownloadFile_WithTimeoutNotification(server + $"/api/download/{dataFileType}", 60, filePath);
+                    return null;
+                });
+            }
+        }
+
+        //void LoadCacheAllCards()
+        //{
+        //    // First try to get all cards from the local file
+        //    ICollection<Card> allCards = GetAllCardsFromDisk();
+        //    if (allCards == null)
+        //    {
+        //        // We need to download all cards remotely
+        //        var cardsResponse = TryDownloadFromServer(() =>
+        //        {
+        //            var raw = HttpClientGet_WithTimeoutNotification(server + "/api/misc/cards", 60).Result;
+        //            var response = TryDeserializeJson<GetCardsResponse>(raw);
+        //            return response;
+        //        });
+
+        //        if (cardsResponse != null)
+        //        {
+        //            // Cannot use AutoMapper since at this point it has not been initialized yet
+        //            //allCards = Mapper.Map<ICollection<Card>>(cardsResponse.Cards);
+        //            allCards = JsonConvert.DeserializeObject<ICollection<Card>>(JsonConvert.SerializeObject(cardsResponse.Cards));
+        //            SaveAllCardsToDisk(allCards);
+        //        }
+        //    }
+
+        //    cacheCards = provider.GetService<CacheSingleton<Dictionary<int, Card>>>();
+        //    cacheCards.PopulateIfNotSet(() => allCards.ToDictionary(i => i.grpId, i => i));
+        //}
+
+        //ICollection<Card> GetAllCardsFromDisk()
+        //{
+        //    if (File.Exists(filePathAllCards))
+        //    {
+        //        string fileContent = "";
+        //        using (FileStream fs = new FileStream(filePathAllCards, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        //        using (var sr = new StreamReader(fs))
+        //            fileContent = sr.ReadToEnd();
+
+        //        var hashAllCardsLocal = new Entity.Util().To32BitFnv1aHash(fileContent);
+        //        var hashAllCardsRemote = TryDownloadFromServer(() =>
+        //        {
+        //            var raw = HttpClientGet_WithTimeoutNotification(server + "/api/misc/lastcardshash", 15).Result;
+        //            var response = TryDeserializeJson<LastHashResponse>(raw);
+        //            return Convert.ToUInt32(response.LastHash);
+        //        });
+
+        //        if (hashAllCardsLocal == hashAllCardsRemote)
+        //        {
+        //            // Local file for cards is up-to-date
+        //            // Will return null if the JSON is invalid and cards will be redownloaded from the server
+        //            return TryDeserializeJson<List<Card>>(fileContent);
+        //        }
+        //        else
+        //        {
+        //            Log.Information("Local cards out of date ({localHash}), must redownload ({remoteHash})", hashAllCardsLocal, hashAllCardsRemote);
+        //            File.Delete(filePathAllCards);
+        //        }
+        //    }
+
+        //    return null;
+        //}
+
+        public async Task HttpClientDownloadFile_WithTimeoutNotification(string requestUri, double timeout, string filePath)
+        {
+            using (HttpClient client = httpClientFactory.Create(timeout))
+            using (var request = new HttpRequestMessage(HttpMethod.Get, requestUri))
+            {
+                using (Stream contentStream = await (await client.SendAsync(request)).Content.ReadAsStreamAsync(),
+                       stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Read))
+                {
+                    await contentStream.CopyToAsync(stream);
                 }
             }
-
-            cacheCards.PopulateIfNotSet(() => allCards.ToDictionary(i => i.grpId, i => i));
-
-            return cacheCards;
-        }
-
-        ICollection<Card> GetAllCardsFromDisk()
-        {
-            if (File.Exists(filePathAllCards))
-            {
-                string fileContent = "";
-                using (FileStream fs = new FileStream(filePathAllCards, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                using (var sr = new StreamReader(fs))
-                    fileContent = sr.ReadToEnd();
-
-                var hashAllCardsLocal = new Entity.Util().To32BitFnv1aHash(fileContent);
-                var hashAllCardsRemote = TryDownloadFromServer(DownloadHashAllCards);
-
-                if (hashAllCardsLocal == hashAllCardsRemote)
-                {
-                    // Local file for cards is up-to-date
-                    // Will return null if the JSON is invalid and cards will be redownloaded from the server
-                    return TryDeserializeJson<List<Card>>(fileContent);
-                }
-                else
-                {
-                    Log.Information("Local cards out of date ({localHash}), must redownload ({remoteHash})", hashAllCardsLocal, hashAllCardsRemote);
-                    File.Delete(filePathAllCards);
-                }
-            }
-
-            return null;
-        }
-
-        uint DownloadHashAllCards()
-        {
-            var raw = HttpClientGet_WithTimeoutNotification(server + "/api/misc/lastcardshash", 15).Result;
-            var response = TryDeserializeJson<LastHashResponse>(raw);
-            return Convert.ToUInt32(response.LastHash);
-        }
-
-        GetCardsResponse DownloadAllCards()
-        {
-            var raw = HttpClientGet_WithTimeoutNotification(server + "/api/misc/cards", 60).Result;
-            var response = TryDeserializeJson<GetCardsResponse>(raw);
-            return response;
         }
 
         public async Task<string> HttpClientGet_WithTimeoutNotification(string requestUri, double timeout)
@@ -379,31 +435,39 @@ namespace MTGAHelper.Tracker.WPF
             }
         }
 
-        void SaveAllCardsToDisk(ICollection<Card> allCards)
-        {
-            // Loop is a patch to try to stop having the error cannot access the file ... because it is being used by another process.
-            int iTry = 0;
-            while (iTry < 5)
-            {
-                try
-                {
-                    iTry++;
-                    File.WriteAllText(filePathAllCards, JsonConvert.SerializeObject(allCards));
-                    break;
-                }
-                catch (IOException ex)
-                {
-                    if (iTry >= 5)
-                        throw new ApplicationException("Could not write AllCards.json:", ex);
-                    else
-                        Thread.Sleep(1000);
-                }
-            }
-        }
+        //void SaveAllCardsToDisk(ICollection<Card> allCards)
+        //{
+        //    // Loop is a patch to try to stop having the error cannot access the file ... because it is being used by another process.
+        //    int iTry = 0;
+        //    while (iTry < 5)
+        //    {
+        //        try
+        //        {
+        //            iTry++;
+        //            File.WriteAllText(filePathAllCards, JsonConvert.SerializeObject(allCards));
+        //            break;
+        //        }
+        //        catch (IOException ex)
+        //        {
+        //            if (iTry >= 5)
+        //                throw new ApplicationException("Could not write AllCards.json:", ex);
+        //            else
+        //                Thread.Sleep(1000);
+        //        }
+        //    }
+        //}
 
         void LoadMainWindow()
         {
+            mainWindow = provider.GetRequiredService<MainWindow>();
             mainWindow.SetAlwaysOnTop(configApp.AlwaysOnTop);
+            mainWindow.ShowInTaskbar = !configApp.MinimizeToSystemTray;
+
+            if (configApp.MinimizeToSystemTray)
+            {
+                notifyIconManager = provider.GetService<NotifyIconManager>();
+                notifyIconManager.AddNotifyIcon(mainWindow);
+            }
 
             if ((configApp.WindowSettings?.Position?.X ?? 0) != 0 ||
                 (configApp.WindowSettings?.Position?.Y ?? 0) != 0 ||
@@ -434,6 +498,11 @@ namespace MTGAHelper.Tracker.WPF
                 };
 
                 mainWindow.configApp.Save();
+
+                if (notifyIconManager != null)
+                {
+                    notifyIconManager.RemoveNotifyIcon();
+                }
             }
         }
 

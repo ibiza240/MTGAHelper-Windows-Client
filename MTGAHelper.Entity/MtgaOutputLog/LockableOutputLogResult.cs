@@ -215,11 +215,11 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         //public InfoByDate<Inventory> GetLastInventory() => InventoryByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
         //    ?? new InfoByDate<Inventory>(default(DateTime), new Inventory());
 
-        public InfoByDate<Dictionary<DateTime, InventoryUpdatedRaw>> GetLastInventoryUpdates() => InventoryUpdatesByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
-            ?? new InfoByDate<Dictionary<DateTime, InventoryUpdatedRaw>>(default(DateTime), new Dictionary<DateTime, InventoryUpdatedRaw>());
+        //public InfoByDate<Dictionary<DateTime, InventoryUpdatedRaw>> GetLastInventoryUpdates() => InventoryUpdatesByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
+        //    ?? new InfoByDate<Dictionary<DateTime, InventoryUpdatedRaw>>(default(DateTime), new Dictionary<DateTime, InventoryUpdatedRaw>());
 
-        public InfoByDate<Dictionary<DateTime, PostMatchUpdateRaw>> GetLastPostMatchUpdates() => PostMatchUpdatesByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
-            ?? new InfoByDate<Dictionary<DateTime, PostMatchUpdateRaw>>(default(DateTime), new Dictionary<DateTime, PostMatchUpdateRaw>());
+        //public InfoByDate<Dictionary<DateTime, PostMatchUpdateRaw>> GetLastPostMatchUpdates() => PostMatchUpdatesByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
+        //    ?? new InfoByDate<Dictionary<DateTime, PostMatchUpdateRaw>>(default(DateTime), new Dictionary<DateTime, PostMatchUpdateRaw>());
 
         public InfoByDate<Dictionary<string, PlayerProgress>> GetLastProgress() => PlayerProgressByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<Dictionary<string, PlayerProgress>>(default(DateTime), new Dictionary<string, PlayerProgress>());
@@ -227,14 +227,14 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public InfoByDate<IList<PlayerQuest>> GetLastQuests() => PlayerQuestsByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<IList<PlayerQuest>>(default(DateTime), new List<PlayerQuest>());
 
-        public InfoByDate<Dictionary<DateTime, CrackBoosterRaw>> GetLastCrackedBoosters() => CrackedBoostersByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
-            ?? new InfoByDate<Dictionary<DateTime, CrackBoosterRaw>>(default(DateTime), new Dictionary<DateTime, CrackBoosterRaw>());
+        //public InfoByDate<Dictionary<DateTime, CrackBoosterRaw>> GetLastCrackedBoosters() => CrackedBoostersByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
+        //    ?? new InfoByDate<Dictionary<DateTime, CrackBoosterRaw>>(default(DateTime), new Dictionary<DateTime, CrackBoosterRaw>());
 
         public InfoByDate<IList<DraftMakePickRaw>> GetLastDraftPickProgress() => DraftPickProgressByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<IList<DraftMakePickRaw>>(default(DateTime), new List<DraftMakePickRaw>());
 
-        public InfoByDate<Dictionary<DateTime, DraftMakePickRaw>> GetLastDraftPickProgressIntraday() => DraftPickProgressIntradayByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
-            ?? new InfoByDate<Dictionary<DateTime, DraftMakePickRaw>>(default(DateTime), new Dictionary<DateTime, DraftMakePickRaw>());
+        //public InfoByDate<Dictionary<DateTime, DraftMakePickRaw>> GetLastDraftPickProgressIntraday() => DraftPickProgressIntradayByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
+        //    ?? new InfoByDate<Dictionary<DateTime, DraftMakePickRaw>>(default(DateTime), new Dictionary<DateTime, DraftMakePickRaw>());
 
         public InfoByDate<HashSet<string>> GetLastMtgaDecksFound() => MtgaDecksFoundByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<HashSet<string>>(default(DateTime), new HashSet<string>());

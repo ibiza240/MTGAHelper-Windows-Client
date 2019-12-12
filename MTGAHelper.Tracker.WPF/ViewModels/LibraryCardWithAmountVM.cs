@@ -18,10 +18,16 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public ObservableProperty<string> AmountAndName { get; set; } = new ObservableProperty<string>("");
 
-        internal void RefreshBindings()
+        public ObservableProperty<string> AmountWithOriginal { get; set; } = new ObservableProperty<string>("");
+
+        public ObservableProperty<int> AmountHackishObservable { get; set; } = new ObservableProperty<int>(0);
+
+        internal void RefreshBindings(int? originalAmount)
         {
             CardVM.SetColorBorder();
+            AmountHackishObservable.Value = Amount;
             AmountAndName.Value = $"{Amount}x {Name}";
+            AmountWithOriginal.Value = $"{Amount}{(originalAmount.HasValue ? "/" + originalAmount.Value : "")}";
             
         }
     }

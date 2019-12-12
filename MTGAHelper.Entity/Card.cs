@@ -31,6 +31,7 @@ namespace MTGAHelper.Entity
         // From data_cards.mtga
         //public int titleId { get; set; }
         public enumLinkedFace linkedFaceType { get; set; }
+        public int LinkedCardGrpId { get; set; }
         public bool isToken { get; set; }
         public bool isCraftable { get; set; }
         public bool isCollectible { get; set; }

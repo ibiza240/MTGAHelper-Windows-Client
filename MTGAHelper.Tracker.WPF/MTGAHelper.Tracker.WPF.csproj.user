@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ShowAllFiles>false</ShowAllFiles>
+    <ShowAllFiles>true</ShowAllFiles>
     <_LastSelectedProfileId>D:\repos\MTGAHelper\MTGAHelper.Tracker.WPF\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
   <ItemGroup>
@@ -10,10 +10,24 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Views\DialogLoginFacebook.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="Views\AboutWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\CardListPopup.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\CardPopup.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\CardPopupDrafting.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\DialogLoginFacebook.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\UserControls\Drafting.xaml">

@@ -57,8 +57,8 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         {
             if (mainWindow.configApp.MinimizeToSystemTray)
             {
-                mainWindow.ShowInTaskbar = false;
-                mainWindow.trayIcon.Visible = true;
+                //mainWindow.ShowInTaskbar = false;
+                //mainWindow.trayIcon.Visible = true;
                 mainWindow.Visibility = Visibility.Hidden;
             }
             else
@@ -114,7 +114,7 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
 
         private void Menu_AlwaysOnTop_Click(object sender, RoutedEventArgs e)
         {
-            SetAlwaysOnTop(!menuItemAlwaysOnTop.IsChecked);
+            mainWindow.SetAlwaysOnTop(!menuItemAlwaysOnTop.IsChecked);
             mainWindow.Activate();
         }
 

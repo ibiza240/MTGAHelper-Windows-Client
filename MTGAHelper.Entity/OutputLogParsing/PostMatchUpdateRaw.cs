@@ -50,11 +50,11 @@ namespace MTGAHelper.Entity.OutputLogParsing
 
     public class Delta
     {
-        public List<int> cardsAdded { get; set; }
-        public List<BoosterDelta> boosterDelta { get; set; }
-        public List<object> decksAdded { get; set; }
-        public List<object> starterDecksAdded { get; set; }
-        public List<object> voucherItemsDelta { get; set; }
+        public List<int> cardsAdded { get; set; } = new List<int>();
+        public List<BoosterDelta> boosterDelta { get; set; } = new List<BoosterDelta>();
+        public List<object> decksAdded { get; set; } = new List<object>();
+        public List<object> starterDecksAdded { get; set; } = new List<object>();
+        public List<object> voucherItemsDelta { get; set; } = new List<object>();
         public int wcCommonDelta { get; set; }
         public int wcUncommonDelta { get; set; }
         public int wcRareDelta { get; set; }
@@ -70,10 +70,10 @@ namespace MTGAHelper.Entity.OutputLogParsing
         public int newNValUncommon { get; set; }
         public int newNValRare { get; set; }
         public int newNValMythic { get; set; }
-        public List<object> vanityItemsAdded { get; set; }
-        public List<object> vanityItemsRemoved { get; set; }
-        public List<CardSkin> artSkinsAdded { get; set; }
-        public List<CardSkin> artSkinsRemoved { get; set; }
+        public List<object> vanityItemsAdded { get; set; } = new List<object>();
+        public List<object> vanityItemsRemoved { get; set; } = new List<object>();
+        public List<CardSkin> artSkinsAdded { get; set; } = new List<CardSkin>();
+        public List<CardSkin> artSkinsRemoved { get; set; } = new List<CardSkin>();
         public object basicLandSet { get; set; }
         public string invEtag { get; set; }
         public string cardEtag { get; set; }
@@ -137,7 +137,7 @@ namespace MTGAHelper.Entity.OutputLogParsing
         public int currentExp { get; set; }
         public int oldLevel { get; set; }
         public int oldExp { get; set; }
-        public List<Update> inventoryUpdates { get; set; }
+        public List<Update> inventoryUpdates { get; set; } = new List<Update>();
     }
 
     public class RewardWebDiff
@@ -192,17 +192,17 @@ namespace MTGAHelper.Entity.OutputLogParsing
     {
         public string trackName { get; set; }
         public int trackTier { get; set; }
-        public TrackDiff trackDiff { get; set; }
-        public RewardWebDiff rewardWebDiff { get; set; }
-        public OrbCountDiff orbCountDiff { get; set; }
+        public TrackDiff trackDiff { get; set; } = new TrackDiff();
+        public RewardWebDiff rewardWebDiff { get; set; } = new RewardWebDiff();
+        public OrbCountDiff orbCountDiff { get; set; } = new OrbCountDiff();
     }
 
     public class PostMatchUpdateRaw
     {
-        public List<QuestUpdate> questUpdate { get; set; }
-        public List<Update> dailyWinUpdates { get; set; }
-        public List<Update> weeklyWinUpdates { get; set; }
-        public BattlePassUpdate eppUpdate { get; set; }
-        public BattlePassUpdate battlePassUpdate { get; set; }
+        public List<QuestUpdate> questUpdate { get; set; } = new List<QuestUpdate>();
+        public List<Update> dailyWinUpdates { get; set; } = new List<Update>();
+        public List<Update> weeklyWinUpdates { get; set; } = new List<Update>();
+        public BattlePassUpdate eppUpdate { get; set; } = new BattlePassUpdate();
+        public BattlePassUpdate battlePassUpdate { get; set; } = new BattlePassUpdate();
     }
 }

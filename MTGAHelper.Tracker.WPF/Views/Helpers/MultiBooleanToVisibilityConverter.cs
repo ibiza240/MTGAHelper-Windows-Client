@@ -27,7 +27,7 @@ namespace MTGAHelper.Tracker.WPF.Views.Helpers
                                     object parameter,
                                     System.Globalization.CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 }

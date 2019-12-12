@@ -85,6 +85,8 @@ namespace MTGAHelper.Entity
                             url = "https://www.mtggoldfish.com/articles/search?tag=budget+arena";
                         else if (Name == MtgGoldfishArticleEnum.SingleScoop.ToString().ToLower())
                             url = "https://www.mtggoldfish.com/articles/search?author=93";
+                        else if (Name == MtgGoldfishArticleEnum.Tournaments.ToString().ToLower())
+                            url = "https://www.mtggoldfish.com/tournaments/standard";
 
                         break;
                     case ScraperTypeEnum.MtgDecks:

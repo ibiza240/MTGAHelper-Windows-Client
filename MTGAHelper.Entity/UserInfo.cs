@@ -5,8 +5,8 @@ namespace MTGAHelper.Lib.Model
 {
     public class UserInfo : ConfigModelUser
     {
-        public bool CollectionOnDisk { get; set; }
-        public int CollectionSizeInMemory { get; set; }
+        //public bool CollectionOnDisk { get; set; }
+        //public int CollectionSizeInMemory { get; set; }
         public double LastLoginHours { get; set; }
         public int NbDecksMonitored { get; set; }
 
@@ -34,13 +34,14 @@ namespace MTGAHelper.Lib.Model
             return res;
         }
 
-        public UserInfo With(int collectionCardsTotal, int count, double totalHours, bool isCollectionOnDisk)
-        {
-            CollectionSizeInMemory = collectionCardsTotal;
-            NbDecksMonitored = count;
-            LastLoginHours = totalHours;
-            CollectionOnDisk = isCollectionOnDisk;
-            return this;
-        }
+        ////public UserInfo With(int collectionCardsTotal, int count, double totalHours, bool isCollectionOnDisk)
+        //public UserInfo With(int count, double totalHours)
+        //{
+        //    //CollectionSizeInMemory = collectionCardsTotal;
+        //    NbDecksMonitored = count;
+        //    LastLoginHours = totalHours;
+        //    //CollectionOnDisk = isCollectionOnDisk;
+        //    return this;
+        //}
     }
 }

@@ -39,6 +39,6 @@ namespace MTGAHelper.Entity
     public class DraftRatings
     {
         public Dictionary<string, DraftRatingScraperResultForSet> RatingsBySet { get; set; } = new Dictionary<string, DraftRatingScraperResultForSet>();
-        public Dictionary<Card, DraftRating> DictRatingByCard { get; set; } = new Dictionary<Card, DraftRating>();
+        //public Dictionary<string, DraftRating> DictRatingByCardName { get; set; } = new Dictionary<string, DraftRating>();
     }
 }

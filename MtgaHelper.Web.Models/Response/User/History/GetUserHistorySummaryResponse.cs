@@ -16,7 +16,7 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
     {
         Regex regex_Rank_StringParts = new Regex(@"^(.*?)_(.*?)_(.*?)$", RegexOptions.Compiled);
 
-        public ICollection<GetUserHistorySummaryDto> History { get; set; }
+        //public ICollection<GetUserHistorySummaryDto> History { get; set; }
         public ICollection<GetUserHistorySummaryDto> History2 { get; set; }
 
         public int TotalItems { get; set; }
@@ -34,11 +34,11 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
         {
         }
 
-        public GetUserHistorySummaryResponse(HistorySummaryForDate[] summary, ICollection<HistorySummaryForDate> summary2, int currentPage, int perPage, int totalItems)
+        public GetUserHistorySummaryResponse(HistorySummaryForDate[] summary, ICollection<HistorySummaryForDate> summary2, int totalItems, ICollection<string> datesAvailable)
         {
             TotalItems = totalItems;
 
-            History = summary
+            var History = summary
                 .Select(i => Mapper.Map<GetUserHistorySummaryDto>(i))
                 .ToArray();
 
@@ -46,45 +46,50 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
                 .Select(i => Mapper.Map<GetUserHistorySummaryDto>(i))
                 .ToArray();
 
-            // TEMP: Take "perPage" again because of the merge
-            History2 = Merge(History.Skip(currentPage * perPage).Take(perPage).ToArray(), history2).Take(perPage).ToArray();
+            History2 = Merge(
+                History.Where(i => datesAvailable.Contains(i.Date.ToString("yyyyMMdd"))).ToArray(),
+                history2.Where(i => datesAvailable.Contains(i.Date.ToString("yyyyMMdd"))).ToArray()
+            );
         }
 
         ICollection<GetUserHistorySummaryDto> Merge(ICollection<GetUserHistorySummaryDto> history, GetUserHistorySummaryDto[] history2)
         {
-            var o = history.Where(i => i.Date.Date < dateNewHistory);
-            foreach (var i in o)
+            foreach (var i in history)
             {
-                var m = regex_Rank_StringParts.Match(i.ConstructedRank);
-                i.ConstructedRankChange = new RankDeltaDto
+                if (i.ConstructedRank != "N/A")
                 {
-                    deltaSteps = 420,
-                    RankEnd = new RankDto
+                    var m = regex_Rank_StringParts.Match(i.ConstructedRank);
+                    i.ConstructedRankChange = new RankDeltaDto
                     {
-                        Format = "Constructed",
-                        Class = m.Groups[1].Value.ToString(),
-                        Level = Convert.ToInt32(m.Groups[2].Value),
-                        Step = Convert.ToInt32(m.Groups[3].Value),
-                    }
-                };
+                        deltaSteps = 420,
+                        RankEnd = new RankDto
+                        {
+                            Format = "Constructed",
+                            Class = m.Groups[1].Value.ToString(),
+                            Level = Convert.ToInt32(m.Groups[2].Value),
+                            Step = Convert.ToInt32(m.Groups[3].Value),
+                        }
+                    };
+                }
 
-                m = regex_Rank_StringParts.Match(i.LimitedRank);
-                i.LimitedRankChange = new RankDeltaDto
+                if (i.LimitedRank != "N/A")
                 {
-                    deltaSteps = 420,
-                    RankEnd = new RankDto
+                    var m = regex_Rank_StringParts.Match(i.LimitedRank);
+                    i.LimitedRankChange = new RankDeltaDto
                     {
-                        Format = "Limited",
-                        Class = m.Groups[1].Value.ToString(),
-                        Level = Convert.ToInt32(m.Groups[2].Value),
-                        Step = Convert.ToInt32(m.Groups[3].Value),
-                    }
-                };
+                        deltaSteps = 420,
+                        RankEnd = new RankDto
+                        {
+                            Format = "Limited",
+                            Class = m.Groups[1].Value.ToString(),
+                            Level = Convert.ToInt32(m.Groups[2].Value),
+                            Step = Convert.ToInt32(m.Groups[3].Value),
+                        }
+                    };
+                }
             }
 
-            var n = history2.Where(i => i.Date.Date >= dateNewHistory);
-
-            return o.Union(n).OrderByDescending(i => i.Date).ToArray();
+            return history.Where(i => i.Date.Date < dateNewHistory).Union(history2.Where(i => i.Date.Date >= dateNewHistory)).OrderByDescending(i => i.Date).ToArray();
         }
     }
 }

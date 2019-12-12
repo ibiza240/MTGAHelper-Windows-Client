@@ -57,6 +57,7 @@ namespace MTGAHelper.Web.UI.IoC
 
             CreateMap<CardWithAmount, CollectionCardDto>()
                 .IncludeBase<CardWithAmount, CardWithAmountDto>()
+                .ForMember(i => i.IdArena, i => i.MapFrom(x => x.Card.grpId))
                 .ForMember(i => i.NotInBooster, i => i.MapFrom(x => x.Card.notInBooster));
 
 
@@ -135,18 +136,19 @@ namespace MTGAHelper.Web.UI.IoC
                 .ForMember(i => i.Losses, i => i.MapFrom(x => x.OutcomesByMode.Values.Sum(y => y.Losses)))
                 .ForMember(i => i.BoostersChange, i => i.MapFrom(x => x.BoostersChange.Select(b => new KeyValuePair<string, int>(b.Key, b.Value))));
 
-            CreateMap<DateSnapshotInfo, GetUserHistoryForDateResponseInfo>()
-                .ForMember(i => i.ConstructedRank, i => i.MapFrom(x => x.RankSynthetic.FirstOrDefault(y => y.Format == RankFormatEnum.Constructed) ?? new ConfigModelRankInfo(RankFormatEnum.Constructed)))
-                .ForMember(i => i.LimitedRank, i => i.MapFrom(x => x.RankSynthetic.FirstOrDefault(y => y.Format == RankFormatEnum.Limited) ?? new ConfigModelRankInfo(RankFormatEnum.Limited)))
-                .ForMember(i => i.Gold, i => i.MapFrom(x => x.Inventory.Gold))
-                .ForMember(i => i.Gems, i => i.MapFrom(x => x.Inventory.Gems))
-                .ForMember(i => i.Wildcards, i => i.MapFrom(x => x.Inventory.Wildcards))
-                .ForMember(i => i.VaultProgress, i => i.MapFrom(x => x.Inventory.VaultProgress));
+            //CreateMap<DateSnapshotInfo, GetUserHistoryForDateResponseInfo>()
+            //    .ForMember(i => i.ConstructedRank, i => i.MapFrom(x => x.RankSynthetic.FirstOrDefault(y => y.Format == RankFormatEnum.Constructed) ?? new ConfigModelRankInfo(RankFormatEnum.Constructed)))
+            //    .ForMember(i => i.LimitedRank, i => i.MapFrom(x => x.RankSynthetic.FirstOrDefault(y => y.Format == RankFormatEnum.Limited) ?? new ConfigModelRankInfo(RankFormatEnum.Limited)))
+            //    .ForMember(i => i.Gold, i => i.MapFrom(x => x.Inventory.Gold))
+            //    .ForMember(i => i.Gems, i => i.MapFrom(x => x.Inventory.Gems))
+            //    .ForMember(i => i.Wildcards, i => i.MapFrom(x => x.Inventory.Wildcards))
+            //    .ForMember(i => i.VaultProgress, i => i.MapFrom(x => x.Inventory.VaultProgress));
 
-            CreateMap<DateSnapshotDiff, GetUserHistoryForDateResponseDiff>();
+            //CreateMap<DateSnapshotDiff, GetUserHistoryForDateResponseDiff>();
 
             CreateMap<CardForDraftPick, CardForDraftPickDto>()
-                .ForMember(i => i.IdArena, i => i.MapFrom(x => x.grpId));
+                .ForMember(i => i.IdArena, i => i.MapFrom(x => x.grpId))
+                .ForMember(i => i.ManaCost, i => i.MapFrom(x => x.mana_cost));
 
             CreateMap<int, CardDto>()
                 .ConvertUsing(i => Mapper.Map<CardDto>(Mapper.Map<Card>(i)));

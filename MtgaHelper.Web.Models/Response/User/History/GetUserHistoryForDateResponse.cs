@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.UserHistory;
+using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
 using MTGAHelper.Lib.UserHistory;
 using MTGAHelper.Web.Models.Response.User.History;
 using MTGAHelper.Web.Models.SharedDto;
@@ -16,26 +17,24 @@ namespace MTGAHelper.Web.Model.Response.User.History
     {
         DateTime dateNewHistory = new DateTime(2019, 11, 18);
 
-        public GetUserHistoryForDateResponseData History { get; set; }
         public GetUserHistoryForDateResponseData History2 { get; set; }
 
-        public GetUserHistoryForDateResponse(DateSnapshotInfo historyForDate, DateSnapshotDiff diff, ICollection<EconomyEvent> economyEvents, ICollection<RankDelta> rankUpdates)
+        public GetUserHistoryForDateResponse(DateTime date, ICollection<MatchResult> matches, ICollection<EconomyEvent> economyEvents, ICollection<RankDelta> rankUpdates,
+            ICollection<CardWithAmountDto> newCardsDeprecated)
         {
-            History = new GetUserHistoryForDateResponseData(historyForDate, diff);
-
             var economyEventsDto = Mapper.Map<ICollection<EconomyEventDto>>(economyEvents);
 
             // V2
-            if (historyForDate.Date < dateNewHistory)
+            if (date < dateNewHistory)
             {
-                if (History.Diff.NewCards.Count > 0)
+                if (newCardsDeprecated.Count > 0)
                     economyEventsDto = new[]
                     {
                         new EconomyEventDto
                         {
-                            DateTime = historyForDate.Date,
+                            DateTime = date,
                             Context = "New cards",
-                            NewCards = History.Diff.NewCards,
+                            NewCards = newCardsDeprecated,
                         }
                     };
                 else
@@ -43,17 +42,17 @@ namespace MTGAHelper.Web.Model.Response.User.History
                     {
                     new EconomyEventDto
                     {
-                        DateTime = historyForDate.Date,
+                        DateTime = date,
                         Context = "N/A",
                     }
                 };
             }
 
-            History2 = new GetUserHistoryForDateResponseData
+            History2 = new GetUserHistoryForDateResponseData(date, matches)
             {
                 EconomyEvents = economyEventsDto,
                 RankUpdates = Mapper.Map<ICollection<RankDeltaDto>>(rankUpdates),
-                Matches = Mapper.Map<ICollection<MatchDto>>(historyForDate.Matches),
+                Matches = Mapper.Map<ICollection<MatchDto>>(matches),
             };
 
             // ASSOCIATE RANK CHANGES WITH MATCHES

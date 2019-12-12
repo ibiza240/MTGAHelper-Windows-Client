@@ -9,6 +9,7 @@ namespace MTGAHelper.Web.Models.Response.User
     {
         public string Rating { get; set; }
         public string Description { get; set; }
+        public string ManaCost { get; set; }
         public float Weight { get; set; }
         public RaredraftPickReasonEnum IsRareDraftPick { get; set; }
         public string Rarity { get; set; }
@@ -24,6 +25,10 @@ namespace MTGAHelper.Web.Models.Response.User
     public class GetCardsForDraftPickResponse
     {
         public ICollection<CardForDraftPickDto> CardsForDraft { get; set; }
+
+        public GetCardsForDraftPickResponse()
+        {
+        }
 
         public GetCardsForDraftPickResponse(ICollection<CardForDraftPick> data)
         {

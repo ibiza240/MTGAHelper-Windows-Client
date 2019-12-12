@@ -254,26 +254,30 @@ namespace MTGAHelper.Tracker.WPF.Business
         //    }
         //}
 
-        internal bool IsLocalTrackerUpToDate()
-        {
-            try
-            {
-                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-                using (var w = new WebClient())
-                {
-                    var responseRaw = w.DownloadString((configApp.Test ? serverTest : server) + "/api/Misc/VersionTracker");
-                    var latestVersion = JsonConvert.DeserializeObject<GetVersionTrackerResponse>(responseRaw).Version;
-                    return new Version(fvi.FileVersion) >= new Version(latestVersion);
-                }
-            }
-            catch (WebException)
-            {
-                // Ignore error on call
-                return true;
-            }
-        }
+        //internal bool IsLocalTrackerUpToDate()
+        //{
+        //    try
+        //    {
+        //        System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+        //        FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+        //        using (var w = new WebClient())
+        //        {
+        //            var responseRaw = w.DownloadString((configApp.Test ? serverTest : server) + "/api/Misc/VersionTracker");
+        //            var latestVersion = JsonConvert.DeserializeObject<GetVersionTrackerResponse>(responseRaw).Version;
+        //            return new Version(fvi.FileVersion) >= new Version(latestVersion);
+        //        }
+        //    }
+        //    catch (WebException)
+        //    {
+        //        // Ignore error on call
+        //        return true;
+        //    }
+        //}
 
+        internal DraftRaredraftingInfoResponse GetRaredraftingInfo(string mtgaHelperUserId)
+        {
+            return GetResponseWithCookie<DraftRaredraftingInfoResponse>("api/User/Compare");
+        }
 
         //public CollectionResponse UploadZippedLogFile(string userId, byte[] fileZipped)
         //{
@@ -313,14 +317,14 @@ namespace MTGAHelper.Tracker.WPF.Business
             return latestUploadHash == uploadHash.ToString();
         }
 
-        internal GetCardsForDraftPickResponse GetCardsForDraftPick(string userId, ICollection<int> grpIds, string source)
-        {
-            if (grpIds == null || grpIds.Count == 0)
-                return new GetCardsForDraftPickResponse(new Entity.CardForDraftPick[0]);
+        //internal GetCardsForDraftPickResponse GetCardsForDraftPick(string userId, ICollection<int> grpIds, string source)
+        //{
+        //    if (grpIds == null || grpIds.Count == 0)
+        //        return new GetCardsForDraftPickResponse(new Entity.CardForDraftPick[0]);
 
-            return GetResponseWithCookie<GetCardsForDraftPickResponse>($"/api/User/DraftPick?grpIds={string.Join(',', grpIds)}&source={HttpUtility.UrlEncode(source)}");
+        //    return GetResponseWithCookie<GetCardsForDraftPickResponse>($"/api/User/DraftPick?grpIds={string.Join(',', grpIds)}&source={HttpUtility.UrlEncode(source)}");
 
-        }
+        //}
 
         internal CollectionResponse GetCollection(string userId)
         {

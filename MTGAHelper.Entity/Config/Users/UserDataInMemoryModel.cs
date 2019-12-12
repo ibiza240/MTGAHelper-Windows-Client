@@ -19,7 +19,7 @@ namespace MTGAHelper.Lib
 
     public class UserDataInMemoryModel
     {
-        object lockMtgaDeckHistory = new object();
+        //object lockMtgaDeckHistory = new object();
         object lockHistorySummary = new object();
 
         public DateTime LastCompareUtc { get; set; }
@@ -28,11 +28,11 @@ namespace MTGAHelper.Lib
 
         public CardsMissingResult CompareResult { get; set; } = new CardsMissingResult();
 
-        public LockableOutputLogResult HistoryDetails { get; set; } = new LockableOutputLogResult();
+        //public LockableOutputLogResult HistoryDetails { get; set; } = new LockableOutputLogResult();
 
         IList<HistorySummaryForDate> HistorySummary { get; set; } = new List<HistorySummaryForDate>();
 
-        IList<ConfigModelRawDeck> MtgaDecks { get; set; } = new List<ConfigModelRawDeck>();
+        //IList<ConfigModelRawDeck> MtgaDecks { get; set; } = new List<ConfigModelRawDeck>();
 
         public IList<HistorySummaryForDate> GetHistorySummary()
         {
@@ -49,15 +49,15 @@ namespace MTGAHelper.Lib
         //    lock (lockHistorySummary)
         //        HistorySummary.Add(summary);
         //}
-        public IList<ConfigModelRawDeck> GetMtgaDecks()
-        {
-            lock (lockMtgaDeckHistory)
-                return MtgaDecks;
-        }
-        public void SetMtgaDecks(IList<ConfigModelRawDeck> list)
-        {
-            lock (lockMtgaDeckHistory)
-                MtgaDecks = list;
-        }
+        //public IList<ConfigModelRawDeck> GetMtgaDecks()
+        //{
+        //    lock (lockMtgaDeckHistory)
+        //        return MtgaDecks;
+        //}
+        //public void SetMtgaDecks(IList<ConfigModelRawDeck> list)
+        //{
+        //    lock (lockMtgaDeckHistory)
+        //        MtgaDecks = list;
+        //}
     }
 }

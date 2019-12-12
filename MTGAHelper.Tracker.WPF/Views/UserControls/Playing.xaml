@@ -34,6 +34,7 @@
         <TabControl Grid.Row="0" TabStripPlacement="Left" Background="Transparent" BorderThickness="0">
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
+                    <EventSetter Event="PreviewMouseLeftButtonDown" Handler="TabControl_PreviewMouseLeftButtonDown"/>
                     <Setter Property="HeaderTemplate">
                         <Setter.Value>
                             <DataTemplate>
@@ -67,40 +68,37 @@
             <TabItem Header="Library">
                 <TabItem.Content>
                     <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Label Grid.Row="0" FontSize="16" FontWeight="Bold" Padding="5,0,0,0">
-                            <TextBlock Text="{Binding InMatchState.LibraryCardsCount, StringFormat=Your library ({0})}" />
-                        </Label>
-                        <Label Grid.Row="1" Margin="0" Padding="5,0,0,5">
-                            <TextBlock>
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="Probability of a land ({0}) on next draw: {1:p1}">
-                                        <Binding Path="InMatchState.LibraryLandsCount" />
-                                        <Binding Path="InMatchState.Stats.DrawLandPct.Value" />
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
-                        </Label>
-                        <uc:SimpleCardsList Grid.Row="2" x:Name="CardsMyLibrary" DataContext="{Binding InMatchState.MyLibrary}" />
-                    </Grid>
-                </TabItem.Content>
-            </TabItem>
-
-            <TabItem Header="Opponent cards">
-                <TabItem.Content>
-                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Label Grid.Row="0" FontSize="16" FontWeight="Bold">
-                            <TextBlock>Opponent cards seen</TextBlock>
+                        <Label Grid.Row="0" Grid.Column="0" FontSize="16" FontWeight="Bold">
+                            <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding InMatchState.LibraryCardsCount, StringFormat={}{0} cards in Library}" />
                         </Label>
-                        <uc:SimpleCardsList Grid.Row="1" x:Name="CardsOpponent" DataContext="{Binding InMatchState.OpponentCardsSeen}" />
+                        <!--<CheckBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" IsChecked="{Binding InMatchState.SplitLands.Value}" Checked="CheckBoxSplitLands_Checked">
+                                Split lands by type
+                            </CheckBox>-->
+                        <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Background="#0b0d0e">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="/Assets/Images/land.png" Width="28" Margin="5,0,0,0" />
+                                <Border Padding="5,0,5,0">
+                                    <StackPanel>
+                                        <Label Padding="2" HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding InMatchState.LibraryLandCurrentAndTotal}" FontWeight="Bold" Foreground="White" />
+                                        </Label>
+                                        <Label Padding="2" HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding InMatchState.Stats.DrawLandPct.Value, StringFormat=p1}" />
+                                        </Label>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                        
+                        <uc:SimpleCardsList Grid.Row="1" Grid.ColumnSpan="2" x:Name="CardsMyLibrary" DataContext="{Binding InMatchState.MyLibrary}" />
                     </Grid>
                 </TabItem.Content>
             </TabItem>
@@ -112,10 +110,26 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <Label Grid.Row="0" FontSize="16" FontWeight="Bold">
-                            <TextBlock>Your sideboard</TextBlock>
+                            <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding InMatchState.SideboardCardsCount, StringFormat={}{0} cards in Sideboard}" />
                         </Label>
                         <uc:SimpleCardsList Grid.Row="1" x:Name="CardsMySideboard" DataContext="{Binding InMatchState.MySideboard}" />
                     </Grid>
+                </TabItem.Content>
+            </TabItem>
+
+            <TabItem Header="Opponent cards">
+                <TabItem.Content>
+                    <Label Content="N/A"></Label>
+                    <!--<Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0" FontSize="16" FontWeight="Bold">
+                            <TextBlock>Opponent cards seen</TextBlock>
+                        </Label>
+                        <uc:SimpleCardsList Grid.Row="1" x:Name="CardsOpponent" DataContext="{Binding InMatchState.OpponentCardsSeen}" />
+                    </Grid>-->
                 </TabItem.Content>
             </TabItem>
 
@@ -142,21 +156,21 @@
                 </TabItem.Content>
             </TabItem>-->
         </TabControl>
-        
-        <Grid Grid.Row="1">
+
+        <Grid Grid.Row="1" Width="Auto" HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold" Margin="0" Padding="0">
+            <Label Grid.Row="0" Grid.Column="0" FontSize="14" FontWeight="Bold" Margin="0" Padding="0,0,0,2">
                 <TextBlock Text="Priority" />
             </Label>
-            <Label Grid.Row="0" Grid.Column="1" Margin="0" Padding="10,0,0,0" VerticalAlignment="Bottom"
+            <Label Grid.Row="0" Grid.Column="1" Margin="0" Padding="10,0,0,2" VerticalAlignment="Bottom"
                 FontWeight="{Binding InMatchState.TimerMe.HasPriority, Converter={StaticResource HasPriorityConverter}}">
                 <TextBlock Text="{Binding InMatchState.TimerMe.TimePlayed, StringFormat=You: {0}}" />
             </Label>
-            <Label Grid.Row="0" Grid.Column="2" Margin="0" Padding="10,0,0,0" VerticalAlignment="Bottom"
+            <Label Grid.Row="0" Grid.Column="2" Margin="0" Padding="10,0,0,2" VerticalAlignment="Bottom"
                 FontWeight="{Binding InMatchState.TimerOpponent.HasPriority, Converter={StaticResource HasPriorityConverter}}">
                 <TextBlock Text="{Binding InMatchState.TimerOpponent.TimePlayed, StringFormat=Opponent: {0}}" />
             </Label>

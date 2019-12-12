@@ -37,6 +37,15 @@
                     <Hyperlink NavigateUri="https://mtgahelper.com" helpers:HyperlinkExtensions.IsExternal="true">
                         MTGAHelper website
                     </Hyperlink>.
+                    <LineBreak />
+                    <LineBreak />
+                    If you haven't already, go select which decks you want to track on the 
+                    <Hyperlink NavigateUri="https://mtgahelper.com/my/sources" helpers:HyperlinkExtensions.IsExternal="true">
+                        Decks sources page
+                    </Hyperlink>.
+                    <LineBreak />
+                    <LineBreak />
+                    Hopefully this tracker can improve your experience playing Magic: The Gathering Arena :)
                 </TextBlock>
             </Label>
 
@@ -65,19 +74,10 @@
                     When playing a match, live data will be shown such as your library with draw probabilities, sideboard and opponent cards seen.
                     <LineBreak />
                     <LineBreak />
-                    When draft picking, ratings from ChannelFireball and "Raredrafting" information will be displayed based on your preferences (collection and tracked decks).
+                    When draft picking, Limited ratings will be displayed, as well as Raredrafting information based on your collection and tracked decks.
                     <LineBreak />
                     <LineBreak />
                     When building a sealed deck, the limited ratings will also be available.
-                    <LineBreak />
-                    <LineBreak />
-                    If you haven't already, go select which decks you want to track on the 
-                    <Hyperlink NavigateUri="https://mtgahelper.com/my/sources" helpers:HyperlinkExtensions.IsExternal="true">
-                        Decks sources page
-                    </Hyperlink>.
-                    <LineBreak />
-                    <LineBreak />
-                    Hopefully this tracker can improve your experience playing Magic: The Gathering Arena :)
                 </TextBlock>
             </Label>
         </StackPanel>

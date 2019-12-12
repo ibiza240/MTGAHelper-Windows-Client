@@ -51,7 +51,7 @@ namespace MTGAHelper.Entity.OutputLogParsing
 
     public class LogInfoRequestRaw
     {
-        public int id { get; set; }
+        public string id { get; set; }
         public string request { get; set; }
     }
 

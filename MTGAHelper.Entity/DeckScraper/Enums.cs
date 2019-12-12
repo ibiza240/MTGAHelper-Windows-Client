@@ -21,6 +21,7 @@
         MuchAbrew,
         BudgetArena,
         SingleScoop,
+        Tournaments,
     }
 
     public enum MtgTop8ListingEnum

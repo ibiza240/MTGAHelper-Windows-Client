@@ -25,14 +25,12 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         {
             InitializeComponent();
 
-            gridCards.RowStyle = (Style)FindResource("DataGridRowCardNotification");
-
         }
 
         public void DisableRowStyleHighlight()
         {
             gridCards.RowStyle = new Style(typeof(DataGridRow));
-            gridCards.RowStyle.Setters.Add(new Setter(BackgroundProperty, new SolidColorBrush(Color.FromArgb(0x27, 0x2b, 0x30, 0))));
+            gridCards.RowStyle.Setters.Add(new Setter(BackgroundProperty, new SolidColorBrush(Color.FromArgb(0, 0x27, 0x2b, 0x30))));
         }
 
         //public void SetDataContext(CardsListVM dataContext)
@@ -68,6 +66,11 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
 
             windowCardPopup.Top = mainWindowTop;
             windowCardPopup.Left = leftAdjusted;
+        }
+
+        private void gridCards_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
         }
     }
 }

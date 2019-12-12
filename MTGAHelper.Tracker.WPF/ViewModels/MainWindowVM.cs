@@ -20,6 +20,7 @@ using MTGAHelper.Tracker.WPF.Views;
 using MTGAHelper.Tracker.WPF.Views.Helpers;
 using MTGAHelper.Web.Models.Response.Account;
 using MTGAHelper.Web.UI.Model.Response.User;
+using Serilog;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
@@ -126,6 +127,10 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             {
                 workToDo();
             }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Managed error in WrapNetworkStatus:");
+            }
             finally
             {
                 statusBlinker.SetNetworkStatus(status, false);
@@ -183,7 +188,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public void RemoveWelcome()
         {
-
             if (MainWindowContext == MainWindowContextEnum.Welcome)
             {
                 MainWindowContext = MainWindowContextEnum.Home;

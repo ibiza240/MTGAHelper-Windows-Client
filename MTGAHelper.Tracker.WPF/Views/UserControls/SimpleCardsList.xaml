@@ -10,105 +10,116 @@
 
     <UserControl.Resources>
         <helpers:BoolToStringConverter x:Key="BoolToVisConverter" TrueValue="Visible" FalseValue="Collapsed" />
-
-        <Style x:Key="DataGridRowCardNotification" TargetType="{x:Type DataGridRow}">
-            <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
-            <Style.Triggers>
-                <EventTrigger RoutedEvent="Binding.TargetUpdated">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <ColorAnimation Duration="00:00:1" Storyboard.TargetProperty="Background.Color" From="Orange" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Style.Triggers>
-        </Style>
     </UserControl.Resources>
-    <Grid>
-        <DataGrid x:Name="gridCards" ItemsSource="{Binding Cards}" AutoGenerateColumns="False" CanUserAddRows="False"
+    <DataGrid x:Name="gridCards" ItemsSource="{Binding Cards}" AutoGenerateColumns="False" CanUserAddRows="False"
     GridLinesVisibility="None" Background="{StaticResource BackgroundBrush}" Foreground="#aaaaaa" HeadersVisibility="None" BorderThickness="0"
-    ScrollViewer.VerticalScrollBarVisibility="Auto" VirtualizingPanel.IsVirtualizing="False">
-            <DataGrid.CellStyle>
-                <Style TargetType="{x:Type DataGridCell}">
-                    <Setter Property="Foreground" Value="Black" />
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Background" Value="{x:Null}" />
-                            <Setter Property="BorderBrush" Value="{x:Null}" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.CellStyle>
-            <DataGrid.Columns>
-                <DataGridTemplateColumn IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Border BorderThickness="2" Width="36" Height="36" MouseEnter="Border_MouseEnter" MouseLeave="Border_MouseLeave">
-                                <Border.BorderBrush>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" GradientStops="{Binding CardVM.ColorGradient.Value}" />
-                                </Border.BorderBrush>
+    ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Hidden" VirtualizingPanel.IsVirtualizing="False">
+        <DataGrid.RowStyle>
+            <Style TargetType="DataGridRow">
+                <Setter Property="BorderThickness" Value="0,1,0,0" />
+                <Setter Property="BorderBrush" Value="#555555" />
+                <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+                <EventSetter Event="MouseEnter" Handler="Border_MouseEnter" />
+                <EventSetter Event="MouseLeave" Handler="Border_MouseLeave" />
+                <Style.Triggers>
+                    <EventTrigger RoutedEvent="Binding.TargetUpdated">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <ColorAnimation Duration="00:00:1" Storyboard.TargetProperty="Background.Color" From="Orange" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Style.Triggers>
+            </Style>
+        </DataGrid.RowStyle>
+        <DataGrid.Columns>
+            <DataGridTemplateColumn IsReadOnly="True" Width="Auto">
+                <DataGridTemplateColumn.CellStyle>
+                    <Style TargetType="{x:Type DataGridCell}">
+                        <Setter Property="IsHitTestVisible" Value="False"/>
+                    </Style>
+                </DataGridTemplateColumn.CellStyle>
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="2" Width="36" Height="36">
+                            <Border.BorderBrush>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" GradientStops="{Binding CardVM.ColorGradient.Value}" />
+                            </Border.BorderBrush>
+                            <Rectangle Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Rectangle.Fill>
+                                    <ImageBrush>
+                                        <ImageBrush.ImageSource>
+                                            <Binding Path="ImageArtUrl">
+                                                <Binding.TargetNullValue>
+                                                    <ImageSource>/Assets/Images/thumbnailUnknown.png</ImageSource>
+                                                </Binding.TargetNullValue>
+                                            </Binding>
+                                        </ImageBrush.ImageSource>
+                                    </ImageBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                        </Border>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            
+            <DataGridTemplateColumn IsReadOnly="True" Width="*">
+                <DataGridTemplateColumn.CellStyle>
+                    <Style TargetType="{x:Type DataGridCell}">
+                        <Setter Property="VerticalAlignment" Value="Stretch" />
+                        <Setter Property="IsHitTestVisible" Value="False"/>
+                    </Style>
+                </DataGridTemplateColumn.CellStyle>
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <Label Padding="2">
+                                <TextBlock Text="{Binding Name}" />
+                            </Label>
 
-                                <Rectangle Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <Rectangle.Fill>
-                                        <ImageBrush>
-                                            <ImageBrush.ImageSource>
-                                                <Binding Path="ImageArtUrl">
-                                                    <Binding.TargetNullValue>
-                                                        <ImageSource>/Assets/Images/thumbnailUnknown.png</ImageSource>
-                                                    </Binding.TargetNullValue>
-                                                </Binding>
-                                            </ImageBrush.ImageSource>
-                                        </ImageBrush>
-                                    </Rectangle.Fill>
-                                </Rectangle>
-                            </Border>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn IsReadOnly="True">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <Label Padding="0">
-                                    <TextBlock Text="{Binding AmountAndName.Value, NotifyOnTargetUpdated=True}" />
+                            <ItemsControl ItemsSource="{Binding CmcImages}" Padding="2">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Image Source="{Binding}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            
+            <DataGridTemplateColumn IsReadOnly="True" Width="42">
+                <DataGridTemplateColumn.CellStyle>
+                    <Style TargetType="{x:Type DataGridCell}">
+                        <Setter Property="Background" Value="#0b0d0e" />
+                        <Setter Property="IsHitTestVisible" Value="False"/>
+                    </Style>
+                </DataGridTemplateColumn.CellStyle>
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <StackPanel VerticalAlignment="Center">
+                            <StackPanel Visibility="{Binding DataContext.ShowDrawPctAndAmount, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVisConverter}}">
+                                <Label Padding="2" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding AmountWithOriginal.Value, NotifyOnTargetUpdated=True}" FontWeight="Bold" Foreground="White" />
                                 </Label>
-
-                                <ItemsControl ItemsSource="{Binding CmcImages}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Horizontal" />
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Image Source="{Binding}" />
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn IsReadOnly="True">
-                    <DataGridTemplateColumn.CellStyle>
-                        <Style TargetType="{x:Type DataGridCell}">
-                            <Setter Property="Visibility" Value="{Binding DataContext.ShowDrawPct, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVisConverter}}" />
-                        </Style>
-                    </DataGridTemplateColumn.CellStyle>
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <Label Padding="5,0,0,0">
+                                <Label Padding="2" HorizontalAlignment="Center">
                                     <TextBlock Text="{Binding DrawPercent.Value, StringFormat=p1}" />
                                 </Label>
-                                <Label Padding="0">
-                                    <TextBlock Text="" />
-                                </Label>
                             </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-    </Grid>
+                            <Label Padding="0" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Visibility="{Binding DataContext.ShowAmount, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVisConverter}}">
+                                <TextBlock Text="{Binding AmountHackishObservable.Value}" FontWeight="Bold" Foreground="White" />
+                            </Label>
+                        </StackPanel>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+        </DataGrid.Columns>
+    </DataGrid>
 </UserControl>

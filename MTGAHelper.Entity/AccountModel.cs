@@ -8,7 +8,8 @@ namespace MTGAHelper.Entity
     {
         Active,
         Inactive,
-        WaitingForVerificationCode
+        WaitingForVerificationCode,
+        ForgotPassword,
     }
 
     public class AccountModel

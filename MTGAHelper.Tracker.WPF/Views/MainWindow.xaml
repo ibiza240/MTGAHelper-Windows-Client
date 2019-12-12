@@ -11,7 +11,7 @@
         Top="0" Left="0" Height="900" Width="320"
         Loaded="Window_Loaded"
         Activated="Window_Activated" Deactivated="Window_Deactivated"
-        LocationChanged="Window_LocationChanged"
+        LocationChanged="Window_LocationChanged" SizeChanged="Window_SizeChanged"
         Closed="Window_Closed"
         Opacity="{Binding OpacityPct}" AllowsTransparency="True" ResizeMode="CanResizeWithGrip" Background="{StaticResource BackgroundBrush}"
         WindowStyle="None" BorderBrush="#181b1f" BorderThickness="2">
@@ -80,9 +80,12 @@
         <uc:Ready Grid.Row="1" x:Name="ucReady" />
         <uc:Welcome Grid.Row="1" x:Name="ucWelcome" />
 
-        <StackPanel Grid.Row="1">
-            <StackPanel.Style>
-                <Style TargetType="{x:Type StackPanel}">
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
                     <Setter Property="Visibility" Value="Hidden" />
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding MainWindowContext}" Value="Drafting">
@@ -90,9 +93,9 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </StackPanel.Style>
+            </Grid.Style>
             <uc:Drafting x:Name="ucDraftHelper" />
-        </StackPanel>
+        </Grid>
 
         <uc:Playing Grid.Row="1" x:Name="ucPlaying" />
 

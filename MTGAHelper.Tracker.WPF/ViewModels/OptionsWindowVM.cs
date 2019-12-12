@@ -29,10 +29,5 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             "ChannelFireball (LSV)",
             "DraftSim",
         };
-
-        internal void SetConfig(ConfigModelApp configApp)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

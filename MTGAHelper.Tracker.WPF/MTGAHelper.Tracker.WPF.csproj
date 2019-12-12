@@ -8,14 +8,14 @@
     <ApplicationIcon>wcC.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>MTGAHelper.Tracker</AssemblyName>
-    <Version>1.3.2</Version>
+    <Version>1.3.4</Version>
     <Company>MTGAHelper</Company>
     <Authors>MTGAHelper</Authors>
     <Description>MTGAHelper Local client</Description>
     <Copyright>2019 MTGAHelper</Copyright>
     <Configurations>Debug;Release;DebugWithServer</Configurations>
-    <AssemblyVersion>1.3.2.0</AssemblyVersion>
-    <FileVersion>1.3.2.0</FileVersion>
+    <AssemblyVersion>1.3.4.0</AssemblyVersion>
+    <FileVersion>1.3.4.0</FileVersion>
     <StartupObject>MTGAHelper.Tracker.WPF.Program</StartupObject>
   </PropertyGroup>
 
@@ -36,6 +36,8 @@
     <None Remove="Assets\Images\banner.jpg" />
     <None Remove="Assets\Images\Facebook.ico" />
     <None Remove="Assets\Images\Google.png" />
+    <None Remove="Assets\Images\land.png" />
+    <None Remove="Assets\Images\land.svg" />
     <None Remove="Assets\Images\loading.gif" />
     <None Remove="Assets\Images\MTGA.png" />
     <None Remove="Assets\Images\star.png" />
@@ -77,9 +79,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="NotifyIconWpf">
+      <HintPath>NotifyIconWpf.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Assets\Images\banner.jpg" />
     <Resource Include="Assets\Images\Facebook.ico" />
     <Resource Include="Assets\Images\Google.png" />
+    <Resource Include="Assets\Images\land.png" />
     <Resource Include="Assets\Images\loading.gif" />
     <Resource Include="Assets\Images\MTGA.png" />
     <Resource Include="Assets\Images\star.png" />
@@ -90,6 +99,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Views\CardListWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\CardListPopup.xaml">
       <SubType>Designer</SubType>
     </Page>
