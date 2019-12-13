@@ -1,3 +1,7 @@
+### v1.3.5 (2019-12-13)
+
+Hotfix for the WotC patch
+
 ### v1.3.4 (2019-12-12)
 
 Separate window for Opponent cards seen
