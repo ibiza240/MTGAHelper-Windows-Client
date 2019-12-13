@@ -1,6 +1,6 @@
 ### v1.3.5 (2019-12-13)
 
-Hotfix for the WotC patch
+Hotfix for supporting the latest WotC update
 
 ### v1.3.4 (2019-12-12)
 
