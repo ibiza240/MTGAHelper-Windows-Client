@@ -29,12 +29,12 @@ Please note that this tracker runs only on Windows for now.
 
 ### Installation
 
-##### Step 1. Microsoft .NET Core 3.0 framework
-The application uses the very recent framework known as Microsoft .NET Core 3.0.
+##### Step 1. Microsoft .NET Core 3.1 framework
+The application uses the very recent framework known as Microsoft .NET Core 3.1.
 
 You will require to install:
-- [This version if you have a 64-bit Operating System (x64-based processor)](https://dotnet.microsoft.com/download/thank-you/dotnet-sdk-3.0.100-windows-x64-installer)
-- [This version if you have a 32-bit Operating System (x86-based processor)](https://dotnet.microsoft.com/download/thank-you/dotnet-sdk-3.0.100-windows-x86-installer)
+- [This version if you have a 64-bit Operating System (x64-based processor)](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x64-installer)
+- [This version if you have a 32-bit Operating System (x86-based processor)](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x86-installer)
 
 > Note: If you are on Windows 7, you will most likely also need this Update for Windows 7 (KB2533623):
 > - [This version if you have a 64-bit Operating System (x64-based processor)](https://www.microsoft.com/en-us/download/details.aspx?id=26764)
@@ -75,9 +75,9 @@ Once your data is uploaded successfully, you can simply refresh the MTGAHelper w
 
 1- The server might be unresponsive. Try to go on https://mtgahelper.com and if the site cannot load, the tracker won't be able to start. You can report this downtime on [Discord](https://discord.gg/GTd3RMd).
 
-2- Maybe the program is not able to find the .NET Core 3.0 framework described above. Check in your installed applications if you have this installed:
+2- Maybe the program is not able to find the .NET Core 3.1 framework described above. Check in your installed applications if you have this installed:
 
-<img src="https://i.imgur.com/UWrO39u.png" width="420" alt=".NET Core 3.0 framework in your installed applications">
+<img src="https://i.imgur.com/UWrO39u.png" width="420" alt=".NET Core 3.1 framework in your installed applications">
 
 3- Try to run the tracker from a command line window by running:
 
