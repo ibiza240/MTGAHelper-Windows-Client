@@ -14,7 +14,7 @@ namespace MTGAHelper.Entity
         public bool IsCraftable { get; set; }
         public int Power { get; set; }
         public int Toughness { get; set; }
-        public int Number { get; set; }  // MTGA: CollectorNumber
+        public string Number { get; set; }  // MTGA: CollectorNumber    MUST BE STRING (e.g. Golgari Queen GR8
         public int Cmc { get; set; }
         public string Rarity { get; set; }
         public enumLinkedFace LinkedFaceType { get; set; }

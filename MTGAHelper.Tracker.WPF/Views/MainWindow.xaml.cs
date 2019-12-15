@@ -21,6 +21,7 @@ using Serilog;
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -29,6 +30,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Threading;
 
 namespace MTGAHelper.Tracker.WPF.Views
@@ -608,6 +610,9 @@ namespace MTGAHelper.Tracker.WPF.Views
                             notifyIconManager.ShowWindowFromTray();
                         else
                             WindowState = WindowState.Normal;
+
+                        var process = Process.GetProcessesByName("MTGA").FirstOrDefault();
+                        BringToFront(process);
                     }
                 });
             }
@@ -615,6 +620,20 @@ namespace MTGAHelper.Tracker.WPF.Views
             ucPlaying.ShowHideOpponentCards(context == MainWindowContextEnum.Playing);
 
             vm.SetMainWindowContext(context);
+        }
+
+        [DllImport("user32.dll")]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+        private void BringToFront(Process pTemp)
+        {
+            try
+            {
+                SetForegroundWindow(pTemp.MainWindowHandle);
+            }
+            catch (Exception ex)
+            {
+                // Doesn't matter
+            }
         }
 
         void SetCardsDraft(DraftPickProgress draftInfo)

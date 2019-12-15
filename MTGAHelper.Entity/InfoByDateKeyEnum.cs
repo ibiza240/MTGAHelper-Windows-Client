@@ -24,7 +24,7 @@ namespace MTGAHelper.Entity
         InventoryUpdates,
         PostMatchUpdates,
         MtgaDecksFound,
-        DraftPickProgress,
+        //DraftPickProgress,
         DraftPickProgressIntraday,
         CrackedBoosters,
         VaultsOpened,

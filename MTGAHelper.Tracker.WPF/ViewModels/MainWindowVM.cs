@@ -80,7 +80,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public MainWindowContextEnum MainWindowContext { get; set; } = MainWindowContextEnum.Welcome;
 
-        public string Version => $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Major}.{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Minor}.{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.Build}";
+        public string Version => System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         // Read-only bindings
         public string NetworkStatusDisplayed => dictStatus[networkStatusDisplayed] + (networkStatusDisplayed == NetworkStatusEnum.Ready ? $" ({SizeOfLogToSend})" : "");

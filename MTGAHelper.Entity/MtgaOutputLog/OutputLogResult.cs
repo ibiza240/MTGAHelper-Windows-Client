@@ -23,7 +23,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public IList<InfoByDate<List<MatchResult>>> MatchesByDate { get; set; } = new List<InfoByDate<List<MatchResult>>>();
         public IList<InfoByDate<List<PlayerQuest>>> PlayerQuestsByDate { get; set; } = new List<InfoByDate<List<PlayerQuest>>>();
         public IList<InfoByDate<Dictionary<string, PlayerProgress>>> PlayerProgressByDate { get; set; } = new List<InfoByDate<Dictionary<string, PlayerProgress>>>();
-        public IList<InfoByDate<List<DraftMakePickRaw>>> DraftPickProgressByDate { get; set; } = new List<InfoByDate<List<DraftMakePickRaw>>>();
+        //public IList<InfoByDate<List<DraftMakePickRaw>>> DraftPickProgressByDate { get; set; } = new List<InfoByDate<List<DraftMakePickRaw>>>();
         //public IList<InfoByDate<DateSnapshotDiff>> DiffByDate { get; set; } = new List<InfoByDate<DateSnapshotDiff>>();
         public IList<InfoByDate<Dictionary<DateTime, CrackBoosterRaw>>> CrackedBoostersByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, CrackBoosterRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, GetPlayerProgressRaw>>> PlayerProgressIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, GetPlayerProgressRaw>>>();
@@ -92,8 +92,8 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
             foreach (var postMatchUpdate in PostMatchUpdatesByDate)
                 CreateOrGetDateSnapshotInfo(postMatchUpdate.DateTime).PostMatchUpdates = postMatchUpdate.Info;
 
-            foreach (var draftPick in DraftPickProgressByDate)
-                CreateOrGetDateSnapshotInfo(draftPick.DateTime).DraftPickProgress = draftPick.Info;
+            //foreach (var draftPick in DraftPickProgressByDate)
+            //    CreateOrGetDateSnapshotInfo(draftPick.DateTime).DraftPickProgress = draftPick.Info;
 
             foreach (var draftPick in DraftPickProgressIntradayByDate)
                 CreateOrGetDateSnapshotInfo(draftPick.DateTime).DraftPickProgressIntraday = draftPick.Info;
@@ -218,7 +218,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
                 PlayerProgressIntraday = PlayerProgressIntradayByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, GetPlayerProgressRaw>(),
                 InventoryUpdates = InventoryUpdatesByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, InventoryUpdatedRaw>(),
                 PostMatchUpdates = PostMatchUpdatesByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, PostMatchUpdateRaw>(),
-                DraftPickProgress = DraftPickProgressByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new List<DraftMakePickRaw>(),
+                //DraftPickProgress = DraftPickProgressByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new List<DraftMakePickRaw>(),
                 DraftPickProgressIntraday = DraftPickProgressIntradayByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, DraftMakePickRaw>(),
                 VaultsOpened = VaultsOpenedByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, CompleteVaultRaw>(),
                 CollectionIntraday = CollectionIntradayByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, Dictionary<int, int>>(),

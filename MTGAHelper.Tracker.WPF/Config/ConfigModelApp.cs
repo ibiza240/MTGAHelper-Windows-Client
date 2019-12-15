@@ -37,7 +37,7 @@ namespace MTGAHelper.Tracker.WPF.Config
         public string SigninPassword { get; set; }
         public string LogFilePath { get; set; } = "E.g. C:\\xyz\\output_log.txt";
         public string GameFilePath { get; set; }
-        public bool RunOnStartup { get; set; } = true;
+        public bool RunOnStartup { get; set; }
         public bool AlwaysOnTop { get; set; } = true;
         public bool MinimizeToSystemTray { get; set; }
         public bool AutoShowHideForMatch { get; set; }
