@@ -1,4 +1,4 @@
-### v1.3.5.1 (Coming up)
+### v1.3.6 (2019-12-14)
 
 Minor bugfixes and support for new cards images
 
