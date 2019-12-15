@@ -1,6 +1,10 @@
+### v1.3.5.1 (Coming up)
+
+Minor bugfixes and support for new cards images
+
 ### v1.3.5 (2019-12-13)
 
-Hotfix for supporting the latest WotC update
+Hotfix for supporting the WotC update (log file format)
 
 ### v1.3.4 (2019-12-12)
 
