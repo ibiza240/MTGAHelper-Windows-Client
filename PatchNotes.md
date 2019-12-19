@@ -1,4 +1,4 @@
-### v1.3.7 (Planned)
+### v1.3.7 (2019-12-18)
 
 New option to not show the Opponent cards overlay
 
