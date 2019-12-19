@@ -1,6 +1,6 @@
 ### v1.3.7 (2019-12-18)
 
-New option to not show the Opponent cards overlay
+Option to hide the Opponent cards overlay
 
 Ability to maximize the main window from the system tray
 
