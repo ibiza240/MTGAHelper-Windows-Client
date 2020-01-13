@@ -1,3 +1,9 @@
+### v1.3.8 (Coming up)
+
+New Draft Ratings source: Deathsie
+
+New Draft Ratings source: Mtg Community Review
+
 ### v1.3.7 (2019-12-18)
 
 Option to hide the Opponent cards overlay
