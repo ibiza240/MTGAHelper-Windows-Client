@@ -17,7 +17,7 @@ Please note that this tracker runs only on Windows for now.
 - Automatically synchronizes your log files data with the MTGAHelper servers
 - In-match tracker to see your draw probabilities, sideboard, opponent cards played, etc.
 - Draft helper when picking your cards during a Draft or with Sealed boosters:
-   - Displays Limited ratings from your prefered source (LSV, DraftSim) to help you win more
+   - Displays Limited ratings from your prefered source (your choice between Deathsie, MtgCommunity, ChannelFireball or DraftSim) to help you win more
    - Gives you Raredrafting information based on your collection to help you determine if it's worth it to raredraft
       - Number of copies currently owned
       - How many decks and sideboards the card is played in
