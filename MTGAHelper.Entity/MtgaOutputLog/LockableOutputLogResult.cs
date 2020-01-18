@@ -2,7 +2,6 @@
 using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Entity.UserHistory;
 using MTGAHelper.Lib.Config.Users;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
 using MTGAHelper.Lib.UserHistory;
 using System;
 using System.Collections.Generic;
@@ -19,7 +18,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
 
     public class LockableOutputLogResultData<T> : ILockableOutputLogResultData<T>
     {
-        object lockData = new object();
+        readonly object lockData = new object();
         IList<InfoByDate<T>> data = new List<InfoByDate<T>>();
 
         public IList<InfoByDate<T>> GetData()

@@ -85,7 +85,7 @@
                         <DataTemplate>
                             <Border BorderThickness="2" Width="36" Height="36">
                                 <Border.BorderBrush>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" GradientStops="{Binding CardVM.ColorGradient.Value}" />
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" GradientStops="{Binding BorderGradient}" />
                                 </Border.BorderBrush>
                                 <Rectangle Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <Rectangle.Fill>
@@ -189,7 +189,14 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16">
-                                <TextBlock Text="{Binding RatingFloat}" FontWeight="Bold" Foreground="{Binding Path=RatingFloat, Converter={StaticResource RatingToColorConverter}}" />
+                                <TextBlock Text="{Binding RatingFloat}" FontWeight="Bold">
+                                    <TextBlock.Foreground>
+                                        <MultiBinding Converter="{StaticResource RatingToColorConverter}">
+                                            <Binding Path="RatingFloat" />
+                                            <Binding Path="RatingScale" />
+                                        </MultiBinding>
+                                    </TextBlock.Foreground>
+                                </TextBlock>
                             </Label>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

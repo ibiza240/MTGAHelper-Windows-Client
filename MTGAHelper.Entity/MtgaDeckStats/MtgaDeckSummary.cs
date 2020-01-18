@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
 
 namespace MTGAHelper.Entity.MtgaDeckStats

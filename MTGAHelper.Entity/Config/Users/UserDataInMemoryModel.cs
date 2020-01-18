@@ -1,9 +1,6 @@
 ﻿using MTGAHelper.Entity;
 using MTGAHelper.Entity.UserHistory;
 using MTGAHelper.Lib.CollectionDecksCompare;
-using MTGAHelper.Lib.Config;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
-using MTGAHelper.Lib.UserHistory;
 using System;
 using System.Collections.Generic;
 
@@ -20,7 +17,7 @@ namespace MTGAHelper.Lib
     public class UserDataInMemoryModel
     {
         //object lockMtgaDeckHistory = new object();
-        object lockHistorySummary = new object();
+        readonly object lockHistorySummary = new object();
 
         public DateTime LastCompareUtc { get; set; }
 

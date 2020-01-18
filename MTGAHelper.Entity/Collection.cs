@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace MTGAHelper.Entity
+﻿namespace MTGAHelper.Entity
 {
     //public abstract class InfoByDate
     //{

@@ -43,7 +43,7 @@
                     <DataTemplate>
                         <Border BorderThickness="2" Width="36" Height="36">
                             <Border.BorderBrush>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" GradientStops="{Binding CardVM.ColorGradient.Value}" />
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" GradientStops="{Binding BorderGradient}" />
                             </Border.BorderBrush>
                             <Rectangle Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Rectangle.Fill>
@@ -106,15 +106,15 @@
                         <StackPanel VerticalAlignment="Center">
                             <StackPanel Visibility="{Binding DataContext.ShowDrawPctAndAmount, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVisConverter}}">
                                 <Label Padding="2" HorizontalAlignment="Center">
-                                    <TextBlock Text="{Binding AmountWithOriginal.Value, NotifyOnTargetUpdated=True}" FontWeight="Bold" Foreground="White" />
+                                    <TextBlock Text="{Binding AmountWithOriginal, NotifyOnTargetUpdated=True}" FontWeight="Bold" Foreground="White" />
                                 </Label>
                                 <Label Padding="2" HorizontalAlignment="Center">
-                                    <TextBlock Text="{Binding DrawPercent.Value, StringFormat=p1}" />
+                                    <TextBlock Text="{Binding DrawPercent, StringFormat=p1}" />
                                 </Label>
                             </StackPanel>
                             <Label Padding="0" HorizontalAlignment="Center" VerticalAlignment="Center"
                                        Visibility="{Binding DataContext.ShowAmount, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVisConverter}}">
-                                <TextBlock Text="{Binding AmountHackishObservable.Value}" FontWeight="Bold" Foreground="White" />
+                                <TextBlock Text="{Binding Amount}" FontWeight="Bold" Foreground="White" />
                             </Label>
                         </StackPanel>
                     </DataTemplate>

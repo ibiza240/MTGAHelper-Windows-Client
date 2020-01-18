@@ -1,47 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Windows.Threading;
-using AutoMapper;
 using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
-using MTGAHelper.Tracker.WPF.Models;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
-    public class Stats : ObservableObject
-    {
-        public Dictionary<int, int> AmountOriginalByGrpId { get; set; } = new Dictionary<int, int>();
-        public ObservableProperty<float> DrawLandPct { get; set; } = new ObservableProperty<float>(0f);
-        public ObservableProperty<int> TotalLandsInitial { get; set; } = new ObservableProperty<int>(0);
-
-        internal void Refresh(ICollection<LibraryCardWithAmountVM> myDeck)
-        {
-            if (myDeck == null)
-                return;
-
-            var totalCards = myDeck.Sum(i => i.Amount);
-            if (totalCards == 0)
-                DrawLandPct.Value = 0;
-            else
-                DrawLandPct.Value = (float)myDeck.Where(i => i.Type.Contains("Land")).Sum(i => i.Amount) / totalCards;
-
-            if (AmountOriginalByGrpId.Any() == false)
-            {
-                // Store the original amounts on first time
-                AmountOriginalByGrpId = myDeck.ToDictionary(i => i.ArenaId, i => i.Amount);
-            }
-
-        }
-
-        internal void Reset()
-        {
-            DrawLandPct.Value = 0;
-            AmountOriginalByGrpId = new Dictionary<int, int>();
-        }
-    }
-
     public class InMatchTrackerStateVM : ObservableObject
     {
         //enum CardListTypeEnum
@@ -52,48 +14,36 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         //    MyFullDeck,
         //}
 
-        InGameTrackerState stateBuffered;
+        IInGameState stateBuffered;
 
-        bool updateCardsInMatchTrackingBuffered { get; set; } = false;
+        bool updateCardsInMatchTrackingBuffered;
 
-        internal void RefreshSplitLands()
+        internal void Init(CardsListOrder cardsListOrder)
         {
+            MyLibrary.CardsListOrder = cardsListOrder;
         }
 
-        object lockCardsInMatchTracking = new object();
+        readonly object lockCardsInMatchTracking = new object();
         int priorityPlayer;
         bool mustReset;
 
-        ////Dictionary<CardListTypeEnum, List<LibraryCardWithAmountVM>> CardLists = new Dictionary<CardListTypeEnum, List<LibraryCardWithAmountVM>>
-        ////{
-        ////    { CardListTypeEnum.MyLibrary, new List<LibraryCardWithAmountVM>() },
-        ////    { CardListTypeEnum.OpponentCards, new List<LibraryCardWithAmountVM>() },
-        ////    { CardListTypeEnum.MyFullDeck, new List<LibraryCardWithAmountVM>() },
-        ////};
-        //List<LibraryCardWithAmountVM> myLibrary = new List<LibraryCardWithAmountVM>();
-        //List<LibraryCardWithAmountVM> opponentCardsSeen = new List<LibraryCardWithAmountVM>();
-        //List<LibraryCardWithAmountVM> fullDeck = new List<LibraryCardWithAmountVM>();
-
         #region Bindings
-        //public List<LibraryCardWithAmountVM> MyDeck => myLibrary;
-        //public List<LibraryCardWithAmountVM> OpponentCardsSeen => opponentCardsSeen;
-        //public List<LibraryCardWithAmountVM> FullDeck => fullDeck;
-        public CardsListVM MyLibrary { get; set; } = new CardsListVM(true, false);
-        public CardsListVM OpponentCardsSeen { get; set; } = new CardsListVM(false, true);
-        public CardsListVM MySideboard { get; set; } = new CardsListVM(false, true);
+        public CardsListVM MyLibrary { get; } = new CardsListVM(true, false, CardsListOrder.Cmc);
+        public CardsListVM OpponentCardsSeen { get; } = new CardsListVM(false, true, CardsListOrder.Cmc);
+        public CardsListVM MySideboard { get; } = new CardsListVM(false, true, CardsListOrder.Cmc);
         //public CardsListVM FullDeck { get; set; } = new CardsListVM(false);
 
-        public string LibraryLandCurrentAndTotal => $"{LibraryLandsCount} / {Stats.TotalLandsInitial.Value}";
+        public string LibraryLandCurrentAndTotal => $"{MyLibrary.LandCount} / {MyLibrary.TotalLandsInitial}";
+        public float LibraryDrawLandPct => MyLibrary.DrawLandPct;
 
         public ObservableProperty<bool> SplitLands { get; set; } = new ObservableProperty<bool>(true);
         public bool ShowWindowOpponentCardsSeen { get; set; }
 
-        public int LibraryCardsCount => MyLibrary.Cards.Sum(i => i.Amount);
-        public int LibraryLandsCount => MyLibrary.Cards.Where(i => i.Type.Contains("Land")).Sum(i => i.Amount);
+        public int LibraryCardsCount => MyLibrary.CardCount;
+        public int LibraryLandsCount => MyLibrary.LandCount;
 
-        public int SideboardCardsCount => MySideboard.Cards.Sum(i => i.Amount);
+        public int SideboardCardsCount => MySideboard.CardCount;
 
-        public Stats Stats { get; set; } = new Stats();
         public PlayerTimerVM TimerMe { get; set; } = new PlayerTimerVM();
         public PlayerTimerVM TimerOpponent { get; set; } = new PlayerTimerVM();
         #endregion
@@ -101,19 +51,16 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         internal void Reset()
         {
             priorityPlayer = 0;
-            MyLibrary.ResetCards(Stats);
+            MyLibrary.ResetCards();
             OpponentCardsSeen.ResetCards();
             MySideboard.ResetCards();
             //FullDeck.ResetCards();
 
-            Stats.Reset();
             TimerMe.Reset();
             TimerOpponent.Reset();
 
-            RaisePropertyChangedEvent(nameof(MyLibrary));
-            RaisePropertyChangedEvent(nameof(OpponentCardsSeen));
-            RaisePropertyChangedEvent(nameof(MySideboard));
-            //RaisePropertyChangedEvent(nameof(FullDeck));
+            // notify that everything changed
+            RaisePropertyChangedEvent(string.Empty);
         }
 
         internal void SetInMatchStateBuffered(InGameTrackerState state)
@@ -167,31 +114,22 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 // Cards lists
                 if (stateBuffered.MySeatId > 0)
                 {
-                    var cardsLibrary = stateBuffered.CardsByZone[stateBuffered.MySeatId][ZoneSimpleEnum.ZoneType_Library]
-                        .ToDictionary(i => i.Key, i => i.Value.Count);
+                    try
+                    {
+                        MyLibrary.ConvertCardList(stateBuffered.CardsInLibrary);
 
-                    MyLibrary.ConvertCardList(cardsLibrary);
+                        OpponentCardsSeen.ConvertCardList(stateBuffered.OpponentCardsSeen);
 
-                    var opponentCards = stateBuffered.OpponentCardsSeen
-                        .GroupBy(i => i.GrpId)
-                        .ToDictionary(i => i.Key, i => i.Count());
+                        MySideboard.ConvertCardList(stateBuffered.CardsInSideboard);
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        // Swallow this reported bug: "Got a crash after I conceded a game"
+                        // I suppose the MySeatId got to 0 after the validation
+                    }
 
-                    OpponentCardsSeen.ConvertCardList(opponentCards);
-
-                    MySideboard.ConvertCardList(stateBuffered.CardsByZone[stateBuffered.MySeatId][ZoneSimpleEnum.ZoneType_Sideboard]
-                        .ToDictionary(i => i.Key, i => i.Value.Count));
-
-                    RaisePropertyChangedEvent(nameof(MyLibrary));
-                    RaisePropertyChangedEvent(nameof(MySideboard));
-                    //RaisePropertyChangedEvent(nameof(FullDeck));
-                    RaisePropertyChangedEvent(nameof(LibraryCardsCount));
-                    RaisePropertyChangedEvent(nameof(LibraryLandsCount));
-                    RaisePropertyChangedEvent(nameof(OpponentCardsSeen));
-                    RaisePropertyChangedEvent(nameof(LibraryLandCurrentAndTotal));
+                    RaisePropertyChangedEvent(string.Empty);
                 }
-
-                // Stats
-                Stats.Refresh(MyLibrary.Cards);
 
                 //if (isInitialized == false && stateBuffered.CardsByZone[stateBuffered.MySeatId][ZoneSimpleEnum.ZoneType_Library].Count > 0)
                 //{

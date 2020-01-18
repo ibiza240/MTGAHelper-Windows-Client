@@ -1,6 +1,4 @@
-﻿using MTGAHelper.Entity.OutputLogParsing;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace MTGAHelper.Entity.OutputLogParsing
 {

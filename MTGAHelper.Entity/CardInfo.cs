@@ -1,9 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
-
-namespace MTGAHelper.Entity
+﻿namespace MTGAHelper.Entity
 {
     public class InfoCardMissingSummary
     {

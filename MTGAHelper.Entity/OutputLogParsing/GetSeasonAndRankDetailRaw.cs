@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using MTGAHelper.Lib.Config.Users;
 
 namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
 {

@@ -4,7 +4,7 @@
     {
         public int NbRaresMissing { get; set; }
         public int NbMythicsMissing { get; set; }
-        
+
         /// <summary>Expected number of drafts still needed to complete
         /// before opening all packs results in a play set of every rare card in the set</summary>
         public float ExpectedNbDraftsToPlaysetRares { get; set; }
@@ -12,7 +12,7 @@
         /// <summary>Expected number of drafts still needed to complete
         /// before opening all packs results in a play set of every mythic rare card in the set</summary>
         public float ExpectedNbDraftsToPlaysetMythics { get; set; }
-        
+
         ///// <summary>The chance that opening all current packs results in a full play set of rares</summary>
         //public double ChanceFullPlaysetRares { get; set; }
 
@@ -38,5 +38,17 @@
 
         /// <summary> total expected wildcard gain from opening current packs of the set</summary>
         public float ExpectedMythicWcs => MythicWcsFromTrack + ExpectedMythicWcsFromPacks;
+
+        public DraftBoostersCriticalPointRarityInfo InfoRare { get; set; }
+        public DraftBoostersCriticalPointRarityInfo InfoMythic { get; set; }
+    }
+
+    public class DraftBoostersCriticalPointRarityInfo
+    {
+        public int T { get; set; }
+        public int R { get; set; }
+        public int P { get; set; }
+        public float N { get; set; }
+        public float W { get; set; }
     }
 }

@@ -1,8 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Text;
+using System.Threading;
+using Newtonsoft.Json;
 
 namespace MTGAHelper.Tracker.WPF.Config
 {
@@ -51,6 +50,9 @@ namespace MTGAHelper.Tracker.WPF.Config
         public bool ShowLimitedRatings { get; set; } = true;
         public string ShowLimitedRatingsSource { get; set; } = "ChannelFireball (LSV)";
 
+        public bool ShowOpponentCards { get; set; } = true;
+        public string OrderLibraryCardsBy { get; set; } = "Converted Mana Cost";
+
         public WindowSettings WindowSettings { get; set; } = new WindowSettings();
         public WindowSettings WindowSettingsOpponentCards { get; set; } = new WindowSettings();
 
@@ -62,8 +64,19 @@ namespace MTGAHelper.Tracker.WPF.Config
             var configFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");
 #endif
             var configFile = Path.Combine(configFolder, "appsettings.json");
-            //var configFile = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
-            File.WriteAllText(configFile, JsonConvert.SerializeObject(this));
+
+            var saved = false;
+            while (saved == false)
+            {
+                //var configFile = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
+                File.WriteAllText(configFile, JsonConvert.SerializeObject(this));
+                
+                // Safety check in case of invalid file saved
+                var fileSize = new FileInfo(configFile).Length;
+                saved = fileSize > 0;
+                if (saved == false)
+                    Thread.Sleep(1000);
+            }
         }
     }
 }

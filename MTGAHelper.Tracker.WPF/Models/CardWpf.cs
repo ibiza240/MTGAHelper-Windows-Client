@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using MTGAHelper.Entity;
 
 namespace MTGAHelper.Tracker.WPF.Models
 {
     public class CardWithAmountWpf : CardWpf
     {
-        public int Amount { get; set; }
+        public virtual int Amount { get; set; }
     }
 
     public class CardWpf
@@ -25,7 +22,7 @@ namespace MTGAHelper.Tracker.WPF.Models
         public int Cmc { get; set; }
         public string Type { get; set; }
 
-        static Regex regexCmcImages = new Regex(@"{([^}]+)}", RegexOptions.Compiled);
+        static readonly Regex regexCmcImages = new Regex(@"{([^}]+)}", RegexOptions.Compiled);
 
         public ICollection<string> CmcImages
         {

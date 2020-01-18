@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace MTGAHelper.Entity
+﻿namespace MTGAHelper.Entity
 {
     //public static class CardMissingPriority
     //{

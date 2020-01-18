@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 using MTGAHelper.Tracker.WPF.ViewModels;
 
 namespace MTGAHelper.Tracker.WPF.Views
@@ -18,7 +8,7 @@ namespace MTGAHelper.Tracker.WPF.Views
     /// </summary>
     public partial class CardPopup : Window
     {
-        CardPopupVM vm = new CardPopupVM();
+        readonly CardPopupVM vm = new CardPopupVM();
 
         public CardPopup()
         {

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using Microsoft.Extensions.Options;
 using Microsoft.Win32;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.ViewModels;
@@ -11,7 +8,7 @@ namespace MTGAHelper.Tracker.WPF.Business
 {
     public class MtgaResourcesLocator
     {
-        MainWindowVM vm;
+        readonly MainWindowVM vm;
 
         public MtgaResourcesLocator(MainWindowVM vm)
         {

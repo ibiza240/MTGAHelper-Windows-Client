@@ -1,8 +1,6 @@
 ﻿using MTGAHelper.Entity;
 using MTGAHelper.Lib.CollectionDecksCompare;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MTGAHelper.Lib
 {

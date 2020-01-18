@@ -1,9 +1,4 @@
-﻿using MTGAHelper.Entity;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MTGAHelper.Tracker.WPF.ViewModels
+﻿namespace MTGAHelper.Tracker.WPF.ViewModels
 {
     public class DraftingCardPopupVM : ObservableObject
     {

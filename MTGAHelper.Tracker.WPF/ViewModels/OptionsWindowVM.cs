@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MTGAHelper.Tracker.WPF.Config;
-
-namespace MTGAHelper.Tracker.WPF.ViewModels
+﻿namespace MTGAHelper.Tracker.WPF.ViewModels
 {
     public class OptionsWindowVM
     {
@@ -13,6 +8,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public bool RunOnStartup { get; set; } = true;
         public bool MinimizeToSystemTray { get; set; } = false;
         public bool AutoShowHideForMatch { get; set; }
+        public bool ShowOpponentCards { get; set; } = true;
 
         public bool ForceCardPopup { get; set; } = false;
         public string ForceCardPopupSide { get; set; } = "On the left";
@@ -24,10 +20,19 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public bool ShowLimitedRatings { get; set; } = true;
         public string ShowLimitedRatingsSource { get; set; } = "ChannelFireball (LSV)";
-        public string[] ShowLimitedRatingsSources { get; set; } = new string[]
+        public string[] ShowLimitedRatingsSources { get; set; } = new string[0];
+        //{
+        //    "ChannelFireball (LSV)",
+        //    "DraftSim",
+        //    "Deathsie",
+        //    "Mtg Community Review",
+        //};
+
+        public string OrderLibraryCardsBy { get; set; } = "Converted Mana Cost";
+        public string[] OrderLibraryCardsByItems { get; set; } = new string[]
         {
-            "ChannelFireball (LSV)",
-            "DraftSim",
+            "Converted Mana Cost",
+            "Highest Draw % chance",
         };
     }
 }

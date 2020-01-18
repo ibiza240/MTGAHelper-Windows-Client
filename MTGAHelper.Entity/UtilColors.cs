@@ -6,7 +6,7 @@ namespace MTGAHelper.Entity
 {
     public class UtilColors
     {
-        Dictionary<string, int> order = new Dictionary<string, int> {
+        readonly Dictionary<string, int> order = new Dictionary<string, int> {
             { "W", 1 },
             { "U", 2 },
             { "B", 3 },

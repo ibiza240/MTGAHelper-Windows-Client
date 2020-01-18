@@ -6,7 +6,7 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
 {
     public class CardsMissingResult
     {
-        ICollection<CardRequiredInfo> computedData;
+        readonly ICollection<CardRequiredInfo> computedData;
 
         public Dictionary<string, CardRequiredInfoByDeck> ByDeck { get; private set; } = new Dictionary<string, CardRequiredInfoByDeck>();
 
@@ -37,8 +37,7 @@ namespace MTGAHelper.Lib.CollectionDecksCompare
         public Dictionary<string, InfoCardMissingSummary[]> GetModelSummary()
         {
             var ret = ByCard
-                //.Where(i => i.Value.Card.setAndInBooster != Card.NOTINBOOSTER)
-                .Where(i => i.Value.Card.isCollectible)
+                .Where(i => i.Value.Card.notInBooster == false)
                 .Where(i => i.Value.NbMissing > 0)
                 //.GroupBy(i => i.Value.Card.setAndInBooster)
                 .GroupBy(i => i.Value.Card.set)

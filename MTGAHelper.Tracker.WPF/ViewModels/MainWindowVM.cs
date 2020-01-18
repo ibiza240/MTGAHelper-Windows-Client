@@ -1,23 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Security;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Threading;
-using AutoMapper;
+using Microsoft.Extensions.Options;
 using MTGAHelper.Entity;
 using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
-using MTGAHelper.Tracker.WPF.Business;
-using MTGAHelper.Tracker.WPF.Business.Monitoring;
+using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.Models;
-using MTGAHelper.Tracker.WPF.Views;
-using MTGAHelper.Tracker.WPF.Views.Helpers;
 using MTGAHelper.Web.Models.Response.Account;
 using MTGAHelper.Web.UI.Model.Response.User;
 using Serilog;
@@ -26,13 +15,14 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 {
     public class MainWindowVM : ObservableObject
     {
-        StatusBlinker statusBlinker;
-
+        readonly StatusBlinker statusBlinker;
         NetworkStatusEnum networkStatusDisplayed;
         bool isGameRunning;
         bool isInitialSetupDone => Problems.HasFlag(ProblemsFlags.LogFileNotFound) == false && Problems.HasFlag(ProblemsFlags.SigninRequired) == false;
+        
+        public CardsListOrder OrderLibraryCardsBy { get; set; }
 
-        Dictionary<NetworkStatusEnum, string> dictStatus = new Dictionary<NetworkStatusEnum, string>
+        readonly Dictionary<NetworkStatusEnum, string> dictStatus = new Dictionary<NetworkStatusEnum, string>
         {
             { NetworkStatusEnum.Ready, "Ready" },
             { NetworkStatusEnum.UpToDate, "Server data is up to date" },
@@ -41,7 +31,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             { NetworkStatusEnum.ProcessingLogFile, "Processing log file..." },
         };
 
-        Dictionary<ProblemsFlags, string> dictProblems = new Dictionary<ProblemsFlags, string>
+        readonly Dictionary<ProblemsFlags, string> dictProblems = new Dictionary<ProblemsFlags, string>
         {
             { ProblemsFlags.LogFileNotFound, "Log file not found" },
             { ProblemsFlags.SigninRequired, "Sign-in required" },
@@ -101,12 +91,13 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             string.Empty : $" as of {Collection.CollectionDate}";
         #endregion
 
-        public MainWindowVM(StatusBlinker statusBlinker, InMatchTrackerStateVM inMatchState)
+        public MainWindowVM(StatusBlinker statusBlinker, InMatchTrackerStateVM inMatchState, IOptionsMonitor<ConfigModelApp> config)
         {
             this.statusBlinker = statusBlinker;
             statusBlinker.EmitStatus += StatusBlinkerEmitStatus;
 
             this.InMatchState = inMatchState;
+            this.OrderLibraryCardsBy = config.CurrentValue.OrderLibraryCardsBy == "Converted Mana Cost" ? CardsListOrder.Cmc : CardsListOrder.DrawChance;
         }
 
         public NetworkStatusEnum GetFlagsNetworkStatus() => statusBlinker.GetFlags();
@@ -245,6 +236,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         internal void SetInMatchStateBuffered(InGameTrackerState state)
         {
+            InMatchState.Init(OrderLibraryCardsBy);
             InMatchState.SetInMatchStateBuffered(state);
         }
         internal void SetCardsInMatchTrackingFromBuffered()

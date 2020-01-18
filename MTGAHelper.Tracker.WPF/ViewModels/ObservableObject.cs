@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
@@ -9,7 +7,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void RaisePropertyChangedEvent(string propertyName)
+        protected void RaisePropertyChangedEvent([CallerMemberName]string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -17,10 +15,10 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
     public class ObservableProperty<T> : ObservableObject
     {
-        private T value;
+        T value;
         public T Value
         {
-            get { return value; }
+            get => value;
             set { this.value = value; RaisePropertyChangedEvent(nameof(Value)); }
         }
 

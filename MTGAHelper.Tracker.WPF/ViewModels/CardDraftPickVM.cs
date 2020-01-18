@@ -1,14 +1,10 @@
-﻿using MTGAHelper.Tracker.WPF.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Media;
+﻿using System.Windows.Media;
+using MTGAHelper.Tracker.WPF.Models;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
     public class CardDraftPickVM : CardDraftPickWpf
     {
-        public CardVM CardVM { get; set; }
+        public GradientStopCollection BorderGradient { get; set; }
     }
 }

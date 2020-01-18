@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.ViewModels;
 
@@ -23,6 +14,8 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         MainWindowVM vmParent;
         CardListWindow windowOpponentCardsSeen;
 
+        MainWindow mainWindow => (MainWindow)Window.GetWindow(this);
+
         public Playing()
         {
             InitializeComponent();
@@ -31,7 +24,7 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         public void Init(MainWindowVM vmParent, WindowSettings windowSettingsOpponentCards)
         {
             this.vmParent = vmParent;
-            windowOpponentCardsSeen = new CardListWindow("Opponent cards seen", vmParent.InMatchState.OpponentCardsSeen, (MainWindow)Window.GetWindow(this));
+            windowOpponentCardsSeen = new CardListWindow("Opponent cards seen", vmParent.InMatchState.OpponentCardsSeen, mainWindow);
 
             if ((windowSettingsOpponentCards?.Position?.X ?? 0) != 0 ||
                 (windowSettingsOpponentCards?.Position?.Y ?? 0) != 0 ||
@@ -65,23 +58,16 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             windowOpponentCardsSeen.SetCardsPopupPosition(side);
         }
 
-        private void CheckBoxSplitLands_Checked(object sender, RoutedEventArgs e)
-        {
-            vmParent.InMatchState.RefreshSplitLands();
-        }
-
         private void TabControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.Source is TabItem) //do not handle clicks on TabItem content but on TabItem itself
+            if (e.Source is TabItem tab && tab.Header.ToString() == "Opponent cards") //do not handle clicks on TabItem content but on TabItem itself
             {
-                var tab = e.Source as TabItem;
-                if (tab.Header.ToString() == "Opponent cards")
-                {
-                    vmParent.InMatchState.ShowWindowOpponentCardsSeen = !vmParent.InMatchState.ShowWindowOpponentCardsSeen;
-                    windowOpponentCardsSeen.Visibility = Visibility.Visible;
-                    windowOpponentCardsSeen.Activate();
-                    e.Handled = true;
-                }
+                vmParent.InMatchState.ShowWindowOpponentCardsSeen = !vmParent.InMatchState.ShowWindowOpponentCardsSeen;
+                windowOpponentCardsSeen.Left = mainWindow.Left - 40;
+                windowOpponentCardsSeen.Top = mainWindow.Top + 230;
+                windowOpponentCardsSeen.Visibility = Visibility.Visible;
+                windowOpponentCardsSeen.Activate();
+                e.Handled = true;
             }
         }
 

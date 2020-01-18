@@ -1,34 +1,58 @@
-﻿using MTGAHelper.Tracker.WPF.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Media;
+using MTGAHelper.Tracker.WPF.Models;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
-    public class LibraryCardWithAmountVM : CardWithAmountWpf
+    public class LibraryCardWithAmountVM : CardWithAmountWpf, INotifyPropertyChanged
     {
-        public delegate void CardNotificationHandler(object sender, EventArgs e);
-
-        public CardVM CardVM { get; set; }
-
-        public ObservableProperty<float> DrawPercent { get; set; } = new ObservableProperty<float>(0f);
-
-        public ObservableProperty<string> AmountAndName { get; set; } = new ObservableProperty<string>("");
-
-        public ObservableProperty<string> AmountWithOriginal { get; set; } = new ObservableProperty<string>("");
-
-        public ObservableProperty<int> AmountHackishObservable { get; set; } = new ObservableProperty<int>(0);
-
-        internal void RefreshBindings(int? originalAmount)
+        GradientStopCollection borderGradient;
+        public GradientStopCollection BorderGradient
         {
-            CardVM.SetColorBorder();
-            AmountHackishObservable.Value = Amount;
-            AmountAndName.Value = $"{Amount}x {Name}";
-            AmountWithOriginal.Value = $"{Amount}{(originalAmount.HasValue ? "/" + originalAmount.Value : "")}";
-            
+            get => borderGradient;
+            set
+            {
+                borderGradient = value;
+                originalAmount = Amount;
+            }
+        }
+
+        float drawPercent;
+
+        public float DrawPercent
+        {
+            get => drawPercent;
+            set
+            {
+                if (drawPercent == value) return;
+                drawPercent = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string AmountAndName => $"{Amount}x {Name}";
+
+        public string AmountWithOriginal => $"{Amount}/{originalAmount}";
+
+        int originalAmount;
+
+        public override int Amount
+        {
+            get => base.Amount;
+            set
+            {
+                if (base.Amount == value) return;
+                base.Amount = value;
+                OnPropertyChanged(string.Empty);
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

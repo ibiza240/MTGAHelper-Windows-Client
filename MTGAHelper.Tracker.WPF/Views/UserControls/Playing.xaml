@@ -91,7 +91,7 @@
                                             <TextBlock Text="{Binding InMatchState.LibraryLandCurrentAndTotal}" FontWeight="Bold" Foreground="White" />
                                         </Label>
                                         <Label Padding="2" HorizontalAlignment="Center">
-                                            <TextBlock Text="{Binding InMatchState.Stats.DrawLandPct.Value, StringFormat=p1}" />
+                                            <TextBlock Text="{Binding InMatchState.LibraryDrawLandPct, StringFormat=p1}" />
                                         </Label>
                                     </StackPanel>
                                 </Border>

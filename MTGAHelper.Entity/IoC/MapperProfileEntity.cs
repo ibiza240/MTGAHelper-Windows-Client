@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using AutoMapper;
 using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Lib.Cache;

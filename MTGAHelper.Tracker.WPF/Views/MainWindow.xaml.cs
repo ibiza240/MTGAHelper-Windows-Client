@@ -1,10 +1,19 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Threading;
+using AutoMapper;
 using Microsoft.Extensions.Options;
-using Microsoft.Win32;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Lib.Cache;
-using MTGAHelper.Lib.IO.Reader;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
@@ -13,50 +22,37 @@ using MTGAHelper.Tracker.WPF.Business;
 using MTGAHelper.Tracker.WPF.Business.Monitoring;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.ViewModels;
-using MTGAHelper.Tracker.WPF.Views.UserControls;
 using MTGAHelper.Web.Models.Response.Account;
-using MTGAHelper.Web.UI.Model.Request;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Runtime.InteropServices;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Automation;
-using System.Windows.Threading;
 
 namespace MTGAHelper.Tracker.WPF.Views
 {
     public partial class MainWindow : Window
     {
-        public MainWindowVM vm;
+        public readonly MainWindowVM vm;
 
         //OptionsWindow optionsWindow;
 
         public ConfigModelApp configApp;
-        ProcessMonitor processMonitor;
-        LogFileZipper zipper;
-        ServerApiCaller api;
-        StartupShortcutManager startupManager;
-        LogSplitter logSplitter;
-        MtgaResourcesLocator resourcesLocator;
-        FileMonitor fileMonitor;
-        DraftHelper draftHelper;
+        readonly ProcessMonitor processMonitor;
+        readonly LogFileZipper zipper;
+        readonly ServerApiCaller api;
+        readonly StartupShortcutManager startupManager;
+        readonly LogSplitter logSplitter;
+        readonly MtgaResourcesLocator resourcesLocator;
+        readonly FileMonitor fileMonitor;
+
+        readonly DraftHelper draftHelper;
         //LogProcessor logProcessor;
-        ReaderMtgaOutputLog reader;
-        InGameTracker inGameTracker;
-        ExternalProviderTokenManager tokenManager;
-        PasswordHasher passwordHasher;
+        readonly ReaderMtgaOutputLog reader;
+        readonly InGameTracker inGameTracker;
+        readonly ExternalProviderTokenManager tokenManager;
+        readonly PasswordHasher passwordHasher;
 
         public NotifyIconManager notifyIconManager;
+        private readonly CacheSingleton<Dictionary<string, DraftRatings>> draftRatings;
 
         //public System.Windows.Forms.NotifyIcon trayIcon;
 
@@ -81,7 +77,8 @@ namespace MTGAHelper.Tracker.WPF.Views
             InGameTracker inMatchTracker,
             ExternalProviderTokenManager tokenManager,
             PasswordHasher passwordHasher,
-            NotifyIconManager notifyIconManager
+            NotifyIconManager notifyIconManager,
+            CacheSingleton<Dictionary<string, DraftRatings>> draftRatings
             )
         {
             this.configApp = configApp.CurrentValue;
@@ -105,7 +102,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             this.tokenManager = tokenManager;
             this.passwordHasher = passwordHasher;
             this.notifyIconManager = notifyIconManager;
-
+            this.draftRatings = draftRatings;
             this.resourcesLocator.LocateLogFilePath(this.configApp);
             this.resourcesLocator.LocateGameClientFilePath(this.configApp);
 
@@ -138,8 +135,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             this.processMonitor.Start(new System.Threading.CancellationToken());
             this.fileMonitor.Start(new System.Threading.CancellationToken());
 
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(200);
+            var timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(200)};
             timer.Tick += (object sender, EventArgs e) =>
             {
                 vm.SetCardsDraftFromBuffered();
@@ -147,8 +143,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             };
             timer.Start();
 
-            DispatcherTimer timerTokenRefresh = new DispatcherTimer();
-            timerTokenRefresh.Interval = TimeSpan.FromMinutes(9);
+            var timerTokenRefresh = new DispatcherTimer {Interval = TimeSpan.FromMinutes(9)};
             timerTokenRefresh.Tick += (object sender, EventArgs e) =>
             {
                 RefreshAccessToken();
@@ -267,7 +262,8 @@ namespace MTGAHelper.Tracker.WPF.Views
         {
             try
             {
-                var optionsWindow = new OptionsWindow().Init(this.configApp);
+                var ratingSources = draftRatings.Get().Keys.ToArray();
+                var optionsWindow = new OptionsWindow().Init(this.configApp, ratingSources);
                 optionsWindow.Owner = this;
                 optionsWindow.ShowDialog();
 
@@ -276,9 +272,11 @@ namespace MTGAHelper.Tracker.WPF.Views
                 newConfig.LogFilePath = optionsWindow.txtLogFilePath.Text.Trim();
                 newConfig.GameFilePath = optionsWindow.txtGameFilePath.Text.Trim();
                 newConfig.RunOnStartup = optionsWindow.chkRunOnStartup.IsChecked.Value;
+                newConfig.ShowOpponentCards = optionsWindow.chkShowOpponentCards.IsChecked.Value;
                 newConfig.MinimizeToSystemTray = optionsWindow.chkMinimizeToSystemTray.IsChecked.Value;
                 newConfig.AutoShowHideForMatch = optionsWindow.chkAutoShowHideForMatch.IsChecked.Value;
                 newConfig.ForceCardPopup = optionsWindow.chkForceCardPopup.IsChecked.Value;
+                newConfig.OrderLibraryCardsBy = optionsWindow.lstOrderLibraryCardsBy.SelectedValue.ToString();
                 newConfig.ForceCardPopupSide = optionsWindow.lstForceCardPopupSide?.SelectedValue?.ToString() ?? configApp.ForceCardPopupSide;
                 newConfig.ShowLimitedRatingsSource = optionsWindow.lstShowLimitedRatingsSource?.SelectedValue?.ToString() ?? configApp.ShowLimitedRatingsSource;
 
@@ -315,6 +313,8 @@ namespace MTGAHelper.Tracker.WPF.Views
 
                     startupManager.ManageRunOnStartup(newConfig.RunOnStartup);
                     ucReady.Init(configApp.GameFilePath);
+
+                    vm.OrderLibraryCardsBy = configApp.OrderLibraryCardsBy == "Converted Mana Cost" ? CardsListOrder.Cmc : CardsListOrder.DrawChance;
                 }
 
                 UpdateCardPopupPosition();
@@ -373,7 +373,6 @@ namespace MTGAHelper.Tracker.WPF.Views
                         }
                     }
 
-                    var collection = result.GetLastCollection();
                     vm.WrapNetworkStatus(NetworkStatusEnum.Uploading, () =>
                     {
                         var collection = api.UploadOutputLogResult(vm.Account.MtgaHelperUserId, result);
@@ -617,7 +616,8 @@ namespace MTGAHelper.Tracker.WPF.Views
                 });
             }
 
-            ucPlaying.ShowHideOpponentCards(context == MainWindowContextEnum.Playing);
+            if (configApp.ShowOpponentCards)
+                ucPlaying.ShowHideOpponentCards(context == MainWindowContextEnum.Playing);
 
             vm.SetMainWindowContext(context);
         }

@@ -1,6 +1,13 @@
-﻿using AutoMapper;
-using Google.Apis.Auth.OAuth2;
-using Hardcodet.Wpf.TaskbarNotification;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Windows;
+using AutoMapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -10,11 +17,9 @@ using MTGAHelper.Entity.IoC;
 using MTGAHelper.Lib.Cache;
 using MTGAHelper.Lib.CacheLoaders;
 using MTGAHelper.Lib.EventsSchedule;
-using MTGAHelper.Lib.IO.Reader;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
 using MTGAHelper.Lib.Ioc;
 using MTGAHelper.Lib.OutputLogParser.IoC;
-//using MTGAHelper.Lib.Ioc;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.Exceptions;
 using MTGAHelper.Tracker.WPF.IoC;
@@ -22,29 +27,11 @@ using MTGAHelper.Tracker.WPF.Logging;
 using MTGAHelper.Tracker.WPF.Views;
 using MTGAHelper.Web.Models;
 using MTGAHelper.Web.Models.Response.Misc;
-using MTGAHelper.Web.Models.Response.SharedDto;
 using MTGAHelper.Web.UI.IoC;
 using MTGAHelper.Web.UI.Model.Response.Misc;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
 
 namespace MTGAHelper.Tracker.WPF
 {
@@ -60,7 +47,7 @@ namespace MTGAHelper.Tracker.WPF
         NotifyIconManager notifyIconManager;
         ConfigModelApp configApp;
         IServiceProvider provider;
-        HttpClientFactory httpClientFactory = new HttpClientFactory();
+        readonly HttpClientFactory httpClientFactory = new HttpClientFactory();
 
         string folderForConfigAndLog;
         string filePathAllCards;
@@ -83,7 +70,7 @@ namespace MTGAHelper.Tracker.WPF
 #if DEBUG || DEBUGWITHSERVER
                 folderForConfigAndLog = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 #else
-             folderForConfigAndLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");
+                folderForConfigAndLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");
 #endif
                 ConfigureApp();
 

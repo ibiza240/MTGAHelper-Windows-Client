@@ -1,16 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using System.Web;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace MTGAHelper.Tracker.WPF.Views
 {
@@ -25,8 +16,8 @@ namespace MTGAHelper.Tracker.WPF.Views
         protected const string server = "https://mtgahelper.com";
 #endif
 
-        private string p_appID;
-        private string p_scopes;
+        private readonly string p_appID;
+        private readonly string p_scopes;
         private string p_access_token;
         private DateTime p_token_expires;
         private string p_granted_scopes;

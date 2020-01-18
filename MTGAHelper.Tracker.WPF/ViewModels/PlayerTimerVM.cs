@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Windows.Threading;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
     public class PlayerTimerVM : ObservableObject
     {
-        DispatcherTimer dispatcherTimer = new DispatcherTimer();
-        Stopwatch stopWatch = new Stopwatch();
+        readonly DispatcherTimer dispatcherTimer = new DispatcherTimer();
+        readonly Stopwatch stopWatch = new Stopwatch();
 
         public string TimePlayed
         {

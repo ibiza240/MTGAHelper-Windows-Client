@@ -4,9 +4,7 @@ using MTGAHelper.Tracker.WPF.Views;
 using Newtonsoft.Json;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,7 +13,7 @@ namespace MTGAHelper.Tracker.WPF.Business
 {
     public class ExternalProviderTokenManager
     {
-        XPS x = new XPS();
+        readonly XPS x = new XPS();
         UserCredential userCredential;
 
         async internal Task<string> GoogleSignin()

@@ -1,15 +1,6 @@
-﻿using Microsoft.Extensions.Options;
-using MTGAHelper.Entity;
-using MTGAHelper.Tracker.WPF.Business;
-using MTGAHelper.Tracker.WPF.Config;
-using MTGAHelper.Tracker.WPF.ViewModels;
+﻿using MTGAHelper.Tracker.WPF.ViewModels;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 

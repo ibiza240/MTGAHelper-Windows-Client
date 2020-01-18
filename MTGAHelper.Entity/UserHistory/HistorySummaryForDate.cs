@@ -1,9 +1,6 @@
-﻿using MTGAHelper.Entity;
-using MTGAHelper.Lib.Config.Users;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace MTGAHelper.Entity.UserHistory
 {

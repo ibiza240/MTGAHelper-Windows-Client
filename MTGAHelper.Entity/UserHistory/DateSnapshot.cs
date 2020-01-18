@@ -1,7 +1,4 @@
-﻿using MTGAHelper.Lib.Config.Users;
-using System.Linq;
-
-namespace MTGAHelper.Lib.UserHistory
+﻿namespace MTGAHelper.Lib.UserHistory
 {
     public class DateSnapshot
     {

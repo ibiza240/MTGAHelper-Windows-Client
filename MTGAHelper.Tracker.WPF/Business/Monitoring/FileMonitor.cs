@@ -1,8 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using MTGAHelper.Tracker.WPF.Config;
-using Serilog;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -12,7 +8,7 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
 {
     public class FileMonitor
     {
-        object lockFilePath = new object();
+        readonly object lockFilePath = new object();
         string filePath = null;
         long lastSize;
         bool initialLoad = true;

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using MTGAHelper.Lib.Config.Users;
+﻿using System.Collections.Generic;
 
 namespace MTGAHelper.Entity.OutputLogParsing
 {

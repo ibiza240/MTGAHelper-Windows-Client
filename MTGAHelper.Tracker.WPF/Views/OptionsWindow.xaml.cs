@@ -1,19 +1,9 @@
 ﻿using AutoMapper;
-using Microsoft.Extensions.Options;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.ViewModels;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace MTGAHelper.Tracker.WPF.Views
 {
@@ -33,9 +23,10 @@ namespace MTGAHelper.Tracker.WPF.Views
             InitializeComponent();
         }
 
-        public OptionsWindow Init(ConfigModelApp configApp)
+        public OptionsWindow Init(ConfigModelApp configApp, string[] ratingSources)
         {
             var vm = Mapper.Map<OptionsWindowVM>(configApp);
+            vm.ShowLimitedRatingsSources = ratingSources;
             DataContext = vm;
 
             return this;

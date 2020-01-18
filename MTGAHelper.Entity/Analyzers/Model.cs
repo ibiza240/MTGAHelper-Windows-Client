@@ -1,8 +1,5 @@
 ﻿using MTGAHelper.Entity;
-using System;
 using System.Collections.Generic;
-using System.Text;
-using MTGAHelper.Lib.Model;
 using MTGAHelper.Lib.Config;
 
 namespace MTGAHelper.Lib.Analyzers.Cards

@@ -1,8 +1,6 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
 using MTGAHelper.Tracker.WPF.Views;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
@@ -29,6 +27,11 @@ namespace MTGAHelper.Tracker.WPF
                 IconSource = new BitmapImage(new Uri("pack://application:,,,/Assets/Images/wcC.ico")),
                 //ToolTipText = "Click for window, right-click for menu",
             };
+            notifyIcon.ContextMenu.Items.Add(new MenuItem
+            {
+                Header = "Maximize",
+                Command = vm.MaximizeWindow,
+            });
             notifyIcon.ContextMenu.Items.Add(new MenuItem
             {
                 Header = "Exit",

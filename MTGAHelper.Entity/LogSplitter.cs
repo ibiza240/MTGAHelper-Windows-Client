@@ -1,6 +1,4 @@
-﻿using MTGAHelper.Entity;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Text;
 
@@ -8,7 +6,7 @@ namespace MTGAHelper.Entity
 {
     public class LogSplitter
     {
-        Util util = new Util();
+        readonly Util util = new Util();
 
         public string LastPartWithDate { get; private set; }
 

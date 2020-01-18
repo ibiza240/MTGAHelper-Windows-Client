@@ -1,7 +1,4 @@
-﻿using Google.Apis.Auth;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Http;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Web.Models.Request;
@@ -9,20 +6,13 @@ using MTGAHelper.Web.Models.Response.Account;
 using MTGAHelper.Web.Models.Response.SharedDto;
 using MTGAHelper.Web.Models.Response.User;
 using MTGAHelper.Web.UI.Model.Request;
-using MTGAHelper.Web.UI.Model.Response.Misc;
 using MTGAHelper.Web.UI.Model.Response.User;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
-using System.Threading;
-using System.Web;
 using WebApplication1.Model.Account;
 
 namespace MTGAHelper.Tracker.WPF.Business
@@ -37,11 +27,11 @@ namespace MTGAHelper.Tracker.WPF.Business
 
         protected const string serverTest = "https://localhost:5001";
 
-        Uri baseAddress = new Uri(server);
+        readonly Uri baseAddress = new Uri(server);
 
-        CookieContainer cookieContainer;
-        HttpClientHandler handler;
-        HttpClient client;
+        readonly CookieContainer cookieContainer;
+        readonly HttpClientHandler handler;
+        readonly HttpClient client;
 
         LogFileZipper zipper;
         ConfigModelApp configApp;

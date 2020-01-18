@@ -1,49 +1,44 @@
 ﻿using AutoMapper;
 using MTGAHelper.Tracker.WPF.Models;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Windows;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
-    public class CardNotificationEventArgs : EventArgs
+    public enum CardsListOrder
     {
-        public int Index { get; set; }
-
-        public CardNotificationEventArgs()
-        {
-        }
-
-        public CardNotificationEventArgs(int index)
-        {
-            Index = index;
-        }
+        Cmc,
+        DrawChance,
     }
 
     public class CardsListVM : ObservableObject
     {
-        public delegate void CardNotificationHandler(object sender, CardNotificationEventArgs e);
-
         public ObservableCollection<LibraryCardWithAmountVM> Cards { get; set; }
 
         public bool ShowDrawPctAndAmount { get; set; } = true;
         public bool ShowAmount { get; set; } = true;
+        public CardsListOrder CardsListOrder { get; set; } = CardsListOrder.Cmc;
 
         public string CardChosen { get; set; } = "TEST";
+        public int CardCount => stats.CardsLeftInDeck;
+        public int LandCount => stats.LandsLeftInDeck;
+        public int TotalLandsInitial => stats.TotalLandsInitial;
+        public float DrawLandPct => stats.DrawLandPct;
 
-        Stats withStats;
+        readonly Stats stats = new Stats();
+        readonly Util util = new Util();
+        readonly BorderGradientCalculator gradientCalculator = new BorderGradientCalculator();
 
         public CardsListVM()
         {
         }
 
-        public CardsListVM(bool showDrawPctAndAmount, bool showAmount)
+        public CardsListVM(bool showDrawPctAndAmount, bool showAmount, CardsListOrder cardsListOrder)
         {
             ShowDrawPctAndAmount = showDrawPctAndAmount;
             ShowAmount = showAmount;
+            CardsListOrder = cardsListOrder;
         }
 
         internal void SetCards(string cardChosen, ICollection<CardWpf> cards)
@@ -51,8 +46,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             CardChosen = cardChosen;
 
             var data = cards.Select(i => ConvertCard(i.ArenaId, 1, cards.Count));
-            Cards = new ObservableCollection<LibraryCardWithAmountVM>(data);
-            foreach (var c in Cards) c.RefreshBindings(withStats?.AmountOriginalByGrpId[c.ArenaId]);
+            Cards = new ObservableCollection<LibraryCardWithAmountVM>(data.Select(AddBorderColor));
 
             RaisePropertyChangedEvent(nameof(CardChosen));
             RaisePropertyChangedEvent(nameof(Cards));
@@ -61,150 +55,119 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public void ResetCards()
         {
             Cards = null;
-            RaisePropertyChangedEvent(nameof(Cards));
-            RaisePropertyChangedEvent(nameof(ShowDrawPctAndAmount));
-            RaisePropertyChangedEvent(nameof(ShowAmount));
+            stats.Reset();
+            RaisePropertyChangedEvent(string.Empty);
         }
 
-        public void ResetCards(Stats withStats)
-        {
-            this.withStats = withStats;
-            ResetCards();
-        }
-
-        public void ConvertCardList(Dictionary<int, int> cardsRaw)
+        public void ConvertCardList(IReadOnlyDictionary<int, int> cardsRaw)
         {
             var totalCards = cardsRaw.Sum(i => i.Value);
 
-            var cards = cardsRaw
-                .Select(i => ConvertCard(i.Key, i.Value, totalCards))
-                .OrderBy(i => i.Type.Contains("Land") ? 0 : 1)
-                .ThenBy(i => i.Cmc)
-                //.ThenBy(i => i.Colors);
-                //.ToArray()
-                ;
+            var cardsQuery = cardsRaw
+                .Select(i => ConvertCard(i.Key, i.Value, totalCards));
 
-            if (Cards == null)
+            switch (CardsListOrder)
             {
-                if (cards.Any())
-                {
-                    Cards = new ObservableCollection<LibraryCardWithAmountVM>(cards);
-                    if (withStats != null)
-                    {
-                        withStats.TotalLandsInitial.Value = Cards.Where(i => i.Type.Contains("Land")).Sum(i => i.Amount);
-                        withStats.Refresh(Cards);
-                    }
-
-                    foreach (var c in Cards)
-                        c.RefreshBindings(withStats?.AmountOriginalByGrpId[c.ArenaId]);
-
-                    RaisePropertyChangedEvent(nameof(Cards));
-                }
+                case CardsListOrder.Cmc:
+                    cardsQuery = cardsQuery
+                        .OrderBy(i => i.Type.Contains("Land") ? 0 : 1)
+                        .ThenBy(i => i.Cmc);
+                    break;
+                case CardsListOrder.DrawChance:
+                    cardsQuery = cardsQuery
+                        .OrderByDescending(i => i.DrawPercent)
+                        .ToArray();
+                    break;
             }
-            else
+
+            var cards = cardsQuery.ToArray();
+
+            if (Cards != null)
             {
-                // Remove any card with 0 amount
-                for (int i = Cards.Count - 1; i >= 0; i--)
-                {
-                    if (Cards[i].Amount == 0)
-                        Cards.RemoveAt(i);
-                }
-
-                // Uglier but...Update values instead of re-binding full data for better performance
-                var dictCards = cards.ToDictionary(i => i.ArenaId, i => i);
-
-                // Modify or remove cards
-                for (int i = Cards.Count - 1; i >= 0; i--)
-                {
-                    var grpId = Cards[i].ArenaId;
-                    if (dictCards.ContainsKey(grpId))//&& dictCards[grpId].Amount != 0)
-                    {
-                        if (Cards[i].DrawPercent.Value != dictCards[grpId].DrawPercent.Value)
-                            Cards[i].DrawPercent.Value = dictCards[grpId].DrawPercent.Value;
-
-                        if (Cards[i].Amount != dictCards[grpId].Amount)
-                        {
-                            // Update the numbers
-                            Cards[i].Amount = dictCards[grpId].Amount;
-                            Cards[i].RefreshBindings(withStats?.AmountOriginalByGrpId[Cards[i].ArenaId]);
-                        }
-                    }
-                    //else
-                    //{
-                    //    // Remove the entry
-                    //    Cards.RemoveAt(i);
-                    //}
-                }
-
-                // Add cards
-                var cardsToAdd = cardsRaw
-                    .Where(i => i.Value > 0)
-                    .Where(i => Cards.Any(x => x.ArenaId == i.Key) == false)
-                    .ToArray();
-                if (cardsToAdd.Length > 0)
-                {
-                    //var newCards = new List<LibraryCardWithAmountVM>(Cards);
-                    Action<int, LibraryCardWithAmountVM> InsertRow = (i, cardToAdd) =>
-                    {
-                        Cards.Insert(i, cardToAdd);
-                        cardToAdd.RefreshBindings(withStats?.AmountOriginalByGrpId[cardToAdd.ArenaId]);
-                    };
-
-                    foreach (var c in cardsToAdd)
-                    {
-                        var cardToAdd = ConvertCard(c.Key, c.Value, totalCards);
-
-                        if (Cards.Count == 0)
-                        {
-                            InsertRow(0, cardToAdd);
-                        }
-                        else
-                        {
-                            // Find where to insert based on CMC
-                            bool inserted = false;
-                            for (int i = 0; i < Cards.Count; i++)
-                            {
-                                if (Cards[i].Cmc >= cardToAdd.Cmc)
-                                {
-                                    InsertRow(i, cardToAdd);
-                                    inserted = true;
-                                    break;
-                                }
-                            }
-
-                            if (inserted == false)
-                                InsertRow(Cards.Count, cardToAdd);
-                        }
-                    }
-
-                    //Cards = newCards;
-                    //RaisePropertyChangedEvent(nameof(Cards));
-                }
+                UpdateCards(cards);
+                stats.Refresh(Cards);
+                NotifyStatsChanged();
+                return;
             }
+
+            if (cardsRaw.Any() == false)
+                return;
+
+            Cards = new ObservableCollection<LibraryCardWithAmountVM>(cards.Select(AddBorderColor));
+            stats.Reset(Cards);
+
+            RaisePropertyChangedEvent(string.Empty);
+        }
+
+        void UpdateCards(ICollection<LibraryCardWithAmountVM> newCards)
+        {
+            // Remove any card with 0 amount
+            for (var i = Cards.Count - 1; i >= 0; i--)
+            {
+                if (Cards[i].Amount == 0)
+                    Cards.RemoveAt(i);
+            }
+
+            var dictCards = newCards.ToDictionary(i => i.ArenaId, i => i);
+
+            // Modify card counts for cards already in the collection
+            for (var i = Cards.Count - 1; i >= 0; i--)
+            {
+                var grpId = Cards[i].ArenaId;
+
+                if (!dictCards.TryGetValue(grpId, out var c))
+                    continue;
+
+                Cards[i].DrawPercent = c.DrawPercent;
+                Cards[i].Amount = c.Amount;
+
+                dictCards.Remove(grpId);
+            }
+
+            // exit early if done
+            if (dictCards.Count <= 0)
+                return;
+
+            // Add cards that are not yet in the collection
+            var cardsToAdd = dictCards
+                .Where(kvp => kvp.Value.Amount > 0)
+                .Select(kvp => AddBorderColor(kvp.Value))
+                .OrderBy(c => c.Cmc)
+                .ToArray();
+
+            var insertAt = 0;
+            foreach (var cardToAdd in cardsToAdd)
+            {
+                // Find where to insert based on CMC
+                while (insertAt < Cards.Count && Cards[insertAt].Cmc < cardToAdd.Cmc)
+                    insertAt++;
+
+                Cards.Insert(insertAt, cardToAdd);
+                insertAt++;
+            }
+        }
+
+        LibraryCardWithAmountVM AddBorderColor(LibraryCardWithAmountVM card)
+        {
+            card.BorderGradient = gradientCalculator.CalculateBorderGradient(card);
+            return card;
         }
 
         LibraryCardWithAmountVM ConvertCard(int grpId, int amount, int totalCards)
         {
-            //if (grpId == 69714) System.Diagnostics.Debugger.Break();
-
             var card = Mapper.Map<Entity.Card>(grpId);
-            var cardVM = Mapper.Map<CardVM>(Mapper.Map<CardWpf>(card));
-            var util = new Util();
-
-            //if (card.name == "Swamp") System.Diagnostics.Debugger.Break();
 
             var ret = new LibraryCardWithAmountVM
             {
                 ArenaId = grpId,
                 Amount = amount,
-                CardVM = cardVM,
                 Colors = card.colors,
                 ColorIdentity = card.color_identity,
                 ImageArtUrl = util.GetThumbnailLocal(card.imageArtUrl),
-                ImageCardUrl = /*"https://img.scryfall.com/cards" +*/ card.imageCardUrl,
+                ImageCardUrl = card.imageCardUrl,
                 Name = card.name,
                 Rarity = card.rarity,
-                DrawPercent = new ObservableProperty<float>((float)amount / totalCards),
+                DrawPercent = (float)amount / totalCards,
                 Cmc = card.cmc,
                 ManaCost = card.mana_cost,
                 Type = card.type,
@@ -212,6 +175,12 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
             return ret;
         }
-    }
 
+        void NotifyStatsChanged()
+        {
+            RaisePropertyChangedEvent(nameof(CardCount));
+            RaisePropertyChangedEvent(nameof(LandCount));
+            RaisePropertyChangedEvent(nameof(DrawLandPct));
+        }
+    }
 }

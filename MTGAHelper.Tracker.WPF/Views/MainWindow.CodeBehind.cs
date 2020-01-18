@@ -1,14 +1,6 @@
-﻿using MTGAHelper.Tracker.WPF.ViewModels;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
 
 namespace MTGAHelper.Tracker.WPF.Views
 {

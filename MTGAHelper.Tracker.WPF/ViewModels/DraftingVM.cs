@@ -4,7 +4,6 @@ using MTGAHelper.Tracker.WPF.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
@@ -21,8 +20,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         ICollection<Card> allCards = new Card[0];
 
         bool updateCardsDraftBuffered;
-        object lockCardsDraft = new object();
-        DraftInfoBuffered draftInfoBuffered = new DraftInfoBuffered();
+        readonly object lockCardsDraft = new object();
+        readonly DraftInfoBuffered draftInfoBuffered = new DraftInfoBuffered();
         List<DraftPickProgress> draftPicksHistory = new List<DraftPickProgress>();
 
         //int nbCardsWheeling => Math.Max(0, CardsDraftByTier.Values.Sum(i => i.Count) - POD_SIZE);
@@ -49,12 +48,12 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public bool IsHiddenWhenCardsDidntWheel => !IsVisibleWhenCardsDidntWheel;
 
         public double RaredraftOpacity => CardsDraft.Any(x => x.RareDraftPickEnum == Entity.RaredraftPickReasonEnum.None && x.RatingFloat != 0f) ? 1.0d : 0.5d;
-        public bool ShowGlobalMTGAHelperSays => /*updateCardsDraftBuffered == false && */CardsDraft.Count > 0 && CardsDraft.Count  < 42;
+        public bool ShowGlobalMTGAHelperSays => /*updateCardsDraftBuffered == false && */CardsDraft.Count > 0 && CardsDraft.Count < 42;
 
         public ObservableProperty<bool> ShowCardListThatDidntWheel { get; set; } = new ObservableProperty<bool>(false);
 
         public DraftPickProgress CurrentDraftPickProgress => draftInfoBuffered.DraftProgress;
-        public CardsListVM CardsThatDidntWheelVM { get; set; } = new CardsListVM(false, false);
+        public CardsListVM CardsThatDidntWheelVM { get; set; } = new CardsListVM(false, false, CardsListOrder.Cmc);
 
         internal void SetCardsDraftBuffered(DraftPickProgress draftProgress, ICollection<CardDraftPickWpf> ratingsInfo)
         {
@@ -105,10 +104,12 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
             //if (updateCardsDraftBuffered)
             //{
+            var calculator = new BorderGradientCalculator();
             lock (lockCardsDraft)
             {
                 var cardsVM = Mapper.Map<ICollection<CardDraftPickVM>>(draftInfoBuffered.CardsDraftBuffered);
-                foreach (var c in cardsVM) c.CardVM.SetColorBorder();
+                foreach (var c in cardsVM)
+                    c.BorderGradient = calculator.CalculateBorderGradient(c);
 
                 //CardsDraftByTier = cardsVM
                 //    .GroupBy(i => i.RatingFloat)

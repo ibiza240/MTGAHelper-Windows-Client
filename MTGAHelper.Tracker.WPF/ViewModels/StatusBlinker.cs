@@ -1,8 +1,5 @@
-﻿using MTGAHelper.Tracker.WPF.ViewModels;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
@@ -12,7 +9,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public event Action<object, NetworkStatusEnum> EmitStatus;
 
         NetworkStatusEnum flagsStatus;
-        object lockFlags = new object();
+        readonly object lockFlags = new object();
 
         public StatusBlinker()
         {

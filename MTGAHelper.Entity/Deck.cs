@@ -21,7 +21,7 @@ namespace MTGAHelper.Entity
 
     public abstract class DeckBase : IDeck
     {
-        Util util = new Util();
+        readonly Util util = new Util();
 
         protected DeckBase(string name, ScraperType scraperType)
         {

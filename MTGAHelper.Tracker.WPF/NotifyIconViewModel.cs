@@ -1,7 +1,5 @@
 ﻿using MTGAHelper.Tracker.WPF.Views;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Input;
 
@@ -14,55 +12,30 @@ namespace MTGAHelper.Tracker.WPF
     /// </summary>
     public class NotifyIconViewModel
     {
-        /// <summary>
-        /// Shows a window, if none is already open.
-        /// </summary>
-        public ICommand ShowWindowCommand
+        public ICommand ShowWindowCommand => new DelegateCommand
         {
-            get
+            CanExecuteFunc = () => true,
+            CommandAction = () =>
             {
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = () => true,
-                    CommandAction = () =>
-                    {
-                        Window.Visibility = Visibility.Visible;
-                        Window.Activate();
-                    }
-                };
+                Window.Visibility = Visibility.Visible;
+                Window.Activate();
             }
-        }
+        };
 
-        /// <summary>
-        /// Hides the main window. This command is only enabled if a window is open.
-        /// </summary>
-        public ICommand HideWindowCommand
+        public ICommand ExitApplicationCommand => new DelegateCommand { CommandAction = () => Application.Current.Shutdown() };
+
+        public ICommand MaximizeWindow => new DelegateCommand
         {
-            get
+            CommandAction = () =>
             {
-                return new DelegateCommand
-                {
-                    CanExecuteFunc = () => true,
-                    CommandAction = () => Window.WindowState = WindowState.Minimized,
-                };
+                Window.Visibility = Visibility.Visible;
+                Window.WindowState = WindowState.Maximized;
+                Window.Activate();
             }
-        }
-
-
-        /// <summary>
-        /// Shuts down the application.
-        /// </summary>
-        public ICommand ExitApplicationCommand
-        {
-            get
-            {
-                return new DelegateCommand { CommandAction = () => Application.Current.Shutdown() };
-            }
-        }
+        };
 
         public MainWindow Window { get; internal set; }
     }
-
 
     /// <summary>
     /// Simplistic delegate command for the demo.

@@ -1,8 +1,5 @@
 ﻿using Serilog.Core;
 using Serilog.Events;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MTGAHelper.Tracker.WPF.Logging
 {

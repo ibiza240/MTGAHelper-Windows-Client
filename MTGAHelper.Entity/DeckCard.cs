@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace MTGAHelper.Entity
+﻿namespace MTGAHelper.Entity
 {
     public enum DeckCardZoneEnum
     {

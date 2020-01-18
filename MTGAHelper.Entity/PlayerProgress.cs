@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MTGAHelper.Entity
+﻿namespace MTGAHelper.Entity
 {
     public class PlayerProgress
     {

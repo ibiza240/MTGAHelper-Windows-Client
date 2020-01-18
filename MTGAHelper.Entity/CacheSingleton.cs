@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace MTGAHelper.Lib.Cache
 {
     public class CacheSingleton<T> where T : class
     {
-        object lockCache = new object();
+        readonly object lockCache = new object();
 
         T cache;
 
