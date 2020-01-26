@@ -1,6 +1,4 @@
-﻿using System;
-using System.Globalization;
-using MTGAHelper.Entity;
+﻿using MTGAHelper.Entity;
 
 namespace MTGAHelper.Tracker.WPF.Models
 {
@@ -18,11 +16,11 @@ namespace MTGAHelper.Tracker.WPF.Models
 
         public string Description { get; set; }
         public string Rating { get; set; }
-        public string DraftRatingSource { get; set; }
+        public string RatingSource { get; set; }
         public DraftRatingTopCard TopCommonCard { get; set; } = new DraftRatingTopCard(0, "");
 
-        public float RatingFloat => float.TryParse(Rating.Substring(0, Math.Min(3, Rating.Length)).Trim(new[] { ' ', '(' }), NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out float f) ? f : 0f;
-        public float RatingScale => DraftRatingSource == "Mtg Community Review" ? 12f : 5f;
+        public float RatingFloat => DraftRating.GetRatingAsFloat(Rating);
+        public float RatingScale => DraftRating.GetRatingScale(RatingSource);
 
         //public bool ShowMtgaHelperSays => Weight > 0 || RareDraftPickEnum != Entity.RaredraftPickReasonEnum.None;
         public string NbDecksUsedInfo => $"Played in {NbDecksUsedMain} tracked deck{(NbDecksUsedMain == 1 ? "" : "s")} and {NbDecksUsedSideboard} sideboard{(NbDecksUsedSideboard == 1 ? "" : "s")}";

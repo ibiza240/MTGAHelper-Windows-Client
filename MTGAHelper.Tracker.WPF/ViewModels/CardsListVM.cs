@@ -1,8 +1,11 @@
-﻿using AutoMapper;
-using MTGAHelper.Tracker.WPF.Models;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using AutoMapper;
+using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
+using MTGAHelper.Tracker.WPF.Models;
+using MTGAHelper.Utility;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
@@ -16,9 +19,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
     {
         public ObservableCollection<LibraryCardWithAmountVM> Cards { get; set; }
 
-        public bool ShowDrawPctAndAmount { get; set; } = true;
-        public bool ShowAmount { get; set; } = true;
-        public CardsListOrder CardsListOrder { get; set; } = CardsListOrder.Cmc;
+        public bool ShowDrawPctAndAmount { get; }
+        public bool ShowAmount { get; }
+        public CardsListOrder CardsListOrder { get; set; }
 
         public string CardChosen { get; set; } = "TEST";
         public int CardCount => stats.CardsLeftInDeck;
@@ -29,10 +32,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         readonly Stats stats = new Stats();
         readonly Util util = new Util();
         readonly BorderGradientCalculator gradientCalculator = new BorderGradientCalculator();
-
-        public CardsListVM()
-        {
-        }
 
         public CardsListVM(bool showDrawPctAndAmount, bool showAmount, CardsListOrder cardsListOrder)
         {
@@ -45,7 +44,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         {
             CardChosen = cardChosen;
 
-            var data = cards.Select(i => ConvertCard(i.ArenaId, 1, cards.Count));
+            var data = cards.Select(i => ConvertCard(i.ArenaId, 1, 1f / cards.Count));
             Cards = new ObservableCollection<LibraryCardWithAmountVM>(data.Select(AddBorderColor));
 
             RaisePropertyChangedEvent(nameof(CardChosen));
@@ -59,32 +58,18 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             RaisePropertyChangedEvent(string.Empty);
         }
 
-        public void ConvertCardList(IReadOnlyDictionary<int, int> cardsRaw)
+        public void ConvertCardList(IReadOnlyCollection<CardDrawInfo> cardsRaw)
         {
-            var totalCards = cardsRaw.Sum(i => i.Value);
-
             var cardsQuery = cardsRaw
-                .Select(i => ConvertCard(i.Key, i.Value, totalCards));
+                .Select(c => ConvertCard(c.GrpId, c.Amount, c.DrawChance));
 
-            switch (CardsListOrder)
-            {
-                case CardsListOrder.Cmc:
-                    cardsQuery = cardsQuery
-                        .OrderBy(i => i.Type.Contains("Land") ? 0 : 1)
-                        .ThenBy(i => i.Cmc);
-                    break;
-                case CardsListOrder.DrawChance:
-                    cardsQuery = cardsQuery
-                        .OrderByDescending(i => i.DrawPercent)
-                        .ToArray();
-                    break;
-            }
-
-            var cards = cardsQuery.ToArray();
+            var cards = OrderByCardListOrder(cardsQuery).ToArray();
 
             if (Cards != null)
             {
                 UpdateCards(cards);
+                if (CardsListOrder == CardsListOrder.DrawChance)
+                    Cards.Sort(c => c.OrderByDescending(i => i.DrawPercent));
                 stats.Refresh(Cards);
                 NotifyStatsChanged();
                 return;
@@ -93,10 +78,35 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             if (cardsRaw.Any() == false)
                 return;
 
-            Cards = new ObservableCollection<LibraryCardWithAmountVM>(cards.Select(AddBorderColor));
+            Cards = new ObservableCollection<LibraryCardWithAmountVM>(cards.Select(AddBorderColor).Select(c =>
+            {
+                // set IsAmountChanged = false
+                c.Amount = c.Amount;
+                return c;
+            }));
             stats.Reset(Cards);
 
             RaisePropertyChangedEvent(string.Empty);
+        }
+
+        IOrderedEnumerable<LibraryCardWithAmountVM> OrderByCardListOrder(IEnumerable<LibraryCardWithAmountVM> cardsQuery)
+        {
+            return CardsListOrder switch
+            {
+                CardsListOrder.Cmc => cardsQuery.OrderBy(i => i.Type.Contains("Land") ? 0 : 1).ThenBy(i => i.Cmc),
+                CardsListOrder.DrawChance => cardsQuery.OrderByDescending(i => i.DrawPercent),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+
+        bool ShouldComeBeforeByCardListOrder(LibraryCardWithAmountVM left, LibraryCardWithAmountVM right)
+        {
+            return CardsListOrder switch
+            {
+                CardsListOrder.Cmc => left.Type.Contains("Land") || left.Cmc < right.Cmc,
+                CardsListOrder.DrawChance => left.DrawPercent > right.DrawPercent,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         void UpdateCards(ICollection<LibraryCardWithAmountVM> newCards)
@@ -116,7 +126,11 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 var grpId = Cards[i].ArenaId;
 
                 if (!dictCards.TryGetValue(grpId, out var c))
+                {
+                    Cards[i].DrawPercent = 0f;
+                    Cards[i].Amount = 0;
                     continue;
+                }
 
                 Cards[i].DrawPercent = c.DrawPercent;
                 Cards[i].Amount = c.Amount;
@@ -129,17 +143,16 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 return;
 
             // Add cards that are not yet in the collection
-            var cardsToAdd = dictCards
+            var cardsToAddUnordered = dictCards
                 .Where(kvp => kvp.Value.Amount > 0)
-                .Select(kvp => AddBorderColor(kvp.Value))
-                .OrderBy(c => c.Cmc)
-                .ToArray();
+                .Select(kvp => AddBorderColor(kvp.Value));
+            var cardsToAdd = OrderByCardListOrder(cardsToAddUnordered).ToArray();
 
             var insertAt = 0;
             foreach (var cardToAdd in cardsToAdd)
             {
                 // Find where to insert based on CMC
-                while (insertAt < Cards.Count && Cards[insertAt].Cmc < cardToAdd.Cmc)
+                while (insertAt < Cards.Count && ShouldComeBeforeByCardListOrder(Cards[insertAt], cardToAdd))
                     insertAt++;
 
                 Cards.Insert(insertAt, cardToAdd);
@@ -153,7 +166,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             return card;
         }
 
-        LibraryCardWithAmountVM ConvertCard(int grpId, int amount, int totalCards)
+        LibraryCardWithAmountVM ConvertCard(int grpId, int amount, float drawChance)
         {
             var card = Mapper.Map<Entity.Card>(grpId);
 
@@ -167,7 +180,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 ImageCardUrl = card.imageCardUrl,
                 Name = card.name,
                 Rarity = card.rarity,
-                DrawPercent = (float)amount / totalCards,
+                DrawPercent = drawChance,
                 Cmc = card.cmc,
                 ManaCost = card.mana_cost,
                 Type = card.type,

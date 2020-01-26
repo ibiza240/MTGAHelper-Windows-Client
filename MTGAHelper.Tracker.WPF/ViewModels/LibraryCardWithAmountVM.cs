@@ -37,15 +37,29 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         int originalAmount;
 
+        int amount;
+
         public override int Amount
         {
-            get => base.Amount;
+            get => amount;
             set
             {
-                if (base.Amount == value) return;
-                base.Amount = value;
+                if (amount == value)
+                {
+                    IsAmountChanged = false;
+                    return;
+                }
+                amount = value;
                 OnPropertyChanged(string.Empty);
+                IsAmountChanged = true;
             }
+        }
+
+        bool isAmountChanged;
+        public bool IsAmountChanged
+        {
+            get => isAmountChanged;
+            private set { isAmountChanged = value; OnPropertyChanged(); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

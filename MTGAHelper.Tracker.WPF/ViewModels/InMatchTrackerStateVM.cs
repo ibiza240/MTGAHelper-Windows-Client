@@ -63,7 +63,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             RaisePropertyChangedEvent(string.Empty);
         }
 
-        internal void SetInMatchStateBuffered(InGameTrackerState state)
+        internal void SetInMatchStateBuffered(IInGameState state)
         {
             lock (lockCardsInMatchTracking)
             {
@@ -116,11 +116,11 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 {
                     try
                     {
-                        MyLibrary.ConvertCardList(stateBuffered.CardsInLibrary);
+                        MyLibrary.ConvertCardList(stateBuffered.MyLibrary);
 
                         OpponentCardsSeen.ConvertCardList(stateBuffered.OpponentCardsSeen);
 
-                        MySideboard.ConvertCardList(stateBuffered.CardsInSideboard);
+                        MySideboard.ConvertCardList(stateBuffered.MySideboard);
                     }
                     catch (KeyNotFoundException)
                     {

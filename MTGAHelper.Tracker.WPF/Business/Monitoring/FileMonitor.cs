@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace MTGAHelper.Tracker.WPF.Business.Monitoring
 {
@@ -57,10 +58,9 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
 
                                 ReadFile();
                             }
-                            catch (Exception ex)
+                            catch
                             {
-                                //Log.Fatal(ex, "Unexpected error:");
-                                System.Diagnostics.Debugger.Break();
+                                // ignored
                             }
                         }
                     }
@@ -106,7 +106,16 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
 
                 if (initialLoad == false)
                 {
-                    OnFileSizeChangedNewText?.Invoke(this, newText);
+                    try
+                    {
+                        OnFileSizeChangedNewText?.Invoke(this, newText);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Fatal(ex, "Unexpected error:");
+                        //System.Diagnostics.Debugger.Break();
+                        throw;
+                    }
                 }
 
                 initialLoad = false;

@@ -1,12 +1,13 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using AutoMapper;
 using MTGAHelper.Entity;
 using MTGAHelper.Web.UI.Model.SharedDto;
-using System.Collections.Generic;
 
 namespace MTGAHelper.Web.Models.Response.User
 {
     public class CardForDraftPickDto : CardDto
     {
+        public string RatingSource { get; set; }
         public string Rating { get; set; }
         public string Description { get; set; }
         public string ManaCost { get; set; }

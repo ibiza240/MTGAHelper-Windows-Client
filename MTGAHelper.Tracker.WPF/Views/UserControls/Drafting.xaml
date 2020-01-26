@@ -105,7 +105,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn IsReadOnly="True">
+                <DataGridTemplateColumn IsReadOnly="True" Width="Auto">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
                             <Setter Property="VerticalAlignment" Value="Center" />
@@ -141,6 +141,7 @@
                         <Style TargetType="{x:Type DataGridCell}">
                             <Setter Property="VerticalAlignment" Value="Center" />
                             <Setter Property="VerticalContentAlignment" Value="Center" />
+                            <Setter Property="Visibility" Value="{Binding DataContext.ShowGlobalMTGAHelperSays, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVisCollapsedConverter}}"/>
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                     <DataGridTemplateColumn.CellTemplate>
@@ -150,16 +151,21 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn IsReadOnly="True" Width="*">
+                <DataGridTemplateColumn IsReadOnly="True" Width="Auto">
                     <DataGridTemplateColumn.CellStyle>
                         <Style TargetType="{x:Type DataGridCell}">
                             <Setter Property="VerticalAlignment" Value="Center" />
                             <Setter Property="VerticalContentAlignment" Value="Center" />
+                            <Setter Property="Visibility" Value="{Binding DataContext.ShowGlobalMTGAHelperSays, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVisCollapsedConverter}}"/>
                         </Style>
                     </DataGridTemplateColumn.CellStyle>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
                                 <Border Grid.Row="0" ToolTipService.InitialShowDelay="50">
                                     <Border.ToolTip>
                                         <TextBlock Foreground="Black"  Text="Raredraft choice" />

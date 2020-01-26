@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Web;
 using System.Windows;
+using MTGAHelper.Tracker.WPF.Config;
 
 namespace MTGAHelper.Tracker.WPF.Views
 {
@@ -10,11 +11,7 @@ namespace MTGAHelper.Tracker.WPF.Views
     /// </summary>
     public partial class DialogLoginFacebook : Window
     {
-#if DEBUG
-        protected const string server = "https://localhost:5001";
-#else
-        protected const string server = "https://mtgahelper.com";
-#endif
+        protected const string server = DebugOrRelease.Server;
 
         private readonly string p_appID;
         private readonly string p_scopes;

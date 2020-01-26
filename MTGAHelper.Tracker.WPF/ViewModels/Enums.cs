@@ -30,5 +30,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         SigninRequired = 2,
         ServerUnavailable = 4,
         GameClientFileNotFound = 8,
+        DetailedLogsDisabled = 16,
     }
 }

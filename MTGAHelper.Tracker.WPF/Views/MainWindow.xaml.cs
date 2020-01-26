@@ -47,7 +47,7 @@ namespace MTGAHelper.Tracker.WPF.Views
         readonly DraftHelper draftHelper;
         //LogProcessor logProcessor;
         readonly ReaderMtgaOutputLog reader;
-        readonly InGameTracker inGameTracker;
+        readonly InGameTracker2 inGameTracker;
         readonly ExternalProviderTokenManager tokenManager;
         readonly PasswordHasher passwordHasher;
 
@@ -74,7 +74,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             //LogProcessor logProcessor,
             ReaderMtgaOutputLog readerMtgaOutputLog,
             //CacheSingleton<ICollection<Card>> allCards,
-            InGameTracker inMatchTracker,
+            InGameTracker2 inMatchTracker,
             ExternalProviderTokenManager tokenManager,
             PasswordHasher passwordHasher,
             NotifyIconManager notifyIconManager,
@@ -135,7 +135,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             this.processMonitor.Start(new System.Threading.CancellationToken());
             this.fileMonitor.Start(new System.Threading.CancellationToken());
 
-            var timer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(200)};
+            var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
             timer.Tick += (object sender, EventArgs e) =>
             {
                 vm.SetCardsDraftFromBuffered();
@@ -143,7 +143,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             };
             timer.Start();
 
-            var timerTokenRefresh = new DispatcherTimer {Interval = TimeSpan.FromMinutes(9)};
+            var timerTokenRefresh = new DispatcherTimer { Interval = TimeSpan.FromMinutes(9) };
             timerTokenRefresh.Tick += (object sender, EventArgs e) =>
             {
                 RefreshAccessToken();
@@ -355,7 +355,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                         {
                             vm.WrapNetworkStatus(NetworkStatusEnum.ProcessingLogFile, () =>
                             {
-                                (result, errorId) = reader.LoadFileContent(isLive, vm.Account.MtgaHelperUserId, ms);
+                                (result, errorId) = reader.LoadFileContent(vm.Account.MtgaHelperUserId, ms).Result;
                             });
 
                             if (result.CollectionByDate.Any(i => i.DateTime == default(DateTime)))
@@ -468,116 +468,133 @@ namespace MTGAHelper.Tracker.WPF.Views
                 UploadLogFile();
         }
 
-        public void OnFileSizeChangedNewText(object sender, string newText)
+        void OnFileSizeChangedNewText(object sender, string newText)
         {
-            vm.SetProblem(ProblemsFlags.LogFileNotFound, false);
+            try
+            {
+                HandleNewText(newText);
+            }
+            catch (Exception e)
+            {
+                Log.Fatal(e, "Unexpected error:");
+                throw;
+            }
+        }
+
+        void HandleNewText(string newText)
+        {
+            vm.UnSetProblem(ProblemsFlags.LogFileNotFound);
             vm.SizeOfLogToSend = fileMonitor.LogContentToSend.Length;
 
-            ICollection<IMtgaOutputLogPartResult> messages = new IMtgaOutputLogPartResult[0];
-            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(newText ?? "")))
+            ICollection<IMtgaOutputLogPartResult> messages;
+            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(newText ?? "")))
             {
-                messages = reader.ProcessIntoMessages(true, "local", ms);
+                messages = reader.ProcessIntoMessagesAsync("local", ms).Result;
             }
 
-            //if (messages.Count == 20) System.Diagnostics.Debugger.Break();
-
-            Action GoHome = () =>
+            void GoHome()
             {
                 SetMainWindowContext(MainWindowContextEnum.Home);
-            };
+            }
 
             var mustUpload = false;
 
             foreach (var msg in messages)
             {
-                if (msg is IResultCardPool msgCardPool)
+                switch (msg)
                 {
-                    var isDrafting = true;
-                    if (msg is GetEventPlayerCourseV2Result playerCourse)
-                    {
-                        if (playerCourse.Raw.payload.CurrentEventState == "PreMatch")
+                    case UnknownResult _:
+                    case IgnoredResult _:
+                        continue;
+                    case DetailedLoggingResult detLogRes:
+                        vm.SetProblem(ProblemsFlags.DetailedLogsDisabled, detLogRes.IsDetailedLoggingDisabled);
+                        break;
+                    case IResultCardPool msgCardPool:
                         {
-                            // Clear the drafting window
-                            SetCardsDraft(new DraftPickProgress(new int[0]));
-                        }
-
-                        isDrafting = playerCourse.Raw.payload.InternalEventName.Contains("Draft") || playerCourse.Raw.payload.InternalEventName.Contains("Sealed");
-                    }
-
-                    if (isDrafting)
-                    {
-                        // Refresh the drafting window to show whole card pool
-                        SetCardsDraft(new DraftPickProgress(msgCardPool.CardPool));
-                        SetMainWindowContext(MainWindowContextEnum.Drafting);
-                    }
-                }
-                else if (msg is IResultDraftPick msgDraftPack && msgDraftPack.Raw.payload.draftPack != null)
-                {
-                    // Refresh the drafting window to show the new picks
-                    var draftInfo = Mapper.Map<DraftPickProgress>(msgDraftPack.Raw.payload);
-                    SetCardsDraft(draftInfo);
-                }
-                else if (msg is LogInfoRequestResult logInfoContainer)
-                {
-                    var logInfo = JsonConvert.DeserializeObject<LogInfoRequestInnerRaw>(logInfoContainer.Raw.request);
-                    if (logInfo.@params.messageName == "DuelScene.EndOfMatchReport" || logInfo.@params.humanContext.Contains("Client changed scenes to Home"))
-                    {
-                        //// Trigger to upload the stored log content
-                        //UploadLogFragment();
-                        mustUpload = true;
-                    }
-
-                    // Change MainWindowContext
-                    var prms = logInfo.@params;
-                    switch (prms.messageName)
-                    {
-                        case "Client.SceneChange":
-                            var context = prms.payloadObject.context?.ToString();   // SceneChange_PayloadObject
-                            if (prms.humanContext.Contains("Client changed scene") &&
-                                context.Contains("Draft") == false &&
-                                context.Contains("Opening sealed boosters") == false &&
-                                context != "deck builder")
+                            var isDrafting = true;
+                            if (msg is GetEventPlayerCourseV2Result playerCourse)
                             {
-                                GoHome();
-                            }
-                            break;
-                        case "DuelScene.EndOfMatchReport":
-                            GoHome();
-                            inGameTracker.Reset();
-                            vm.SetInMatchStateBuffered(inGameTracker.State);
-                            break;
-                    }
-                }
-                else if (msg is StateChangedResult stateChanged)
-                {
-                    if (msg.Part.Contains("\"new\":8}"))
-                        GoHome();
+                                var payload = playerCourse.Raw.payload;
+                                if (payload.CurrentEventState == "PreMatch")
+                                {
+                                    // Clear the drafting window
+                                    SetCardsDraft(new DraftPickProgress(new int[0]));
+                                }
 
-                }
-                else if (msg is MatchCreatedResult matchCreated)
-                {
-                    SetMainWindowContext(MainWindowContextEnum.Playing);
-                }
-                //else if (msg is EventClaimPrizeResult claimPrize)
-                //{
-                //    // Clear the drafting window
-                //    SetCardsDraft(new int[0]);
-                //}
-                else if (msg is ConnectRespResult connectResp)
-                {
-                    inGameTracker.InitSideboard(
-                        connectResp.Raw.systemSeatIds.First(),
-                        connectResp.Raw.connectResp.deckMessage.sideboardCards);
-                }
-                else if (msg is GetPlayerInventoryResult || msg is GetPlayerCardsResult ||
-                    msg is PostMatchUpdateResult || msg is RankUpdatedResult ||
-                    msg is GetCombinedRankInfoResult)
-                {
-                    mustUpload = true;
-                }
-                else if (msg is InventoryUpdatedResult)
-                {
-                    mustUpload = true;
+                                isDrafting = payload.InternalEventName.Contains("Draft") || payload.InternalEventName.Contains("Sealed");
+                            }
+
+                            if (isDrafting)
+                            {
+                                // Refresh the drafting window to show whole card pool
+                                SetCardsDraft(new DraftPickProgress(msgCardPool.CardPool));
+                                SetMainWindowContext(MainWindowContextEnum.Drafting);
+                            }
+
+                            break;
+                        }
+                    case IResultDraftPick msgDraftPack when msgDraftPack.Raw.payload.draftPack != null:
+                        {
+                            // Refresh the drafting window to show the new picks
+                            var draftInfo = Mapper.Map<DraftPickProgress>(msgDraftPack.Raw.payload);
+                            SetCardsDraft(draftInfo);
+                            break;
+                        }
+                    case LogInfoRequestResult logInfoContainer:
+                        {
+                            var logInfo = JsonConvert.DeserializeObject<LogInfoRequestInnerRaw>(logInfoContainer.Raw.request);
+                            if (logInfo.@params.messageName == "DuelScene.EndOfMatchReport" || logInfo.@params.humanContext.Contains("Client changed scenes to Home"))
+                            {
+                                //// Trigger to upload the stored log content
+                                //UploadLogFragment();
+                                mustUpload = true;
+                            }
+
+                            // Change MainWindowContext
+                            var prms = logInfo.@params;
+                            switch (prms.messageName)
+                            {
+                                case "Client.SceneChange":
+                                    var context = prms.payloadObject.context?.ToString();   // SceneChange_PayloadObject
+                                    if (prms.humanContext.Contains("Client changed scene") &&
+                                        context.Contains("Draft") == false &&
+                                        context.Contains("Opening sealed boosters") == false &&
+                                        context != "deck builder")
+                                    {
+                                        GoHome();
+                                    }
+                                    break;
+                                case "DuelScene.EndOfMatchReport":
+                                    GoHome();
+                                    inGameTracker.Reset();
+                                    vm.SetInMatchStateBuffered(inGameTracker.State);
+                                    break;
+                            }
+
+                            break;
+                        }
+                    case StateChangedResult stateChanged:
+                        {
+                            if (msg.Part.Contains("\"new\":8}"))
+                                GoHome();
+                            break;
+                        }
+                    //else if (msg is EventClaimPrizeResult claimPrize)
+                    //{
+                    //    // Clear the drafting window
+                    //    SetCardsDraft(new int[0]);
+                    //}
+                    case MatchCreatedResult matchCreated:
+                        SetMainWindowContext(MainWindowContextEnum.Playing);
+                        break;
+                    case GetPlayerInventoryResult _:
+                    case GetPlayerCardsResult _:
+                    case PostMatchUpdateResult _:
+                    case RankUpdatedResult _:
+                    case GetCombinedRankInfoResult _:
+                    case InventoryUpdatedResult _:
+                        mustUpload = true;
+                        break;
                 }
 
                 if (vm.MainWindowContext == MainWindowContextEnum.Playing)
@@ -597,7 +614,7 @@ namespace MTGAHelper.Tracker.WPF.Views
         {
             if (configApp.AutoShowHideForMatch)
             {
-                Application.Current.Dispatcher.Invoke(() =>
+                Application.Current.Dispatcher?.Invoke(() =>
                 {
                     if (context == MainWindowContextEnum.Home)
                     {
@@ -624,13 +641,14 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         [DllImport("user32.dll")]
         static extern bool SetForegroundWindow(IntPtr hWnd);
-        private void BringToFront(Process pTemp)
+
+        void BringToFront(Process pTemp)
         {
             try
             {
                 SetForegroundWindow(pTemp.MainWindowHandle);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Doesn't matter
             }
@@ -639,18 +657,17 @@ namespace MTGAHelper.Tracker.WPF.Views
         void SetCardsDraft(DraftPickProgress draftInfo)
         {
             var cardPool = draftInfo?.DraftPack;
+            if (cardPool == null)
+                return;
 
-            if (cardPool != null)
-            {
-                var draftingInfo = draftHelper.GetDraftPicksForCards(
-                    vm.Account.MtgaHelperUserId,
-                    cardPool,
-                    configApp.ShowLimitedRatingsSource,
-                    vm.Collection.Cards.Where(i => i.IdArena != 0).ToDictionary(i => i.IdArena, i => i.Amount),
-                    raredraftingInfo);
+            var draftingInfo = draftHelper.GetDraftPicksForCards(
+                vm.Account.MtgaHelperUserId,
+                cardPool,
+                configApp.ShowLimitedRatingsSource,
+                vm.Collection.Cards.Where(i => i.IdArena != 0).ToDictionary(i => i.IdArena, i => i.Amount),
+                raredraftingInfo);
 
-                vm.SetCardsDraftBuffered(draftInfo, draftingInfo);
-            }
+            vm.SetCardsDraftBuffered(draftInfo, draftingInfo);
         }
     }
 }

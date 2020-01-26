@@ -5,16 +5,17 @@ namespace MTGAHelper.Tracker.WPF
 {
     class Util
     {
+        readonly Entity.Util util = new Entity.Util();
+
         internal string GetThumbnailLocal(string imageArtUrl)
         {
-            var thumbnailUrl = new Entity.Util().GetThumbnailUrl(imageArtUrl);
+            var thumbnailUrl = util.GetThumbnailUrl(imageArtUrl).Replace("/images", "Assets");
             var ret =
                 Path.GetFullPath(
-#if DEBUG == false
+#if DEBUG == false || DEBUGWITHSERVER
                         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper") + "\\" +
 #endif
-                        thumbnailUrl
-                    .Replace("/images", "Assets"));
+                        thumbnailUrl);
 
             return ret;
         }

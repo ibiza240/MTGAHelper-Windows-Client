@@ -19,15 +19,11 @@ namespace MTGAHelper.Tracker.WPF.Business
 {
     public class ServerApiCaller
     {
-#if DEBUG
-        protected const string server = "https://localhost:5001";
-#else
-        protected const string server = "https://mtgahelper.com";
-#endif
+        const string SERVER = DebugOrRelease.Server;
 
-        protected const string serverTest = "https://localhost:5001";
+        protected const string serverTest = DebugOrRelease.LocalServer;
 
-        readonly Uri baseAddress = new Uri(server);
+        readonly Uri baseAddress = new Uri(SERVER);
 
         readonly CookieContainer cookieContainer;
         readonly HttpClientHandler handler;

@@ -35,6 +35,7 @@
 
     public class CardForDraftPick : Card
     {
+        public string RatingSource { get; set; } = "";
         public string Rating { get; set; } = "N/A";
         public string Description { get; set; } = "N/A";
         public float Weight { get; set; }

@@ -20,10 +20,11 @@ namespace MTGAHelper.Tracker.WPF.Business
             if (File.Exists(configApp.LogFilePath))
             {
                 // File found
-                vm.SetProblem(ProblemsFlags.LogFileNotFound, false);
+                vm.UnSetProblem(ProblemsFlags.LogFileNotFound);
                 return;
             }
-            else if (configApp.LogFilePath.StartsWith("E.g."))
+
+            if (configApp.LogFilePath.StartsWith("E.g."))
             {
                 var pathDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/../LocalLow/Wizards Of The Coast/MTGA";
                 if (Directory.Exists(pathDir))
@@ -31,13 +32,13 @@ namespace MTGAHelper.Tracker.WPF.Business
                     // File deduced
                     configApp.LogFilePath = Path.GetFullPath($"{pathDir}/output_log.txt");
                     configApp.Save();
-                    vm.SetProblem(ProblemsFlags.LogFileNotFound, false);
+                    vm.UnSetProblem(ProblemsFlags.LogFileNotFound);
                     return;
                 }
             }
 
             // File not found
-            vm.SetProblem(ProblemsFlags.LogFileNotFound, true);
+            vm.SetProblem(ProblemsFlags.LogFileNotFound);
         }
 
         public void LocateGameClientFilePath(ConfigModelApp configApp)
@@ -45,7 +46,7 @@ namespace MTGAHelper.Tracker.WPF.Business
             if (File.Exists(configApp.GameFilePath))
             {
                 // File found
-                vm.SetProblem(ProblemsFlags.GameClientFileNotFound, false);
+                vm.UnSetProblem(ProblemsFlags.GameClientFileNotFound);
                 return;
             }
             else if (string.IsNullOrWhiteSpace(configApp.GameFilePath))
@@ -60,7 +61,7 @@ namespace MTGAHelper.Tracker.WPF.Business
                             // File deduced
                             configApp.GameFilePath = Path.Combine(o as string, "MTGA.exe");
                             configApp.Save();
-                            vm.SetProblem(ProblemsFlags.GameClientFileNotFound, false);
+                            vm.UnSetProblem(ProblemsFlags.GameClientFileNotFound);
                             return;
                         }
                     }
@@ -68,7 +69,7 @@ namespace MTGAHelper.Tracker.WPF.Business
             }
 
             // File not found
-            vm.SetProblem(ProblemsFlags.GameClientFileNotFound, true);
+            vm.SetProblem(ProblemsFlags.GameClientFileNotFound);
         }
     }
 }

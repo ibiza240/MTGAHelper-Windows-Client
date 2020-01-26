@@ -27,8 +27,6 @@ namespace MTGAHelper.Tracker.WPF.Business
             var apiDto = Mapper.Map<ICollection<CardForDraftPickDto>>(result);
 
             var ret = Mapper.Map<ICollection<CardDraftPickWpf>>(apiDto);
-            foreach (var r in ret)
-                r.DraftRatingSource = source;
 
             return ret;
         }

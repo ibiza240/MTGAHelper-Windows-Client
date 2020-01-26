@@ -37,11 +37,8 @@ namespace MTGAHelper.Tracker.WPF
 {
     public partial class App : Application
     {
-#if DEBUG
-        const string server = "https://localhost:5001";
-#else
-        const string server = "https://mtgahelper.com";
-#endif
+        const string SERVER = DebugOrRelease.Server;
+
 
         MainWindow mainWindow;
         NotifyIconManager notifyIconManager;
@@ -67,11 +64,7 @@ namespace MTGAHelper.Tracker.WPF
         {
             try
             {
-#if DEBUG || DEBUGWITHSERVER
-                folderForConfigAndLog = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-#else
-                folderForConfigAndLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");
-#endif
+                folderForConfigAndLog = new DebugOrRelease().GetConfigFolder();
                 ConfigureApp();
 
                 CheckForServerMessage();
@@ -141,7 +134,7 @@ namespace MTGAHelper.Tracker.WPF
         {
             var latestVersion = TryDownloadFromServer(() =>
             {
-                var raw = HttpClientGet_WithTimeoutNotification(server + "/api/misc/VersionTracker", 15).Result;
+                var raw = HttpClientGet_WithTimeoutNotification(SERVER + "/api/misc/VersionTracker", 15).Result;
                 return TryDeserializeJson<GetVersionTrackerResponse>(raw).Version;
             });
 
@@ -155,8 +148,9 @@ namespace MTGAHelper.Tracker.WPF
 
         void MustDownloadNewVersion()
         {
-#if DEBUG || DEBUGWITHSERVER
-#else
+            if (new DebugOrRelease().IsDebug)
+                return;
+
             if (MessageBox.Show("A new version of the MTGAHelper Tracker is available, you must install it to continue. Proceed now?", "MTGAHelper", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 // Download latest auto-updater
@@ -176,14 +170,13 @@ namespace MTGAHelper.Tracker.WPF
             }
 
             App.Current.Shutdown();
-#endif
         }
 
         void CheckForServerMessage()
         {
             var msgs = TryDownloadFromServer(() =>
                 {
-                    var raw = HttpClientGet_WithTimeoutNotification(server + "/api/misc/TrackerClientMessages", 15).Result;
+                    var raw = HttpClientGet_WithTimeoutNotification(SERVER + "/api/misc/TrackerClientMessages", 15).Result;
                     return TryDeserializeJson<Dictionary<string, string>>(raw, true);
                 }
             );
@@ -283,7 +276,7 @@ namespace MTGAHelper.Tracker.WPF
             {
                 var dateFormatsResponse = TryDownloadFromServer(() =>
                 {
-                    var raw = HttpClientGet_WithTimeoutNotification(server + "/api/misc/dateFormats", 15).Result;
+                    var raw = HttpClientGet_WithTimeoutNotification(SERVER + "/api/misc/dateFormats", 15).Result;
                     var response = TryDeserializeJson<GetDateFormatsResponse>(raw);
                     return response;
                 });
@@ -306,7 +299,7 @@ namespace MTGAHelper.Tracker.WPF
             // Compare hash to server
             var isUpToDate = TryDownloadFromServer(() =>
             {
-                var raw = HttpClientGet_WithTimeoutNotification(server + $"/api/misc/filehash?id={dataFileType}&hash={hashLocal}", 15).Result;
+                var raw = HttpClientGet_WithTimeoutNotification(SERVER + $"/api/misc/filehash?id={dataFileType}&hash={hashLocal}", 15).Result;
                 var response = TryDeserializeJson<bool>(raw);
                 return response;
             });
@@ -317,7 +310,7 @@ namespace MTGAHelper.Tracker.WPF
                 Log.Information("Data [{dataType}] out of date, redownloading", dataFileType);
                 await TryDownloadFromServer<Task<object>>(async () =>
                 {
-                    await HttpClientDownloadFile_WithTimeoutNotification(server + $"/api/download/{dataFileType}", 60, filePath);
+                    await HttpClientDownloadFile_WithTimeoutNotification(SERVER + $"/api/download/{dataFileType}", 60, filePath);
                     return null;
                 });
             }

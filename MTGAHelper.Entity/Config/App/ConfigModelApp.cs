@@ -62,10 +62,7 @@ namespace MTGAHelper.Lib.Config
         public bool IsFeatureEnabled(ConfigAppFeatureEnum feature)
         {
             var f = feature.ToString();
-            if (Features.ContainsKey(f) == false || Features[f])
-                return true;
-
-            return false;
+            return Features.ContainsKey(f) == false || Features[f];
         }
     }
 

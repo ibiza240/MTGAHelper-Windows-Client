@@ -22,13 +22,15 @@
                 <EventSetter Event="MouseEnter" Handler="Border_MouseEnter" />
                 <EventSetter Event="MouseLeave" Handler="Border_MouseLeave" />
                 <Style.Triggers>
-                    <EventTrigger RoutedEvent="Binding.TargetUpdated">
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <ColorAnimation Duration="00:00:1" Storyboard.TargetProperty="Background.Color" From="Orange" />
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </EventTrigger>
+                    <DataTrigger Binding="{Binding IsAmountChanged}" Value="True">
+                        <DataTrigger.EnterActions>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Duration="00:00:2" Storyboard.TargetProperty="Background.Color" From="Orange" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </DataTrigger.EnterActions>
+                    </DataTrigger>
                 </Style.Triggers>
             </Style>
         </DataGrid.RowStyle>
@@ -62,7 +64,7 @@
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
-            
+
             <DataGridTemplateColumn IsReadOnly="True" Width="*">
                 <DataGridTemplateColumn.CellStyle>
                     <Style TargetType="{x:Type DataGridCell}">
@@ -93,7 +95,7 @@
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>
-            
+
             <DataGridTemplateColumn IsReadOnly="True" Width="42">
                 <DataGridTemplateColumn.CellStyle>
                     <Style TargetType="{x:Type DataGridCell}">
@@ -106,7 +108,7 @@
                         <StackPanel VerticalAlignment="Center">
                             <StackPanel Visibility="{Binding DataContext.ShowDrawPctAndAmount, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVisConverter}}">
                                 <Label Padding="2" HorizontalAlignment="Center">
-                                    <TextBlock Text="{Binding AmountWithOriginal, NotifyOnTargetUpdated=True}" FontWeight="Bold" Foreground="White" />
+                                    <TextBlock Text="{Binding AmountWithOriginal}" FontWeight="Bold" Foreground="White" />
                                 </Label>
                                 <Label Padding="2" HorizontalAlignment="Center">
                                     <TextBlock Text="{Binding DrawPercent, StringFormat=p1}" />

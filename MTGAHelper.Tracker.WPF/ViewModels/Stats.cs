@@ -19,8 +19,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
             CardsLeftInDeck = deck.Sum(i => i.Amount);
             LandsLeftInDeck = deck.Where(i => i.Type.Contains("Land")).Sum(i => i.Amount);
-
-            DrawLandPct = CardsLeftInDeck == 0 ? 0 : (float)LandsLeftInDeck / CardsLeftInDeck;
+            DrawLandPct = deck.Where(c => c.Type.Contains("Land")).Sum(c => c.DrawPercent);
 
             if (hasCapturedTotals)
                 return;

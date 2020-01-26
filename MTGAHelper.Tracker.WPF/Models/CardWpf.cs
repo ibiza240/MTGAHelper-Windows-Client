@@ -28,7 +28,7 @@ namespace MTGAHelper.Tracker.WPF.Models
         {
             get
             {
-                var matches = regexCmcImages.Matches(ManaCost);
+                var matches = regexCmcImages.Matches(ManaCost ?? "");
                 if (matches.Count == 0) return new string[0];
 
                 var ret = matches

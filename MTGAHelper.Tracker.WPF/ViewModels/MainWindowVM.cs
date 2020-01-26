@@ -19,7 +19,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         NetworkStatusEnum networkStatusDisplayed;
         bool isGameRunning;
         bool isInitialSetupDone => Problems.HasFlag(ProblemsFlags.LogFileNotFound) == false && Problems.HasFlag(ProblemsFlags.SigninRequired) == false;
-        
+
         public CardsListOrder OrderLibraryCardsBy { get; set; }
 
         readonly Dictionary<NetworkStatusEnum, string> dictStatus = new Dictionary<NetworkStatusEnum, string>
@@ -37,6 +37,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             { ProblemsFlags.SigninRequired, "Sign-in required" },
             { ProblemsFlags.ServerUnavailable, "Remote server unavailable" },
             { ProblemsFlags.GameClientFileNotFound, "MTGArena game not found" },
+            { ProblemsFlags.DetailedLogsDisabled, "Detailed Logs not enabled in MTGArena" },
         };
 
         //public bool IsInMatch { get; set; }
@@ -141,7 +142,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             RaisePropertyChangedEvent(nameof(OpacityPct));
         }
 
-        public void SetProblem(ProblemsFlags flag, bool isActive)
+        public void UnSetProblem(ProblemsFlags flag) => SetProblem(flag, false);
+
+        public void SetProblem(ProblemsFlags flag, bool isActive = true)
         {
             if (isActive)
                 Problems |= flag;  // Set flag
@@ -190,9 +193,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         {
             Task.Factory.StartNew(() =>
             {
-                SetProblem(ProblemsFlags.ServerUnavailable, true);
+                SetProblem(ProblemsFlags.ServerUnavailable);
                 Task.Delay(5000).Wait();
-                SetProblem(ProblemsFlags.ServerUnavailable, false);
+                UnSetProblem(ProblemsFlags.ServerUnavailable);
             });
         }
 
@@ -234,7 +237,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             DraftingVM.SetCardsDraftFromBuffered();
         }
 
-        internal void SetInMatchStateBuffered(InGameTrackerState state)
+        internal void SetInMatchStateBuffered(IInGameState state)
         {
             InMatchState.Init(OrderLibraryCardsBy);
             InMatchState.SetInMatchStateBuffered(state);

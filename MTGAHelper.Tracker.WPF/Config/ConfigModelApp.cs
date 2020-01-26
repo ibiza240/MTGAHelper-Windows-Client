@@ -58,19 +58,14 @@ namespace MTGAHelper.Tracker.WPF.Config
 
         internal void Save()
         {
-#if DEBUG || DEBUGWITHSERVER
-            var configFolder = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-#else
-            var configFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");
-#endif
+            var configFolder = new DebugOrRelease().GetConfigFolder();
             var configFile = Path.Combine(configFolder, "appsettings.json");
-
             var saved = false;
             while (saved == false)
             {
                 //var configFile = Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json");
                 File.WriteAllText(configFile, JsonConvert.SerializeObject(this));
-                
+
                 // Safety check in case of invalid file saved
                 var fileSize = new FileInfo(configFile).Length;
                 saved = fileSize > 0;

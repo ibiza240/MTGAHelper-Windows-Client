@@ -1,3 +1,13 @@
+### v1.4.0 (2020-01-26)
+
+The program is now an x64 "All-in-one" executable file which eliminates the need to install .NET Core first
+
+In-game tracker: Card draw % calculation that takes into account cards seen (or visible face-up in the library)
+
+Includes the latest thumbnail images for THB cards
+
+Some visual bugfixes when displaying a limited card pool that is complete
+
 ### v1.3.8 (2020-01-16)
 
 Update for Theros: Beyond Death
