@@ -1,3 +1,7 @@
+### v1.4.1 (2020-02-16)
+
+Update for supporting the latest MTGA game patch
+
 ### v1.4.0 (2020-01-26)
 
 The program is now an x64 "All-in-one" executable file which eliminates the need to install .NET Core first

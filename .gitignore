@@ -26,3 +26,4 @@ packages
 /data/events.json
 /NODATE
 *.pubxml
+/MTGAHelper.Tracker.WPF/Interop.MSHTML.dll

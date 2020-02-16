@@ -9,13 +9,15 @@ namespace MTGAHelper.Web.UI.Model.Response
         public int NbLogin { get; set; }
         public bool ChangesSinceLastLogin { get; set; }
         public ICollection<string> NotificationsInactive { get; set; } = new string[0];
+        public bool IsSupporter { get; set; }
 
-        public RegisterUserResponse(string userId, string email, int nbLogin, bool changesSinceLastLogin)
+        public RegisterUserResponse(string userId, string email, int nbLogin, bool changesSinceLastLogin, bool isSupporter)
         {
             UserId = userId;
             Email = email;
             NbLogin = nbLogin;
             ChangesSinceLastLogin = changesSinceLastLogin;
+            IsSupporter = isSupporter;
         }
     }
 }

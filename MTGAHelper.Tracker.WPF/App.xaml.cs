@@ -90,7 +90,7 @@ namespace MTGAHelper.Tracker.WPF
                     cfg.AddProfile<MapperProfileLibOutputLogParser>();
                     cfg.AddProfile(new MapperProfileLibCardConvert(
                         provider.GetService<DeckListConverter>(),
-                        provider.GetService<SingletonEventsScheduleManager>()));
+                        provider.GetService<SingletonEventsScheduleManager>().Init(folderData)));
                 });
 
                 LoadMainWindow();

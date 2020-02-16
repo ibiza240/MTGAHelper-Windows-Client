@@ -61,6 +61,7 @@ namespace MTGAHelper.Tracker.WPF.Views
         public MainWindow(
             //OptionsWindow optionsWindow,
             IOptionsMonitor<ConfigModelApp> configApp,
+            IOptionsMonitor<MTGAHelper.Lib.Config.ConfigModelApp> configAppLib,
             ICollection<Card> allCards,
             MainWindowVM viewModel,
             ProcessMonitor processMonitor,
@@ -86,7 +87,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             //optionsWindow.Owner = Window.GetWindow(this);
             //this.optionsWindow = optionsWindow;
 
-            this.reader = readerMtgaOutputLog;
+            this.reader = readerMtgaOutputLog.Init(configAppLib.CurrentValue.FolderData);
             this.processMonitor = processMonitor;
             processMonitor.OnProcessMonitorStatusChanged += OnProcessMonitorStatusChanged;
             this.zipper = zipper;
