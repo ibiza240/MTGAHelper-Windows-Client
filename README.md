@@ -29,11 +29,21 @@ Please note that this tracker runs only on Windows for now. However, you can upl
 
 ### Installation
 
-##### Extra step for Windows 7 users
+##### Step 1. Microsoft .NET Core 3.1 framework
+The application uses the very recent framework known as Microsoft .NET Core 3.1.
 
-> Note: If you are on Windows 7, you will need to install this Update first (KB2533623):
+You will require to install:
+- [This version if you have a 64-bit Operating System (x64-based processor)](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x64-installer)
+- [This version if you have a 32-bit Operating System (x86-based processor)](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x86-installer)
+
+> Note: If you are on Windows 7, you will most likely also need this Update for Windows 7 (KB2533623):
 > - [This version if you have a 64-bit Operating System (x64-based processor)](https://www.microsoft.com/en-us/download/details.aspx?id=26764)
 > - [This version if you have a 32-bit Operating System (x86-based processor)](https://www.microsoft.com/en-us/download/details.aspx?id=26767)
+
+
+##### Step 2. MTGAHelper Tracker Installer
+
+Once the framework installed, [download the Tracker Installer](https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelperTracker.msi) and after the very simple setup, the tracker will be ready to run from your Desktop where a shortcut will be created.
 
 ##### MTGAHelper Tracker Installer
 
