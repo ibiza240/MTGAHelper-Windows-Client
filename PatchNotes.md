@@ -1,3 +1,13 @@
+### v1.4.2 (2020-04-16)
+
+Update for supporting the latest MTGA game patch (Ikoria)
+
+Revert the "All-in-one" executable file
+
+Now requires .NET Core 3.1.3
+
+New Draft Ratings source: Infinite Mythic Edition
+
 ### v1.4.1 (2020-02-16)
 
 Update for supporting the latest MTGA game patch
@@ -76,7 +86,7 @@ Draft helper: Pack X pick Y label
 
 Draft helper: New popup showing the cards that didn't wheel from a previously seen pack
 
-Draft helper: Support for multiple Ratings sources (new: DraftSim)
+Draft helper: Support for multiple Ratings sources
 
 Bugfix for a problem that made the tracker crash
 

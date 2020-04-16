@@ -33,8 +33,8 @@ Please note that this tracker runs only on Windows for now. However, you can upl
 The application uses the very recent framework known as Microsoft .NET Core 3.1.
 
 You will require to install:
-- [This version if you have a 64-bit Operating System (x64-based processor)](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x64-installer)
-- [This version if you have a 32-bit Operating System (x86-based processor)](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.0-windows-x86-installer)
+- [This version if you have a 64-bit Operating System (x64-based processor)](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.3-windows-x64-installer)
+- [This version if you have a 32-bit Operating System (x86-based processor)](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.3-windows-x86-installer)
 
 > Note: If you are on Windows 7, you will most likely also need this Update for Windows 7 (KB2533623):
 > - [This version if you have a 64-bit Operating System (x64-based processor)](https://www.microsoft.com/en-us/download/details.aspx?id=26764)
