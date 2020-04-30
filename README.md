@@ -61,7 +61,7 @@ Once your data is uploaded successfully, you can simply refresh the MTGAHelper w
 
 1- The server might be unresponsive. Try to go on https://mtgahelper.com and if the site cannot load, the tracker won't be able to start. You can report this downtime on [Discord](https://discord.gg/GTd3RMd).
 
-2- Also, in the `%AppData%/MTGAHelper` directory there might be some log files (e.g.: `log-201923.txt`). You can open these text files and see if there's any helpful information.
+2- Also, in the `%AppData%/MTGAHelper` directory there might be some log files (e.g.: `log-202006.txt`). You can open these text files and see if there's any helpful information.
 
 
 ### I am connected but the tracker and website are showing no data / 0 cards in collection
