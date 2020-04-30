@@ -61,17 +61,7 @@ Once your data is uploaded successfully, you can simply refresh the MTGAHelper w
 
 1- The server might be unresponsive. Try to go on https://mtgahelper.com and if the site cannot load, the tracker won't be able to start. You can report this downtime on [Discord](https://discord.gg/GTd3RMd).
 
-2- Maybe the program is not able to find the .NET Core 3.1 framework described above. Check in your installed applications if you have this installed:
-
-<img src="https://i.imgur.com/UWrO39u.png" width="420" alt=".NET Core 3.1 framework in your installed applications">
-
-3- Try to run the tracker from a command line window by running:
-
-    dotnet "C:\Program Files (x86)\MTGAHelper\MTGAHelper Tracker\MTGAHelper.Tracker.dll"
-
-This should give some detailed information on why the tracker doesn't want to start that you can send me.
-
-4- Also, in the `%AppData%/MTGAHelper` directory there might be some log files (e.g.: `log-201923.txt`). You can open these text files and see if there's any helpful information.
+2- Also, in the `%AppData%/MTGAHelper` directory there might be some log files (e.g.: `log-201923.txt`). You can open these text files and see if there's any helpful information.
 
 
 ### I am connected but the tracker and website are showing no data / 0 cards in collection
