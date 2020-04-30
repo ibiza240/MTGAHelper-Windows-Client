@@ -32,8 +32,8 @@ namespace MTGAHelper.Web.UI.Model.Response.User
             string lastUploadHash,
             ICollection<CardWithAmount> collection,
             Inventory inventory,
-            ICollection<ConfigModelRankInfo> ranks,
-            Dictionary<string, PlayerProgress> playerProgress)
+            IReadOnlyCollection<ConfigModelRankInfo> ranks,
+            IReadOnlyDictionary<string, PlayerProgress> playerProgress)
         {
             PlayerName = playerName;
             CollectionDate = date.ToString("yyyy-MM-dd HH:mm:ss");

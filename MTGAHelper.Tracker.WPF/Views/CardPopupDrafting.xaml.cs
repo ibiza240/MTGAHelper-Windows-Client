@@ -13,48 +13,51 @@ namespace MTGAHelper.Tracker.WPF.Views
     /// <summary>
     /// Interaction logic for CardPopup.xaml
     /// </summary>
-    public partial class CardPopupDrafting : Window
+    public partial class CardPopupDrafting
     {
-        readonly DraftingCardPopupVM vm = new DraftingCardPopupVM();
+        #region Constructor
 
+        /// <summary>
+        /// Default Constructor
+        /// </summary>
         public CardPopupDrafting()
         {
-            //vm = (GlobalVM)DataContext;
-            DataContext = vm;
+            DataContext = ViewModel;
 
             InitializeComponent();
-
-            //DispatcherTimer timer = new DispatcherTimer();
-            //timer.Interval = TimeSpan.FromMilliseconds(200);
-            //timer.Tick += (object sender, EventArgs e) =>
-            //{
-            //    Top = vm.CardPopupTop;
-            //    Left = vm.CardPopupLeft;
-            //};
-            //timer.Start();
         }
+
+        #endregion
+
+        #region Private Fields
+
+        /// <summary>
+        /// The view model and window data context
+        /// </summary>
+        private readonly DraftingCardPopupVM ViewModel = new DraftingCardPopupVM();
+
+        #endregion
+
+        #region Public Methods
 
         public void Refresh(CardDraftPickVM cardVM, bool showGlobalMTGAHelperSays)
         {
-            //this.vm.CardPopupImageUrl.Value = vm.CardPopupImageUrl.Value;
-            //this.vm.Description.Value = vm.Description.Value;
-            //this.vm.Rating.Value = vm.Rating.Value;
-            //this.vm.TopCommonCard.Value = vm.TopCommonCard.Value;
-            this.vm.SetDraftCard(cardVM, showGlobalMTGAHelperSays);
+            ViewModel.SetDraftCard(cardVM, showGlobalMTGAHelperSays);
         }
 
         public void SetCardPopupPosition(ForceCardPopupSideEnum side, int mainWindowTop, int mainWindowLeft, int mainWindowWidth)
         {
             var popupWidth = (int)Width;
 
-            var toLeft = mainWindowLeft - popupWidth;
-            var toRight = mainWindowLeft + mainWindowWidth;
+            int toLeft = mainWindowLeft - popupWidth;
+            int toRight = mainWindowLeft + mainWindowWidth;
 
-            var leftAdjusted = mainWindowLeft < SystemParameters.WorkArea.Width / 2 ? toRight : toLeft;
-            if (side == ForceCardPopupSideEnum.Left)
-                leftAdjusted = toLeft;
-            else if (side == ForceCardPopupSideEnum.Right)
-                leftAdjusted = toRight;
+            int leftAdjusted = side switch
+            {
+                ForceCardPopupSideEnum.Left => toLeft,
+                ForceCardPopupSideEnum.Right => toRight,
+                _ => (mainWindowLeft < SystemParameters.WorkArea.Width / 2 ? toRight : toLeft)
+            };
 
             Top = mainWindowTop;
             Left = leftAdjusted;
@@ -62,7 +65,9 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         public void SetPopupRatingsSource(bool showRatingsSource, string source)
         {
-            vm.SetPopupRatingsSource(showRatingsSource, source);
+            ViewModel.SetPopupRatingsSource(showRatingsSource, source);
         }
+
+        #endregion
     }
 }

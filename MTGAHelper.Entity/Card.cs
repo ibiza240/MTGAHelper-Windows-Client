@@ -33,10 +33,10 @@ namespace MTGAHelper.Entity
         public enumLinkedFace linkedFaceType { get; set; }
         public int LinkedCardGrpId { get; set; }
         public bool isToken { get; set; }
-        public bool isCraftable { get; set; }
+        //public bool isCraftable { get; set; }
         public bool isCollectible { get; set; }
         public string artistCredit { get; set; }
-        
+
         //public string artistCredit { get; set; }
 
         public Card()
@@ -91,6 +91,9 @@ namespace MTGAHelper.Entity
         }
         public RarityEnum GetRarityEnum(bool splitRareLands = false)
         {
+            if (string.IsNullOrWhiteSpace(rarity))
+                return RarityEnum.Unknown;
+
             // Because different sources of cards...
             // Scryfall: "Mythic Rare"
             // MTGATool: "mythic"

@@ -8,22 +8,30 @@ namespace MTGAHelper.Tracker.WPF.IoC
 {
     public class MapperProfileTrackerWpf : Profile
     {
-        public MapperProfileTrackerWpf()
+        public MapperProfileTrackerWpf(BorderGradientCalculator gradientCalculator)
         {
             CreateMap<CardForDraftPickDto, CardDraftPickWpf>()
-                .ForMember(i => i.RareDraftPickEnum, i => i.MapFrom(x => x.IsRareDraftPick));
+                .ForMember(i => i.RareDraftPickEnum, i => i.MapFrom(x => x.IsRareDraftPick))
+                .ForMember(m => m.NbMissing, opt => opt.Ignore()) // todo Bruno?
+                .ForMember(m => m.ArenaId, opt => opt.MapFrom(x => x.IdArena))
+                .ForMember(m => m.ColorIdentity, opt => opt.Ignore()) // todo Bruno?
+                .ForMember(m => m.Cmc, opt => opt.Ignore()) // todo Bruno?
+                .ForMember(m => m.Type, opt => opt.Ignore()); // todo Bruno?
+
+            CreateMap<CardDraftPickWpf, CardDraftPickVM>()
+                .ForMember(i => i.BorderGradient, opt => opt.MapFrom(x => gradientCalculator.CalculateBorderGradient(x)));
 
             CreateMap<Entity.Card, CardWpf>()
                 .ForMember(i => i.ArenaId, i => i.MapFrom(x => x.grpId))
                 .ForMember(i => i.ColorIdentity, i => i.MapFrom(x => x.color_identity))
                 .ForMember(i => i.ManaCost, i => i.MapFrom(x => x.mana_cost));
 
-            CreateMap<CardWithAmountWpf, LibraryCardWithAmountVM>();
+            CreateMap<CardWithAmountWpf, LibraryCardWithAmountVM>(MemberList.None);
             //.ForMember(i => i.ImageArtUrl, i => i.MapFrom(x => new Util().GetThumbnailLocal(x.ImageArtUrl)));
 
-            CreateMap<CardDraftPickWpf, CardDraftPickVM>()
-                .ForMember(i => i.BorderGradient, i => i.Ignore());
-            CreateMap<ConfigModelApp, OptionsWindowVM>();
+            CreateMap<ConfigModel, OptionsWindowVM>()
+                .IgnoreAllPropertiesWithAnInaccessibleSetter()
+                .ForMember(m => m.ShowLimitedRatingsSources, opt => opt.Ignore());
             //.ForMember(i => i.ForceCardPopupSide, i => i.MapFrom(x =>  string.IsNullOrEmpty(x.ForceCardPopupSide) ? "On the left" : x.ForceCardPopupSide));
         }
     }

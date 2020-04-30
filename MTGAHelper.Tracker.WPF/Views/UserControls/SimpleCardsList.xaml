@@ -1,85 +1,118 @@
-﻿<UserControl x:Class="MTGAHelper.Tracker.WPF.Views.UserControls.SimpleCardsList"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-        xmlns:local="clr-namespace:MTGAHelper.Tracker.WPF.Views.UserControls"
-        xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
-        mc:Ignorable="d" 
-        d:DesignHeight="700" d:DesignWidth="400">
+﻿<UserControl
+    x:Class="MTGAHelper.Tracker.WPF.Views.UserControls.SimpleCardsList"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:MTGAHelper.Tracker.WPF.ViewModels"
+    d:DataContext="{d:DesignInstance viewModels:CardsListVM}"
+    d:DesignHeight="700"
+    d:DesignWidth="400"
+    mc:Ignorable="d">
 
-    <UserControl.Resources>
-        <helpers:BoolToStringConverter x:Key="BoolToVisConverter" TrueValue="Visible" FalseValue="Collapsed" />
-    </UserControl.Resources>
-    <DataGrid x:Name="gridCards" ItemsSource="{Binding Cards}" AutoGenerateColumns="False" CanUserAddRows="False"
-    GridLinesVisibility="None" Background="{StaticResource BackgroundBrush}" Foreground="#aaaaaa" HeadersVisibility="None" BorderThickness="0"
-    ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Hidden" VirtualizingPanel.IsVirtualizing="False">
-        <DataGrid.RowStyle>
-            <Style TargetType="DataGridRow">
-                <Setter Property="BorderThickness" Value="0,1,0,0" />
-                <Setter Property="BorderBrush" Value="#555555" />
-                <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+    <!--  Card List  -->
+    <ListBox
+        HorizontalContentAlignment="Stretch"
+        Background="{StaticResource BackgroundBrush}"
+        BorderBrush="{StaticResource ScrollBarBackground}"
+        BorderThickness="0"
+        Grid.IsSharedSizeScope="True"
+        IsTabStop="False"
+        ItemsSource="{Binding Cards}"
+        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+        ScrollViewer.VerticalScrollBarVisibility="Auto"
+        VirtualizingPanel.IsVirtualizing="False">
+        <ListBox.ItemContainerStyle>
+            <Style TargetType="{x:Type ListBoxItem}">
                 <EventSetter Event="MouseEnter" Handler="Border_MouseEnter" />
                 <EventSetter Event="MouseLeave" Handler="Border_MouseLeave" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="Padding" Value="0,0,0,0" />
+                <Setter Property="BorderBrush" Value="{StaticResource ScrollBarBackground}" />
+                <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                            <Border
+                                x:Name="Bd"
+                                Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="true">
+                                <ContentPresenter
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
                 <Style.Triggers>
+                    <!--  This binding resolves successfully but will not accept a fully qualified path  -->
+                    <!--  ReSharper disable once Xaml.BindingWithContextNotResolved  -->
                     <DataTrigger Binding="{Binding IsAmountChanged}" Value="True">
                         <DataTrigger.EnterActions>
                             <BeginStoryboard>
                                 <Storyboard>
-                                    <ColorAnimation Duration="00:00:2" Storyboard.TargetProperty="Background.Color" From="Orange" />
+                                    <ColorAnimation
+                                        Storyboard.TargetProperty="Background.Color"
+                                        From="#FFF26D21"
+                                        Duration="00:00:2" />
                                 </Storyboard>
                             </BeginStoryboard>
                         </DataTrigger.EnterActions>
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
-        </DataGrid.RowStyle>
-        <DataGrid.Columns>
-            <DataGridTemplateColumn IsReadOnly="True" Width="Auto">
-                <DataGridTemplateColumn.CellStyle>
-                    <Style TargetType="{x:Type DataGridCell}">
-                        <Setter Property="IsHitTestVisible" Value="False"/>
-                    </Style>
-                </DataGridTemplateColumn.CellStyle>
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <Border BorderThickness="2" Width="36" Height="36">
-                            <Border.BorderBrush>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0" GradientStops="{Binding BorderGradient}" />
-                            </Border.BorderBrush>
-                            <Rectangle Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Rectangle.Fill>
-                                    <ImageBrush>
-                                        <ImageBrush.ImageSource>
-                                            <Binding Path="ImageArtUrl">
-                                                <Binding.TargetNullValue>
-                                                    <ImageSource>/Assets/Images/thumbnailUnknown.png</ImageSource>
-                                                </Binding.TargetNullValue>
-                                            </Binding>
-                                        </ImageBrush.ImageSource>
-                                    </ImageBrush>
-                                </Rectangle.Fill>
-                            </Rectangle>
-                        </Border>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-
-            <DataGridTemplateColumn IsReadOnly="True" Width="*">
-                <DataGridTemplateColumn.CellStyle>
-                    <Style TargetType="{x:Type DataGridCell}">
-                        <Setter Property="VerticalAlignment" Value="Stretch" />
-                        <Setter Property="IsHitTestVisible" Value="False"/>
-                    </Style>
-                </DataGridTemplateColumn.CellStyle>
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <Label Padding="2">
+        </ListBox.ItemContainerStyle>
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="LastColumn" />
+                    </Grid.ColumnDefinitions>
+                    <!--  Card Image  -->
+                    <Border
+                        Grid.Column="0"
+                        Margin="2"
+                        d:DataContext="{d:DesignInstance viewModels:LibraryCardWithAmountVM}"
+                        BorderThickness="2"
+                        Visibility="{Binding DataContext.ShowImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVis}}">
+                        <Border.BorderBrush>
+                            <LinearGradientBrush GradientStops="{Binding BorderGradient}" StartPoint="0,0" EndPoint="1,0" />
+                        </Border.BorderBrush>
+                        <Image
+                            Width="32"
+                            Height="32"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Source="{Binding ImageArtUrl, TargetNullValue='pack://application:,,,/Assets/Images/thumbnailUnknown.png'}" />
+                    </Border>
+                    <!--  Card Name And Converted Mana Cost  -->
+                    <Grid Grid.Column="1">
+                        <!--  Vertical Layout  -->
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <!--  Card Name  -->
+                            <Label
+                                Grid.Row="0"
+                                Padding="5,4,0,0"
+                                Visibility="{Binding DataContext.ShowImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVis}}">
                                 <TextBlock Text="{Binding Name}" />
                             </Label>
-
-                            <ItemsControl ItemsSource="{Binding CmcImages}" Padding="2">
+                            <!--  Converted Mana Cost Symbols  -->
+                            <ItemsControl
+                                Grid.Row="1"
+                                Padding="5,0,0,4"
+                                ItemsSource="{Binding CmcImages}"
+                                Visibility="{Binding DataContext.ShowImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVis}}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal" />
@@ -87,41 +120,124 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Image Source="{Binding}" />
+                                        <Image
+                                            Width="14"
+                                            Height="14"
+                                            Source="{Binding}" />
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                        </StackPanel>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-
-            <DataGridTemplateColumn IsReadOnly="True" Width="42">
-                <DataGridTemplateColumn.CellStyle>
-                    <Style TargetType="{x:Type DataGridCell}">
-                        <Setter Property="Background" Value="#0b0d0e" />
-                        <Setter Property="IsHitTestVisible" Value="False"/>
-                    </Style>
-                </DataGridTemplateColumn.CellStyle>
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <StackPanel VerticalAlignment="Center">
-                            <StackPanel Visibility="{Binding DataContext.ShowDrawPctAndAmount, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVisConverter}}">
-                                <Label Padding="2" HorizontalAlignment="Center">
-                                    <TextBlock Text="{Binding AmountWithOriginal}" FontWeight="Bold" Foreground="White" />
-                                </Label>
-                                <Label Padding="2" HorizontalAlignment="Center">
-                                    <TextBlock Text="{Binding DrawPercent, StringFormat=p1}" />
-                                </Label>
-                            </StackPanel>
-                            <Label Padding="0" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       Visibility="{Binding DataContext.ShowAmount, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVisConverter}}">
-                                <TextBlock Text="{Binding Amount}" FontWeight="Bold" Foreground="White" />
+                        </Grid>
+                        <!--  Horizontal Layout  -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <!--  Card Name  -->
+                            <Label
+                                Grid.Column="0"
+                                Padding="2,0"
+                                VerticalAlignment="Center"
+                                Visibility="{Binding DataContext.ShowImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVisInverse}}">
+                                <TextBlock Text="{Binding Name}" />
                             </Label>
-                        </StackPanel>
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-            </DataGridTemplateColumn>
-        </DataGrid.Columns>
-    </DataGrid>
+                            <!--  Converted Mana Cost Symbols  -->
+                            <ItemsControl
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Padding="2,0"
+                                ItemsSource="{Binding CmcImages}"
+                                Visibility="{Binding DataContext.ShowImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVisInverse}}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Image
+                                            Width="12"
+                                            Height="12"
+                                            Source="{Binding}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </Grid>
+                    <!--  Card Count with Draw Percentage  -->
+                    <Grid
+                        Grid.Column="2"
+                        Background="{StaticResource HeaderBrush}"
+                        Visibility="{Binding DataContext.ShowDrawPercent, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVis}}">
+                        <!--  Vertical Layout  -->
+                        <Grid Visibility="{Binding DataContext.ShowImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVis}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <!--  Fraction of cards remaining  -->
+                            <Label
+                                Grid.Row="0"
+                                Padding="5,2"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom">
+                                <TextBlock
+                                    FontWeight="Bold"
+                                    Foreground="White"
+                                    Text="{Binding CardFraction}" />
+                            </Label>
+                            <!--  Percentage to draw card  -->
+                            <Label
+                                Grid.Row="1"
+                                Padding="5,2"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top">
+                                <TextBlock Text="{Binding DrawPercent, StringFormat=p1}" />
+                            </Label>
+                        </Grid>
+                        <!--  Horizontal Layout  -->
+                        <Grid Visibility="{Binding DataContext.ShowImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVisInverse}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition SharedSizeGroup="ThirdColumn" />
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn" />
+                            </Grid.ColumnDefinitions>
+                            <!--  Fraction of cards remaining  -->
+                            <Label
+                                Grid.Column="0"
+                                Padding="5,0"
+                                HorizontalAlignment="Center">
+                                <TextBlock
+                                    FontWeight="Bold"
+                                    Foreground="White"
+                                    Text="{Binding CardFraction}" />
+                            </Label>
+                            <!--  Percentage to draw card  -->
+                            <Label
+                                Grid.Column="1"
+                                Padding="0,0,5,0"
+                                HorizontalAlignment="Right">
+                                <TextBlock Text="{Binding DrawPercent, StringFormat=p1}" />
+                            </Label>
+                        </Grid>
+                    </Grid>
+                    <!--  Card Count Only / Used for opponent decks when original amount is unknown  -->
+                    <Grid
+                        Grid.Column="2"
+                        Background="{StaticResource HeaderBrush}"
+                        Visibility="{Binding DataContext.ShowCardCountOnly, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVis}}">
+                        <Label
+                            Padding="20,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                            <TextBlock
+                                FontWeight="Bold"
+                                Foreground="White"
+                                Text="{Binding Amount}" />
+                        </Label>
+                    </Grid>
+                </Grid>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+    </ListBox>
 </UserControl>

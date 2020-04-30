@@ -2,12 +2,11 @@
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
-    public enum MainWindowContextEnum
+    public enum WindowContext
     {
         Unknown,
         Welcome,
         Home,
-        //InCollection,
         Drafting,
         Playing,
     }

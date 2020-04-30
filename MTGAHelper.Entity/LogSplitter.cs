@@ -4,9 +4,15 @@ using System.Text;
 
 namespace MTGAHelper.Entity
 {
+    // TODO: move out of Entity
     public class LogSplitter
     {
-        readonly Util util = new Util();
+        readonly Util util;
+
+        public LogSplitter(Util util)
+        {
+            this.util = util;
+        }
 
         public string LastPartWithDate { get; private set; }
 
@@ -40,8 +46,8 @@ namespace MTGAHelper.Entity
         {
             //try
             //{
-                if (part.Contains(DateTime.Now.Year.ToString()) || part.Contains((DateTime.Now.Year - 1).ToString()))
-                    LastPartWithDate = part;
+            if (part.Contains(DateTime.Now.Year.ToString()) || part.Contains((DateTime.Now.Year - 1).ToString()))
+                LastPartWithDate = part;
             //}
             //catch (Exception ex)
             //{

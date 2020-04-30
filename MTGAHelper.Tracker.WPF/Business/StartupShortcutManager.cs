@@ -45,8 +45,8 @@ namespace MTGAHelper.Tracker.WPF.Business
         {
             //try
             //{
-            var shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "MTGAHelper Tracker.lnk");
-            var shortcutExists = File.Exists(shortcutPath);
+            string shortcutPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "MTGAHelper Tracker.lnk");
+            bool shortcutExists = File.Exists(shortcutPath);
 
             if (runOnStartup)
             {
@@ -55,7 +55,7 @@ namespace MTGAHelper.Tracker.WPF.Business
             }
             else if (shortcutExists)
             {
-                System.IO.File.Delete(shortcutPath);
+                File.Delete(shortcutPath);
             }
 
             return true;
@@ -67,9 +67,9 @@ namespace MTGAHelper.Tracker.WPF.Business
             //}
         }
 
-        void CreateShortcut(string shortcutPath)
+        private void CreateShortcut(string shortcutPath)
         {
-             var appLocation = System.Reflection.Assembly.GetExecutingAssembly().Location.Replace(".dll", ".exe");
+             string appLocation = System.Reflection.Assembly.GetExecutingAssembly().Location.Replace(".dll", ".exe");
 
             // var shell = new WshShell();
             // var shortcut = shell.CreateShortcut(shortcutPath) as IWshShortcut;
@@ -77,14 +77,15 @@ namespace MTGAHelper.Tracker.WPF.Business
             // shortcut.WorkingDirectory = Path.GetDirectoryName(appLocation);
             // shortcut.Save();
 
-            IShellLink link = (IShellLink)new ShellLink();
+            var link = (IShellLink)new ShellLink();
 
             // setup shortcut information
             link.SetDescription("MTGAHelper Tracker");
             link.SetPath(appLocation);
+            link.SetWorkingDirectory(Path.GetDirectoryName(appLocation));
 
             // save it
-            IPersistFile file = (IPersistFile)link;
+            var file = (IPersistFile) link;
             file.Save(shortcutPath, false);
         }
     }

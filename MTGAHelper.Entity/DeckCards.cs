@@ -10,6 +10,7 @@ namespace MTGAHelper.Entity
         public Dictionary<int, DeckCard> QuickCardsMain { get; protected set; }
         public Dictionary<int, DeckCard> QuickCardsSideboard { get; protected set; }
         public DeckCard QuickCardCommander { get; protected set; }
+        public DeckCard QuickCardCompanion { get; protected set; }
 
         public DeckCards(ICollection<DeckCard> Cards)
         {
@@ -33,6 +34,8 @@ namespace MTGAHelper.Entity
                 .ToDictionary(i => i.Card.grpId, i => i);
 
             QuickCardCommander = All.FirstOrDefault(i => i.Zone == DeckCardZoneEnum.Commander);
+
+            QuickCardCompanion = All.FirstOrDefault(i => i.Zone == DeckCardZoneEnum.Companion);
         }
     }
 }

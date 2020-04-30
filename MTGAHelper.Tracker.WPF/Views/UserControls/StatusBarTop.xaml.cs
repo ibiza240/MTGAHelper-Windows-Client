@@ -1,68 +1,123 @@
-﻿using MTGAHelper.Tracker.WPF.ViewModels;
+﻿using MTGAHelper.Tracker.WPF.Config;
+using MTGAHelper.Tracker.WPF.ViewModels;
+using Newtonsoft.Json;
+using Serilog;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
-using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace MTGAHelper.Tracker.WPF.Views.UserControls
 {
     /// <summary>
     /// Interaction logic for StatusBarTop.xaml
     /// </summary>
-    public partial class StatusBarTop : UserControl
+    public partial class StatusBarTop
     {
-        MainWindow mainWindow;// => (MainWindow)Window.GetWindow(this);
-        MainWindowVM vm;
+        #region Constructor / Initializer
 
-        //DraftHelper draftHelper;
-        //LogProcessor logProcessor;
-        //string userId;
-
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public StatusBarTop()
         {
             InitializeComponent();
         }
 
-        public StatusBarTop Init(MainWindow mainWindow, MainWindowVM vm/*, DraftHelper draftHelper,LogProcessor logProcessor, string userId,*/)
+        /// <summary>
+        /// Initializer
+        /// </summary>
+        /// <param name="mainWindow"></param>
+        /// <param name="vm"></param>
+        public void Init(MainWindow mainWindow, MainWindowVM vm)
         {
-            this.mainWindow = mainWindow;
-            this.vm = vm;
-            //this.draftHelper = draftHelper;
-            //this.logProcessor = logProcessor;
-            //this.userId = userId;
-            //this.allCards = allCards;
-            return this;
+            MainWindow = mainWindow;
+            MainWindowViewModel = vm;
         }
 
+        #endregion
+
+        #region Private Fields
+
+        /// <summary>
+        /// Main Window
+        /// </summary>
+        private MainWindow MainWindow;
+
+        /// <summary>
+        /// Main Window View Model
+        /// </summary>
+        private MainWindowVM MainWindowViewModel;
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Show the options dialog
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Menu_Options_Click(object sender, RoutedEventArgs e)
         {
-            mainWindow.ShowDialogOptions();
+            MainWindow.ShowDialogOptions();
         }
 
-        private void Menu_Minimize_Click(object sender, RoutedEventArgs e)
+        private void Menu_DraftHelperConfig_Click(object sender, RoutedEventArgs e)
         {
-            MinimizeWindow();
-        }
+            string filepathConfigurator = Path.Combine(MainWindow.ConfigModel.DraftHelperFolder, "MTGAHelper.Tracker.DraftHelper.Configurator.exe");
 
-        public void MinimizeWindow()
-        {
-            if (mainWindow.configApp.MinimizeToSystemTray)
+            Log.Information($"Starting configurator at {filepathConfigurator}");
+
+            // Use same Ratings source as in Options
+            var configuratorConfigFilepath = Path.Combine(Path.GetDirectoryName(filepathConfigurator), "configurator.config.json");
+            if (File.Exists(configuratorConfigFilepath))
             {
-                //mainWindow.ShowInTaskbar = false;
-                //mainWindow.trayIcon.Visible = true;
-                mainWindow.Visibility = Visibility.Hidden;
+                var configuratorConfigFileContent = File.ReadAllText(configuratorConfigFilepath);
+                var configuratorConfig = JsonConvert.DeserializeObject<ConfiguratorConfig>(configuratorConfigFileContent);
+                if (configuratorConfig.RatingsSource != MainWindow.ConfigModel.ShowLimitedRatingsSource)
+                {
+                    configuratorConfig.RatingsSource = MainWindow.ConfigModel.ShowLimitedRatingsSource;
+                    File.WriteAllText(configuratorConfigFilepath, JsonConvert.SerializeObject(configuratorConfig));
+                }
             }
-            else
-                mainWindow.WindowState = WindowState.Minimized;
+
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = filepathConfigurator,
+                    UseShellExecute = false,
+                    CreateNoWindow = false,
+                    WorkingDirectory = Path.GetDirectoryName(filepathConfigurator)
+                }
+            };
+
+            process.Start();
         }
 
+        private void Menu_DraftHelperRun_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.RunDraftHelper();
+        }
+
+        /// <summary>
+        /// Show the about dialog
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Menu_About_Click(object sender, RoutedEventArgs e)
         {
-            var about = new AboutWindow();
-            about.Owner = Window.GetWindow(this);
+            var about = new AboutWindow { Owner = Window.GetWindow(this) };
             about.ShowDialog();
         }
 
+        /// <summary>
+        /// Open the patch notes website
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Menu_PatchNotes_Click(object sender, RoutedEventArgs e)
         {
             var ps = new ProcessStartInfo("https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/PatchNotes.md")
@@ -74,83 +129,64 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             e.Handled = true;
         }
 
+        /// <summary>
+        /// Close the application
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Menu_Exit_Click(object sender, RoutedEventArgs e)
         {
-            App.Current.Shutdown();
+            Application.Current.Shutdown();
         }
 
+        /// <summary>
+        /// Upload the log file manually
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Menu_UploadNow_Click(object sender, RoutedEventArgs e)
         {
-            if (vm.Account.IsAuthenticated == false)
+            if (MainWindowViewModel.Account.IsAuthenticated == false)
             {
                 MessageBox.Show("Please sign-in first.", "MTGAHelper");
                 return;
             }
 
-            if (vm.IsUploading)
+            if (MainWindowViewModel.IsUploading)
             {
                 MessageBox.Show($"The tracker is already uploading data, sorry for the slow speed. This waiting time can be greatly reduced, see how you can show your support on the website. Thanks!", "MTGAHelper");
                 return;
             }
 
-            mainWindow.UploadLogFile(() =>
+            MainWindow.UploadLogFile(() =>
             {
                 Dispatcher.Invoke(() =>
                 {
-                    var errors = vm.ProblemsList.Count == 0 ? "." : $":{Environment.NewLine}{string.Join(Environment.NewLine, vm.ProblemsList)}";
+                    string errors = MainWindowViewModel.ProblemsList.Count == 0 ? "." : $":{Environment.NewLine}{string.Join(Environment.NewLine, MainWindowViewModel.ProblemsList)}";
                     MessageBox.Show($"Could not upload the log file{errors}", "MTGAHelper");
                 });
             });
         }
 
-        private void Menu_AlwaysOnTop_Click(object sender, RoutedEventArgs e)
-        {
-            mainWindow.SetAlwaysOnTop(!menuItemAlwaysOnTop.IsChecked);
-            mainWindow.Activate();
-        }
-
-        internal void SetAlwaysOnTop(bool alwaysOnTop)
-        {
-            menuItemAlwaysOnTop.IsChecked = alwaysOnTop;
-            vm.AlwaysOnTop.Value = alwaysOnTop;
-            mainWindow.Topmost = alwaysOnTop;
-        }
-
         private void Menu_Signin_Click(object sender, RoutedEventArgs e)
         {
-            vm.SetMainWindowContext(MainWindowContextEnum.Welcome);
+            MainWindowViewModel.SetMainWindowContext(WindowContext.Welcome);
         }
 
-        //int i = 0;
-        //private void MenuTestDrafter_Click(object sender, RoutedEventArgs e)
-        //{
-        //    Task.Factory.StartNew(() =>
-        //    {
-        //        if (i % 2 == 0)
-        //        {
-        //            var draftPack = "\"69195\",\"69245\",\"69212\",\"69261\",\"69382\",\"69268\",\"69172\",\"69278\",\"69299\",\"69312\",\"69248\",\"69339\",\"69287\",\"69155\",\"69400\"";
+        /// <summary>
+        /// Show the animated icon on an icon double click
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void IconClick(object sender, MouseButtonEventArgs e)
+        {
+            // Look for double clicks
+            if (e.ClickCount != 2) return;
 
-        //            var rng = new Random();
-        //            var randomizedCards = allCards
-        //                .OrderBy(i => rng.NextDouble())
-        //                .Take(15)
-        //                .Select(i => "\"" + i.grpId + "\"")
-        //                .ToArray();
-        //            draftPack = string.Join(",", randomizedCards);
+            // Flip the animated icon boolean
+            MainWindowViewModel.AnimatedIcon = !MainWindowViewModel.AnimatedIcon;
+        }
 
-        //            var msg = "[UnityCrossThreadLogger]8/9/2019 1:05:03 AM" + Environment.NewLine + "<== Draft.DraftStatus(113)" + Environment.NewLine +
-        //"{\"playerId\":\"933E5CE627155485\",\"eventName\":\"QuickDraft_RNA_20190802\",\"draftId\":\"933E5CE627155485: QuickDraft_RNA_20190802: Draft\",\"draftStatus\":\"Draft.PickNext\",\"packNumber\":0,\"pickNumber\":0,\"draftPack\":[" + draftPack + "],\"pickedCards\":[],\"requestUnits\":0.0}";
-
-        //            mainWindow.OnFileSizeChangedNewText(this, msg);
-        //        }
-        //        else
-        //        {
-        //            var msg = File.ReadAllText(@"D:\repos\MTGAHelper\CompleteDraft.txt");
-        //            mainWindow.OnFileSizeChangedNewText(this, msg);
-        //        }
-
-        //        i++;
-        //    });
-        //}
+        #endregion
     }
 }

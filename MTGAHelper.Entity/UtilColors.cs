@@ -1,11 +1,13 @@
 ﻿using MTGAHelper.Lib.Cache;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 
 namespace MTGAHelper.Entity
 {
-    public class UtilColors
+    public class UtilColors : IValueConverter<ICollection<int>, string>, IValueConverter<IDeck, string>
     {
+        // TODO: move out of Entity
         readonly Dictionary<string, int> order = new Dictionary<string, int> {
             { "W", 1 },
             { "U", 2 },
@@ -14,13 +16,10 @@ namespace MTGAHelper.Entity
             { "G", 5 },
         };
 
-        public Dictionary<int, Card> dictAllCards;
+        readonly Dictionary<int, Card> dictAllCards;
 
         public UtilColors(CacheSingleton<Dictionary<int, Card>> allCards)
         {
-            //var value = allCards.Get();
-            //if (value != null)
-            //    dictAllCards = value.ToDictionary(i => i.grpId, i => i);
             dictAllCards = allCards.Get();
         }
 
@@ -59,6 +58,16 @@ namespace MTGAHelper.Entity
                 .OrderBy(i => order[i]);
 
             return colors;
+        }
+
+        public string Convert(ICollection<int> sourceMember, ResolutionContext context)
+        {
+            return FromGrpIds(sourceMember);
+        }
+
+        public string Convert(IDeck sourceMember, ResolutionContext context)
+        {
+            return FromDeck(sourceMember);
         }
     }
 }

@@ -10,21 +10,16 @@ namespace MTGAHelper.Tracker.WPF.Views.Helpers
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value == null)
-                return FalseValue;
-            else
-                return System.Convert.ToBoolean(value) ? TrueValue : FalseValue;
+            return value == null ? FalseValue : System.Convert.ToBoolean(value) ? TrueValue : FalseValue;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return value != null ? value.Equals(TrueValue) : false;
+            return value?.Equals(TrueValue) ?? false;
         }
     }
 
     public class BoolToStringConverter : BoolToValueConverter<string> { }
     public class BoolToIntegerConverter : BoolToValueConverter<int> { }
-    //public class BoolToBrushConverter : BoolToValueConverter<Brush> { }
-    //public class BoolToVisibilityConverter : BoolToValueConverter<Visibility> { }
-    //public class BoolToObjectConverter : BoolToValueConverter<Object> { }
+
 }

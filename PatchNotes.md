@@ -1,3 +1,12 @@
+### v1.4.3 (2020-04-30)
+
+UI Theme overhaul
+In-match tracker Compact mode
+In-match tracker Option to show Opponent cards in the same window or in a separate window
+Bugfix for Bo3 sideboarding
+Full opponent name with tag now saved, making a friend request possible
+.Net Core Framework 1.3.1 dependency removed (now relying on .Net Framework 4.8)
+
 ### v1.4.2 (2020-04-16)
 
 Update for supporting the latest MTGA game patch (Ikoria)

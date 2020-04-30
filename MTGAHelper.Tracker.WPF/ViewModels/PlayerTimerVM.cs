@@ -6,37 +6,37 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 {
     public class PlayerTimerVM : ObservableObject
     {
-        readonly DispatcherTimer dispatcherTimer = new DispatcherTimer();
-        readonly Stopwatch stopWatch = new Stopwatch();
+        private readonly DispatcherTimer DispatcherTimer = new DispatcherTimer();
+
+        private readonly Stopwatch StopWatch = new Stopwatch();
 
         public string TimePlayed
         {
             get
             {
-                TimeSpan ts = stopWatch.Elapsed;
-                return string.Format("{0:00}:{1:00}:{2:00}", ts.Hours, ts.Minutes, ts.Seconds);
+                var ts = StopWatch.Elapsed;
+                return $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}";
             }
         }
 
-        public bool HasPriority => stopWatch.IsRunning;
+        public bool HasPriority => StopWatch.IsRunning;
 
         public PlayerTimerVM()
         {
-            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
-            dispatcherTimer.Interval = TimeSpan.FromMilliseconds(200);
+            DispatcherTimer.Tick += DispatcherTimer_Tick;
+            DispatcherTimer.Interval = TimeSpan.FromMilliseconds(200);
         }
 
-        void dispatcherTimer_Tick(object sender, EventArgs e)
+        private void DispatcherTimer_Tick(object sender, EventArgs e)
         {
             try
             {
-                if (stopWatch.IsRunning)
-                {
-                    RaisePropertyChangedEvent(nameof(TimePlayed));
-                    RaisePropertyChangedEvent(nameof(HasPriority));
-                }
+                if (!StopWatch.IsRunning) return;
+
+                RaisePropertyChangedEvent(nameof(TimePlayed));
+                RaisePropertyChangedEvent(nameof(HasPriority));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Debugger.Break();
             }
@@ -44,20 +44,20 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public void Pause()
         {
-            stopWatch.Stop();
-            dispatcherTimer.Stop();
+            StopWatch.Stop();
+            DispatcherTimer.Stop();
         }
 
-        public void Unpause()
+        public void Resume()
         {
-            stopWatch.Start();
-            dispatcherTimer.Start();
+            StopWatch.Start();
+            DispatcherTimer.Start();
         }
 
         public void Reset()
         {
-            stopWatch.Reset();
-            dispatcherTimer.Stop();
+            StopWatch.Reset();
+            DispatcherTimer.Stop();
             RaisePropertyChangedEvent(nameof(TimePlayed));
         }
     }

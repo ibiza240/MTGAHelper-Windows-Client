@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
+﻿using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Web.Models.Request;
 using MTGAHelper.Web.Models.Response.Account;
@@ -19,31 +18,28 @@ namespace MTGAHelper.Tracker.WPF.Business
 {
     public class ServerApiCaller
     {
-        const string SERVER = DebugOrRelease.Server;
+        private const string SERVER = DebugOrRelease.Server;
 
-        protected const string serverTest = DebugOrRelease.LocalServer;
+        protected const string ServerTest = DebugOrRelease.LocalServer;
 
-        readonly Uri baseAddress = new Uri(SERVER);
+        private readonly Uri BaseAddress = new Uri(SERVER);
 
-        readonly CookieContainer cookieContainer;
-        readonly HttpClientHandler handler;
-        readonly HttpClient client;
+        private readonly CookieContainer CookieContainer;
+        private readonly HttpClient Client;
 
-        LogFileZipper zipper;
-        ConfigModelApp configApp;
+        private ConfigModel ConfigApp;
 
-        public ServerApiCaller(LogFileZipper zipper, IOptionsMonitor<ConfigModelApp> configApp)
+        public ServerApiCaller(ConfigModel configApp)
         {
-            cookieContainer = new CookieContainer();
-            handler = new HttpClientHandler() { CookieContainer = cookieContainer };
-            client = new HttpClient(handler) { BaseAddress = baseAddress };
-            this.zipper = zipper;
-            this.configApp = configApp?.CurrentValue;
+            CookieContainer = new CookieContainer();
+            var handler = new HttpClientHandler { CookieContainer = CookieContainer };
+            Client = new HttpClient(handler) { BaseAddress = BaseAddress };
+            ConfigApp = configApp;
         }
 
         public void SetUserId(string userId)
         {
-            cookieContainer.SetCookies(baseAddress, "userId=" + userId);
+            CookieContainer.SetCookies(BaseAddress, "userId=" + userId);
         }
 
         //    public AccountResponse Init(AccountResponse account, string password)
@@ -146,9 +142,9 @@ namespace MTGAHelper.Tracker.WPF.Business
             {
                 try
                 {
-                    var response = client.PostAsync(apiEndpoint, new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json")).Result;
+                    var response = Client.PostAsync(apiEndpoint, new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json")).Result;
                     response.EnsureSuccessStatusCode();
-                    var strResponse = response.Content.ReadAsStringAsync().Result;
+                    string strResponse = response.Content.ReadAsStringAsync().Result;
                     var parsed = JsonConvert.DeserializeObject<TReturn>(strResponse);
                     return parsed;
                 }
@@ -169,7 +165,7 @@ namespace MTGAHelper.Tracker.WPF.Business
         //    }
         //}
 
-        T GetResponseWithCookie<T>(string apiEndpoint)
+        private T GetResponseWithCookie<T>(string apiEndpoint)
         {
             //var baseAddress = new Uri(server);
             //var cookieContainer = new CookieContainer();
@@ -178,9 +174,9 @@ namespace MTGAHelper.Tracker.WPF.Business
             {
                 try
                 {
-                    var response = client.GetAsync(apiEndpoint).Result;
+                    var response = Client.GetAsync(apiEndpoint).Result;
                     response.EnsureSuccessStatusCode();
-                    var strResponse = response.Content.ReadAsStringAsync().Result;
+                    string strResponse = response.Content.ReadAsStringAsync().Result;
 
                     if (typeof(T) == typeof(string))
                         return (T)Convert.ChangeType(strResponse, typeof(T));
@@ -192,10 +188,10 @@ namespace MTGAHelper.Tracker.WPF.Business
                 {
                     throw new HttpRequestException("Remote server unavailable", ex);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     Debugger.Break();
-                    return default(T);
+                    return default;
                 }
             }
         }
@@ -299,7 +295,7 @@ namespace MTGAHelper.Tracker.WPF.Business
 
         internal bool IsSameLastUploadHash(string userId, uint uploadHash)
         {
-            var latestUploadHash = GetResponseWithCookie<LastHashResponse>("/api/User/LastUploadHash").LastHash;
+            string latestUploadHash = GetResponseWithCookie<LastHashResponse>("/api/User/LastUploadHash").LastHash;
             return latestUploadHash == uploadHash.ToString();
         }
 

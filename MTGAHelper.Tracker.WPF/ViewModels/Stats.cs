@@ -5,10 +5,10 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 {
     public class Stats
     {
-        bool hasCapturedTotals;
+        private bool HasCapturedTotals;
         public int CardsLeftInDeck { get; private set; }
         public int LandsLeftInDeck { get; private set; }
-        public int TotalCardsInitial { get; private set; }
+        public int TotalCardsInitial { get; set; }
         public int TotalLandsInitial { get; private set; }
         public float DrawLandPct { get; private set; }
 
@@ -21,23 +21,23 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             LandsLeftInDeck = deck.Where(i => i.Type.Contains("Land")).Sum(i => i.Amount);
             DrawLandPct = deck.Where(c => c.Type.Contains("Land")).Sum(c => c.DrawPercent);
 
-            if (hasCapturedTotals)
+            if (HasCapturedTotals)
                 return;
 
             TotalLandsInitial = LandsLeftInDeck;
             TotalCardsInitial = CardsLeftInDeck;
-            hasCapturedTotals = true;
+            HasCapturedTotals = true;
         }
 
         internal void Reset(ICollection<LibraryCardWithAmountVM> deck)
         {
-            hasCapturedTotals = false;
+            HasCapturedTotals = false;
             Refresh(deck);
         }
 
         internal void Reset()
         {
-            hasCapturedTotals = false;
+            HasCapturedTotals = false;
 
             CardsLeftInDeck = 0;
             LandsLeftInDeck = 0;

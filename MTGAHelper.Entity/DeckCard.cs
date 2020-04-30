@@ -5,6 +5,7 @@
         Deck,
         Sideboard,
         Commander,
+        Companion,
     };
 
     public interface IDeckCard

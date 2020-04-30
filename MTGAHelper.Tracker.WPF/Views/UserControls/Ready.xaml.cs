@@ -11,7 +11,7 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
     /// </summary>
     public partial class Ready : UserControl
     {
-        string gameFilePath;
+        private string GameFilePath;
 
         public Ready()
         {
@@ -20,22 +20,22 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
 
         public void Init(string gameFilePath)
         {
-            this.gameFilePath = gameFilePath;
+            GameFilePath = gameFilePath;
         }
 
-        void HyperlinkLaunchGame_Click(object sender, RoutedEventArgs e)
+        private void HyperlinkLaunchGame_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                var appName = Path.GetFileNameWithoutExtension(gameFilePath);
-                var processFound = Process.GetProcessesByName(appName).Length > 0;
+                string? appName = Path.GetFileNameWithoutExtension(GameFilePath);
+                bool processFound = Process.GetProcessesByName(appName).Length > 0;
                 if (processFound)
                 {
                     MessageBox.Show($"Game is already running.", "MTGAHelper");
                     return;
                 }
 
-                var ps = new ProcessStartInfo(gameFilePath);
+                var ps = new ProcessStartInfo(GameFilePath);
                 Process.Start(ps);
             }
             catch (Exception ex)

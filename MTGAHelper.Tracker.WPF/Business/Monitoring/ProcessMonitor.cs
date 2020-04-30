@@ -6,9 +6,9 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
 {
     public class ProcessMonitor
     {
-        const string PROCESS_NAME = "MTGA";
+        private const string PROCESS_NAME = "MTGA";
 
-        public bool IsRunning { get; private set; } = false;
+        public bool IsRunning { get; private set; }
 
         public event Action<object, bool> OnProcessMonitorStatusChanged;
 
@@ -21,35 +21,33 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
             await ContinuallyCheckForProcess(cancellationToken);
         }
 
-        Task ContinuallyCheckForProcess(CancellationToken cancellationToken)
+        private Task ContinuallyCheckForProcess(CancellationToken cancellationToken)
         {
-            Task task = null;
-
-            task = Task.Run(() =>
+            var task = Task.Run(() =>
             {
                 while (true)
                 {
                     try
                     {
-                        if (cancellationToken.IsCancellationRequested == true)
-                            throw new TaskCanceledException(task);
+                        if (cancellationToken.IsCancellationRequested)
+                            throw new TaskCanceledException((Task) null);
 
-                        var processFound = System.Diagnostics.Process.GetProcessesByName(PROCESS_NAME).Length > 0;
-                        var stateChanged = processFound != IsRunning;
+                        bool processFound = System.Diagnostics.Process.GetProcessesByName(PROCESS_NAME).Length > 0;
+                        bool stateChanged = processFound != IsRunning;
                         if (stateChanged)
                         {
                             IsRunning = processFound;
                             OnProcessMonitorStatusChanged?.Invoke(this, IsRunning);
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         //Log.Fatal(ex, "Unexpected error:");
                     }
 
                     Thread.Sleep(1000);
                 }
-            });
+            }, cancellationToken);
 
             return task;
         }

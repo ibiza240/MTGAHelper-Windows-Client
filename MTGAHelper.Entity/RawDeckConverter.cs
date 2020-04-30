@@ -1,42 +1,21 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MTGAHelper.Lib.Cache;
 
 namespace MTGAHelper.Entity
 {
-    public enum enumLinkedFace
-    {
-        None = 0,
-        DFC_Front = 1,
-        DFC_Back = 2,
-        MeldCard = 3,
-        MeldedPermanent = 4,
-        SplitCard = 5,
-        SplitHalf = 6,
-        AdventureAdventure = 7,
-        AdventureCreature = 8,
-    }
-
+    // TODO: move out of Entity
     public class RawDeckConverter
     {
-        public Dictionary<int, int> ResultRaw { get; private set; }
+        readonly Dictionary<int, Card> allCards;
 
-        Dictionary<int, Card> allCards;
-
-        public RawDeckConverter Init(Dictionary<int, Card> allCards)
+        public RawDeckConverter(CacheSingleton<Dictionary<int, Card>> allCards)
         {
-            this.allCards = allCards;
-            return this;
+            this.allCards = allCards.Get();
         }
 
-        public ICollection<CardWithAmount> LoadCollection(string collectionJson)
-        {
-            ResultRaw = JsonConvert.DeserializeObject<Dictionary<int, int>>(collectionJson);
-            return LoadCollection(ResultRaw);
-        }
-
-        public ICollection<CardWithAmount> LoadCollection(Dictionary<int, int> info)
+        public ICollection<CardWithAmount> LoadCollection(IReadOnlyDictionary<int, int> info)
         {
             if (info == null)
                 return new CardWithAmount[0];
@@ -72,6 +51,4 @@ namespace MTGAHelper.Entity
                 .ToArray();
         }
     }
-
-
 }

@@ -1,11 +1,11 @@
-﻿using MTGAHelper.Entity;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using MTGAHelper.Entity;
 using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Entity.UserHistory;
 using MTGAHelper.Lib.Config.Users;
 using MTGAHelper.Lib.UserHistory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
 {
@@ -190,19 +190,6 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
 
         public InfoByDate<Dictionary<int, int>> GetLastCollection() => CollectionByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<Dictionary<int, int>>(default(DateTime), new Dictionary<int, int>());
-
-        public InfoByDate<ICollection<CardWithAmount>> GetLastCollectionInMemory(RawDeckConverter converter)
-        {
-            InfoByDate<ICollection<CardWithAmount>> lastCollectionInMemory = null;
-            var info = GetLastCollection();
-            //if (lastCollectionInMemory == null || lastCollectionInMemory.DateTime == default(DateTime))
-            {
-                //var info = GetLastCollection();
-                lastCollectionInMemory = new InfoByDate<ICollection<CardWithAmount>>(info.DateTime, converter.LoadCollection(info.Info));
-            }
-
-            return lastCollectionInMemory;
-        }
 
         public InfoByDate<ICollection<ConfigModelRankInfo>> GetLastRankInfo() => RankSyntheticByDate.GetData().OrderBy(i => i.DateTime).LastOrDefault()
             ?? new InfoByDate<ICollection<ConfigModelRankInfo>>(default(DateTime),

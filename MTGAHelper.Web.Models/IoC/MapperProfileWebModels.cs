@@ -1,14 +1,12 @@
-﻿
+﻿using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.MtgaDeckStats;
 using MTGAHelper.Entity.UserHistory;
-using MTGAHelper.Lib.Cache;
 using MTGAHelper.Lib.CollectionDecksCompare;
 using MTGAHelper.Lib.Config.Users;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
-using MTGAHelper.Web.Models;
 using MTGAHelper.Web.Models.Response.Account;
 using MTGAHelper.Web.Models.Response.User;
 using MTGAHelper.Web.Models.Response.User.History;
@@ -19,24 +17,19 @@ using MTGAHelper.Web.UI.Model.Response.User;
 using MTGAHelper.Web.UI.Model.Response.User.History;
 using MTGAHelper.Web.UI.Model.SharedDto;
 using MTGAHelper.Web.UI.Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MTGAHelper.Web.UI.IoC
 {
     public class MapperProfileWebModels : Profile
     {
         public MapperProfileWebModels(
-            Dictionary<int, Card> dictAllCards,
-            IServiceProvider provider,
-            UtilManaCurve utilManaCurve)
+            UtilColors utilColors,
+            AutoMapperRawDeckToColorConverter rawDeckToColor,
+            AutoMapperIntToCardArtConverter intToCardArt,
+            AutoMapperRawDeckConverter rawDeckConverter,
+            AutoMapperManaCurveConverter manaCurveConverter,
+            AutoMapperCollationToSetConverter collationToSet)
         {
-            var rawDeckConverter = provider.GetService<AutoMapperRawDeckConverter>();
-            var rawDeckToColorConverter = provider.GetService<AutoMapperRawDeckToColorConverter>();
-            var utilColors = provider.GetService<UtilColors>();
-            var setsByCollationId = provider.GetService<CacheSingleton<Dictionary<int, Set>>>()?.Get();
-
             CreateMap<Card, CardDto>()
                 .ForMember(i => i.IdArena, i => i.MapFrom(x => x.grpId));
 
@@ -44,6 +37,7 @@ namespace MTGAHelper.Web.UI.IoC
             CreateMap<CardDtoFull, Card>();
 
             CreateMap<CardWithAmount, CardWithAmountDto>()
+                .ForMember(i => i.IdArena, i => i.MapFrom(x => x.Card.grpId))
                 .ForMember(i => i.Name, i => i.MapFrom(x => x.Card.name))
                 .ForMember(i => i.Set, i => i.MapFrom(x => x.Card.set))
                 .ForMember(i => i.Rarity, i => i.MapFrom(x => x.Card.GetRarityEnum(false).ToString()))
@@ -52,11 +46,10 @@ namespace MTGAHelper.Web.UI.IoC
                 .ForMember(i => i.Color, i => i.MapFrom(x => x.Card.type.Contains("Land") ? "Land" : x.Card.colors == null ? "" : string.Join("", x.Card.colors)))
             ;
 
-            CreateMap<CardWithAmountDto, CollectionCardDto>();
+            //CreateMap<CardWithAmountDto, CollectionCardDto>();
 
             CreateMap<CardWithAmount, CollectionCardDto>()
                 .IncludeBase<CardWithAmount, CardWithAmountDto>()
-                .ForMember(i => i.IdArena, i => i.MapFrom(x => x.Card.grpId))
                 .ForMember(i => i.NotInBooster, i => i.MapFrom(x => x.Card.notInBooster));
 
 
@@ -70,15 +63,7 @@ namespace MTGAHelper.Web.UI.IoC
             ////    .ForMember(i => i.VaultProgress, i => i.MapFrom(x => x.Diff.WildcardsChange));
 
             CreateMap<DeckCard, DeckCardDto>()
-                .ForMember(i => i.Name, i => i.MapFrom(x => x.Card.name))
-                .ForMember(i => i.ImageCardUrl, i => i.MapFrom(x => x.Card.imageCardUrl))
-                .ForMember(i => i.ImageThumbnail, i => i.MapFrom(x => new Util().GetThumbnailUrl(x.Card.imageArtUrl)))
-                .ForMember(i => i.Rarity, i => i.MapFrom(x => x.Card.GetRarityEnum(false).ToString()))
-                .ForMember(i => i.Type, i => i.MapFrom(x => x.Card.GetSimpleType()))
-                .ForMember(i => i.Set, i => i.MapFrom(x => x.Card.set))
-                .ForMember(i => i.ManaCost, i => i.MapFrom(x => x.Card.mana_cost))
-                .ForMember(i => i.Cmc, i => i.MapFrom(x => x.Card.cmc))
-                .ForMember(i => i.Color, i => i.MapFrom(x => x.Card.type.Contains("Land") ? "Land" : x.Card.colors == null ? "" : string.Join("", x.Card.colors)));
+                .IncludeBase<CardWithAmount, DeckCardDto>();
 
             CreateMap<CardWithAmount, DeckCardDto>()
                 .ForMember(i => i.Name, i => i.MapFrom(x => x.Card.name))
@@ -89,7 +74,8 @@ namespace MTGAHelper.Web.UI.IoC
                 .ForMember(i => i.Set, i => i.MapFrom(x => x.Card.set))
                 .ForMember(i => i.ManaCost, i => i.MapFrom(x => x.Card.mana_cost))
                 .ForMember(i => i.Cmc, i => i.MapFrom(x => x.Card.cmc))
-                .ForMember(i => i.Color, i => i.MapFrom(x => x.Card.type.Contains("Land") ? "Land" : x.Card.colors == null ? "" : string.Join("", x.Card.colors)));
+                .ForMember(i => i.Color, i => i.MapFrom(x => x.Card.type.Contains("Land") ? "Land" : x.Card.colors == null ? "" : string.Join("", x.Card.colors)))
+                .ForMember(m => m.NbMissing, o => o.Ignore());
 
             //new DeckCardDto
             //{
@@ -112,14 +98,15 @@ namespace MTGAHelper.Web.UI.IoC
                 .ForMember(i => i.FirstTurn, i => i.MapFrom(x => x.Games.Any() == false ? FirstTurnEnum.Unknown.ToString() : x.Games.First().FirstTurn.ToString()))
                 .ForMember(i => i.OpponentRank, i => i.MapFrom(x => $"{x.Opponent.RankingClass}_{x.Opponent.RankingTier}"))
                 //.ForMember(i => i.Outcome, i => i.MapFrom(x => string.Join('-', x.Games.Select(y => y.Outcome.ToString()[0]))))
-                .ForMember(i => i.OpponentDeckColors, i => i.MapFrom(x => utilColors.FromGrpIds(x.GetOpponentCardsSeen())));
+                .ForMember(i => i.OpponentDeckColors, i => i.ConvertUsing(utilColors, x => x.GetOpponentCardsSeen()))
+                .ForMember(m => m.RankDelta, o => o.Ignore());
 
             // ConfigModelRawDeck to DeckDto directly
             CreateMap<ConfigModelRawDeck, SimpleDeckDto>()
                 .ForMember(i => i.Main, i => i.MapFrom(x => x.CardsMain))
                 .ForMember(i => i.Sideboard, i => i.MapFrom(x => x.CardsSideboard))
-                .ForMember(i => i.Colors, i => i.ConvertUsing(rawDeckToColorConverter, x => x))
-                .ForMember(i => i.DeckImage, i => i.MapFrom(x => (string)dictAllCards[x.DeckTileId].imageArtUrl));
+                .ForMember(i => i.Colors, i => i.ConvertUsing(rawDeckToColor, x => x))
+                .ForMember(i => i.DeckImage, i => i.ConvertUsing(intToCardArt, x => x.DeckTileId));
 
             CreateMap<GameDetail, GameDetailDto>();
 
@@ -150,7 +137,7 @@ namespace MTGAHelper.Web.UI.IoC
                 .ForMember(i => i.ManaCost, i => i.MapFrom(x => x.mana_cost));
 
             CreateMap<int, CardDto>()
-                .ConvertUsing(i => Mapper.Map<CardDto>(Mapper.Map<Card>(i)));
+                .ConvertUsing((i, dto, ctx) => ctx.Mapper.Map<CardDto>(ctx.Mapper.Map<Card>(i)));
 
             CreateMap<MtgaDeckSummary, MtgaDeckSummaryDto>()
                 .ForMember(i => i.FirstPlayed, i => i.MapFrom(x => x.FirstPlayed.ToString("yyyy-MM-dd")))
@@ -158,14 +145,14 @@ namespace MTGAHelper.Web.UI.IoC
             //.ForMember(i => i.DeckColor, i => i.ConvertUsing(rawDeckToColorConverter, x => x.DeckUsed));
 
             CreateMap<MtgaDeckDetail, MtgaDeckDetailDto>()
-            //.ForMember(i => i.FirstPlayed, i => i.MapFrom(x => x.FirstPlayed.ToString("yyyy-MM-dd")))
-            //.ForMember(i => i.LastPlayed, i => i.MapFrom(x => x.LastPlayed.ToString("yyyy-MM-dd")));
-            //.ForMember(i => i.DeckColor, i => i.ConvertUsing(rawDeckToColorConverter, x => x.DeckUsed))
-            //.ForMember(i => i.CardsMain, i => i.MapFrom(x => x.DeckUsed.CardsMain))
-            //.ForMember(i => i.CardsSideboard, i => i.MapFrom(x => x.DeckUsed.CardsSideboard));
+                //.ForMember(i => i.FirstPlayed, i => i.MapFrom(x => x.FirstPlayed.ToString("yyyy-MM-dd")))
+                //.ForMember(i => i.LastPlayed, i => i.MapFrom(x => x.LastPlayed.ToString("yyyy-MM-dd")));
+                //.ForMember(i => i.DeckColor, i => i.ConvertUsing(rawDeckToColorConverter, x => x.DeckUsed))
+                //.ForMember(i => i.CardsMain, i => i.MapFrom(x => x.DeckUsed.CardsMain))
+                //.ForMember(i => i.CardsSideboard, i => i.MapFrom(x => x.DeckUsed.CardsSideboard));
                 .ForMember(i => i.CardsMain, i => i.MapFrom(x => Mapper.Map<ICollection<CardWithAmount>>(x.CardsMain)))
                 .ForMember(i => i.CardsSideboard, i => i.MapFrom(x => Mapper.Map<ICollection<CardWithAmount>>(x.CardsSideboard)))
-                .ForMember(i => i.ManaCurve, i => i.MapFrom(x => utilManaCurve.CalculateManaCurve(Mapper.Map<ICollection<CardWithAmount>>(x.CardsMain))));
+                .ForMember(i => i.ManaCurve, i => i.ConvertUsing(manaCurveConverter, x => x.CardsMain));
 
             CreateMap<MtgaDeckAnalysis, MtgaDeckAnalysisDto>();
             CreateMap<MtgaDeckAnalysisMatchInfo, MtgaDeckAnalysisMatchInfoDto>();
@@ -176,18 +163,18 @@ namespace MTGAHelper.Web.UI.IoC
                 .ForMember(i => i.Boosters, i => i.MapFrom(x => x.Boosters));
 
             CreateMap<InventoryBooster, InventoryBoosterDto>()
-                .ForMember(i => i.Set, i => i.MapFrom(x => setsByCollationId[x.CollationId].Code));
+                .ForMember(i => i.Set, i => i.ConvertUsing(collationToSet, x => x.CollationId));
 
             CreateMap<DeckSummary, DeckSummaryResponseDto>();
             CreateMap<DeckTrackedSummary, DeckTrackedSummaryResponseDto>();
-                //.ForMember(i => i.MissingWeightBase, i => i.MapFrom(x => x.MissingWeightBase == float.NaN ? 0 : x.MissingWeightBase))
-                //.ForMember(i => i.MissingWeight, i => i.MapFrom(x => x.MissingWeight == float.NaN ? 0 : x.MissingWeight))
-                //.ForMember(i => i.PriorityFactor, i => i.MapFrom(x => x.PriorityFactor == float.NaN ? 0 : x.PriorityFactor));
 
             CreateMap<CardMissingDetailsModel, CardMissingDetailsModelResponseDto>();
             CreateMap<InfoCardMissingSummary, InfoCardMissingSummaryResponseDto>();
 
-            CreateMap<AccountModel, AccountResponse>();
+            CreateMap<AccountModel, AccountResponse>()
+                .ForMember(m => m.IsAuthenticated, o => o.Ignore())
+                .ForMember(m => m.ResponseStatus, o => o.Ignore())
+                .ForMember(m => m.Message, o => o.Ignore());
 
             CreateMap<EconomyEvent, EconomyEventDto>()
                 .ForMember(i => i.Context, i => i.MapFrom(x => x.Context.Replace("PlayerInventory.", "")));

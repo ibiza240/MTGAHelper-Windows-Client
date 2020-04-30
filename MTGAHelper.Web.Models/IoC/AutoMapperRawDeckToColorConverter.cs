@@ -1,21 +1,16 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using MTGAHelper.Entity;
-using MTGAHelper.Lib.Cache;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MTGAHelper.Web.UI.Shared
 {
     public class AutoMapperRawDeckToColorConverter : IValueConverter<ConfigModelRawDeck, string>
     {
-        readonly Dictionary<int, Card> dictAllCards;
         readonly UtilColors utilColors;
 
-        public AutoMapperRawDeckToColorConverter(CacheSingleton<Dictionary<int, Card>> cacheCards, UtilColors utilColors)
+        public AutoMapperRawDeckToColorConverter(UtilColors utilColors)
         {
-            this.dictAllCards = cacheCards.Get();
             this.utilColors = utilColors;
         }
 
@@ -26,13 +21,9 @@ namespace MTGAHelper.Web.UI.Shared
 
             try
             {
-                var cards = sourceMember.CardsMainWithCommander.Keys//.Union(sourceMember.CardsSideboard.Keys)
-                    .Where(i => dictAllCards.ContainsKey(i))
-                    .Select(i => new DeckCard(new CardWithAmount(dictAllCards[i]), DeckCardZoneEnum.Deck))
-                    .ToArray();
+                var cards = sourceMember.CardsMainWithCommander.Keys; //.Union(sourceMember.CardsSideboard.Keys)
 
-                var deck = new Deck(sourceMember.Name, null, cards);
-                return utilColors.FromDeck(deck);
+                return utilColors.FromGrpIds(cards);
             }
             catch (Exception ex)
             {

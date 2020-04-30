@@ -15,11 +15,12 @@ namespace MTGAHelper.Tracker.WPF.Models
         public string NbMissingString => $"You are missing {NbMissingCollection} {(NbMissingCollection == 1 ? "copy" : "copies")} in your collection";
 
         public string Description { get; set; }
-        public string Rating { get; set; }
+        public float RatingValue { get; set; }
+        public string RatingToDisplay { get; set; }
         public string RatingSource { get; set; }
         public DraftRatingTopCard TopCommonCard { get; set; } = new DraftRatingTopCard(0, "");
 
-        public float RatingFloat => DraftRating.GetRatingAsFloat(Rating);
+        public float RatingFloat => RatingValue;
         public float RatingScale => DraftRating.GetRatingScale(RatingSource);
 
         //public bool ShowMtgaHelperSays => Weight > 0 || RareDraftPickEnum != Entity.RaredraftPickReasonEnum.None;

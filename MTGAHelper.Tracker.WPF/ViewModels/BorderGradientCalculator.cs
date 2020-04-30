@@ -7,7 +7,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 {
     public class BorderGradientCalculator
     {
-        readonly Dictionary<string, Color> dictColorToHex = new Dictionary<string, Color>
+        private readonly Dictionary<string, Color> DictColorToHex = new Dictionary<string, Color>
         {
             { "W", Color.FromRgb(255,255,255) },
             { "U", Color.FromRgb(0,0,255) },
@@ -22,12 +22,12 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 ? theCard.Colors
                 : theCard.ColorIdentity;
 
-            var gradient = CreateGradient(colorsOfTheCard.Select(c => dictColorToHex[c]).ToArray());
+            var gradient = CreateGradient(colorsOfTheCard.Select(c => DictColorToHex[c]).ToArray());
 
             return gradient;
         }
 
-        GradientStopCollection CreateGradient(IReadOnlyList<Color> colorsOfTheCard)
+        private GradientStopCollection CreateGradient(IReadOnlyList<Color> colorsOfTheCard)
         {
             switch (colorsOfTheCard.Count)
             {
@@ -46,7 +46,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }
         }
 
-        GradientStopCollection CreateGradientMono(Color color)
+        private GradientStopCollection CreateGradientMono(Color color)
         {
             return new GradientStopCollection(new[] {
                 new GradientStop(color, 0d),
@@ -54,7 +54,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             });
         }
 
-        GradientStopCollection CreateGradientDual(Color c1, Color c2)
+        private GradientStopCollection CreateGradientDual(Color c1, Color c2)
         {
             return new GradientStopCollection(new[] {
                 new GradientStop(c1, 0d),
@@ -62,7 +62,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             });
         }
 
-        GradientStopCollection CreateGradientTriple(Color c1, Color c2, Color c3)
+        private GradientStopCollection CreateGradientTriple(Color c1, Color c2, Color c3)
         {
             return new GradientStopCollection(new[] {
                 new GradientStop(c1, 0d),
@@ -74,7 +74,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             });
         }
 
-        GradientStopCollection CreateGradientGold()
+        private GradientStopCollection CreateGradientGold()
         {
             return new GradientStopCollection(new[] {
                 new GradientStop(Color.FromRgb(255,215,0), 0d),
@@ -82,7 +82,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             });
         }
 
-        GradientStopCollection CreateGradientColorless()
+        private GradientStopCollection CreateGradientColorless()
         {
             return new GradientStopCollection(new[] {
                 new GradientStop(Color.FromRgb(128,128,128), 0d),

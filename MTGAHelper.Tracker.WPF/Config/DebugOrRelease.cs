@@ -7,7 +7,7 @@ namespace MTGAHelper.Tracker.WPF.Config
     public class DebugOrRelease
     {
         public const string LocalServer = "https://localhost:5001";
-        const string REMOTE_SERVER = "https://mtgahelper.com";
+        private const string REMOTE_SERVER = "https://mtgahelper.com";
 
 #if DEBUG && !DEBUGWITHSERVER
         public const string Server = LocalServer;
@@ -26,7 +26,7 @@ namespace MTGAHelper.Tracker.WPF.Config
         public string TestServer => LocalServer;
 
         [Conditional("DEBUG")]
-        void SetIfDebug()
+        private void SetIfDebug()
         {
             IsDebug = true;
         }

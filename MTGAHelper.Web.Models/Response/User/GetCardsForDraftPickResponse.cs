@@ -8,7 +8,8 @@ namespace MTGAHelper.Web.Models.Response.User
     public class CardForDraftPickDto : CardDto
     {
         public string RatingSource { get; set; }
-        public string Rating { get; set; }
+        public string RatingToDisplay { get; set; }
+        public float RatingValue { get; set; }
         public string Description { get; set; }
         public string ManaCost { get; set; }
         public float Weight { get; set; }

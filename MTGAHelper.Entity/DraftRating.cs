@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace MTGAHelper.Entity
@@ -25,18 +26,23 @@ namespace MTGAHelper.Entity
     {
         //public Card Card { get; set; }
         public string CardName { get; set; }
+        public string RatingToDisplay { get; set; }
+        
+        [Obsolete]
         public string Rating { get; set; }
+        
+        public float RatingValue { get; set; }
         public string Description { get; set; }
 
-        public static float GetRatingAsFloat(string rating)
-        {
-            return float.TryParse(
-                rating.Substring(0, System.Math.Min(3, rating.Length)).Trim(new[] { ' ', '(' }),
-                NumberStyles.AllowDecimalPoint,
-                CultureInfo.InvariantCulture, out var parsed)
-                ? parsed
-                : 0f;
-        }
+        //public static float GetRatingAsFloat(string rating)
+        //{
+        //    return float.TryParse(
+        //        rating.Substring(0, System.Math.Min(3, rating.Length)).Trim(new[] { ' ', '(' }),
+        //        NumberStyles.AllowDecimalPoint,
+        //        CultureInfo.InvariantCulture, out var parsed)
+        //        ? parsed
+        //        : 0f;
+        //}
 
         public static float GetRatingScale(string ratingSource)
         {

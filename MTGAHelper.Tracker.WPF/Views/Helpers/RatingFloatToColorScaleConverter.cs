@@ -14,7 +14,7 @@ namespace MTGAHelper.Tracker.WPF.Views.Helpers
         {
             var value = values[0];
             var scale = values[1];
-            var pct = (float)value / (float)scale;//5f;
+            float pct = (float)value / (float)scale;//5f;
             var valueGray = (byte)Math.Max(50, MinGray + (int)(pct * (MaxGray - MinGray)));
 
             return new SolidColorBrush(Color.FromRgb(valueGray, valueGray, valueGray));

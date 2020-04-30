@@ -5,5 +5,4 @@
         public int id { get; set; }
         public T payload { get; set; }
     }
-
 }

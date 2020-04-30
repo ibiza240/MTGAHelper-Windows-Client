@@ -11,7 +11,7 @@ namespace MTGAHelper.Web.UI.Model.Response.User
 
     public class InventoryResponseDto
     {
-        public string PlayerId { get; set; }
+        //public string PlayerId { get; set; }
         public int Gold { get; set; }
         public int Gems { get; set; }
         public int DraftTokens { get; set; }

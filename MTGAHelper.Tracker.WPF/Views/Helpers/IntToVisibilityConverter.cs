@@ -11,7 +11,7 @@ namespace MTGAHelper.Tracker.WPF.Views.Helpers
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (int)value > Threshold ? Visibility.Visible : Visibility.Collapsed;
+            return value != null && (int)value > Threshold ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -1,7 +1,6 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
-using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.ViewModels;
 
 namespace MTGAHelper.Tracker.WPF.Views.UserControls
@@ -9,79 +8,90 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
     /// <summary>
     /// Interaction logic for Playing.xaml
     /// </summary>
-    public partial class Playing : UserControl
+    public partial class Playing
     {
-        MainWindowVM vmParent;
-        CardListWindow windowOpponentCardsSeen;
+        #region Private Fields
 
-        MainWindow mainWindow => (MainWindow)Window.GetWindow(this);
+        /// <summary>
+        /// External window for displaying opponent cards
+        /// </summary>
+        private OpponentWindow OpponentCardsWindow { get; set; }
 
+        private MainWindowVM MainWindowVM { get; set; }
+
+        /// <summary>
+        /// Reference to the main window
+        /// </summary>
+        private MainWindow MainWindow => (MainWindow)Window.GetWindow(this);
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public Playing()
         {
             InitializeComponent();
         }
 
-        public void Init(MainWindowVM vmParent, WindowSettings windowSettingsOpponentCards)
+        /// <summary>
+        /// Function to initialize the class from DI
+        /// </summary>
+        /// <param name="mvm"></param>
+        public void Init(MainWindowVM mvm)
         {
-            this.vmParent = vmParent;
-            windowOpponentCardsSeen = new CardListWindow("Opponent cards seen", vmParent.InMatchState.OpponentCardsSeen, mainWindow);
+            // Create the opponent cards window
+            OpponentCardsWindow = new OpponentWindow(mvm);
 
-            if ((windowSettingsOpponentCards?.Position?.X ?? 0) != 0 ||
-                (windowSettingsOpponentCards?.Position?.Y ?? 0) != 0 ||
-                (windowSettingsOpponentCards?.Size?.X ?? 0) != 0 //||
-                //(windowSettingsOpponentCards?.Size?.Y ?? 0) != 0
-            )
-            {
-                windowOpponentCardsSeen.Width = (double)windowSettingsOpponentCards?.Size?.X;
-                //windowOpponentCardsSeen.Height = (double)windowSettingsOpponentCards?.Size?.Y;
-
-                windowOpponentCardsSeen.WindowStartupLocation = WindowStartupLocation.Manual;
-                windowOpponentCardsSeen.Left = (double)windowSettingsOpponentCards?.Position?.X;
-                windowOpponentCardsSeen.Top = (double)windowSettingsOpponentCards?.Position?.Y;
-            }
+            // Set a reference to the main window view model
+            MainWindowVM = mvm;
         }
 
-        //public void Init(MainWindowVM vm)
-        //{
-        //    DataContext = vm;
-        //    //CardsMyLibrary.SetDataContext(vm.InMatchState.MyLibrary);
-        //    //CardsMySideboard.SetDataContext(vm.InMatchState.MySideboard);
-        //    //CardsOpponent.SetDataContext(vm.InMatchState.OpponentCardsSeen);
-        //    //FullDeck.SetDataContext(vm.InMatchState.FullDeck);
-        //}
+        #endregion
 
-        internal void SetCardPopupPosition(ForceCardPopupSideEnum side, int mainWindowTop, int mainWindowLeft, int mainWindowWidth)
+        #region Internal Methods
+
+        /// <summary>
+        /// Set the card pop-up location
+        /// </summary>
+        /// <param name="side"></param>
+        /// <param name="mainWindowTop"></param>
+        /// <param name="mainWindowLeft"></param>
+        /// <param name="mainWindowWidth"></param>
+        internal void SetCardPopupPosition(ForceCardPopupSideEnum side, double mainWindowTop, double mainWindowLeft, double mainWindowWidth)
         {
             CardsMyLibrary.SetCardPopupPosition(side, mainWindowTop, mainWindowLeft, mainWindowWidth);
             CardsMySideboard.SetCardPopupPosition(side, mainWindowTop, mainWindowLeft, mainWindowWidth);
-            //CardsOpponent.SetCardPopupPosition(side, mainWindowTop, mainWindowLeft, mainWindowWidth);
-            windowOpponentCardsSeen.SetCardsPopupPosition(side);
+            CardsOpponent.SetCardPopupPosition(side, mainWindowTop, mainWindowLeft, mainWindowWidth);
+            OpponentCardsWindow.SetCardsPopupPosition(side);
         }
 
-        private void TabControl_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Show the external opponents window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OpenOpponentCardsWindow(object sender, MouseButtonEventArgs e)
         {
-            if (e.Source is TabItem tab && tab.Header.ToString() == "Opponent cards") //do not handle clicks on TabItem content but on TabItem itself
-            {
-                vmParent.InMatchState.ShowWindowOpponentCardsSeen = !vmParent.InMatchState.ShowWindowOpponentCardsSeen;
-                windowOpponentCardsSeen.Left = mainWindow.Left - 40;
-                windowOpponentCardsSeen.Top = mainWindow.Top + 230;
-                windowOpponentCardsSeen.Visibility = Visibility.Visible;
-                windowOpponentCardsSeen.Activate();
-                e.Handled = true;
-            }
+            // If the external window option is not selected, do nothing and let the click change the tab
+            if (!MainWindow.ConfigModel.ShowOpponentCardsExternal) return;
+
+            // Set the already created window to visible
+            MainWindowVM.OpponentWindowViewModel.IsWindowVisible = true;
+
+            // Set the window as active
+            OpponentCardsWindow.Activate();
+
+            // Handle the click to prevent changing the tabs
+            e.Handled = true;
         }
 
-        internal void ShowHideOpponentCards(bool isVisible)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                windowOpponentCardsSeen.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
-            });
-        }
-
-        internal void SetAlwaysOnTop(bool alwaysOnTop)
-        {
-            windowOpponentCardsSeen.Topmost = alwaysOnTop;
-        }
+        #endregion
     }
 }

@@ -1,123 +1,422 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7207FD3A-1288-41C5-BAB9-220FB19E9306}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ApplicationIcon>wcC.ico</ApplicationIcon>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <AssemblyName>MTGAHelper.Tracker</AssemblyName>
-    <Version>1.4.1</Version>
-    <Company>MTGAHelper</Company>
-    <Authors>MTGAHelper</Authors>
-    <Description>MTGAHelper Local client</Description>
-    <Copyright>2019 MTGAHelper</Copyright>
-    <Configurations>Debug;Release;DebugWithServer</Configurations>
-    <StartupObject>MTGAHelper.Tracker.WPF.Program</StartupObject>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <PublishTrimmed>true</PublishTrimmed>
-    <PublishReadyToRun>true</PublishReadyToRun>
-    <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
-    <PublishSingleFile>true</PublishSingleFile>
+    <RootNamespace>MTGAHelper.Tracker.WPF</RootNamespace>
+    <AssemblyName>MTGAHelper.Tracker.WPF</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugWithServer|AnyCPU'">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
+    <OutputPath>$(SolutionDir)\_Output\bin\$(Configuration)\</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
+    <OutputPath>$(SolutionDir)\_Output\bin\$(Configuration)\</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
-
-  <!-- <ItemGroup>
-    <COMReference Include="IWshRuntimeLibrary.dll">
-      <Guid>f935dc20-1cf0-11d0-adb9-00c04fd58a0b</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-      <Private>true</Private>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup> -->
-
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugWithServer|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
+    <OutputPath>$(SolutionDir)\_Output\bin\$(Configuration)\</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
+    <DefineConstants>DEBUG;DEBUGWITHSERVER;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>8</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
-    <None Remove="Assets\Images\banner.jpg" />
-    <None Remove="Assets\Images\Facebook.ico" />
-    <None Remove="Assets\Images\Google.png" />
-    <None Remove="Assets\Images\land.png" />
-    <None Remove="Assets\Images\land.svg" />
-    <None Remove="Assets\Images\loading.gif" />
-    <None Remove="Assets\Images\MTGA.png" />
-    <None Remove="Assets\Images\star.png" />
-    <None Remove="Assets\Images\thumbnailUnknown.png" />
-    <None Remove="Assets\Images\Treasure.png" />
-    <None Remove="Assets\Images\wcC.ico" />
-    <None Remove="Assets\Images\wcC.png" />
-    <None Remove="StatusBarTop.xaml" />
-    <None Remove="Views\OptionsWindow.xaml" />
-    <None Remove="Views\UC_DraftHelper.xaml" />
-    <None Remove="Views\UC_Ready.xaml" />
-    <None Remove="Views\UC_StatusBarTop.xaml" />
-    <None Remove="Views\UC_Welcome.xaml" />
-    <None Remove="Views\UserControls\Playing.xaml" />
-    <None Remove="Views\UserControls\Ready.xaml" />
-    <None Remove="Views\UserControls\StatusBarTop.xaml" />
-    <None Remove="Views\UserControls\Welcome.xaml" />
-    <None Remove="Welcome.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NETCore.Targets" Version="3.0.0" PrivateAssets="all" />
-    <PackageReference Include="Google.Apis.Oauth2.v2" Version="1.43.0.1602" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Serilog" Version="2.9.0" />
-    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
-    <PackageReference Include="WpfAnimatedGif" Version="2.0.0-beta.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\MTGAHelper.Lib.OutputLogParser\MTGAHelper.Lib.OutputLogParser.csproj" />
-    <ProjectReference Include="..\MTGAHelper.Web.Models\MTGAHelper.Web.Models.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="NotifyIconWpf">
-      <HintPath>NotifyIconWpf.dll</HintPath>
+    <Reference Include="AutoMapper, Version=8.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.8.0.0\lib\net461\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis, Version=1.45.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.1.45.0\lib\net45\Google.Apis.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth, Version=1.45.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Auth.1.45.0\lib\net45\Google.Apis.Auth.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Auth.PlatformServices, Version=1.45.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Auth.1.45.0\lib\net45\Google.Apis.Auth.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Core, Version=1.45.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.Core.1.45.0\lib\net45\Google.Apis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.PlatformServices, Version=1.45.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.1.45.0\lib\net45\Google.Apis.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Binder, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Binder.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.FileExtensions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.FileExtensions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.FileExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Configuration.Json, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Configuration.Json.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.FileProviders.Abstractions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.FileProviders.Abstractions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.FileProviders.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.FileProviders.Physical, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.FileProviders.Physical.2.2.0\lib\netstandard2.0\Microsoft.Extensions.FileProviders.Physical.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.FileSystemGlobbing, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.FileSystemGlobbing.2.2.0\lib\netstandard2.0\Microsoft.Extensions.FileSystemGlobbing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Options.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options.ConfigurationExtensions, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Options.ConfigurationExtensions.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Options.ConfigurationExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.2.9.0\lib\net46\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.File, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.File.4.1.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
+    </Reference>
+    <Reference Include="SimpleInjector, Version=4.9.1.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.4.9.1\lib\net45\SimpleInjector.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.4.5.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Memory, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.1\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.1\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WpfAnimatedGif, Version=2.0.0.0, Culture=neutral, PublicKeyToken=9e7cd3b544a090dc, processorArchitecture=MSIL">
+      <HintPath>..\packages\WpfAnimatedGif.2.0.0\lib\net40\WpfAnimatedGif.dll</HintPath>
     </Reference>
   </ItemGroup>
-
+  <ItemGroup>
+    <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="Business\DraftCardsPicker.cs" />
+    <Compile Include="Business\DraftHelperRunner.cs" />
+    <Compile Include="Config\ConfiguratorConfig.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Tools\HttpClientFactory.cs" />
+    <Compile Include="Tools\RelayCommand.cs" />
+    <Compile Include="Tools\Utilities.cs" />
+    <Compile Include="ViewModels\BorderGradientCalculator.cs" />
+    <Compile Include="ViewModels\CardDraftPickVM.cs" />
+    <Compile Include="ViewModels\OpponentWindowViewModel.cs" />
+    <Compile Include="ViewModels\CardPopupVM.cs" />
+    <Compile Include="ViewModels\CardsListVM.cs" />
+    <Compile Include="ViewModels\DraftingCardPopupVM.cs" />
+    <Compile Include="ViewModels\DraftingVM.cs" />
+    <Compile Include="ViewModels\Enums.cs" />
+    <Compile Include="ViewModels\InMatchTrackerStateVM.cs" />
+    <Compile Include="ViewModels\LibraryCardWithAmountVM.cs" />
+    <Compile Include="ViewModels\MainWindowVM.cs" />
+    <Compile Include="ViewModels\ObservableObject.cs" />
+    <Compile Include="ViewModels\OptionsWindowVM.cs" />
+    <Compile Include="ViewModels\PlayerTimerVM.cs" />
+    <Compile Include="ViewModels\Stats.cs" />
+    <Compile Include="ViewModels\StatusBlinker.cs" />
+    <Compile Include="ViewModels\VMUpdaterFromAnotherThread.cs" />
+    <Compile Include="Views\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CardListPopup.xaml.cs">
+      <DependentUpon>CardListPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OpponentWindow.xaml.cs">
+      <DependentUpon>OpponentWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CardPopup.xaml.cs">
+      <DependentUpon>CardPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CardPopupDrafting.xaml.cs">
+      <DependentUpon>CardPopupDrafting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DialogLoginFacebook.xaml.cs">
+      <DependentUpon>DialogLoginFacebook.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Helpers\BoolToValueConverter.cs" />
+    <Compile Include="Views\Helpers\CountToVis.cs" />
+    <Compile Include="Views\Helpers\HyperlinkExtensions.cs" />
+    <Compile Include="Views\Helpers\IntToVisibilityConverter.cs" />
+    <Compile Include="Views\Helpers\MultiBooleanToVisibilityConverter.cs" />
+    <Compile Include="Views\Helpers\RatingFloatToColorScaleConverter.cs" />
+    <Compile Include="Views\Helpers\StringToValueConverter.cs" />
+    <Compile Include="Views\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OptionsWindow.xaml.cs">
+      <DependentUpon>OptionsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\Drafting.xaml.cs">
+      <DependentUpon>Drafting.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\Playing.xaml.cs">
+      <DependentUpon>Playing.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\Ready.xaml.cs">
+      <DependentUpon>Ready.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\SimpleCardsList.xaml.cs">
+      <DependentUpon>SimpleCardsList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\StatusBarTop.xaml.cs">
+      <DependentUpon>StatusBarTop.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\Welcome.xaml.cs">
+      <DependentUpon>Welcome.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Business\ExternalProviderTokenManager.cs" />
+    <Compile Include="Business\LogFileZipper.cs" />
+    <Compile Include="Business\LogProcessor.cs" />
+    <Compile Include="Business\Monitoring\FileMonitor.cs" />
+    <Compile Include="Business\Monitoring\ProcessMonitor.cs" />
+    <Compile Include="Business\MtgaResourcesLocator.cs" />
+    <Compile Include="Business\ScreenshotTaker.cs" />
+    <Compile Include="Business\ServerApiCaller.cs" />
+    <Compile Include="Business\StartupShortcutManager.cs" />
+    <Compile Include="Config\ConfigModel.cs" />
+    <Compile Include="Config\DebugOrRelease.cs" />
+    <Compile Include="Exceptions\ServerNotAvailableException.cs" />
+    <Compile Include="IoC\IServiceCollectionExtension.cs" />
+    <Compile Include="IoC\MapperProfileTrackerWpf.cs" />
+    <Compile Include="Logging\RemovePropertiesEnricher.cs" />
+    <Page Include="ResourceDicts\IconPaths.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ResourceDicts\Theme.Brushes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ResourceDicts\Theme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AboutWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CardListPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\OpponentWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CardPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CardPopupDrafting.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\DialogLoginFacebook.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\OptionsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\UserControls\Drafting.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\UserControls\Playing.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\UserControls\Ready.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\UserControls\SimpleCardsList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\UserControls\StatusBarTop.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\UserControls\Welcome.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\CardDraftPickWpf.cs" />
+    <Compile Include="Models\CardWpf.cs" />
+    <Compile Include="Models\DraftHelperOutputModel.cs" />
+    <Compile Include="Models\OutputLog\DraftMakePick.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Resource Include="Fonts\consola.ttf" />
+    <Resource Include="Fonts\ImSpiegelland.ttf" />
+    <Resource Include="Fonts\LaborUnion-Regular.otf" />
+    <Resource Include="Fonts\LaborUnion-Small.otf" />
+    <Resource Include="Fonts\Lato-Regular.ttf" />
+    <Resource Include="Fonts\MTG.TTF" />
+    <Resource Include="Fonts\UnderTheWeather.ttf" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icon.ico" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\Images\banner.jpg" />
     <Resource Include="Assets\Images\Facebook.ico" />
     <Resource Include="Assets\Images\Google.png" />
+    <Resource Include="Assets\Images\icon.ico" />
+    <Resource Include="Assets\Images\icon.png" />
     <Resource Include="Assets\Images\land.png" />
     <Resource Include="Assets\Images\loading.gif" />
     <Resource Include="Assets\Images\MTGA.png" />
+    <Resource Include="Assets\Images\iconAnimated.gif" />
     <Resource Include="Assets\Images\star.png" />
     <Resource Include="Assets\Images\thumbnailUnknown.png" />
     <Resource Include="Assets\Images\Treasure.png" />
-    <Resource Include="Assets\Images\wcC.ico" />
-    <Resource Include="Assets\Images\wcC.png" />
   </ItemGroup>
-
   <ItemGroup>
-    <Page Update="Views\CardListWindow.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\CardListPopup.xaml">
-      <SubType>Designer</SubType>
-    </Page>
+    <ProjectReference Include="..\MTGAHelper.Entity\MTGAHelper.Entity.csproj">
+      <Project>{17824c64-56bc-4e61-baca-0140788ce6a1}</Project>
+      <Name>MTGAHelper.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MTGAHelper.Lib.OutputLogParser.Models\MTGAHelper.Lib.OutputLogParser.Models.csproj">
+      <Project>{cddef8a6-0544-4dfa-a4fe-08e9fc8b137c}</Project>
+      <Name>MTGAHelper.Lib.OutputLogParser.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MTGAHelper.Lib.OutputLogParser\MTGAHelper.Lib.OutputLogParser.csproj">
+      <Project>{e8ebb994-dc88-4362-b578-c23bf6f4e2fc}</Project>
+      <Name>MTGAHelper.Lib.OutputLogParser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MTGAHelper.Utility\MTGAHelper.Utility.csproj">
+      <Project>{dc8aefa8-84ec-420b-9d83-75b6a8ed1161}</Project>
+      <Name>MTGAHelper.Utility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MTGAHelper.Web.Models\MTGAHelper.Web.Models.csproj">
+      <Project>{53264ca2-c4e6-4a18-be4d-7b2cec48b85a}</Project>
+      <Name>MTGAHelper.Web.Models</Name>
+    </ProjectReference>
   </ItemGroup>
-
+  <ItemGroup>
+    <Resource Include="Assets\Images\discord.png" />
+    <Resource Include="Assets\Images\patreon.png" />
+    <Resource Include="Assets\Images\paypal.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

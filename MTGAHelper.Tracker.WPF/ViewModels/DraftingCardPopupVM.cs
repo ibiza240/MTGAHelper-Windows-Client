@@ -3,9 +3,14 @@
     public class DraftingCardPopupVM : ObservableObject
     {
         public CardDraftPickVM Card { get; set; } = new CardDraftPickVM();
+
         public ObservableProperty<bool> ShowGlobalMTGAHelperSays { get; set; } = new ObservableProperty<bool>(false);
+
         public string RatingsSource { get; set; }
+
         public bool ShowRatingsSource { get; set; }
+
+        public bool ShowDescription => string.IsNullOrEmpty(Card.Description) == false;
 
         //public ObservableProperty<int> CardPopupTop { get; set; } = new ObservableProperty<int>(0);
         //public ObservableProperty<int> CardPopupLeft { get; set; } = new ObservableProperty<int>(0);

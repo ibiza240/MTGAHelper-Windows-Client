@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
@@ -14,43 +13,67 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         //    MyFullDeck,
         //}
 
-        IInGameState stateBuffered;
+        private IInGameState StateBuffered;
 
-        bool updateCardsInMatchTrackingBuffered;
+        private bool UpdateCardsInMatchTrackingBuffered;
 
         internal void Init(CardsListOrder cardsListOrder)
         {
             MyLibrary.CardsListOrder = cardsListOrder;
         }
 
-        readonly object lockCardsInMatchTracking = new object();
-        int priorityPlayer;
-        bool mustReset;
+        private readonly object LockCardsInMatchTracking = new object();
+
+        private int PriorityPlayer;
+
+        private bool MustReset;
 
         #region Bindings
-        public CardsListVM MyLibrary { get; } = new CardsListVM(true, false, CardsListOrder.Cmc);
-        public CardsListVM OpponentCardsSeen { get; } = new CardsListVM(false, true, CardsListOrder.Cmc);
-        public CardsListVM MySideboard { get; } = new CardsListVM(false, true, CardsListOrder.Cmc);
+
+        /// <summary>
+        /// Current Deck
+        /// </summary>
+        public CardsListVM MyLibrary { get; } = new CardsListVM(DisplayType.Percent, CardsListOrder.ManaCost);
+
+        /// <summary>
+        /// Opponent Deck
+        /// </summary>
+        public CardsListVM OpponentCardsSeen { get; } = new CardsListVM(DisplayType.CountOnly, CardsListOrder.ManaCost);
+
+        /// <summary>
+        /// Sideboard
+        /// </summary>
+        public CardsListVM MySideboard { get; } = new CardsListVM(DisplayType.CountOnly, CardsListOrder.ManaCost);
+
         //public CardsListVM FullDeck { get; set; } = new CardsListVM(false);
 
+        /// <summary>
+        /// String version of lands remaining over starting lands
+        /// </summary>
         public string LibraryLandCurrentAndTotal => $"{MyLibrary.LandCount} / {MyLibrary.TotalLandsInitial}";
+
+        /// <summary>
+        /// Percent chance to draw a land
+        /// </summary>
         public float LibraryDrawLandPct => MyLibrary.DrawLandPct;
 
         public ObservableProperty<bool> SplitLands { get; set; } = new ObservableProperty<bool>(true);
-        public bool ShowWindowOpponentCardsSeen { get; set; }
 
         public int LibraryCardsCount => MyLibrary.CardCount;
-        public int LibraryLandsCount => MyLibrary.LandCount;
 
         public int SideboardCardsCount => MySideboard.CardCount;
 
+        public int OpponentCardsSeenCount => OpponentCardsSeen.CardCount;
+
         public PlayerTimerVM TimerMe { get; set; } = new PlayerTimerVM();
+
         public PlayerTimerVM TimerOpponent { get; set; } = new PlayerTimerVM();
+
         #endregion
 
         internal void Reset()
         {
-            priorityPlayer = 0;
+            PriorityPlayer = 0;
             MyLibrary.ResetCards();
             OpponentCardsSeen.ResetCards();
             MySideboard.ResetCards();
@@ -65,62 +88,62 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         internal void SetInMatchStateBuffered(IInGameState state)
         {
-            lock (lockCardsInMatchTracking)
+            lock (LockCardsInMatchTracking)
             {
-                mustReset |= state.IsReset;
-                stateBuffered = state;
-                updateCardsInMatchTrackingBuffered = true;
+                MustReset |= state.IsReset;
+                StateBuffered = state;
+                UpdateCardsInMatchTrackingBuffered = true;
             }
         }
 
         internal void SetInMatchStateFromBuffered()
         {
-            if (updateCardsInMatchTrackingBuffered == false)
+            if (UpdateCardsInMatchTrackingBuffered == false)
                 return;
 
-            if (mustReset)
+            if (MustReset)
             {
                 Reset();
-                mustReset = false;
+                MustReset = false;
             }
 
-            if (stateBuffered.MySeatId == 0)
+            if (StateBuffered.MySeatId == 0)
                 return;
 
-            lock (lockCardsInMatchTracking)
+            lock (LockCardsInMatchTracking)
             {
                 // Timers
-                if (stateBuffered.IsSideboarding)
+                if (StateBuffered.IsSideboarding)
                 {
                     TimerMe.Pause();
                     TimerOpponent.Pause();
                 }
-                if (priorityPlayer != stateBuffered.PriorityPlayer)
+                if (PriorityPlayer != StateBuffered.PriorityPlayer)
                 {
-                    priorityPlayer = stateBuffered.PriorityPlayer;
+                    PriorityPlayer = StateBuffered.PriorityPlayer;
 
-                    if (priorityPlayer == stateBuffered.MySeatId)
+                    if (PriorityPlayer == StateBuffered.MySeatId)
                     {
-                        TimerMe.Unpause();
+                        TimerMe.Resume();
                         TimerOpponent.Pause();
                     }
-                    else if (priorityPlayer == stateBuffered.OpponentSeatId)
+                    else if (PriorityPlayer == StateBuffered.OpponentSeatId)
                     {
                         TimerMe.Pause();
-                        TimerOpponent.Unpause();
+                        TimerOpponent.Resume();
                     }
                 }
 
                 // Cards lists
-                if (stateBuffered.MySeatId > 0)
+                if (StateBuffered.MySeatId > 0)
                 {
                     try
                     {
-                        MyLibrary.ConvertCardList(stateBuffered.MyLibrary);
+                        MyLibrary.ConvertCardList(StateBuffered.MyLibrary);
 
-                        OpponentCardsSeen.ConvertCardList(stateBuffered.OpponentCardsSeen);
+                        OpponentCardsSeen.ConvertCardList(StateBuffered.OpponentCardsSeen);
 
-                        MySideboard.ConvertCardList(stateBuffered.MySideboard);
+                        MySideboard.ConvertCardList(StateBuffered.MySideboard);
                     }
                     catch (KeyNotFoundException)
                     {
@@ -138,7 +161,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 //    isInitialized = true;
                 //}
 
-                updateCardsInMatchTrackingBuffered = false;
+                UpdateCardsInMatchTrackingBuffered = false;
             }
         }
     }

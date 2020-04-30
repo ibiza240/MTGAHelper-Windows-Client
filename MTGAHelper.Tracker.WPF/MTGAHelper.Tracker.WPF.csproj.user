@@ -1,58 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ShowAllFiles>true</ShowAllFiles>
-    <_LastSelectedProfileId>D:\repos\MTGAHelper\MTGAHelper.Tracker.WPF\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
+    <_LastSelectedProfileId>C:\Users\BL\source\repos\MTGAHelper\MTGAHelper.Tracker.WPF\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
+    <ProjectView>ShowAllFiles</ProjectView>
+    <PublishUrlHistory />
+    <InstallUrlHistory />
+    <SupportUrlHistory />
+    <UpdateUrlHistory />
+    <BootstrapperUrlHistory />
+    <ErrorReportUrlHistory />
+    <FallbackCulture>en-US</FallbackCulture>
+    <VerifyUploadedFiles>false</VerifyUploadedFiles>
   </PropertyGroup>
-  <ItemGroup>
-    <ApplicationDefinition Update="App.xaml">
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Views\DialogLoginFacebook.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="Views\AboutWindow.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\CardListPopup.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\CardPopup.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\CardPopupDrafting.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\DialogLoginFacebook.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\UserControls\Drafting.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\MainWindow.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\OptionsWindow.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\UserControls\Playing.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\UserControls\Ready.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\UserControls\SimpleCardsList.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\UserControls\StatusBarTop.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\UserControls\Welcome.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
 </Project>

@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Threading;
 using System.Windows;
+using Serilog;
 
 namespace MTGAHelper.Tracker.WPF
 {
-    static class Program
+    internal static class Program
     {
-        static Mutex mutex;
+        private static Mutex Mutex;
+
         [STAThread]
-        static void Main()
+        private static void Main()
         {
             // https://stackoverflow.com/questions/229565/what-is-a-good-pattern-for-using-a-global-mutex-in-c
-            string mutexId = "Global\\{24eb5c47-62c6-4822-b305-b6265a3fbea3}";
-            using (mutex = new Mutex(false, mutexId, out bool createdNew))
+            const string mutexId = "Global\\{24eb5c47-62c6-4822-b305-b6265a3fbea3}";
+            using (Mutex = new Mutex(false, mutexId, out _))
             {
                 var hasHandle = false;
                 try
                 {
                     try
                     {
-                        hasHandle = mutex.WaitOne(1000, false);
+                        hasHandle = Mutex.WaitOne(1000, false);
                         if (hasHandle == false)
                             throw new TimeoutException("Timeout waiting for exclusive access");
                     }
@@ -36,13 +38,16 @@ namespace MTGAHelper.Tracker.WPF
                 {
                     MessageBox.Show("Cannot run MTGAHelper more than once", "MTGAHelper");
                 }
+                catch (Exception e)
+                {
+                    Log.Fatal(e, "Fatal error");
+                }
                 finally
                 {
                     if (hasHandle)
-                        mutex.ReleaseMutex();
+                        Mutex.ReleaseMutex();
                 }
             }
         }
     }
-
 }

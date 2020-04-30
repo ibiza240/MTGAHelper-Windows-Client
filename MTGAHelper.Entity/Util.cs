@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace MTGAHelper.Entity
 {
+    // TODO: move out of Entity
     public class Util
     {
         public readonly Regex regexPrefix = new Regex(@"^\[(.*?)\](?:(\d.+? \d.+?(?: (?:A|P)M)?)(?:$|: | [a-zA-Z]))?", RegexOptions.Compiled);
@@ -14,8 +15,8 @@ namespace MTGAHelper.Entity
         public string AppFolder =>
             Directory.GetCurrentDirectory();
 
-        public readonly uint FnvPrime32 = 16777619;
-        public readonly uint FnvOffset32 = 2166136261;
+        const uint FnvPrime32 = 16777619;
+        const uint FnvOffset32 = 2166136261;
         //public static readonly ulong FnvPrime64 = 1099511628211;
         //public static readonly ulong FnvOffset64 = 14695981039346656037;
         public uint To32BitFnv1aHash(string toHash, bool separateUpperByte = false)

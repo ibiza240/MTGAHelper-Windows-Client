@@ -2,41 +2,71 @@
 
 namespace MTGAHelper.Lib.Cache
 {
+    public interface ICacheLoader<T>
+    {
+        T LoadData();
+    }
+
+    public class SimpleLoader<T> : ICacheLoader<T>
+    {
+        readonly Func<T> loadFunc;
+
+        public SimpleLoader(Func<T> loadFunc)
+        {
+            this.loadFunc = loadFunc;
+        }
+
+        public T LoadData()
+        {
+            return loadFunc();
+        }
+    }
+
+    // TODO: move out of Entity
     public class CacheSingleton<T> where T : class
     {
-        readonly object lockCache = new object();
+        readonly object lockSetCache = new object();
+        readonly ICacheLoader<T> loader;
 
         T cache;
 
-        public void Set(T obj)
+        public CacheSingleton(ICacheLoader<T> loader)
         {
-            lock (lockCache)
-                cache = obj;
+            this.loader = loader;
         }
 
         public T Get()
         {
-            lock (lockCache)
+            // once cache is not null, it will never be set to null,
+            // therefore we can return (possibly stale) value as long as it's not null.
+            return cache ?? ReloadInternal(false);
+        }
+
+        public void Reload()
+        {
+            ReloadInternal(true);
+        }
+
+        T ReloadInternal(bool ifNotNull)
+        {
+            lock (lockSetCache)
             {
+                // checks for null (again) inside the lock to prevent double loading
+                if (ifNotNull || cache == null)
+                    cache = loader.LoadData();
                 return cache;
             }
         }
 
-        public void PopulateIfNotSet(Func<T> populateFunction)
+        public void Set(T newValue)
         {
-            lock (lockCache)
-            {
-                if (IsNotSet())
-                {
-                    Set(populateFunction());
-                }
-            }
-        }
+            if (newValue == null)
+                throw new ArgumentNullException(nameof(newValue));
 
-        public bool IsNotSet()
-        {
-            lock (lockCache)
-                return cache == null;
+            lock (lockSetCache)
+            {
+                cache = newValue;
+            }
         }
     }
 }

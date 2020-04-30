@@ -23,9 +23,10 @@ namespace MTGAHelper.Tracker.WPF.Views.Helpers
             var hyperlink = sender as Hyperlink;
 
             if ((bool)args.NewValue)
-                hyperlink.RequestNavigate += Hyperlink_RequestNavigate;
-            else
-                hyperlink.RequestNavigate -= Hyperlink_RequestNavigate;
+            {
+                if (hyperlink != null) hyperlink.RequestNavigate += Hyperlink_RequestNavigate;
+            }
+            else if (hyperlink != null) hyperlink.RequestNavigate -= Hyperlink_RequestNavigate;
         }
 
         private static void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)

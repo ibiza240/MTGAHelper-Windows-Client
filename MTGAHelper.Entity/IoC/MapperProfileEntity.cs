@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using MTGAHelper.Entity.OutputLogParsing;
-using MTGAHelper.Lib.Cache;
 using MTGAHelper.Lib.CollectionDecksCompare;
 using MTGAHelper.Lib.Config;
+using MTGAHelper.Web.UI.Shared;
 
 namespace MTGAHelper.Entity.IoC
 {
@@ -14,7 +14,10 @@ namespace MTGAHelper.Entity.IoC
         public MapperProfileOldCardFormat()
         {
             CreateMap<Card2, Card>()
-                .ForMember(i => i.type, i => i.MapFrom(x => x.Type_line))
+                .ForMember(i => i.type, i => i.MapFrom(x => x.TypeLine))
+                .ForMember(i => i.mana_cost, i => i.MapFrom(x => x.ManaCost))
+                .ForMember(i => i.colors, i => i.MapFrom(x => x.Colors))
+                .ForMember(i => i.color_identity, i => i.MapFrom(x => x.ColorIdentity))
                 .ForMember(i => i.notInBooster, i => i.MapFrom(x => !x.IsInBooster))
                 .ForMember(i => i.artistCredit, i => i.MapFrom(x => x.Artist));
         }
@@ -22,29 +25,24 @@ namespace MTGAHelper.Entity.IoC
 
     public class MapperProfileEntity : Profile
     {
-        public MapperProfileEntity(CacheSingleton<Dictionary<int, Card>> cacheCards)
+        public MapperProfileEntity(
+            AutoMapperGrpIdToCardConverter grpIdToCard)
         {
-            var dictAllCards = cacheCards.Get();
-
             // grpId to Card
-            CreateMap<int, Card>().ConvertUsing(i => dictAllCards.ContainsKey(i) ? dictAllCards[i] :
-                new Card
-                {
-                    grpId = 0,
-                    name = "Unknown",
-                    imageCardUrl = "https://cdn11.bigcommerce.com/s-0kvv9/images/stencil/1280x1280/products/266486/371622/classicmtgsleeves__43072.1532006814.jpg?c=2&imbypass=on"
-                });
+            CreateMap<int, Card>().ConvertUsing(grpIdToCard);
 
             //CreateMap<MtgaDeck, ConfigModelRawDeck>();
 
             CreateMap<KeyValuePair<int, int>, CardWithAmount>()
-                .ConvertUsing(i => new CardWithAmount(dictAllCards[i.Key], i.Value));
+                .ForCtorParam("card", opt => opt.MapFrom(kvp => kvp.Key))
+                .ForCtorParam("amount", opt => opt.MapFrom(kvp => kvp.Value))
+                .ForAllMembers(o => o.Ignore());
 
             CreateMap<QuestUpdate, PlayerQuest>();
-            CreateMap<TrackDiff, PlayerProgress>();
+            CreateMap<TrackDiff, PlayerProgress>(MemberList.None);
             CreateMap<DraftMakePickRaw, DraftPickProgress>();
 
-            CreateMap<ConfigModelRawDeck, ConfigModelDeck>()
+            CreateMap<ConfigModelRawDeck, ConfigModelDeck>(MemberList.None)
                 .ForMember(i => i.ScraperTypeId, i => i.MapFrom(x => Constants.USERDECK_SOURCE_MTGADECK))
                 .ForMember(i => i.UrlDeckList, i => i.MapFrom(x => (string)null));
 
@@ -62,7 +60,9 @@ namespace MTGAHelper.Entity.IoC
                 .ForMember(i => i.NbMissing, i => i.MapFrom(x => x.NbMissing));
 
             CreateMap<Card, CardForDraftPick>()
-                .ForMember(i => i.Rating, i => i.Ignore())
+                .ForMember(i => i.RatingToDisplay, i => i.Ignore())
+                .ForMember(i => i.RatingValue, i => i.Ignore())
+                .ForMember(i => i.RatingSource, i => i.Ignore())
                 .ForMember(i => i.Description, i => i.Ignore())
                 .ForMember(i => i.Weight, i => i.Ignore())
                 .ForMember(i => i.NbDecksUsedMain, i => i.Ignore())

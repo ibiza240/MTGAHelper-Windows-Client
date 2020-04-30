@@ -10,9 +10,9 @@ namespace MTGAHelper.Lib.Model
         public double LastLoginHours { get; set; }
         public int NbDecksMonitored { get; set; }
 
-        public UserInfo()
-        {
-        }
+        //public UserInfo()
+        //{
+        //}
 
         //public UserInfo(ConfigModelUser configModel)
         //{
@@ -28,11 +28,11 @@ namespace MTGAHelper.Lib.Model
         //    this.MtgaUserProfile = configModel.MtgaUserProfile;
         //}
 
-        public static UserInfo FromConfigModelUser(ConfigModelUser configModel)
-        {
-            var res = Mapper.Map<UserInfo>(configModel);
-            return res;
-        }
+        //public static UserInfo FromConfigModelUser(ConfigModelUser configModel)
+        //{
+        //    var res = Mapper.Map<UserInfo>(configModel);
+        //    return res;
+        //}
 
         ////public UserInfo With(int collectionCardsTotal, int count, double totalHours, bool isCollectionOnDisk)
         //public UserInfo With(int count, double totalHours)

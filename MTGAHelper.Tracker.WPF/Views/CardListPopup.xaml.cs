@@ -6,15 +6,11 @@ namespace MTGAHelper.Tracker.WPF.Views
     /// <summary>
     /// Interaction logic for CardListPopup.xaml
     /// </summary>
-    public partial class CardListPopup : Window
+    public partial class CardListPopup
     {
-        //CardsListVM vm = new CardsListVM(false);
-
         public CardListPopup()
         {
-            //DataContext = vm;
             InitializeComponent();
-            CardsInPopup.DisableRowStyleHighlight();
         }
 
         public void Init(CardsListVM vm)
@@ -22,23 +18,19 @@ namespace MTGAHelper.Tracker.WPF.Views
             DataContext = vm;
         }
 
-        //internal void SetDataContext(string cardChosen, ICollection<CardWpf> cards)
-        //{
-        //    vm.SetCards(cardChosen, cards);
-        //}
-
         public void SetCardPopupPosition(ForceCardPopupSideEnum side, int mainWindowTop, int mainWindowLeft, int mainWindowWidth)
         {
             var popupWidth = (int)Width;
 
-            var toLeft = mainWindowLeft - popupWidth;
-            var toRight = mainWindowLeft + mainWindowWidth;
+            int toLeft = mainWindowLeft - popupWidth;
+            int toRight = mainWindowLeft + mainWindowWidth;
 
-            var leftAdjusted = mainWindowLeft < SystemParameters.WorkArea.Width / 2 ? toRight : toLeft;
-            if (side == ForceCardPopupSideEnum.Left)
-                leftAdjusted = toLeft;
-            else if (side == ForceCardPopupSideEnum.Right)
-                leftAdjusted = toRight;
+            int leftAdjusted = side switch
+            {
+                ForceCardPopupSideEnum.Left => toLeft,
+                ForceCardPopupSideEnum.Right => toRight,
+                _ => (mainWindowLeft < SystemParameters.WorkArea.Width / 2 ? toRight : toLeft)
+            };
 
             Top = mainWindowTop;
             Left = leftAdjusted;

@@ -11,7 +11,7 @@ namespace MTGAHelper.Entity
         public string Name { get; set; }
         public bool IsToken { get; set; }
         public bool IsCollectible { get; set; }
-        public bool IsCraftable { get; set; }
+        //public bool IsCraftable { get; set; }
         public int Power { get; set; }
         public int Toughness { get; set; }
         public string Number { get; set; }  // MTGA: CollectorNumber    MUST BE STRING (e.g. Golgari Queen GR8
@@ -23,11 +23,11 @@ namespace MTGAHelper.Entity
         // From MTGA but with custom logic
         public string Set { get; set; }
 
-        // from Scryfall
-        public ICollection<string> Colors { get; set; }
-        public ICollection<string> Color_identity { get; set; }
-        public string Type_line { get; set; }
-        public string Mana_cost { get; set; }
+        //// from Scryfall
+        //public ICollection<string> Colors { get; set; }
+        //public ICollection<string> Color_identity { get; set; }
+        //public string Type_line { get; set; }
+        //public string Mana_cost { get; set; }
 
         // from Scryfall, calculated 
         public string imageCardUrl { get; set; }
@@ -38,5 +38,11 @@ namespace MTGAHelper.Entity
 
         // Custom
         public bool IsInBooster { get; set; } = true;
+
+        // New Cards format
+        public ICollection<string> Colors { get; set; }
+        public ICollection<string> ColorIdentity { get; set; }
+        public string TypeLine { get; set; }
+        public string ManaCost { get; set; }
     }
 }

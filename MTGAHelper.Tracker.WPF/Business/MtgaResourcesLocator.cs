@@ -8,50 +8,50 @@ namespace MTGAHelper.Tracker.WPF.Business
 {
     public class MtgaResourcesLocator
     {
-        readonly MainWindowVM vm;
+        private readonly MainWindowVM VM;
 
         public MtgaResourcesLocator(MainWindowVM vm)
         {
-            this.vm = vm;
+            VM = vm;
         }
 
-        public void LocateLogFilePath(ConfigModelApp configApp)
+        public void LocateLogFilePath(ConfigModel configApp)
         {
             if (File.Exists(configApp.LogFilePath))
             {
                 // File found
-                vm.UnSetProblem(ProblemsFlags.LogFileNotFound);
+                VM.UnSetProblem(ProblemsFlags.LogFileNotFound);
                 return;
             }
 
             if (configApp.LogFilePath.StartsWith("E.g."))
             {
-                var pathDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/../LocalLow/Wizards Of The Coast/MTGA";
+                string pathDir = $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}/../LocalLow/Wizards Of The Coast/MTGA";
                 if (Directory.Exists(pathDir))
                 {
                     // File deduced
                     configApp.LogFilePath = Path.GetFullPath($"{pathDir}/output_log.txt");
                     configApp.Save();
-                    vm.UnSetProblem(ProblemsFlags.LogFileNotFound);
+                    VM.UnSetProblem(ProblemsFlags.LogFileNotFound);
                     return;
                 }
             }
 
             // File not found
-            vm.SetProblem(ProblemsFlags.LogFileNotFound);
+            VM.SetProblem(ProblemsFlags.LogFileNotFound);
         }
 
-        public void LocateGameClientFilePath(ConfigModelApp configApp)
+        public void LocateGameClientFilePath(ConfigModel configApp)
         {
             if (File.Exists(configApp.GameFilePath))
             {
                 // File found
-                vm.UnSetProblem(ProblemsFlags.GameClientFileNotFound);
+                VM.UnSetProblem(ProblemsFlags.GameClientFileNotFound);
                 return;
             }
             else if (string.IsNullOrWhiteSpace(configApp.GameFilePath))
             {
-                using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\WOW6432Node\\Wizards of the Coast\\MTGArena"))
+                using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\WOW6432Node\\Wizards of the Coast\\MTGArena"))
                 {
                     if (key != null)
                     {
@@ -61,7 +61,7 @@ namespace MTGAHelper.Tracker.WPF.Business
                             // File deduced
                             configApp.GameFilePath = Path.Combine(o as string, "MTGA.exe");
                             configApp.Save();
-                            vm.UnSetProblem(ProblemsFlags.GameClientFileNotFound);
+                            VM.UnSetProblem(ProblemsFlags.GameClientFileNotFound);
                             return;
                         }
                     }
@@ -69,7 +69,7 @@ namespace MTGAHelper.Tracker.WPF.Business
             }
 
             // File not found
-            vm.SetProblem(ProblemsFlags.GameClientFileNotFound);
+            VM.SetProblem(ProblemsFlags.GameClientFileNotFound);
         }
     }
 }

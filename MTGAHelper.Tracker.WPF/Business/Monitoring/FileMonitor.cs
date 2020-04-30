@@ -9,10 +9,13 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
 {
     public class FileMonitor
     {
-        readonly object lockFilePath = new object();
-        string filePath = null;
-        long lastSize;
-        bool initialLoad = true;
+        private readonly object LockFilePath = new object();
+
+        private string FilePath;
+
+        private long LastSize;
+
+        private bool InitialLoad = true;
 
         public StringBuilder LogContentToSend { get; private set; } = new StringBuilder();
 
@@ -25,8 +28,8 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
 
         public void SetFilePath(string filePath)
         {
-            lock (lockFilePath)
-                this.filePath = filePath;
+            lock (LockFilePath)
+                FilePath = filePath;
         }
 
         public async Task Start(CancellationToken cancellationToken)
@@ -34,7 +37,7 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
             await ContinuallyCheckLogFile(cancellationToken);
         }
 
-        async Task ContinuallyCheckLogFile(CancellationToken cancellationToken)
+        private async Task ContinuallyCheckLogFile(CancellationToken cancellationToken)
         {
             //Task task = null;
 
@@ -42,84 +45,83 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
             {
                 while (true)
                 {
-                    Task.Delay(1000).Wait();
+                    Task.Delay(1000, cancellationToken).Wait(cancellationToken);
 
-                    lock (lockFilePath)
+                    lock (LockFilePath)
                     {
-                        if (filePath != null)
+                        if (FilePath == null) continue;
+
+                        try
                         {
-                            try
-                            {
-                                if (cancellationToken.IsCancellationRequested == true)
-                                    throw new TaskCanceledException();// (task);
+                            if (cancellationToken.IsCancellationRequested)
+                                throw new TaskCanceledException();// (task);
 
-                                if (File.Exists(filePath) == false)
-                                    continue;
+                            if (File.Exists(FilePath) == false)
+                                continue;
 
-                                ReadFile();
-                            }
-                            catch
-                            {
-                                // ignored
-                            }
+                            ReadFile();
+                        }
+                        catch
+                        {
+                            // ignored
                         }
                     }
                 }
-            }).ConfigureAwait(false);
+            }, cancellationToken).ConfigureAwait(false);
         }
 
-        void ReadFile()
+        private void ReadFile()
         {
-            var fileSize = new FileInfo(filePath).Length;
-            if (fileSize != lastSize)
+            long fileSize = new FileInfo(FilePath).Length;
+            if (fileSize == LastSize) return;
+
+            string newText;
+
+            if (fileSize < LastSize)
             {
-                var newText = "";
-
-                if (fileSize < lastSize)
+                // New file was created
+                using (var fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    // New file was created
-                    using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    using (StreamReader reader = new StreamReader(fs))
-                    {
-                        newText = reader.ReadToEnd();
-                    }
-                    lastSize = new FileInfo(filePath).Length;
-                    LogContentToSend = new StringBuilder(newText);
-                }
-                else
-                {
-                    // File got bigger
-                    using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    {
-                        var newTextSize = fs.Length - lastSize;
-                        byte[] b = new byte[newTextSize];
-
-                        fs.Seek(lastSize, SeekOrigin.Begin);
-                        fs.Read(b, 0, (int)(newTextSize));
-
-                        newText = Encoding.UTF8.GetString(b);
-                    }
-
-                    lastSize = fileSize;
-                    LogContentToSend.Append(newText);
+                    using var reader = new StreamReader(fs);
+                    newText = reader.ReadToEnd();
                 }
 
-                if (initialLoad == false)
-                {
-                    try
-                    {
-                        OnFileSizeChangedNewText?.Invoke(this, newText);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Fatal(ex, "Unexpected error:");
-                        //System.Diagnostics.Debugger.Break();
-                        throw;
-                    }
-                }
-
-                initialLoad = false;
+                LastSize = new FileInfo(FilePath).Length;
+                LogContentToSend = new StringBuilder(newText);
             }
+            else
+            {
+                // File got bigger
+                using (var fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    long newTextSize = fs.Length - LastSize;
+                    var b = new byte[newTextSize];
+
+                    fs.Seek(LastSize, SeekOrigin.Begin);
+                    fs.Read(b, 0, (int)(newTextSize));
+
+                    newText = Encoding.UTF8.GetString(b);
+                }
+
+                LastSize = fileSize;
+                LogContentToSend.Append(newText);
+            }
+
+            if (InitialLoad == false)
+            {
+                try
+                {
+                    OnFileSizeChangedNewText?.Invoke(this, newText);
+                }
+                catch (Exception ex)
+                {
+                    Log.Fatal(ex, "Unexpected error:");
+                    //System.Diagnostics.Debugger.Break();
+                    throw;
+                }
+            }
+
+            InitialLoad = false;
         }
 
         public void ResetStringBuilder()

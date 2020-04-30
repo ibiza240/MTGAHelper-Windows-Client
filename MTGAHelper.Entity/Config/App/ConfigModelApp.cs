@@ -15,7 +15,7 @@ namespace MTGAHelper.Lib.Config
         public ICollection<string> Formats { get; set; }
     }
 
-    public class ConfigModelApp
+    public class ConfigModelApp : IAccountPath, IConfigUsersPath, IDataPath
     {
         //public const string CURRENT_SET = "ELD";
 
@@ -29,7 +29,6 @@ namespace MTGAHelper.Lib.Config
         //public string FolderDataDecks => Path.Combine(FolderData, "decks");
         public string FolderDataConfigUsers => Path.Combine(FolderData, "configusers");
         public string FolderDataAccounts => Path.Combine(FolderData, "accounts");
-        public string FolderDataGlobal => Path.Combine(FolderData, "global");
 
         //public List<string> CardsObtainableOnlyByCrafting { get; set; } = new List<string>();
 

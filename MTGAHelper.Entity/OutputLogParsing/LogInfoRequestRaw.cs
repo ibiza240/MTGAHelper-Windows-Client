@@ -61,4 +61,20 @@ namespace MTGAHelper.Entity.OutputLogParsing
         public Params @params { get; set; }
         public string id { get; set; }
     }
+
+    public class Params
+    {
+        public string messageName { get; set; }
+        public string humanContext { get; set; }
+        public dynamic payloadObject { get; set; }
+        public string transactionId { get; set; }
+    }
+
+    public class Params<T>
+    {
+        public string messageName { get; set; }
+        public string humanContext { get; set; }
+        public T payloadObject { get; set; }
+        public string transactionId { get; set; }
+    }
 }

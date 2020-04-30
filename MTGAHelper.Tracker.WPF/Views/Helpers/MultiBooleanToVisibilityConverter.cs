@@ -10,8 +10,8 @@ namespace MTGAHelper.Tracker.WPF.Views.Helpers
                                 object parameter,
                                 System.Globalization.CultureInfo culture)
         {
-            bool visible = true;
-            foreach (object value in values)
+            var visible = true;
+            foreach (var value in values)
                 visible &= System.Convert.ToBoolean(value);
 
             if (visible)

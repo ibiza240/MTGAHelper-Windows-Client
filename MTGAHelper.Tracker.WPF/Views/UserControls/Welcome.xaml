@@ -1,93 +1,138 @@
-﻿<UserControl x:Class="MTGAHelper.Tracker.WPF.Views.UserControls.Welcome"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:MTGAHelper.Tracker.WPF.Views"
-             xmlns:uc="clr-namespace:MTGAHelper.Tracker.WPF.Views.UserControls"
-             xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
-             mc:Ignorable="d">
-    <UserControl.Style>
-        <Style TargetType="{x:Type uc:Welcome}">
-            <Setter Property="Visibility" Value="Hidden" />
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding MainWindowContext}" Value="Welcome">
-                    <Setter Property="Visibility" Value="Visible" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-    </UserControl.Style>
-    <StackPanel Orientation="Vertical" Margin="10,10,10,10">
-        <Label FontSize="20" FontWeight="Bold">
-            <TextBlock>Welcome!</TextBlock>
+﻿<UserControl
+    x:Class="MTGAHelper.Tracker.WPF.Views.UserControls.Welcome"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:MTGAHelper.Tracker.WPF.ViewModels"
+    d:DataContext="{d:DesignInstance viewModels:MainWindowVM}"
+    mc:Ignorable="d">
+    <StackPanel Margin="10" Orientation="Vertical">
+        <Label FontWeight="Bold">
+            <TextBlock FontSize="20">Welcome!</TextBlock>
         </Label>
 
-        <Label>
-            <TextBlock TextWrapping="Wrap">
-                You must first sign-in to MTGAHelper.
+        <Label Margin="0,10,0,0">
+            <TextBlock FontWeight="Bold" TextWrapping="Wrap">
+                You must first sign-in to MTGAHelper
             </TextBlock>
         </Label>
 
-        <StackPanel>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Height="32" Background="{StaticResource BackgroundBrush}" Click="SigninGoogle_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Assets/Images/Google.png" Width="16" Height="16" />
-                        <TextBlock Margin="5,0,0,0">
-                            With Google
-                        </TextBlock>
-                    </StackPanel>
-                </Button>
-                <Button Grid.Column="1" Background="{StaticResource BackgroundBrush}" Click="SigninFacebook_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Assets/Images/Facebook.ico" Width="16" Height="16" />
-                        <TextBlock Margin="5,0,0,0">
-                            With Facebook
-                        </TextBlock>
-                    </StackPanel>
-                </Button>
-            </Grid>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="0"
+                Height="32"
+                Background="{StaticResource BackgroundBrush}"
+                Click="SigninGoogle_Click">
+                <StackPanel Orientation="Horizontal">
+                    <Image
+                        Width="16"
+                        Height="16"
+                        Source="/Assets/Images/Google.png" />
+                    <TextBlock Margin="5,0,0,0">
+                        With Google
+                    </TextBlock>
+                </StackPanel>
+            </Button>
+            <Button
+                Grid.Column="1"
+                Background="{StaticResource BackgroundBrush}"
+                Click="SigninFacebook_Click">
+                <StackPanel Orientation="Horizontal">
+                    <Image
+                        Width="16"
+                        Height="16"
+                        Source="/Assets/Images/Facebook.ico" />
+                    <TextBlock Margin="5,0,0,0">
+                        With Facebook
+                    </TextBlock>
+                </StackPanel>
+            </Button>
+        </Grid>
 
-            <Label FontSize="16" FontWeight="Bold" Margin="0,10,0,0">Or with a local account</Label>
-            <Label Padding="5,0,5,0" HorizontalContentAlignment="Center">
-                <TextBlock TextWrapping="Wrap" TextAlignment="Center">
-                    You will have to create a local account first on the 
-                    <Hyperlink NavigateUri="https://mtgahelper.com" helpers:HyperlinkExtensions.IsExternal="true">
-                        MTGAHelper website
-                    </Hyperlink>
-                </TextBlock>
+        <Label
+            Margin="0,30,0,0"
+            FontSize="16"
+            FontWeight="Bold">
+            Or with a local account
+        </Label>
+        <Label Padding="5,0,5,0" HorizontalContentAlignment="Center">
+            <TextBlock TextAlignment="Center" TextWrapping="Wrap">
+                You will have to create a local account first on the
+                <Hyperlink helpers:HyperlinkExtensions.IsExternal="true" NavigateUri="https://mtgahelper.com">
+                    MTGAHelper website
+                </Hyperlink>
+            </TextBlock>
+        </Label>
+        <Grid Margin="0,10,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                HorizontalAlignment="Right">
+                Email:
             </Label>
-            <Grid Margin="0,10,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
+            <TextBox
+                Grid.Row="0"
+                Grid.Column="1"
+                Height="20"
+                Text="{Binding SigninEmail.Value}" />
+            <CheckBox
+                x:Name="RememberEmailCheckBox"
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="0,5,0,0">
+                Remember my email
+            </CheckBox>
 
-                <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right">Email:</Label>
-                <TextBox Grid.Row="0" Grid.Column="1" Height="20" Text="{Binding SigninEmail.Value}"></TextBox>
-                <CheckBox Grid.Row="1" Grid.Column="1" x:Name="chkRememberEmail">Remember my email</CheckBox>
+            <Label
+                Grid.Row="2"
+                Grid.Column="0"
+                Margin="0,10,0,0"
+                HorizontalAlignment="Right">
+                Password:
+            </Label>
+            <PasswordBox
+                x:Name="PasswordBox"
+                Grid.Row="2"
+                Grid.Column="1"
+                Height="20"
+                Margin="0,10,0,0"
+                KeyUp="txtPassword_KeyUp" />
+            <CheckBox
+                x:Name="RememberPasswordCheckBox"
+                Grid.Row="3"
+                Grid.Column="1"
+                Margin="0,5,0,0">
+                Remember my password to auto-signin
+            </CheckBox>
 
-                <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" Margin="0,10,0,0">Password:</Label>
-                <PasswordBox Grid.Row="2" Grid.Column="1" x:Name="txtPassword" Height="20" KeyUp="txtPassword_KeyUp"></PasswordBox>
-                <!--<TextBox Grid.Row="1" Grid.Column="1" Height="20" Text="{Binding SigninPassword}"></TextBox>-->
-                <CheckBox Grid.Row="3" Grid.Column="1" x:Name="chkRememberPassword">Remember my password to auto-signin</CheckBox>
-
-                <Button Grid.Row="4" Grid.Column="1" Height="24" Margin="0,10,0,0"
-                    Background="{StaticResource BackgroundBrush}" Click="ButtonLoginLocal_Click">
-                    Sign-in
-                </Button>
-            </Grid>
-        </StackPanel>
+            <Button
+                Grid.Row="4"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Height="32"
+                Margin="0,20,0,0"
+                Background="{StaticResource BackgroundBrush}"
+                Click="ButtonLoginLocal_Click">
+                Sign-in
+            </Button>
+        </Grid>
     </StackPanel>
 </UserControl>

@@ -5,11 +5,6 @@
         public Card Card { get; set; }
         public int Amount { get; private set; }
 
-        public CardWithAmount(Card card)
-        {
-            Card = card;
-        }
-
         public CardWithAmount(Card card, int amount)
         {
             Card = card;
@@ -36,7 +31,8 @@
     public class CardForDraftPick : Card
     {
         public string RatingSource { get; set; } = "";
-        public string Rating { get; set; } = "N/A";
+        public float RatingValue { get; set; } = 0f;
+        public string RatingToDisplay { get; set; } = "N/A";
         public string Description { get; set; } = "N/A";
         public float Weight { get; set; }
         public int NbDecksUsedMain { get; set; }

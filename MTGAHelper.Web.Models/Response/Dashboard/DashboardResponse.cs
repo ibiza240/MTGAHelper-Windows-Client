@@ -24,7 +24,6 @@ namespace MTGAHelper.Web.UI.Model.Response
     public class InfoCardMissingSummaryResponseDto
     {
         public string Set { get; set; }
-        public bool NotInBooster { get; set; }
         public string Rarity { get; set; }
         public int NbMissing { get; set; }
         public float MissingWeight { get; set; }

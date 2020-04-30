@@ -4,14 +4,14 @@ namespace MTGAHelper.Tracker.WPF.Models.OutputLog
 {
     public class DraftMakePick
     {
-        public string playerId { get; set; }
-        public string eventName { get; set; }
-        public string draftId { get; set; }
-        public string draftStatus { get; set; }
-        public int packNumber { get; set; }
-        public int pickNumber { get; set; }
-        public List<string> draftPack { get; set; }
-        public List<string> pickedCards { get; set; }
-        public double requestUnits { get; set; }
+        public string PlayerId { get; set; }
+        public string EventName { get; set; }
+        public string DraftId { get; set; }
+        public string DraftStatus { get; set; }
+        public int PackNumber { get; set; }
+        public int PickNumber { get; set; }
+        public List<string> DraftPack { get; set; }
+        public List<string> PickedCards { get; set; }
+        public double RequestUnits { get; set; }
     }
 }

@@ -1,72 +1,103 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using MTGAHelper.Tracker.WPF.Models;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
-    public class LibraryCardWithAmountVM : CardWithAmountWpf, INotifyPropertyChanged
+    public class LibraryCardWithAmountVM : CardWithAmountWpf
     {
-        GradientStopCollection borderGradient;
-        public GradientStopCollection BorderGradient
-        {
-            get => borderGradient;
-            set
-            {
-                borderGradient = value;
-                originalAmount = Amount;
-            }
-        }
+        #region Public Properties
 
-        float drawPercent;
-
-        public float DrawPercent
-        {
-            get => drawPercent;
-            set
-            {
-                if (drawPercent == value) return;
-                drawPercent = value;
-                OnPropertyChanged();
-            }
-        }
-
+        /// <summary>
+        /// Current card count string with name
+        /// </summary>
         public string AmountAndName => $"{Amount}x {Name}";
 
-        public string AmountWithOriginal => $"{Amount}/{originalAmount}";
+        /// <summary>
+        /// Fraction string of cards remaining in the deck and cards that started in the deck
+        /// </summary>
+        public string CardFraction => $"{Amount} / {_OriginalAmount}";
 
-        int originalAmount;
+        /// <summary>
+        /// Percentage chance to draw this card
+        /// </summary>
+        public float DrawPercent
+        {
+            get => _DrawPercent;
+            set => SetField(ref _DrawPercent, value, nameof(DrawPercent));
+        }
 
-        int amount;
-
+        /// <summary>
+        /// Number of cards remaining in the deck
+        /// </summary>
         public override int Amount
         {
-            get => amount;
-            set
+            get => _Amount;
+            set => IsAmountChanged = SetField(ref _Amount, value, nameof(Amount));
+        }
+
+        /// <summary>
+        /// Has the amount of remaining cards changed? Used to animate the background color
+        /// </summary>
+        public bool IsAmountChanged
+        {
+            get => _IsAmountChanged;
+            private set
             {
-                if (amount == value)
-                {
-                    IsAmountChanged = false;
-                    return;
-                }
-                amount = value;
-                OnPropertyChanged(string.Empty);
-                IsAmountChanged = true;
+                SetField(ref _IsAmountChanged, value, nameof(IsAmountChanged));
+
+                // Raise the property changed event for amount with original
+                RaisePropertyChangedEvent(nameof(CardFraction));
             }
         }
 
-        bool isAmountChanged;
-        public bool IsAmountChanged
+        /// <summary>
+        /// Border color based on card color
+        /// </summary>
+        public GradientStopCollection BorderGradient
         {
-            get => isAmountChanged;
-            private set { isAmountChanged = value; OnPropertyChanged(); }
+            get => _BorderGradient;
+            set
+            {
+                SetField(ref _BorderGradient, value, nameof(BorderGradient));
+
+                // Set the original value when the border is set because somebody hates constructors :(
+                _OriginalAmount = Amount;
+            }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        #endregion
 
-        void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        #region Private Backing Fields
+
+        /// <summary>
+        /// Percentage chance to draw this card
+        /// </summary>
+        private float _DrawPercent;
+
+        /// <summary>
+        /// Number of cards remaining in the deck
+        /// </summary>
+        private int _Amount;
+
+        /// <summary>
+        /// Has the amount of remaining cards changed? Used to animate the background color
+        /// </summary>
+        private bool _IsAmountChanged;
+
+        /// <summary>
+        /// Border color based on card color
+        /// </summary>
+        private GradientStopCollection _BorderGradient;
+
+        #endregion
+
+        #region Private Fields
+
+        /// <summary>
+        /// The number of cards the deck started with
+        /// </summary>
+        private int _OriginalAmount;
+
+        #endregion
     }
 }

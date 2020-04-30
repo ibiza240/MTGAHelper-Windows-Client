@@ -8,8 +8,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
     {
         public event Action<object, NetworkStatusEnum> EmitStatus;
 
-        NetworkStatusEnum flagsStatus;
-        readonly object lockFlags = new object();
+        private NetworkStatusEnum FlagsStatus;
+        private readonly object LockFlags = new object();
 
         public StatusBlinker()
         {
@@ -19,15 +19,15 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 {
                     Task.Delay(1000).Wait();
 
-                    var activeFlags = new NetworkStatusEnum[0];
-                    lock (lockFlags)
+                    NetworkStatusEnum[] activeFlags;
+                    lock (LockFlags)
                     {
                         activeFlags = Enum.GetValues(typeof(NetworkStatusEnum)).Cast<NetworkStatusEnum>()
-                            .Where(i => flagsStatus.HasFlag(i))
+                            .Where(i => FlagsStatus.HasFlag(i))
                             .ToArray();
                     }
 
-                    int idx = 0;
+                    var idx = 0;
                     foreach (var f in activeFlags)
                     {
                         idx++;
@@ -41,25 +41,25 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public void SetNetworkStatus(NetworkStatusEnum flag, bool isActive)
         {
-            lock (lockFlags)
+            lock (LockFlags)
             {
                 if (isActive)
-                    flagsStatus |= flag;  // Set flag
+                    FlagsStatus |= flag;  // Set flag
                 else
-                    flagsStatus &= ~flag;  // Remove flag
+                    FlagsStatus &= ~flag;  // Remove flag
             }
         }
 
         public bool HasFlag(NetworkStatusEnum flag)
         {
-            lock (lockFlags)
-                return flagsStatus.HasFlag(flag);
+            lock (LockFlags)
+                return FlagsStatus.HasFlag(flag);
         }
 
         internal NetworkStatusEnum GetFlags()
         {
-            lock (lockFlags)
-                return flagsStatus;
+            lock (LockFlags)
+                return FlagsStatus;
             //return Enum.GetValues(typeof(TrackerStatusEnum)).Cast<TrackerStatusEnum>()
             //    .Where(i => flagsStatus.HasFlag(i))
             //    .ToArray();

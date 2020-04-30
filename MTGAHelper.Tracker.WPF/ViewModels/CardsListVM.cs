@@ -5,56 +5,142 @@ using System.Linq;
 using AutoMapper;
 using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
 using MTGAHelper.Tracker.WPF.Models;
+using MTGAHelper.Tracker.WPF.Tools;
 using MTGAHelper.Utility;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
+    #region Enumeration
+
+    public enum DisplayType
+    {
+        Percent,
+        CountOnly,
+        None
+    }
+
     public enum CardsListOrder
     {
-        Cmc,
+        ManaCost,
         DrawChance,
     }
 
+    #endregion
+
     public class CardsListVM : ObservableObject
     {
+        #region Constructor
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <param name="display"></param>
+        /// <param name="cardsListOrder"></param>
+        public CardsListVM(DisplayType display, CardsListOrder cardsListOrder)
+        {
+            CardsListOrder = cardsListOrder;
+            Display = display;
+        }
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Collection of cards
+        /// </summary>
         public ObservableCollection<LibraryCardWithAmountVM> Cards { get; set; }
 
-        public bool ShowDrawPctAndAmount { get; }
-        public bool ShowAmount { get; }
+        /// <summary>
+        /// Whether to show the card images
+        /// </summary>
+        public bool ShowImage
+        {
+            get => _ShowCardImage;
+            set => SetField(ref _ShowCardImage, value, nameof(ShowImage));
+        }
+
+        /// <summary>
+        /// Whether to show the draw percentage and card fraction
+        /// </summary>
+        public bool ShowDrawPercent => Display == DisplayType.Percent;
+
+        /// <summary>
+        /// Whether to show only the card count
+        /// </summary>
+        public bool ShowCardCountOnly => Display == DisplayType.CountOnly;
+
+        /// <summary>
+        /// Option for sorting the cards
+        /// </summary>
         public CardsListOrder CardsListOrder { get; set; }
 
+        /// <summary>
+        /// String used for noting card pop-ups
+        /// </summary>
         public string CardChosen { get; set; } = "TEST";
-        public int CardCount => stats.CardsLeftInDeck;
-        public int LandCount => stats.LandsLeftInDeck;
-        public int TotalLandsInitial => stats.TotalLandsInitial;
-        public float DrawLandPct => stats.DrawLandPct;
 
-        readonly Stats stats = new Stats();
-        readonly Util util = new Util();
-        readonly BorderGradientCalculator gradientCalculator = new BorderGradientCalculator();
+        /// <summary>
+        /// Number of cards left in the deck
+        /// </summary>
+        public int CardCount => Stats.CardsLeftInDeck;
 
-        public CardsListVM(bool showDrawPctAndAmount, bool showAmount, CardsListOrder cardsListOrder)
-        {
-            ShowDrawPctAndAmount = showDrawPctAndAmount;
-            ShowAmount = showAmount;
-            CardsListOrder = cardsListOrder;
-        }
+        /// <summary>
+        /// Number of lands left in the deck
+        /// </summary>
+        public int LandCount => Stats.LandsLeftInDeck;
 
-        internal void SetCards(string cardChosen, ICollection<CardWpf> cards)
-        {
-            CardChosen = cardChosen;
+        /// <summary>
+        /// Total number of lands in the original deck
+        /// </summary>
+        public int TotalLandsInitial => Stats.TotalLandsInitial;
 
-            var data = cards.Select(i => ConvertCard(i.ArenaId, 1, 1f / cards.Count));
-            Cards = new ObservableCollection<LibraryCardWithAmountVM>(data.Select(AddBorderColor));
+        /// <summary>
+        /// Percentage chance of drawing a land
+        /// </summary>
+        public float DrawLandPct => Stats.DrawLandPct;
 
-            RaisePropertyChangedEvent(nameof(CardChosen));
-            RaisePropertyChangedEvent(nameof(Cards));
-        }
+        #endregion
+
+        #region Private Backing Fields
+
+        /// <summary>
+        /// Whether to show the card images
+        /// </summary>
+        private bool _ShowCardImage = true;
+
+        #endregion
+
+        #region Private Fields
+
+        /// <summary>
+        /// What type of information to display
+        /// </summary>
+        private DisplayType Display { get; }
+
+        /// <summary>
+        /// Deck statistics
+        /// </summary>
+        private readonly Stats Stats = new Stats();
+
+        /// <summary>
+        /// Deck utilities
+        /// </summary>
+        private readonly Utilities Util = new Utilities();
+
+        /// <summary>
+        /// Calculator for card border gradients
+        /// </summary>
+        private readonly BorderGradientCalculator GradientCalculator = new BorderGradientCalculator();
+
+        #endregion
+
+        #region Public Methods
 
         public void ResetCards()
         {
             Cards = null;
-            stats.Reset();
+            Stats.Reset();
             RaisePropertyChangedEvent(string.Empty);
         }
 
@@ -70,7 +156,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 UpdateCards(cards);
                 if (CardsListOrder == CardsListOrder.DrawChance)
                     Cards.Sort(c => c.OrderByDescending(i => i.DrawPercent));
-                stats.Refresh(Cards);
+                Stats.Refresh(Cards);
                 NotifyStatsChanged();
                 return;
             }
@@ -84,35 +170,39 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 c.Amount = c.Amount;
                 return c;
             }));
-            stats.Reset(Cards);
+            Stats.Reset(Cards);
 
             RaisePropertyChangedEvent(string.Empty);
         }
 
-        IOrderedEnumerable<LibraryCardWithAmountVM> OrderByCardListOrder(IEnumerable<LibraryCardWithAmountVM> cardsQuery)
+        #endregion
+
+        #region Private Methods
+
+        private IOrderedEnumerable<LibraryCardWithAmountVM> OrderByCardListOrder(IEnumerable<LibraryCardWithAmountVM> cardsQuery)
         {
             return CardsListOrder switch
             {
-                CardsListOrder.Cmc => cardsQuery.OrderBy(i => i.Type.Contains("Land") ? 0 : 1).ThenBy(i => i.Cmc),
+                CardsListOrder.ManaCost => cardsQuery.OrderBy(i => i.Type.Contains("Land") ? 0 : 1).ThenBy(i => i.Cmc),
                 CardsListOrder.DrawChance => cardsQuery.OrderByDescending(i => i.DrawPercent),
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
 
-        bool ShouldComeBeforeByCardListOrder(LibraryCardWithAmountVM left, LibraryCardWithAmountVM right)
+        private bool ShouldComeBeforeByCardListOrder(LibraryCardWithAmountVM left, LibraryCardWithAmountVM right)
         {
             return CardsListOrder switch
             {
-                CardsListOrder.Cmc => left.Type.Contains("Land") || left.Cmc < right.Cmc,
+                CardsListOrder.ManaCost => left.Type.Contains("Land") || left.Cmc < right.Cmc,
                 CardsListOrder.DrawChance => left.DrawPercent > right.DrawPercent,
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
 
-        void UpdateCards(ICollection<LibraryCardWithAmountVM> newCards)
+        private void UpdateCards(ICollection<LibraryCardWithAmountVM> newCards)
         {
             // Remove any card with 0 amount
-            for (var i = Cards.Count - 1; i >= 0; i--)
+            for (int i = Cards.Count - 1; i >= 0; i--)
             {
                 if (Cards[i].Amount == 0)
                     Cards.RemoveAt(i);
@@ -121,9 +211,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             var dictCards = newCards.ToDictionary(i => i.ArenaId, i => i);
 
             // Modify card counts for cards already in the collection
-            for (var i = Cards.Count - 1; i >= 0; i--)
+            for (int i = Cards.Count - 1; i >= 0; i--)
             {
-                var grpId = Cards[i].ArenaId;
+                int grpId = Cards[i].ArenaId;
 
                 if (!dictCards.TryGetValue(grpId, out var c))
                 {
@@ -160,13 +250,13 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }
         }
 
-        LibraryCardWithAmountVM AddBorderColor(LibraryCardWithAmountVM card)
+        private LibraryCardWithAmountVM AddBorderColor(LibraryCardWithAmountVM card)
         {
-            card.BorderGradient = gradientCalculator.CalculateBorderGradient(card);
+            card.BorderGradient = GradientCalculator.CalculateBorderGradient(card);
             return card;
         }
 
-        LibraryCardWithAmountVM ConvertCard(int grpId, int amount, float drawChance)
+        private LibraryCardWithAmountVM ConvertCard(int grpId, int amount, float drawChance)
         {
             var card = Mapper.Map<Entity.Card>(grpId);
 
@@ -176,7 +266,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 Amount = amount,
                 Colors = card.colors,
                 ColorIdentity = card.color_identity,
-                ImageArtUrl = util.GetThumbnailLocal(card.imageArtUrl),
+                ImageArtUrl = Util.GetThumbnailLocal(card.imageArtUrl),
                 ImageCardUrl = card.imageCardUrl,
                 Name = card.name,
                 Rarity = card.rarity,
@@ -189,11 +279,28 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             return ret;
         }
 
-        void NotifyStatsChanged()
+        private void NotifyStatsChanged()
         {
             RaisePropertyChangedEvent(nameof(CardCount));
             RaisePropertyChangedEvent(nameof(LandCount));
             RaisePropertyChangedEvent(nameof(DrawLandPct));
         }
+
+        #endregion
+
+        #region Internal Methods
+
+        internal void SetCards(string cardChosen, ICollection<CardWpf> cards)
+        {
+            CardChosen = cardChosen;
+
+            var data = cards.Select(i => ConvertCard(i.ArenaId, 1, 1f / cards.Count));
+            Cards = new ObservableCollection<LibraryCardWithAmountVM>(data.Select(AddBorderColor));
+
+            RaisePropertyChangedEvent(nameof(CardChosen));
+            RaisePropertyChangedEvent(nameof(Cards));
+        }
+
+        #endregion
     }
 }

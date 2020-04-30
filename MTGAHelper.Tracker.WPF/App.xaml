@@ -1,17 +1,30 @@
-﻿<Application x:Class="MTGAHelper.Tracker.WPF.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:MTGAHelper.Tracker.WPF.Views"
-             xmlns:vm="clr-namespace:MTGAHelper.Tracker.WPF.ViewModels"
-             Exit="Application_Exit">
+﻿<Application
+    x:Class="MTGAHelper.Tracker.WPF.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
+    Exit="Application_Exit">
     <Application.Resources>
-        <Style TargetType="TextBlock">
-            <Setter Property="Foreground" Value ="#aaaaaa"/>
-        </Style>
-        <Style TargetType="Hyperlink">
-            <Setter Property="Foreground" Value ="Aquamarine"/>
-        </Style>
+        <ResourceDictionary>
+            <!--  Style Dictionaries  -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/ResourceDicts/Theme.xaml" />
+                <ResourceDictionary Source="/ResourceDicts/IconPaths.xaml" />
+            </ResourceDictionary.MergedDictionaries>
 
-        <SolidColorBrush x:Key="BackgroundBrush" Color="#272b30" />
+            <!--  Common Use Converters  -->
+            <helpers:BoolToStringConverter
+                x:Key="BoolToVis"
+                FalseValue="Collapsed"
+                TrueValue="Visible" />
+            <helpers:BoolToStringConverter
+                x:Key="BoolToVisHidden"
+                FalseValue="Hidden"
+                TrueValue="Visible" />
+            <helpers:BoolToStringConverter
+                x:Key="BoolToVisInverse"
+                FalseValue="Visible"
+                TrueValue="Collapsed" />
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

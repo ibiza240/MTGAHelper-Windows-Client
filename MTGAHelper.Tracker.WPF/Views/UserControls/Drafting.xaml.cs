@@ -1,8 +1,8 @@
 ﻿using MTGAHelper.Entity;
 using MTGAHelper.Tracker.WPF.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace MTGAHelper.Tracker.WPF.Views.UserControls
@@ -10,14 +10,17 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
     /// <summary>
     /// Interaction logic for DraftHelper.xaml
     /// </summary>
-    public partial class Drafting : UserControl
+    public partial class Drafting
     {
-        MainWindow mainWindow => (MainWindow)Window.GetWindow(this);
-        MainWindowVM vm => (MainWindowVM)mainWindow.DataContext;
+        private MainWindow MainWindow => (MainWindow)Window.GetWindow(this);
+
+        private MainWindowVM ViewModel => (MainWindowVM)MainWindow.DataContext;
+
         //DraftingCardPopupVM vmCardPopup = new DraftingCardPopupVM();
 
-        readonly CardPopupDrafting windowCardPopupDrafting = new CardPopupDrafting();
-        readonly CardListPopup windowCardListWheeled = new CardListPopup();
+        private readonly CardPopupDrafting WindowCardPopupDrafting = new CardPopupDrafting();
+
+        private readonly CardListPopup WindowCardListWheeled = new CardListPopup();
 
         public Drafting()
         {
@@ -30,61 +33,51 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         internal void Init(ICollection<Card> allCards, DraftingVM draftingVM)
         {
             draftingVM.Init(allCards);
-            windowCardListWheeled.Init(draftingVM.CardsThatDidntWheelVM);
-            this.DataContext = draftingVM;
-        }
-
-        private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            ScrollViewer scv = (ScrollViewer)sender;
-            scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
-            e.Handled = true;
+            WindowCardListWheeled.Init(draftingVM.CardsThatDidNotWheelVM);
+            DataContext = draftingVM;
         }
 
         private void CardRow_MouseEnter(object sender, MouseEventArgs e)
         {
             var vm = (sender as FrameworkElement)?.DataContext as CardDraftPickVM;
-            windowCardPopupDrafting.Refresh(vm, mainWindow.vm.DraftingVM.ShowGlobalMTGAHelperSays);
-            windowCardPopupDrafting.Visibility = Visibility.Visible;
+            WindowCardPopupDrafting.Refresh(vm, MainWindow.MainWindowVM.DraftingVM.ShowGlobalMTGAHelperSays);
+            WindowCardPopupDrafting.Visibility = Visibility.Visible;
 
         }
 
         private void CardRow_MouseLeave(object sender, MouseEventArgs e)
         {
-            windowCardPopupDrafting.Visibility = Visibility.Hidden;
+            WindowCardPopupDrafting.Visibility = Visibility.Hidden;
         }
 
         internal void SetCardPopupPosition(ForceCardPopupSideEnum side, int top, int left, int width)
         {
-            windowCardPopupDrafting.SetCardPopupPosition(side, top, left, width);
-            windowCardListWheeled.SetCardPopupPosition(side, top, left, width);
+            WindowCardPopupDrafting.SetCardPopupPosition(side, top, left, width);
+            WindowCardListWheeled.SetCardPopupPosition(side, top, left, width);
         }
 
         public void SetPopupRatingsSource(bool showRatingsSource, string source)
         {
-            windowCardPopupDrafting.SetPopupRatingsSource(showRatingsSource, source);
+            WindowCardPopupDrafting.SetPopupRatingsSource(showRatingsSource, source);
         }
 
-        private void ShowHideCardsThatDidntWheel_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void ShowHideCardsThatDidNotWheel_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            //if (vm.DraftingVM.ShowCardListThatDidntWheel.Value == false)
-            //{
-            //    // Setup the cardlist popup content
-            //    var cardsWheeled = allCards
-            //        .Where(i => vm.DraftingVM.CardsThatDidntWheel.Contains(i.grpId))
-            //        .Select(i => Mapper.Map<CardWpf>(i))
-            //        .ToArray();
+            ViewModel.DraftingVM.ToggleShowHideCardListPopupThatDidNotWheel();
 
-            //    windowCardListWheeled.SetDataContext(vm.DraftingVM.CardChosenThatDidntWheel, cardsWheeled);
-            //}
-
-            vm.DraftingVM.ToggleShowHideCardListPopupThatDidntWheel();
-            windowCardListWheeled.Visibility = vm.DraftingVM.ShowCardListThatDidntWheel.Value ? Visibility.Visible : Visibility.Hidden;
+            WindowCardListWheeled.Visibility = ViewModel.DraftingVM.ShowCardListThatDidNotWheel
+                ? Visibility.Visible
+                : Visibility.Hidden;
         }
 
         private void UserControl_GotFocus(object sender, RoutedEventArgs e)
         {
-            windowCardListWheeled.Focus();
+            WindowCardListWheeled.Focus();
+        }
+
+        private void btnRunDraftHelper_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindow.RunDraftHelper();
         }
     }
 }
