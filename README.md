@@ -10,7 +10,7 @@ You can then use the **[MTGAHelper website](http://www.mtgahelper.com)**  at any
 
 See [this post](https://www.patreon.com/posts/how-to-make-best-29075781) for an overview on how to best use MTGAHelper.
 
-Please note that this tracker runs only on Windows for now. However, you can upload your log file manually on the website at any time :)
+> Please note that the Full Tracker runs only on Windows for now. However, you can upload your log file on any OS with this [portable console program](https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.ConsoleSync.exe.zip) or manually on the website at any time.
 
 ### Features
 
@@ -29,25 +29,7 @@ Please note that this tracker runs only on Windows for now. However, you can upl
 
 ### Installation
 
-##### Step 1. Microsoft .NET Core 3.1 framework
-The application uses the very recent framework known as Microsoft .NET Core 3.1.
-
-You will require to install:
-- [This version if you have a 64-bit Operating System (x64-based processor)](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.3-windows-x64-installer)
-- [This version if you have a 32-bit Operating System (x86-based processor)](https://dotnet.microsoft.com/download/dotnet-core/thank-you/runtime-desktop-3.1.3-windows-x86-installer)
-
-> Note: If you are on Windows 7, you will most likely also need this Update for Windows 7 (KB2533623):
-> - [This version if you have a 64-bit Operating System (x64-based processor)](https://www.microsoft.com/en-us/download/details.aspx?id=26764)
-> - [This version if you have a 32-bit Operating System (x86-based processor)](https://www.microsoft.com/en-us/download/details.aspx?id=26767)
-
-
-##### Step 2. MTGAHelper Tracker Installer
-
-Once the framework installed, [download the Tracker Installer](https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelperTracker.msi) and after the very simple setup, the tracker will be ready to run from your Desktop where a shortcut will be created.
-
-##### MTGAHelper Tracker Installer
-
-[Download the Tracker Installer](https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelperTracker.msi) and after the very simple setup, the tracker will be ready to run from your Desktop where a shortcut will be created.
+Simply [download the Tracker Installer](https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelperTracker.msi) and after the very simple setup, the tracker will be ready to run from your Desktop where a shortcut will be created.
 
 ### Configuration
 
@@ -79,17 +61,7 @@ Once your data is uploaded successfully, you can simply refresh the MTGAHelper w
 
 1- The server might be unresponsive. Try to go on https://mtgahelper.com and if the site cannot load, the tracker won't be able to start. You can report this downtime on [Discord](https://discord.gg/GTd3RMd).
 
-2- Maybe the program is not able to find the .NET Core 3.1 framework described above. Check in your installed applications if you have this installed:
-
-<img src="https://i.imgur.com/UWrO39u.png" width="420" alt=".NET Core 3.1 framework in your installed applications">
-
-3- Try to run the tracker from a command line window by running:
-
-    dotnet "C:\Program Files (x86)\MTGAHelper\MTGAHelper Tracker\MTGAHelper.Tracker.dll"
-
-This should give some detailed information on why the tracker doesn't want to start that you can send me.
-
-4- Also, in the `%AppData%/MTGAHelper` directory there might be some log files (e.g.: `log-201923.txt`). You can open these text files and see if there's any helpful information.
+2- Also, in the `%AppData%/MTGAHelper` directory there might be some log files (e.g.: `log-202006.txt`). You can open these text files and see if there's any helpful information.
 
 
 ### I am connected but the tracker and website are showing no data / 0 cards in collection
