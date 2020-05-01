@@ -1,3 +1,7 @@
+### v1.4.4 (2020-05-01)
+
+Hotfix for a connection-related bug 
+
 ### v1.4.3 (2020-04-30)
 
 UI Theme overhaul
