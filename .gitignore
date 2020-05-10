@@ -27,3 +27,4 @@ packages
 /NODATE
 *.pubxml
 /MTGAHelper.Tracker.WPF/Interop.MSHTML.dll
+/MTGAHelper.Lib.OutputLogParser/ExternalProviderSecrets.cs

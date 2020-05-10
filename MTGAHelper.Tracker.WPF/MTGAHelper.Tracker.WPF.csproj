@@ -396,6 +396,14 @@
       <Project>{17824c64-56bc-4e61-baca-0140788ce6a1}</Project>
       <Name>MTGAHelper.Entity</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MTGAHelper.Lib.OutputLogParser.Models\MTGAHelper.Lib.OutputLogParser.Models.csproj">
+      <Project>{62bbc2eb-4b1c-4028-af0d-f8bd9a4649a6}</Project>
+      <Name>MTGAHelper.Lib.OutputLogParser.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MTGAHelper.Lib.OutputLogParser\MTGAHelper.Lib.OutputLogParser.csproj">
+      <Project>{1e839ed3-7c42-4239-b93e-b4c9bf8c40af}</Project>
+      <Name>MTGAHelper.Lib.OutputLogParser</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MTGAHelper.Web.Models\MTGAHelper.Web.Models.csproj">
       <Project>{53264ca2-c4e6-4a18-be4d-7b2cec48b85a}</Project>
       <Name>MTGAHelper.Web.Models</Name>
