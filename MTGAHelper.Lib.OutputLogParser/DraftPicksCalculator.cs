@@ -31,6 +31,7 @@ namespace MTGAHelper.Lib.OutputLogParser
                     )));
         }
 
+        // ToDo: Refator in separat function!
         public ICollection<CardForDraftPick> GetCardsForDraftPick(
             string userId,
             string source,
@@ -69,7 +70,14 @@ namespace MTGAHelper.Lib.OutputLogParser
 
                     try
                     {
-                        card.NbMissingCollection = collection.ContainsKey(i.grpId) ? 4 - collection[i.grpId] : 4;
+                        if (i.type.StartsWith("Basic Land"))
+                        {
+                            card.NbMissingCollection = 0;
+                        }
+                        else
+                        {
+                            card.NbMissingCollection = collection.ContainsKey(i.grpId) ? 4 - collection[i.grpId] : 4;
+                        }
                         //var test = weights.FirstOrDefault(x => x.Value.Card.name.StartsWith("Find"));
 
                         if (weights.ContainsKey(i.grpId))
