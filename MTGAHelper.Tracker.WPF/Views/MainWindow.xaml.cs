@@ -354,8 +354,14 @@ namespace MTGAHelper.Tracker.WPF.Views
 
                     MainWindowVM.WrapNetworkStatus(NetworkStatusEnum.Uploading, () =>
                     {
+
+#if !DEBUG && !DEBUGWITHSERVER
                         CollectionResponse collection = Api.UploadOutputLogResult(MainWindowVM.Account.MtgaHelperUserId, result);
                         MainWindowVM.SetCollection(collection);
+#else
+                        Console.WriteLine("Running in DEBUG - no server upload!");
+#endif
+
                         RefreshRareDraftingInfo();
                     });
                 }
