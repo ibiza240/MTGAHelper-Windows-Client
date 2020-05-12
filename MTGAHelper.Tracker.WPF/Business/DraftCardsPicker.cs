@@ -16,11 +16,23 @@ namespace MTGAHelper.Tracker.WPF.Business
             DraftPicksCalculator = draftPicksCalculator;
         }
 
-        public ICollection<CardDraftPickWpf> GetDraftPicksForCards(string userId, ICollection<int> grpIds, string source, Dictionary<int, int> collection, ICollection<CardCompareInfo> raredraftingInfo)
+        public ICollection<CardDraftPickWpf> GetDraftPicksForCards(
+            string userId,
+            ICollection<int> cardPool,
+            ICollection<int> pickedCards,
+            string source,
+            Dictionary<int, int> collection,
+            ICollection<CardCompareInfo> raredraftingInfo)
         {
             //var apiResponse = api.GetCardsForDraftPick(userId, grpIds, source);
 
-            var result = DraftPicksCalculator.GetCardsForDraftPick(userId, source, grpIds, collection, raredraftingInfo);
+            var result = DraftPicksCalculator.GetCardsForDraftPick(
+                userId,
+                cardPool,
+                pickedCards,
+                source,
+                collection,
+                raredraftingInfo);
             
             var apiDto = Mapper.Map<ICollection<CardForDraftPickDto>>(result);
 

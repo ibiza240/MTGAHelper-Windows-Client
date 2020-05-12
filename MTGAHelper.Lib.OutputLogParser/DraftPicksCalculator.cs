@@ -11,7 +11,6 @@ namespace MTGAHelper.Lib.OutputLogParser
     public class DraftPicksCalculator
     {
         readonly Dictionary<int, Card> allCards;
-        //CacheSingleton<Dictionary<string, DraftRatings>> draftRatings;
         readonly Dictionary<string,
             Dictionary<string,
                 (Dictionary<string, DraftRating> ratings, Dictionary<string, ICollection<DraftRatingTopCard>> topCardsByColor)>> ratingsBySourceSet;
@@ -21,7 +20,6 @@ namespace MTGAHelper.Lib.OutputLogParser
             CacheSingleton<Dictionary<string, DraftRatings>> draftRatings)
         {
             this.allCards = cacheAllCards.Get();
-            //this.draftRatings = draftRatings;
             var ratingsBySource = draftRatings.Get();
             ratingsBySourceSet = ratingsBySource.ToDictionary(
                 source => source.Key, source => source.Value.RatingsBySet.ToDictionary(
@@ -31,41 +29,29 @@ namespace MTGAHelper.Lib.OutputLogParser
                     )));
         }
 
-        // ToDo: Refator in separat function!
         public ICollection<CardForDraftPick> GetCardsForDraftPick(
             string userId,
+            ICollection<int> cardPool,
+            ICollection<int> pickedCards,
             string source,
-            ICollection<int> grpIds,
             Dictionary<int, int> collection,
             ICollection<CardCompareInfo> raredraftingInfo
             )
         {
-            if (grpIds.Any() == false)
+            if (cardPool.Any() == false)
                 return new CardForDraftPick[0];
 
             var weights = raredraftingInfo.ToDictionary(i => i.GrpId, i => i);
 
-            //var test = grpIds
-            //    .Where(i => dictCardsByGrpId.ContainsKey(i))
-            //    .Select(i => dictCardsByGrpId[i])
-            //    .ToList();
-
-            //var collection = ConfigUsers.Get(userId).DataInMemory.HistoryDetails.GetLastCollectionInMemory(rawDeckConverter).Info.ToDictionary(i => i.Card.grpId, i => i.Amount);
-            //var collection = cacheUserHistoryCollectionIntraday.GetLast(userId).Info.Values.Last();
-
-            var byCard = grpIds
+            var byCard = cardPool
                 .Where(i => allCards.ContainsKey(i))
                 .Select(i => allCards[i]);
 
             var maxWeight = byCard.Max(i => weights.ContainsKey(i.grpId) ? weights[i.grpId].MissingWeight : 0f);
 
             var dataUnordered = byCard
-                //.Select(i => new { ratings = draftRatings.Get()[source], item = i })
                 .Select(i =>
                 {
-                    //var i = ri.item;
-                    //var draftRatings = ri.ratings;
-
                     var card = Mapper.Map<CardForDraftPick>(i);
 
                     try
@@ -76,29 +62,17 @@ namespace MTGAHelper.Lib.OutputLogParser
                         }
                         else
                         {
-                            card.NbMissingCollection = collection.ContainsKey(i.grpId) ? 4 - collection[i.grpId] : 4;
+                            card.NbMissingCollection = calculateMissingAmount(collection, i, pickedCards);
                         }
-                        //var test = weights.FirstOrDefault(x => x.Value.Card.name.StartsWith("Find"));
 
                         if (weights.ContainsKey(i.grpId))
                         {
                             card.NbMissingTrackedDecks = weights[i.grpId].NbMissing;
                             card.Weight = weights[i.grpId].MissingWeight;
-                            card.NbDecksUsedMain = weights[i.grpId].NbDecksMain;//.ByDeck.Count(x => x.Value.NbMissingMain > 0);
-                            card.NbDecksUsedSideboard = weights[i.grpId].NbDecksSideboardOnly;//.NbDecks - card.NbDecksUsedMain;
+                            card.NbDecksUsedMain = weights[i.grpId].NbDecksMain;
+                            card.NbDecksUsedSideboard = weights[i.grpId].NbDecksSideboardOnly;
                         }
 
-                        //if (draftRatings.DictRatingByCardName.ContainsKey(i.name))
-                        //{
-                        //    card.Description = draftRatings.DictRatingByCardName[i.name].Description;
-                        //    card.Rating = draftRatings.DictRatingByCardName[i.name].Rating;
-                        //}
-
-                        //if (draftRatings.RatingsBySet.ContainsKey(card.set) && draftRatings.RatingsBySet[card.set].TopCommonCardsByColor.ContainsKey(cardColors))
-                        //{
-                        //    var rank = draftRatings.RatingsBySet[card.set].TopCommonCardsByColor[card.colors.First()].FirstOrDefault(x => x.Name == card.name)?.Rank ?? 0;
-                        //    card.TopCommonCard = new DraftRatingTopCard(rank, cardColors);
-                        //}
                         if (ratingsBySourceSet.ContainsKey(source) &&
                             ratingsBySourceSet[source].ContainsKey(i.set) &&
                             ratingsBySourceSet[source][i.set].ratings.ContainsKey(i.name))
@@ -136,7 +110,6 @@ namespace MTGAHelper.Lib.OutputLogParser
                 .ThenByDescending(i => i.name)
                 .ToArray();
 
-            //DetermineRareDraft(data);
             var isMissingRareLand = data.FirstOrDefault(i => i.type.Contains("Land") && i.GetRarityEnum() == RarityEnum.Rare && i.NbMissingCollection > 0);
 
             if (isMissingRareLand != null)
@@ -164,6 +137,30 @@ namespace MTGAHelper.Lib.OutputLogParser
             }
 
             return data;
+        }
+
+        private static int calculateMissingAmount(
+            Dictionary<int, int> collection,
+            Card i,
+            ICollection<int> pickedCards)
+        {
+            int missingAmount;
+
+            missingAmount = collection.ContainsKey(i.grpId) ? 
+                4 - collection[i.grpId] : 
+                4;
+
+            if(missingAmount == 0)
+            {
+                return missingAmount;
+            }
+
+            if (pickedCards.Contains(i.grpId))
+            {
+                missingAmount -= pickedCards.Count(cardId => cardId == i.grpId);
+            }
+
+            return missingAmount < 0 ? 0 : missingAmount;
         }
     }
 }
