@@ -249,7 +249,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="16">
-                                <TextBlock FontWeight="Bold" Text="{Binding RatingFloat}">
+                                <TextBlock FontWeight="Bold" Text="{Binding RatingString}">
                                     <TextBlock.Foreground>
                                         <MultiBinding Converter="{StaticResource RatingToColorConverter}">
                                             <Binding Path="RatingFloat" />
