@@ -20,8 +20,6 @@ namespace MTGAHelper.Tracker.WPF.Models
         public string RatingSource { get; set; }
         public DraftRatingTopCard TopCommonCard { get; set; } = new DraftRatingTopCard(0, "");
 
-        public string RatingString => RatingToDisplay.Contains("N/A") ? RatingToDisplay : RatingFloat.ToString();
-        public float RatingFloat => RatingValue;
         public float RatingScale => DraftRating.GetRatingScale(RatingSource);
 
         //public bool ShowMtgaHelperSays => Weight > 0 || RareDraftPickEnum != Entity.RaredraftPickReasonEnum.None;

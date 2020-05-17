@@ -152,7 +152,7 @@
                             <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn" />
-                            <ColumnDefinition Width="36" />
+                            <ColumnDefinition Width="Auto" SharedSizeGroup="FifthColumn" />
                         </Grid.ColumnDefinitions>
                         <!--  Card Image  -->
                         <Border
@@ -249,10 +249,10 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="16">
-                                <TextBlock FontWeight="Bold" Text="{Binding RatingString}">
+                                <TextBlock FontWeight="Bold" Text="{Binding RatingToDisplay}">
                                     <TextBlock.Foreground>
                                         <MultiBinding Converter="{StaticResource RatingToColorConverter}">
-                                            <Binding Path="RatingFloat" />
+                                            <Binding Path="RatingValue" />
                                             <Binding Path="RatingScale" />
                                         </MultiBinding>
                                     </TextBlock.Foreground>
