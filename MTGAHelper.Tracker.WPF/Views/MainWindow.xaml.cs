@@ -597,29 +597,12 @@ namespace MTGAHelper.Tracker.WPF.Views
             if (cardPool == null)
                 return;
 
-            string draftSet = draftInfo.DraftId?.Split('_')[1] ?? "";
-
-            // Filter the users collection to only get cards for the current drafting set
-            IEnumerable<Web.UI.Model.SharedDto.CollectionCardDto> collection;
-            if (String.IsNullOrEmpty(draftSet))
-            {
-                collection = MainWindowVM.Collection.Cards.Where(i => 
-                    i.IdArena != 0);
-            }
-            else
-            {
-                collection = MainWindowVM.Collection.Cards.Where(i => (
-                    i.IdArena != 0 &&
-                    i.Set.Contains(draftSet)));
-            }
-
             var draftingInfo = DraftHelper.GetDraftPicksForCards(
                 MainWindowVM.Account.MtgaHelperUserId,
                 cardPool,
                 draftInfo.PickedCards,
                 ConfigModel.ShowLimitedRatingsSource,
-                collection
-                .ToDictionary(i => i.IdArena, i => i.Amount),
+                MainWindowVM.Collection.Cards.Where(i => i.IdArena != 0).ToDictionary(i => i.IdArena, i => i.Amount),
                 RareDraftingInfo);
 
             MainWindowVM.SetCardsDraftBuffered(draftInfo, draftingInfo);
