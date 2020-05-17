@@ -30,3 +30,4 @@ packages
 /MTGAHelper.Lib.OutputLogParser/ExternalProviderSecrets.cs
 /data
 /MTGAHelper.Tool.OutputLogMessageViewer
+/.vscode

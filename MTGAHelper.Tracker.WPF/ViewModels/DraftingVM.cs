@@ -80,7 +80,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public string CardChosenThatDidNotWheel { get; private set; }
 
-        public double RareDraftOpacity => CardsDraft.Any(x => x.RareDraftPickEnum == RaredraftPickReasonEnum.None && Math.Abs(x.RatingFloat) > float.Epsilon) ? 1.0d : 0.5d;
+        public double RareDraftOpacity => CardsDraft.Any(x => x.RareDraftPickEnum == RaredraftPickReasonEnum.None && Math.Abs(x.RatingValue) > float.Epsilon) ? 1.0d : 0.5d;
 
         #endregion
 

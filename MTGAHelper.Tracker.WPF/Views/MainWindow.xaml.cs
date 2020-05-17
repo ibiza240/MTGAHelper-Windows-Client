@@ -354,8 +354,14 @@ namespace MTGAHelper.Tracker.WPF.Views
 
                     MainWindowVM.WrapNetworkStatus(NetworkStatusEnum.Uploading, () =>
                     {
+
+#if !DEBUG && !DEBUGWITHSERVER
                         CollectionResponse collection = Api.UploadOutputLogResult(MainWindowVM.Account.MtgaHelperUserId, result);
                         MainWindowVM.SetCollection(collection);
+#else
+                        Console.WriteLine("Running in DEBUG - no server upload!");
+#endif
+
                         RefreshRareDraftingInfo();
                     });
                 }
@@ -594,6 +600,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             var draftingInfo = DraftHelper.GetDraftPicksForCards(
                 MainWindowVM.Account.MtgaHelperUserId,
                 cardPool,
+                draftInfo.PickedCards,
                 ConfigModel.ShowLimitedRatingsSource,
                 MainWindowVM.Collection.Cards.Where(i => i.IdArena != 0).ToDictionary(i => i.IdArena, i => i.Amount),
                 RareDraftingInfo);
