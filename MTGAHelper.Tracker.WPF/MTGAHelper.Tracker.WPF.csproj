@@ -14,15 +14,15 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
+    <OutputPath>$(SolutionDir)\_Output\bin\$(Configuration)\</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
-    <OutputPath>$(SolutionDir)\_Output\bin\$(Configuration)\</OutputPath>
-    <OutDir>$(OutputPath)</OutDir>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -32,9 +32,6 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
-    <OutputPath>$(SolutionDir)\_Output\bin\$(Configuration)\</OutputPath>
-    <OutDir>$(OutputPath)</OutDir>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -42,9 +39,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugWithServer|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
-    <OutputPath>$(SolutionDir)\_Output\bin\$(Configuration)\</OutputPath>
-    <OutDir>$(OutputPath)</OutDir>
     <DefineConstants>DEBUG;DEBUGWITHSERVER;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -114,6 +108,12 @@
     <Reference Include="Microsoft.Extensions.Primitives, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Primitives.2.2.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Core.1.1.1\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -121,7 +121,7 @@
       <HintPath>..\packages\Serilog.2.9.0\lib\net46\Serilog.dll</HintPath>
     </Reference>
     <Reference Include="Serilog.Sinks.File, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Sinks.File.4.1.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
+      <HintPath>..\packages\Serilog.Sinks.File.4.0.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
     </Reference>
     <Reference Include="SimpleInjector, Version=4.9.1.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleInjector.4.9.1\lib\net45\SimpleInjector.dll</HintPath>
@@ -153,6 +153,7 @@
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -174,16 +175,31 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Business\CacheLoaderConfigResolutions.cs" />
     <Compile Include="Business\DraftCardsPicker.cs" />
     <Compile Include="Business\DraftHelperRunner.cs" />
+    <Compile Include="Business\EmailProvider.cs" />
+    <Compile Include="Business\InputOutputOrchestratorMock.cs" />
+    <Compile Include="Config\ConfigResolutions.cs" />
     <Compile Include="Config\ConfiguratorConfig.cs" />
+    <Compile Include="Exceptions\DraftHelperMockException.cs" />
+    <Compile Include="InternalConstructorResolutionBehaviour.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Tools\HttpClientFactory.cs" />
+    <Compile Include="Tools\PasswordBoxProperty.cs" />
     <Compile Include="Tools\RelayCommand.cs" />
     <Compile Include="Tools\Utilities.cs" />
+    <Compile Include="Tools\BasicModel.cs" />
+    <Compile Include="Tools\Configurable.cs" />
+    <Compile Include="Tools\ConfigurableObject.cs" />
+    <Compile Include="Tools\ConfigurablePath.cs" />
+    <Compile Include="Tools\UpdatableModel.cs" />
+    <Compile Include="Tools\ValidatableModel.cs" />
     <Compile Include="ViewModels\BorderGradientCalculator.cs" />
     <Compile Include="ViewModels\CardDraftPickVM.cs" />
-    <Compile Include="ViewModels\OpponentWindowViewModel.cs" />
+    <Compile Include="ViewModels\DraftingVMPxpx.cs" />
+    <Compile Include="ViewModels\MainWindowVM.BindableProperties.cs" />
+    <Compile Include="ViewModels\OpponentWindowVM.cs" />
     <Compile Include="ViewModels\CardPopupVM.cs" />
     <Compile Include="ViewModels\CardsListVM.cs" />
     <Compile Include="ViewModels\DraftingCardPopupVM.cs" />
@@ -192,12 +208,10 @@
     <Compile Include="ViewModels\InMatchTrackerStateVM.cs" />
     <Compile Include="ViewModels\LibraryCardWithAmountVM.cs" />
     <Compile Include="ViewModels\MainWindowVM.cs" />
-    <Compile Include="ViewModels\ObservableObject.cs" />
     <Compile Include="ViewModels\OptionsWindowVM.cs" />
     <Compile Include="ViewModels\PlayerTimerVM.cs" />
     <Compile Include="ViewModels\Stats.cs" />
     <Compile Include="ViewModels\StatusBlinker.cs" />
-    <Compile Include="ViewModels\VMUpdaterFromAnotherThread.cs" />
     <Compile Include="Views\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
@@ -270,7 +284,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ResourceDicts\Theme.Brushes.xaml">
+    <Page Include="ResourceDicts\Theme.Shared.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ResourceDicts\Theme.Colors.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -358,6 +376,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <Compile Include="ViewModels\MainWindowVM.Commands.cs" />
     <Resource Include="Fonts\consola.ttf" />
     <Resource Include="Fonts\ImSpiegelland.ttf" />
     <Resource Include="Fonts\LaborUnion-Regular.otf" />
@@ -397,12 +416,16 @@
       <Name>MTGAHelper.Entity</Name>
     </ProjectReference>
     <ProjectReference Include="..\MTGAHelper.Lib.OutputLogParser.Models\MTGAHelper.Lib.OutputLogParser.Models.csproj">
-      <Project>{62bbc2eb-4b1c-4028-af0d-f8bd9a4649a6}</Project>
+      <Project>{cddef8a6-0544-4dfa-a4fe-08e9fc8b137c}</Project>
       <Name>MTGAHelper.Lib.OutputLogParser.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\MTGAHelper.Lib.OutputLogParser\MTGAHelper.Lib.OutputLogParser.csproj">
-      <Project>{1e839ed3-7c42-4239-b93e-b4c9bf8c40af}</Project>
+      <Project>{e8ebb994-dc88-4362-b578-c23bf6f4e2fc}</Project>
       <Name>MTGAHelper.Lib.OutputLogParser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MTGAHelper.Tracker.DraftHelper.Shared\MTGAHelper.Tracker.DraftHelper.Shared.csproj">
+      <Project>{1ad4d608-38c7-4bab-a932-be2ea28a1c4d}</Project>
+      <Name>MTGAHelper.Tracker.DraftHelper.Shared</Name>
     </ProjectReference>
     <ProjectReference Include="..\MTGAHelper.Web.Models\MTGAHelper.Web.Models.csproj">
       <Project>{53264ca2-c4e6-4a18-be4d-7b2cec48b85a}</Project>
@@ -414,5 +437,6 @@
     <Resource Include="Assets\Images\patreon.png" />
     <Resource Include="Assets\Images\paypal.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

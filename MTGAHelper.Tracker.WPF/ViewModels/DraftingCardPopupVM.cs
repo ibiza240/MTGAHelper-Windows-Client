@@ -1,35 +1,73 @@
-﻿namespace MTGAHelper.Tracker.WPF.ViewModels
+﻿using MTGAHelper.Tracker.WPF.Tools;
+
+namespace MTGAHelper.Tracker.WPF.ViewModels
 {
-    public class DraftingCardPopupVM : ObservableObject
+    public class DraftingCardPopupVM : BasicModel
     {
-        public CardDraftPickVM Card { get; set; } = new CardDraftPickVM();
+        #region Public Properties
 
-        public ObservableProperty<bool> ShowGlobalMTGAHelperSays { get; set; } = new ObservableProperty<bool>(false);
+        public CardDraftPickVM Card
+        {
+            get => _Card;
+            set => SetField(ref _Card, value, nameof(Card));
+        }
 
-        public string RatingsSource { get; set; }
+        public bool ShowGlobalMTGAHelperSays
+        {
+            get => _ShowGlobalMTGAHelperSays;
+            set => SetField(ref _ShowGlobalMTGAHelperSays, value, nameof(ShowGlobalMTGAHelperSays));
+        }
 
-        public bool ShowRatingsSource { get; set; }
+        public string RatingsSource
+        {
+            get => _RatingsSource;
+            set => SetField(ref _RatingsSource, value, nameof(RatingsSource));
+        }
 
-        public bool ShowDescription => string.IsNullOrEmpty(Card.Description) == false;
+        public bool ShowRatingsSource
+        {
+            get => _ShowRatingsSource;
+            set => SetField(ref _ShowRatingsSource, value, nameof(ShowRatingsSource));
+        }
 
-        //public ObservableProperty<int> CardPopupTop { get; set; } = new ObservableProperty<int>(0);
-        //public ObservableProperty<int> CardPopupLeft { get; set; } = new ObservableProperty<int>(0);
+        public bool ShowDescription
+        {
+            get => _ShowDescription;
+            set => SetField(ref _ShowDescription, value, nameof(ShowDescription));
+        }
+
+        #endregion
+
+        #region Private Backing Fields
+
+        private CardDraftPickVM _Card = new CardDraftPickVM();
+
+        private bool _ShowGlobalMTGAHelperSays;
+
+        private string _RatingsSource;
+
+        private bool _ShowRatingsSource;
+
+        private bool _ShowDescription;
+
+        #endregion
+
+        #region Public Methods
 
         public void SetDraftCard(CardDraftPickVM cardVM, bool showGlobalMTGAHelperSays)
         {
             Card = cardVM;
-            ShowGlobalMTGAHelperSays.Value = showGlobalMTGAHelperSays;
-            RaisePropertyChangedEvent(nameof(Card));
+            ShowDescription = string.IsNullOrEmpty(Card.Description) == false;
+            ShowGlobalMTGAHelperSays = showGlobalMTGAHelperSays;
+            OnPropertyChanged(nameof(Card));
         }
 
         public void SetPopupRatingsSource(bool showRatingsSource, string source)
         {
             ShowRatingsSource = showRatingsSource;
             RatingsSource = source;
-
-            RaisePropertyChangedEvent(nameof(ShowRatingsSource));
-            RaisePropertyChangedEvent(nameof(RatingsSource));
         }
 
+        #endregion
     }
 }

@@ -58,21 +58,17 @@
                 </TextBlock>
             </StackPanel>
 
-            <StackPanel
-                Margin="0,20,0,0"
-                Visibility="{Binding ShowGlobalMTGAHelperSays.Value, Converter={StaticResource BoolToVis}}">
+            <StackPanel Margin="0,20,0,0" Visibility="{Binding ShowGlobalMTGAHelperSays, Converter={StaticResource BoolToVis}}">
                 <TextBlock
                     Margin="0,0,0,5"
                     FontSize="16"
                     FontWeight="Bold"
                     Text="MTGAHelper says" />
-                <TextBlock
-                    Margin="0,5,0,0"
-                    Text="{Binding Card.NbMissingString}">
+                <TextBlock Margin="0,5,0,0" Text="{Binding Card.NbMissingString}">
                     <TextBlock.Visibility>
                         <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
                             <Binding Path="Card.IsRequiredToShowNbMissing" />
-                            <Binding Path="ShowGlobalMTGAHelperSays.Value" />
+                            <Binding Path="ShowGlobalMTGAHelperSays" />
                         </MultiBinding>
                     </TextBlock.Visibility>
                 </TextBlock>

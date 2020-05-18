@@ -24,7 +24,7 @@ namespace MTGAHelper.Tracker.WPF.Business
                 (string i, string s) = X.G();
                 try
                 {
-                    var credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    UserCredential credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                         new ClientSecrets
                         {
                             ClientId = i,
@@ -43,7 +43,7 @@ namespace MTGAHelper.Tracker.WPF.Business
                     Log.Error(ex, msg);
                     return default;
                 }
-            };
+            }
 
             UserCredential = await Signin();
 

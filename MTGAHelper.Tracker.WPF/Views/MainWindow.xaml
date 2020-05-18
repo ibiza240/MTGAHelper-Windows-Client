@@ -44,10 +44,7 @@
         </Grid.RowDefinitions>
 
         <!--  Top Status Bar  -->
-        <uc:StatusBarTop
-            x:Name="StatusBarTop"
-            Grid.Row="0"
-            MouseLeftButtonDown="StatusBarTop_OnMouseLeftButtonDown" />
+        <uc:StatusBarTop Grid.Row="0" MouseLeftButtonDown="StatusBarTop_OnMouseLeftButtonDown" />
 
         <!--  Ready Page  -->
         <Grid Grid.Row="1">
@@ -58,7 +55,7 @@
                 <Style TargetType="{x:Type Grid}">
                     <Setter Property="Visibility" Value="Hidden" />
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding MainWindowContext}" Value="Home">
+                        <DataTrigger Binding="{Binding Context}" Value="Home">
                             <Setter Property="Visibility" Value="Visible" />
                         </DataTrigger>
                     </Style.Triggers>
@@ -76,7 +73,7 @@
                 <Style TargetType="{x:Type Grid}">
                     <Setter Property="Visibility" Value="Hidden" />
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding MainWindowContext}" Value="Welcome">
+                        <DataTrigger Binding="{Binding Context}" Value="Welcome">
                             <Setter Property="Visibility" Value="Visible" />
                         </DataTrigger>
                     </Style.Triggers>
@@ -94,7 +91,7 @@
                 <Style TargetType="{x:Type Grid}">
                     <Setter Property="Visibility" Value="Hidden" />
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding MainWindowContext}" Value="Drafting">
+                        <DataTrigger Binding="{Binding Context}" Value="Drafting">
                             <Setter Property="Visibility" Value="Visible" />
                         </DataTrigger>
                     </Style.Triggers>
@@ -112,7 +109,7 @@
                 <Style TargetType="{x:Type Grid}">
                     <Setter Property="Visibility" Value="Hidden" />
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding MainWindowContext}" Value="Playing">
+                        <DataTrigger Binding="{Binding Context}" Value="Playing">
                             <Setter Property="Visibility" Value="Visible" />
                         </DataTrigger>
                     </Style.Triggers>
@@ -198,6 +195,23 @@
                                     Stretch="Uniform">
                                     <Rectangle.OpacityMask>
                                         <VisualBrush Stretch="Uniform" Visual="{StaticResource EyeOpenPath}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Viewbox>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <!--  Reset Window  -->
+                    <MenuItem Command="{Binding ResetWindowsCommand}" Header="_Reset Window Locations">
+                        <MenuItem.Icon>
+                            <Viewbox>
+                                <Rectangle
+                                    Width="40"
+                                    Height="40"
+                                    Margin="0,5"
+                                    Fill="White"
+                                    Stretch="Uniform">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Uniform" Visual="{StaticResource RefreshPath}" />
                                     </Rectangle.OpacityMask>
                                 </Rectangle>
                             </Viewbox>

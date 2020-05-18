@@ -5,134 +5,146 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="clr-namespace:MTGAHelper.Tracker.WPF.Views.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tools="clr-namespace:MTGAHelper.Tracker.WPF.Tools"
     xmlns:viewModels="clr-namespace:MTGAHelper.Tracker.WPF.ViewModels"
     d:DataContext="{d:DesignInstance viewModels:MainWindowVM}"
     mc:Ignorable="d">
-    <StackPanel Margin="10" Orientation="Vertical">
-        <Label FontWeight="Bold">
-            <TextBlock FontSize="20">Welcome!</TextBlock>
-        </Label>
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="5" Orientation="Vertical">
+            <Label FontWeight="Bold">
+                <TextBlock FontSize="20" Text="Welcome!" />
+            </Label>
 
-        <Label Margin="0,10,0,0">
-            <TextBlock FontWeight="Bold" TextWrapping="Wrap">
-                You must first sign-in to MTGAHelper
-            </TextBlock>
-        </Label>
+            <Label Margin="0,10,0,0">
+                <TextBlock
+                    FontWeight="Bold"
+                    Text="You must sign-in to use MTGAHelper"
+                    TextWrapping="Wrap" />
+            </Label>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+            <!--  Google Sign-in Button  -->
             <Button
-                Grid.Column="0"
-                Height="32"
+                Margin="5"
+                Padding="10,5"
+                VerticalContentAlignment="Center"
                 Background="{StaticResource BackgroundBrush}"
-                Click="SigninGoogle_Click">
-                <StackPanel Orientation="Horizontal">
+                Command="{Binding ValidateUserCommand}"
+                CommandParameter="Google">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
                     <Image
                         Width="16"
                         Height="16"
+                        Margin="2"
                         Source="/Assets/Images/Google.png" />
-                    <TextBlock Margin="5,0,0,0">
-                        With Google
-                    </TextBlock>
-                </StackPanel>
+                    <TextBlock
+                        Grid.Column="1"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="Sign in with Google" />
+                </Grid>
             </Button>
+
+            <!--  Facebook Sign-in Button  -->
             <Button
-                Grid.Column="1"
+                Margin="5"
+                Padding="10,5"
+                VerticalContentAlignment="Center"
                 Background="{StaticResource BackgroundBrush}"
-                Click="SigninFacebook_Click">
-                <StackPanel Orientation="Horizontal">
+                Command="{Binding ValidateUserCommand}"
+                CommandParameter="Facebook">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
                     <Image
                         Width="16"
                         Height="16"
+                        Margin="2"
                         Source="/Assets/Images/Facebook.ico" />
-                    <TextBlock Margin="5,0,0,0">
-                        With Facebook
-                    </TextBlock>
-                </StackPanel>
+                    <TextBlock
+                        Grid.Column="1"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        Text="Sign in with Facebook" />
+                </Grid>
             </Button>
-        </Grid>
 
-        <Label
-            Margin="0,30,0,0"
-            FontSize="16"
-            FontWeight="Bold">
-            Or with a local account
-        </Label>
-        <Label Padding="5,0,5,0" HorizontalContentAlignment="Center">
-            <TextBlock TextAlignment="Center" TextWrapping="Wrap">
-                You will have to create a local account first on the
-                <Hyperlink helpers:HyperlinkExtensions.IsExternal="true" NavigateUri="https://mtgahelper.com">
-                    MTGAHelper website
-                </Hyperlink>
-            </TextBlock>
-        </Label>
-        <Grid Margin="0,10,0,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
+            <!--  Local Account Sign-in  -->
             <Label
-                Grid.Row="0"
-                Grid.Column="0"
-                HorizontalAlignment="Right">
-                Email:
+                Margin="0,30,0,0"
+                Content="Or use an MTGAHelper account"
+                FontWeight="Bold" />
+            <Label HorizontalContentAlignment="Center">
+                <TextBlock TextAlignment="Center" TextWrapping="Wrap">
+                    <Run>Accounts must be created via the</Run>
+                    <Hyperlink helpers:HyperlinkExtensions.IsExternal="true" NavigateUri="https://mtgahelper.com">MTGAHelper website</Hyperlink>
+                </TextBlock>
             </Label>
-            <TextBox
-                Grid.Row="0"
-                Grid.Column="1"
-                Height="20"
-                Text="{Binding SigninEmail.Value}" />
-            <CheckBox
-                x:Name="RememberEmailCheckBox"
-                Grid.Row="1"
-                Grid.Column="1"
-                Margin="0,5,0,0">
-                Remember my email
-            </CheckBox>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <Label
-                Grid.Row="2"
-                Grid.Column="0"
-                Margin="0,10,0,0"
-                HorizontalAlignment="Right">
-                Password:
-            </Label>
-            <PasswordBox
-                x:Name="PasswordBox"
-                Grid.Row="2"
-                Grid.Column="1"
-                Height="20"
-                Margin="0,10,0,0"
-                KeyUp="txtPassword_KeyUp" />
-            <CheckBox
-                x:Name="RememberPasswordCheckBox"
-                Grid.Row="3"
-                Grid.Column="1"
-                Margin="0,5,0,0">
-                Remember my password to auto-signin
-            </CheckBox>
-
-            <Button
-                Grid.Row="4"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"
-                Height="32"
-                Margin="0,20,0,0"
-                Background="{StaticResource BackgroundBrush}"
-                Click="ButtonLoginLocal_Click">
-                Sign-in
-            </Button>
-        </Grid>
-    </StackPanel>
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    HorizontalAlignment="Right"
+                    VerticalContentAlignment="Center"
+                    Content="Email" />
+                <TextBox
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    VerticalContentAlignment="Center"
+                    Text="{Binding SigninEmail}" />
+                <CheckBox
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    VerticalContentAlignment="Center"
+                    Content="Remember email"
+                    IsChecked="{Binding RememberEmail}" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    HorizontalAlignment="Right"
+                    VerticalContentAlignment="Center"
+                    Content="Password" />
+                <PasswordBox
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    VerticalContentAlignment="Center"
+                    tools:PasswordBoxProperty.BindPassword="True"
+                    tools:PasswordBoxProperty.BoundPassword="{Binding SigninPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <PasswordBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding Path=ValidateUserCommand}" />
+                    </PasswordBox.InputBindings>
+                </PasswordBox>
+                <CheckBox
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    VerticalContentAlignment="Center"
+                    Content="Auto Sign In"
+                    IsChecked="{Binding RememberPassword}" />
+                <Button
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Background="{StaticResource BackgroundBrush}"
+                    Command="{Binding ValidateUserCommand}"
+                    Content="Sign In" />
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

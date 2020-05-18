@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
+using MTGAHelper.Lib.OutputLogParser.Models;
 
 namespace MTGAHelper.Lib.OutputLogParser
 {

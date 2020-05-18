@@ -3,6 +3,7 @@ using AutoMapper;
 using MTGAHelper.Entity;
 using MTGAHelper.Lib.OutputLogParser;
 using MTGAHelper.Tracker.WPF.Models;
+using MTGAHelper.Tracker.WPF.Tools;
 using MTGAHelper.Web.Models.Response.User;
 
 namespace MTGAHelper.Tracker.WPF.Business
@@ -38,8 +39,8 @@ namespace MTGAHelper.Tracker.WPF.Business
 
             var ret = Mapper.Map<ICollection<CardDraftPickWpf>>(apiDto);
 
-            foreach (var c in ret)
-                c.ImageArtUrl = new Tools.Utilities().GetThumbnailLocal(c.ImageArtUrl);
+            foreach (CardDraftPickWpf c in ret)
+                c.ImageArtUrl = Utilities.GetThumbnailLocal(c.ImageArtUrl);
 
             return ret;
         }

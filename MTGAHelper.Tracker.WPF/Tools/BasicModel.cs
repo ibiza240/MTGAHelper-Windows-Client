@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+
 // ReSharper disable DelegateSubtraction
 
-namespace MTGAHelper.Tracker.WPF.ViewModels
+namespace MTGAHelper.Tracker.WPF.Tools
 {
     /// <summary>
-    /// Abstract common usage object with WPF binding convenience functions
+    /// Base class for objects that intend to be bound to the UI
     /// </summary>
-    public abstract class ObservableObject : INotifyPropertyChanged
+    public abstract class BasicModel : INotifyPropertyChanged, IDisposable
     {
         #region INotifyPropertyChanged Implementation
 
@@ -24,8 +26,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             add
             {
                 // Attempt to remove the handler to avoid duplicate subscription
-                // Quicker than checking the invocation list and equally safety
-                if (_PropertyChanged == null)
+                // Quicker than checking the invocation list and equally safe
+                if (_PropertyChanged != null)
                     _PropertyChanged -= value;
 
                 // Add the handler
@@ -46,7 +48,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// Function to post event when property changes
         /// </summary>
         /// <param name="propertyName"></param>
-        protected void RaisePropertyChangedEvent(string propertyName)
+        public void OnPropertyChanged(string propertyName)
         {
             _PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -63,41 +65,21 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;
             field = value;
-            RaisePropertyChangedEvent(propertyName);
+            OnPropertyChanged(propertyName);
             return true;
         }
 
         #endregion
-    }
 
-    /// <summary>
-    /// Template class of common usage for WPF bindings
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class ObservableProperty<T> : ObservableObject
-    {
-        #region Constructor
+        #region IDisposable Implementation
 
-        public ObservableProperty(T value)
+        /// <summary>
+        /// Set the PropertyChanged event handler to null to allow garbage collection
+        /// </summary>
+        public virtual void Dispose()
         {
-            Value = value;
+            _PropertyChanged = null;
         }
-
-        #endregion
-
-        #region Public Properties
-
-        public T Value
-        {
-            get => _Value;
-            set => SetField(ref _Value, value, nameof(Value));
-        }
-
-        #endregion
-
-        #region Private Backing Fields
-
-        private T _Value;
 
         #endregion
     }

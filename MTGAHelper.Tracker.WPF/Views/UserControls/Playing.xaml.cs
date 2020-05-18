@@ -1,6 +1,5 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
+using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.ViewModels;
 
 namespace MTGAHelper.Tracker.WPF.Views.UserControls
@@ -17,12 +16,10 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         /// </summary>
         private OpponentWindow OpponentCardsWindow { get; set; }
 
-        private MainWindowVM MainWindowVM { get; set; }
-
         /// <summary>
-        /// Reference to the main window
+        /// Reference the main window view model
         /// </summary>
-        private MainWindow MainWindow => (MainWindow)Window.GetWindow(this);
+        private MainWindowVM MainWindowVM { get; set; }
 
         #endregion
 
@@ -60,7 +57,7 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         /// <param name="mainWindowTop"></param>
         /// <param name="mainWindowLeft"></param>
         /// <param name="mainWindowWidth"></param>
-        internal void SetCardPopupPosition(ForceCardPopupSideEnum side, double mainWindowTop, double mainWindowLeft, double mainWindowWidth)
+        internal void SetCardPopupPosition(CardPopupSide side, double mainWindowTop, double mainWindowLeft, double mainWindowWidth)
         {
             CardsMyLibrary.SetCardPopupPosition(side, mainWindowTop, mainWindowLeft, mainWindowWidth);
             CardsMySideboard.SetCardPopupPosition(side, mainWindowTop, mainWindowLeft, mainWindowWidth);
@@ -80,13 +77,10 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         private void OpenOpponentCardsWindow(object sender, MouseButtonEventArgs e)
         {
             // If the external window option is not selected, do nothing and let the click change the tab
-            if (!MainWindow.ConfigModel.ShowOpponentCardsExternal) return;
+            if (!MainWindowVM.Config.ShowOpponentCardsExternal) return;
 
-            // Set the already created window to visible
-            MainWindowVM.OpponentWindowViewModel.IsWindowVisible = true;
-
-            // Set the window as active
-            OpponentCardsWindow.Activate();
+            // Show the opponent window
+            MainWindowVM.OpponentWindowVM.ShowHideWindow(true);
 
             // Handle the click to prevent changing the tabs
             e.Handled = true;

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
+using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.ViewModels;
+using Point = System.Windows.Point;
 
 namespace MTGAHelper.Tracker.WPF.Views
 {
@@ -20,7 +22,7 @@ namespace MTGAHelper.Tracker.WPF.Views
         public OpponentWindow(MainWindowVM mvm)
         {
             // Set the data context to the opponent window view model
-            DataContext = mvm.OpponentWindowViewModel;
+            DataContext = mvm.OpponentWindowVM;
 
             InitializeComponent();
         }
@@ -33,7 +35,7 @@ namespace MTGAHelper.Tracker.WPF.Views
         /// Set the location of the card pop-up
         /// </summary>
         /// <param name="side"></param>
-        internal void SetCardsPopupPosition(ForceCardPopupSideEnum side)
+        internal void SetCardsPopupPosition(CardPopupSide side)
         {
             CardsInWindow.SetCardPopupPosition(side, (int)Top, (int)Left, (int)Width);
         }
@@ -91,7 +93,7 @@ namespace MTGAHelper.Tracker.WPF.Views
         /// </summary>
         private void UpdatePosition()
         {
-            CardsInWindow.SetCardPopupPosition(ForceCardPopupSideEnum.None, (int)Top, (int)Left, (int)Width);
+            CardsInWindow.SetCardPopupPosition(CardPopupSide.Auto, (int)Top, (int)Left, (int)Width);
         }
 
         #endregion

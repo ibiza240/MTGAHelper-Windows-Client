@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Threading;
+using MTGAHelper.Tracker.WPF.Tools;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
-    public class PlayerTimerVM : ObservableObject
+    public class PlayerTimerVM : BasicModel
     {
         private readonly DispatcherTimer DispatcherTimer = new DispatcherTimer();
 
@@ -33,8 +34,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             {
                 if (!StopWatch.IsRunning) return;
 
-                RaisePropertyChangedEvent(nameof(TimePlayed));
-                RaisePropertyChangedEvent(nameof(HasPriority));
+                OnPropertyChanged(nameof(TimePlayed));
+                OnPropertyChanged(nameof(HasPriority));
             }
             catch (Exception)
             {
@@ -58,7 +59,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         {
             StopWatch.Reset();
             DispatcherTimer.Stop();
-            RaisePropertyChangedEvent(nameof(TimePlayed));
+            OnPropertyChanged(nameof(TimePlayed));
         }
     }
 }

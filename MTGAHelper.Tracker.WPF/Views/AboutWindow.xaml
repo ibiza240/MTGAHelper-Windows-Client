@@ -83,9 +83,9 @@
                     <Run FontWeight="Bold">Thanks to these amazing contributors for their help in making this program better:</Run>
                     <LineBreak />
                     <LineBreak />
-                    <Run>omarjuul</Run>
+                    <Run Foreground="Orange" FontWeight="DemiBold">omarjuul</Run>
                     <LineBreak />
-                    <Run>TastePurple</Run>
+                    <Run Foreground="DarkViolet" FontWeight="DemiBold">TastePurple</Run>
                     <LineBreak />
                 </TextBlock>
                 <Separator />
@@ -102,7 +102,7 @@
                         Width="14"
                         Height="14"
                         Source="/MTGAHelper.Tracker.WPF;component/Assets/Images/discord.png"/>
-                    <Hyperlink helpers:HyperlinkExtensions.IsExternal="true" NavigateUri="https://www.paypal.me/mtgahelper">Discord</Hyperlink>
+                    <Hyperlink helpers:HyperlinkExtensions.IsExternal="true" NavigateUri="https://discord.gg/GTd3RMd">Discord</Hyperlink>
                     <Run>server to have a chat with the community and get the latest news in the fastest way.</Run>
                     <LineBreak />
                     <Run>Come say hello :)</Run>

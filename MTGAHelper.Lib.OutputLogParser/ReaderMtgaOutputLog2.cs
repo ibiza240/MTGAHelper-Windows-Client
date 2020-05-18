@@ -12,6 +12,7 @@ using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient;
 using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
 using MTGAHelper.Lib.OutputLogParser;
+using MTGAHelper.Lib.OutputLogParser.Models;
 using MTGAHelper.Lib.OutputLogProgress;
 using MTGAHelper.Utility;
 using Serilog;

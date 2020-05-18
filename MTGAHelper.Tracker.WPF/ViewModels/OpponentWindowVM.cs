@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 using MTGAHelper.Tracker.WPF.Config;
@@ -7,7 +6,7 @@ using MTGAHelper.Tracker.WPF.Tools;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
-    public class OpponentWindowViewModel : ObservableObject
+    public class OpponentWindowVM : BasicModel
     {
         #region Constructor
 
@@ -16,7 +15,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// </summary>
         /// <param name="windowTitle"></param>
         /// <param name="mvm"></param>
-        public OpponentWindowViewModel(string windowTitle, MainWindowVM mvm)
+        public OpponentWindowVM(string windowTitle, MainWindowVM mvm)
         {
             // Set the window title
             WindowTitle = windowTitle;
@@ -65,7 +64,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public CardsListVM CardList { get; set; }
 
         /// <summary>
-        /// Reference to the MainWindow ViewModel
+        /// Reference to the MainViewModel
         /// </summary>
         public MainWindowVM MainWindowVM { get; }
 
@@ -155,7 +154,52 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <summary>
         /// Config Window Settings
         /// </summary>
-        private WindowSettings WindowSettings => MainWindowVM?.ConfigModel?.WindowSettingsOpponentCards;
+        private WindowSettings WindowSettings => MainWindowVM?.Config?.WindowSettingsOpponentCards;
+
+        /// <summary>
+        /// Track whether the window was previously visible
+        /// </summary>
+        private bool WasVisible;
+
+        /// <summary>
+        /// Track the new match status of auto opening the window
+        /// </summary>
+        private bool NewMatch;
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Common use method for showing or hiding the window based on main window state and options
+        /// </summary>
+        public void ShowHideWindow(bool manual = false)
+        {
+            if (MainWindowVM.IsWindowVisible && MainWindowVM.WindowState == WindowState.Normal &&
+                MainWindowVM.Context == WindowContext.Playing && MainWindowVM.Config.ShowOpponentCardsExternal && !MainWindowVM.IsHeightMinimized)
+            {
+                // If the AutoShow setting is enabled, the window was previously visible, or the manual argument is set, show the window
+                if ((MainWindowVM.Config.ShowOpponentCardsAuto && NewMatch) || WasVisible || manual)
+                {
+                    // Clear the new match flag
+                    NewMatch = false;
+
+                    // Show the window
+                    ShowWindow();
+                }
+            }
+            else
+            {
+                // Get the current status of the window visibility
+                bool v = IsWindowVisible;
+
+                // Always hide the opponent window if the main window is not visible
+                HideWindow();
+
+                // Set the last status of the window visibility
+                WasVisible = v;
+            }
+        }
 
         #endregion
 
@@ -202,57 +246,21 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         {
             switch (e.PropertyName)
             {
-                // Handle changes to the main window visibility
+                // Handle changes to the main window visibility, window state, or window context
                 case nameof(MainWindowVM.IsWindowVisible):
+                case nameof(MainWindowVM.WindowState):
+                case nameof(MainWindowVM.IsHeightMinimized):
                 {
-                    if (MainWindowVM.IsWindowVisible)
-                    {
-                        // Check that the context is Playing, and the options for external and auto are both set
-                        if (MainWindowVM.MainWindowContext == WindowContext.Playing &&
-                            MainWindowVM.ConfigModel.ShowOpponentCardsExternal &&
-                            MainWindowVM.ConfigModel.ShowOpponentCardsAuto)
-                        {
-                            // Set the window to visible
-                            IsWindowVisible = true;
-                        }
-                    }
-                    else
-                    {
-                        // Hide the opponent window anytime the main window is hidden
-                        IsWindowVisible = false;
-                    }
+                    ShowHideWindow();
                     break;
                 }
-
-                // Handle changes to the main window state
-                case nameof(MainWindowVM.WindowState):
+                // Handle changes to the main 
+                case nameof(MainWindowVM.Context):
                 {
-                    switch (MainWindowVM.WindowState)
-                    {
-                        case WindowState.Normal:
-                        {
-                            // Check that the context is Playing, and the options for external and auto are both set
-                            if (MainWindowVM.MainWindowContext == WindowContext.Playing &&
-                                MainWindowVM.ConfigModel.ShowOpponentCardsExternal &&
-                                MainWindowVM.ConfigModel.ShowOpponentCardsAuto)
-                            {
-                                // Set the window to visible
-                                IsWindowVisible = true;
-                            }
-                            break;
-                        }
-                        case WindowState.Minimized:
-                        {
-                            // Hide the opponent window anytime the main window is minimized
-                            IsWindowVisible = false;
-                            break;
-                        }
-                        case WindowState.Maximized:
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    if (MainWindowVM.Context == WindowContext.Playing && !NewMatch)
+                        NewMatch = true;
 
+                    ShowHideWindow();
                     break;
                 }
             }
@@ -279,6 +287,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         private void ShowWindow()
         {
+            // Set the window to visible
             IsWindowVisible = true;
         }
 
@@ -303,6 +312,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         private void HideWindow()
         {
+            // Hide the window
             IsWindowVisible = false;
         }
 

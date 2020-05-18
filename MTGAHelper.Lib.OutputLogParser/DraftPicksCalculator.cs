@@ -56,14 +56,7 @@ namespace MTGAHelper.Lib.OutputLogParser
 
                     try
                     {
-                        if (i.type.StartsWith("Basic Land"))
-                        {
-                            card.NbMissingCollection = 0;
-                        }
-                        else
-                        {
-                            card.NbMissingCollection = calculateMissingAmount(collection, i, pickedCards);
-                        }
+                        card.NbMissingCollection = calculateMissingAmount(collection, card, pickedCards);
 
                         if (weights.ContainsKey(i.grpId))
                         {
@@ -114,8 +107,10 @@ namespace MTGAHelper.Lib.OutputLogParser
 
             if (isMissingRareLand != null)
                 isMissingRareLand.IsRareDraftPick = RaredraftPickReasonEnum.RareLandMissing;
+
             else if (maxWeight > 0 && data.Any(i => i.Weight == maxWeight))
                 data.First(i => i.Weight == maxWeight).IsRareDraftPick = RaredraftPickReasonEnum.HighestWeight;
+
             else if (data.Any(i => i.type.StartsWith("Basic Land") == false && i.NbMissingCollection > 0))
             {
                 var r = data
@@ -124,6 +119,7 @@ namespace MTGAHelper.Lib.OutputLogParser
                     .OrderBy(i => i.GetRarityEnum())
                     .ThenByDescending(i => i.NbMissingCollection)
                     .First();
+
                 r.IsRareDraftPick = RaredraftPickReasonEnum.MissingInCollection;
             }
             else
@@ -132,6 +128,7 @@ namespace MTGAHelper.Lib.OutputLogParser
                 var cardsMatching = data
                     .Where(i => i.GetRarityEnum() == bestRarity)
                     .Where(i => i.type.StartsWith("Basic Land") == false);
+
                 foreach (var c in cardsMatching)
                     c.IsRareDraftPick = RaredraftPickReasonEnum.BestVaultRarity;
             }
@@ -139,28 +136,19 @@ namespace MTGAHelper.Lib.OutputLogParser
             return data;
         }
 
-        private static int calculateMissingAmount(
+        private int calculateMissingAmount(
             Dictionary<int, int> collection,
-            Card i,
+            Card card,
             ICollection<int> pickedCards)
         {
-            int missingAmount;
+            // Check with collection
+            var missingAmount = card.type.StartsWith("Basic Land") ? 0 :
+                collection.ContainsKey(card.grpId) ? 4 - collection[card.grpId] : 4;
 
-            missingAmount = collection.ContainsKey(i.grpId) ? 
-                4 - collection[i.grpId] : 
-                4;
+            // Consider picked cards during draft
+            missingAmount -= pickedCards.Count(i => i == card.grpId);
 
-            if(missingAmount == 0)
-            {
-                return missingAmount;
-            }
-
-            if (pickedCards.Contains(i.grpId))
-            {
-                missingAmount -= pickedCards.Count(cardId => cardId == i.grpId);
-            }
-
-            return missingAmount < 0 ? 0 : missingAmount;
+            return Math.Max(0, missingAmount);
         }
     }
 }

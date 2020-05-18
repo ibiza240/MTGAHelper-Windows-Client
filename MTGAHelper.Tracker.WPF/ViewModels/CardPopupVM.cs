@@ -1,6 +1,8 @@
-﻿namespace MTGAHelper.Tracker.WPF.ViewModels
+﻿using MTGAHelper.Tracker.WPF.Tools;
+
+namespace MTGAHelper.Tracker.WPF.ViewModels
 {
-    public class CardPopupVM: ObservableObject
+    public class CardPopupVM: BasicModel
     {
         /// <summary>
         /// Card Image URL

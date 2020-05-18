@@ -20,81 +20,23 @@ namespace MTGAHelper.Tracker.WPF.Business
     {
         private const string SERVER = DebugOrRelease.Server;
 
-        protected const string ServerTest = DebugOrRelease.LocalServer;
-
         private readonly Uri BaseAddress = new Uri(SERVER);
 
         private readonly CookieContainer CookieContainer;
         private readonly HttpClient Client;
 
-        private ConfigModel ConfigApp;
 
-        public ServerApiCaller(ConfigModel configApp)
+        public ServerApiCaller()
         {
             CookieContainer = new CookieContainer();
             var handler = new HttpClientHandler { CookieContainer = CookieContainer };
             Client = new HttpClient(handler) { BaseAddress = BaseAddress };
-            ConfigApp = configApp;
         }
 
         public void SetUserId(string userId)
         {
             CookieContainer.SetCookies(BaseAddress, "userId=" + userId);
         }
-
-        //    public AccountResponse Init(AccountResponse account, string password)
-        //    {
-        //        cookieContainer = new CookieContainer();
-        //        handler = new HttpClientHandler() { CookieContainer = cookieContainer };
-        //        client = new HttpClient(handler) { BaseAddress = baseAddress };
-
-        //        AccountResponse response = null;
-
-        //        if (account.Provider == null)
-        //        {
-        //            response = ParseResponseGet<AccountResponse>($"api/account/signin?email={account.Email}&password={password}");
-        //        }
-        //        else
-        //        {
-        //UserCredential credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-        //    new ClientSecrets
-        //    {
-        //        ClientId = "",
-        //        ClientSecret = ""
-        //    },
-        //    new[] { "email", "openid" },
-        //    "user",
-        //    CancellationToken.None).Result;
-
-        //            if (credential.Token.IssuedUtc.AddSeconds(credential.Token.ExpiresInSeconds ?? 0) < DateTime.UtcNow)
-        //            {
-        //                credential.RefreshTokenAsync(CancellationToken.None).Wait();
-        //            }
-
-        //            var test = GoogleJsonWebSignature.ValidateAsync(credential.Token.IdToken,
-        //                new GoogleJsonWebSignature.ValidationSettings { Audience = new []
-        //                { "appId" } }).Result;
-
-        //            //// Create the service.
-        //            //var service = new BooksService(new BaseClientService.Initializer()
-        //            //{
-        //            //    HttpClientInitializer = credential,
-        //            //    ApplicationName = "Books API Sample",
-        //            //});
-
-        //            //credential.Initialize().CreateAuthorizationCodeRequest("https://localhost:5001/api/External/Callback").Build;
-        //            //var test = new ConfigurableHttpClient(new ConfigurableMessageHandler(new HttpClientHandler())).
-
-        //            //var bookshelves = await service.Mylibrary.Bookshelves.List().ExecuteAsync();
-        //            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", credential.Token.IdToken);
-
-        //            response = ParseResponseGet<AccountResponse>($"External/Callback");
-        //        }
-
-        //        cookieContainer.Add(baseAddress, new Cookie("userId", account.MtgaHelperUserId));
-
-        //        return response;
-        //    }
 
         internal AccountResponse ValidateExternalToken(string provider, string token)
         {
@@ -110,31 +52,6 @@ namespace MTGAHelper.Tracker.WPF.Business
         {
             return GetResponseWithCookie<AccountResponse>($"api/WpfLogin/AutoSigninLocalUser?email={System.Web.HttpUtility.UrlEncode(email)}&hash={System.Web.HttpUtility.UrlEncode(hash)}");
         }
-
-        //internal TReturn PostResponseWithCookie<TReturn>(string userId, string apiEndpoint, object body)
-        //{
-        //    var baseAddress = new Uri(server);
-        //    var cookieContainer = new CookieContainer();
-        //    using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
-        //    using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
-        //    {
-        //        cookieContainer.Add(baseAddress, new Cookie("userId", userId));
-        //        //var test = JsonConvert.SerializeObject(body);
-
-        //        try
-        //        {
-        //            var response = client.PostAsync(apiEndpoint, new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json")).Result;
-        //            response.EnsureSuccessStatusCode();
-        //            var strResponse = response.Content.ReadAsStringAsync().Result;
-        //            var parsed = JsonConvert.DeserializeObject<TReturn>(strResponse);
-        //            return parsed;
-        //        }
-        //        catch (AggregateException ex)
-        //        {
-        //            throw new HttpRequestException("Remote server unavailable", ex);
-        //        }
-        //    }
-        //}
 
         internal TReturn PostResponseSimple<TReturn>(string apiEndpoint, object body)
         {
@@ -154,16 +71,6 @@ namespace MTGAHelper.Tracker.WPF.Business
                 }
             }
         }
-
-        //internal T GetResponseSimple<T>(string endpoint)
-        //{
-        //    using (var w = new WebClient())
-        //    {
-        //        var responseRaw = w.DownloadString(server + endpoint);
-        //        var parsed = JsonConvert.DeserializeObject<T>(responseRaw);
-        //        return parsed;
-        //    }
-        //}
 
         private T GetResponseWithCookie<T>(string apiEndpoint)
         {
@@ -196,121 +103,28 @@ namespace MTGAHelper.Tracker.WPF.Business
             }
         }
 
-        internal string GetAccountSalt(string signinEmail)
+        internal string GetAccountSalt()
         {
             return GetResponseWithCookie<string>("api/WpfLogin/AccountSalt");
         }
-
-        //T ParseResponseGet<T>(string apiEndpoint)
-        //{
-        //    try
-        //    {
-        //        //var baseAddress = new Uri(server);
-        //        //var cookieContainer = new CookieContainer();
-        //        //using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
-        //        //using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
-        //        {
-        //            //cookieContainer.Add(baseAddress, new Cookie("userId", userId));
-
-        //            try
-        //            {
-        //                var response = client.GetAsync(apiEndpoint).Result;
-
-        //                var testCookiesResponse = cookieContainer.GetCookies(new Uri(baseAddress + apiEndpoint)).Cast<Cookie>();
-
-        //                response.EnsureSuccessStatusCode();
-        //                var strResponse = response.Content.ReadAsStringAsync().Result;
-        //                var parsed = JsonConvert.DeserializeObject<T>(strResponse);
-        //                return parsed;
-        //            }
-        //            catch (AggregateException ex)
-        //            {
-        //                throw new HttpRequestException("Remote server unavailable", ex);
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Debugger.Break();
-        //        return default(T);
-        //    }
-        //}
-
-        //internal bool IsLocalTrackerUpToDate()
-        //{
-        //    try
-        //    {
-        //        System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-        //        FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-        //        using (var w = new WebClient())
-        //        {
-        //            var responseRaw = w.DownloadString((configApp.Test ? serverTest : server) + "/api/Misc/VersionTracker");
-        //            var latestVersion = JsonConvert.DeserializeObject<GetVersionTrackerResponse>(responseRaw).Version;
-        //            return new Version(fvi.FileVersion) >= new Version(latestVersion);
-        //        }
-        //    }
-        //    catch (WebException)
-        //    {
-        //        // Ignore error on call
-        //        return true;
-        //    }
-        //}
 
         internal DraftRaredraftingInfoResponse GetRaredraftingInfo(string mtgaHelperUserId)
         {
             return GetResponseWithCookie<DraftRaredraftingInfoResponse>("api/User/Compare");
         }
-
-        //public CollectionResponse UploadZippedLogFile(string userId, byte[] fileZipped)
-        //{
-        //    var baseAddress = new Uri(server);
-        //    var cookieContainer = new CookieContainer();
-
-        //    using (var handler = new HttpClientHandler() { CookieContainer = cookieContainer })
-        //    using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
-        //    {
-        //        client.Timeout = new TimeSpan(0, 5, 0);
-        //        var content = new MultipartFormDataContent();
-        //        cookieContainer.Add(baseAddress, new Cookie("userId", userId));
-        //        content.Add(new ByteArrayContent(fileZipped), "fileCollection", $"{userId}_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}.zip");
-
-        //        try
-        //        {
-        //            var response = client.PostAsync("/api/User/Collection", content).Result;
-        //            response.EnsureSuccessStatusCode();
-        //            var strResponse = response.Content.ReadAsStringAsync().Result;
-        //            var parsed = JsonConvert.DeserializeObject<CollectionResponse>(strResponse);
-        //            return parsed;
-        //        }
-        //        catch (AggregateException ex)
-        //        {
-        //            throw new HttpRequestException("Remote server unavailable", ex);
-        //        }
-        //    }
-        //}
         internal CollectionResponse UploadOutputLogResult(string userId, OutputLogResult result)
         {
             return PostResponseSimple<CollectionResponse>("/api/User/LogFileProcessed", new PostOutputLogProcessedRequest(result));
         }
 
-        internal bool IsSameLastUploadHash(string userId, uint uploadHash)
+        internal bool IsSameLastUploadHash(uint uploadHash)
         {
             string latestUploadHash = GetResponseWithCookie<LastHashResponse>("/api/User/LastUploadHash").LastHash;
             return latestUploadHash == uploadHash.ToString();
         }
 
-        //internal GetCardsForDraftPickResponse GetCardsForDraftPick(string userId, ICollection<int> grpIds, string source)
-        //{
-        //    if (grpIds == null || grpIds.Count == 0)
-        //        return new GetCardsForDraftPickResponse(new Entity.CardForDraftPick[0]);
-
-        //    return GetResponseWithCookie<GetCardsForDraftPickResponse>($"/api/User/DraftPick?grpIds={string.Join(',', grpIds)}&source={HttpUtility.UrlEncode(source)}");
-
-        //}
-
-        internal CollectionResponse GetCollection(string userId)
+        internal CollectionResponse GetCollection()
         {
-            //return GetResponseWithCookie<CollectionResponse>(userId, "/api/User/Collection");
             return GetResponseWithCookie<CollectionResponse>("api/User/Collection");
         }
 

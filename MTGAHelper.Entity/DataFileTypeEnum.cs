@@ -5,6 +5,7 @@
         Unknown,
         AllCardsCached2,
         draftRatings,
+        ConfigResolutions,
     }
 
 }

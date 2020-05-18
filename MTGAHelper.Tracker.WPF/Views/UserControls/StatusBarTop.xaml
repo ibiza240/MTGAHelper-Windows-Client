@@ -31,13 +31,17 @@
             <Grid>
                 <Image
                     Margin="3,2,2,4"
-                    PreviewMouseLeftButtonDown="IconClick"
                     Source="../../Assets/Images/icon.png"
-                    Visibility="{Binding AnimatedIcon, Converter={StaticResource BoolToVisInverse}}" />
-                <Image
-                    gif:ImageBehavior.AnimatedSource="../../Assets/Images/iconAnimated.gif"
-                    PreviewMouseLeftButtonDown="IconClick"
-                    Visibility="{Binding AnimatedIcon, Converter={StaticResource BoolToVis}}" />
+                    Visibility="{Binding AnimatedIcon, Converter={StaticResource BoolToVisInverse}}">
+                    <Image.InputBindings>
+                        <MouseBinding Command="{Binding SwitchIconCommand}" Gesture="LeftDoubleClick" />
+                    </Image.InputBindings>
+                </Image>
+                <Image gif:ImageBehavior.AnimatedSource="../../Assets/Images/iconAnimated.gif" Visibility="{Binding AnimatedIcon, Converter={StaticResource BoolToVis}}">
+                    <Image.InputBindings>
+                        <MouseBinding Command="{Binding SwitchIconCommand}" Gesture="LeftDoubleClick" />
+                    </Image.InputBindings>
+                </Image>
             </Grid>
         </StatusBarItem>
         <!--  Tool Name and Version Info  -->
@@ -48,10 +52,13 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBlock Style="{StaticResource HeaderStyle}">MTGAHelper</TextBlock>
-                <TextBlock Grid.Row="1" FontSize="8" Text="{Binding Version, StringFormat=' v{0}'}" />
+                <TextBlock
+                    Grid.Row="1"
+                    FontSize="8"
+                    Text="{Binding Version, StringFormat=' v{0}'}" />
             </Grid>
         </StatusBarItem>
         <!--  Action Buttons  -->
@@ -85,7 +92,8 @@
                 <MenuItem
                     Background="{StaticResource HeaderBrush}"
                     BorderBrush="{StaticResource MenuBorderBrush}"
-                    Command="{Binding MinimizeWindowCommand}">
+                    Command="{Binding MinimizeWindowCommand}"
+                    Visibility="{Binding IsHeightMinimized, Converter={StaticResource BoolToVisInverse}}">
                     <MenuItem.Header>
                         <Viewbox>
                             <Rectangle
@@ -102,6 +110,30 @@
                     </MenuItem.Header>
                     <MenuItem.ToolTip>
                         <ToolTip Background="{StaticResource TooltipBackgroundBrush}" Content="Minimize" />
+                    </MenuItem.ToolTip>
+                </MenuItem>
+                <!--  Restore Height Minimized Window  -->
+                <MenuItem
+                    Background="{StaticResource HeaderBrush}"
+                    BorderBrush="{StaticResource MenuBorderBrush}"
+                    Command="{Binding RestoreWindowCommand}"
+                    Visibility="{Binding IsHeightMinimized, Converter={StaticResource BoolToVis}}">
+                    <MenuItem.Header>
+                        <Viewbox>
+                            <Rectangle
+                                Width="40"
+                                Height="40"
+                                Margin="0,10"
+                                Fill="White"
+                                Stretch="Uniform">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Stretch="Uniform" Visual="{StaticResource ZoomExtentsPath}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Viewbox>
+                    </MenuItem.Header>
+                    <MenuItem.ToolTip>
+                        <ToolTip Background="{StaticResource TooltipBackgroundBrush}" Content="Expand" />
                     </MenuItem.ToolTip>
                 </MenuItem>
                 <!--  General Options Drop Down  -->
@@ -124,28 +156,24 @@
                         <ToolTip Background="{StaticResource TooltipBackgroundBrush}" Content="Menu" />
                     </MenuItem.ToolTip>
                     <!--  Switch User  -->
-                    <MenuItem Click="Menu_Signin_Click" Header="_Switch user" />
+                    <MenuItem Command="{Binding SignOutCommand}" Header="_Switch user" />
                     <Separator />
                     <!--  Open Options Window  -->
-                    <MenuItem Click="Menu_Options_Click" Header="_Options" />
+                    <MenuItem Command="{Binding ShowOptionsCommand}" Header="_Options" />
                     <!--  Set as Always Top  -->
                     <MenuItem
                         Header="Always on _Top"
                         IsCheckable="True"
                         IsChecked="{Binding WindowTopmost}" />
                     <!--  Manual Log Upload  -->
-                    <MenuItem Click="Menu_UploadNow_Click" Header="_Upload log file now" />
+                    <MenuItem Command="{Binding UploadLogCommand}" Header="_Upload log file now" />
                     <Separator />
-                    <!--  DraftHelper  -->
-                    <!--<MenuItem Click="Menu_DraftHelperRun_Click" Header="Run _DraftHelper now" />
-                    <MenuItem Click="Menu_DraftHelperConfig_Click" Header="_Configure DraftHelper" />
-                    <Separator />-->
                     <!--  About  -->
                     <MenuItem Click="Menu_About_Click" Header="_About" />
                     <!--  Patch Notes  -->
                     <MenuItem Click="Menu_PatchNotes_Click" Header="View _Patch notes" />
                     <!--  Exit Application  -->
-                    <MenuItem Click="Menu_Exit_Click" Header="_Exit" />
+                    <MenuItem Command="{Binding ExitApplicationCommand}" Header="_Exit" />
                     <!--<Separator />
                     <MenuItem Header="Test _Drafter" Click="MenuTestDrafter_Click" />-->
                 </MenuItem>

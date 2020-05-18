@@ -29,7 +29,7 @@ See [this post](https://www.patreon.com/posts/how-to-make-best-29075781) for an 
 
 ### Installation
 
-Simply [download the Tracker Installer](https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelperTracker.msi) and after the very simple setup, the tracker will be ready to run from your Desktop where a shortcut will be created.
+Simply [download the Tracker Installer](https://mtgahelper.com/download/MTGAHelperTracker.msi) and after the very simple setup, the tracker will be ready to run from your Desktop where a shortcut will be created.
 
 ### Configuration
 

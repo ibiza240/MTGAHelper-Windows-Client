@@ -46,7 +46,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 SetField(ref _IsAmountChanged, value, nameof(IsAmountChanged));
 
                 // Raise the property changed event for amount with original
-                RaisePropertyChangedEvent(nameof(CardFraction));
+                OnPropertyChanged(nameof(CardFraction));
             }
         }
 

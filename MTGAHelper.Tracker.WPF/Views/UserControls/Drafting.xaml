@@ -25,62 +25,70 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <!--  General Drafting Info  -->
-        <Grid Grid.Row="0" Visibility="{Binding ShowGlobalMTGAHelperSays, Converter={StaticResource BoolToVis}}">
+        <Grid Grid.Row="0" Visibility="{Binding ShowGlobalMTGAHelperSays, Converter={StaticResource BoolToVis}}" Height="30">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <!--  Button to run the DraftHelper  -->
-            <Border Grid.Column="0" />
-            <!--<Menu Margin="2" Background="Transparent">
-                <MenuItem
-                    Padding="0"
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <!--  Button to run the DraftHelper  -->
+                <Menu
+                    Margin="2"
                     Background="Transparent"
-                    Click="btnRunDraftHelper_Click">
-                    <MenuItem.Header>
-                        <Viewbox>
-                            <Rectangle
-                                Width="80"
-                                Height="40"
-                                Margin="0,5,5,5"
-                                Fill="White">
-                                <Rectangle.OpacityMask>
-                                    <VisualBrush Stretch="Uniform" Visual="{StaticResource DraftPath}" />
-                                </Rectangle.OpacityMask>
-                            </Rectangle>
-                        </Viewbox>
-                    </MenuItem.Header>
-                    <MenuItem.ToolTip>
-                        <ToolTip Background="{StaticResource TooltipBackgroundBrush}" Content="Run DraftHelper" />
-                    </MenuItem.ToolTip>
-                </MenuItem>
-            </Menu>-->
-            <!--  Pack and Pick Data  -->
-            <Label
-                Grid.Column="1"
-                Padding="0,5,0,5"
-                VerticalAlignment="Center"
-                FontSize="13"
-                FontWeight="DemiBold">
-                <TextBlock Text="{Binding PackPickMessage}" />
-            </Label>
+                    Visibility="{Binding IsHumanDraft, Converter={StaticResource BoolToVis}}">
+                    <MenuItem
+                        Padding="0"
+                        Background="Transparent"
+                        Click="btnRunDraftHelper_Click">
+                        <MenuItem.Header>
+                            <Viewbox>
+                                <Rectangle
+                                    Width="80"
+                                    Height="40"
+                                    Margin="0,5,5,5"
+                                    Fill="White">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Uniform" Visual="{StaticResource DraftPath}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Viewbox>
+                        </MenuItem.Header>
+                        <MenuItem.ToolTip>
+                            <ToolTip Background="{StaticResource TooltipBackgroundBrush}" Content="Run DraftHelper" />
+                        </MenuItem.ToolTip>
+                    </MenuItem>
+                </Menu>
+                <!--  ComboBox for Pack and Pick  -->
+                <ComboBox
+                    x:Name="PxpxComboBox"
+                    Height="14"
+                    IsEnabled="{Binding IsHumanDraft}"
+                    ItemsSource="{Binding PxpxItems}"
+                    SelectedItem="{Binding PxpxItemSelected}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Label}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
             <!--  Non-Wheeling Card List  -->
             <Label
-                Grid.Column="2"
+                Grid.Column="1"
                 Padding="10,5,0,5"
                 VerticalAlignment="Center"
                 Cursor="Hand"
                 MouseLeftButtonUp="ShowHideCardsThatDidNotWheel_MouseLeftButtonUp"
-                Visibility="{Binding IsVisibleWhenCardsDidNotWheel, Converter={StaticResource BoolToVis}}">
+                Visibility="{Binding ShowLinkCardListThatDidNotWheel, Converter={StaticResource BoolToVis}}">
                 <TextBlock
                     Foreground="Aquamarine"
                     Text="{Binding CardsWheelingMessage}"
-                    TextDecorations="Underline">
+                    TextDecorations="Underline"
+                    TextTrimming="CharacterEllipsis">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Style.Triggers>
@@ -94,16 +102,17 @@
             </Label>
             <!--  Wheeling Card Count  -->
             <Label
-                Grid.Column="2"
+                Grid.Column="1"
                 Padding="10,5,0,5"
                 VerticalAlignment="Center"
                 Visibility="{Binding IsVisibleWhenCardsDidNotWheel, Converter={StaticResource BoolToVisInverse}}">
-                <TextBlock Text="{Binding CardsWheelingMessage}" />
+                <TextBlock Text="{Binding CardsWheelingMessage}" TextTrimming="CharacterEllipsis" />
             </Label>
         </Grid>
 
         <!--  Draft Choices  -->
         <ListBox
+            x:Name="CardsListbox"
             Grid.Row="1"
             HorizontalContentAlignment="Stretch"
             Background="{StaticResource BackgroundBrush}"
@@ -114,6 +123,8 @@
             ItemsSource="{Binding CardsDraft}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             ScrollViewer.VerticalScrollBarVisibility="Auto"
+            SelectionChanged="ListBox_SelectionChanged"
+            SelectionMode="Single"
             VirtualizingPanel.IsVirtualizing="False">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
@@ -177,9 +188,7 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <!--  Card Name  -->
-                            <Label
-                                Grid.Row="0"
-                                Padding="5,4,0,0">
+                            <Label Grid.Row="0" Padding="5,4,0,0">
                                 <TextBlock Text="{Binding Name}" />
                             </Label>
                             <!--  Converted Mana Cost Symbols  -->
@@ -233,7 +242,7 @@
                                 Grid.Row="1"
                                 Margin="3"
                                 ToolTipService.InitialShowDelay="50"
-                                    Visibility="{Binding RareDraftPickEnum, Converter={StaticResource BoolToVis}}">
+                                Visibility="{Binding RareDraftPickEnum, Converter={StaticResource BoolToVis}}">
                                 <Border.ToolTip>
                                     <TextBlock Foreground="Black" Text="RareDraft Choice" />
                                 </Border.ToolTip>

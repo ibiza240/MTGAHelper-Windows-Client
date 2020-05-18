@@ -1,3 +1,25 @@
+### v1.4.6 (2020-05-18)
+
+DraftHelper: "Copies missing" number is now considering new cards picked during the draft
+
+DraftHelper new ratings source: MTG Arena Zone for Ikoria set
+
+New minimize option: collapse in height
+
+Ability to reset the tracker position from the tray icon
+
+Compact mode now saved as preference
+
+Bugfix (DraftHelper): More details will be displayed correctly in the hover popup
+
+Bugfix (DraftHelper): Lands won't be counted as missing copies
+
+Bugfix (In-match tracker): Priority label won't take up timer space
+
+### v1.4.5 (2020-05-17)
+
+Release that includes the Human DraftHelper (for patrons)
+
 ### v1.4.4 (2020-05-01)
 
 Hotfix for a connection-related bug 

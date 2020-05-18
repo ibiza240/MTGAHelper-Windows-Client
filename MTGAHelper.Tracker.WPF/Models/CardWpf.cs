@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using MTGAHelper.Tracker.WPF.ViewModels;
+using MTGAHelper.Tracker.WPF.Tools;
 
 namespace MTGAHelper.Tracker.WPF.Models
 {
@@ -10,7 +10,7 @@ namespace MTGAHelper.Tracker.WPF.Models
         public virtual int Amount { get; set; }
     }
 
-    public class CardWpf : ObservableObject
+    public class CardWpf : BasicModel
     {
         public int ArenaId { get; set; }
 

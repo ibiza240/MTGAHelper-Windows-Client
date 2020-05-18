@@ -1,4 +1,5 @@
 ﻿using System;
+using MTGAHelper.Lib.OutputLogParser.Models;
 
 namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
 {
@@ -63,6 +64,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         }
     }
 
+    [AddMessageEvenIfDateNull]
     public class DetailedLoggingResult : MtgaOutputLogPartResultBase<string>
     {
         public DetailedLoggingResult(bool isEnabled)

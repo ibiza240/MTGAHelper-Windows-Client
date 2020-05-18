@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
+using MTGAHelper.Tracker.WPF.Tools;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
-    public class InMatchTrackerStateVM : ObservableObject
+    public class InMatchTrackerStateVM : BasicModel
     {
         //enum CardListTypeEnum
         //{
@@ -57,7 +58,13 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// </summary>
         public float LibraryDrawLandPct => MyLibrary.DrawLandPct;
 
-        public ObservableProperty<bool> SplitLands { get; set; } = new ObservableProperty<bool>(true);
+        public bool SplitLands
+        {
+            get => _SplitLands;
+            set => SetField(ref _SplitLands, value, nameof(SplitLands));
+        }
+
+        private bool _SplitLands;
 
         public int LibraryCardsCount => MyLibrary.CardCount;
 
@@ -83,7 +90,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             TimerOpponent.Reset();
 
             // notify that everything changed
-            RaisePropertyChangedEvent(string.Empty);
+            OnPropertyChanged(string.Empty);
         }
 
         internal void SetInMatchStateBuffered(IInGameState state)
@@ -151,13 +158,13 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                         // I suppose the MySeatId got to 0 after the validation
                     }
 
-                    RaisePropertyChangedEvent(string.Empty);
+                    OnPropertyChanged(string.Empty);
                 }
 
                 //if (isInitialized == false && stateBuffered.CardsByZone[stateBuffered.MySeatId][ZoneSimpleEnum.ZoneType_Library].Count > 0)
                 //{
                 //    FullDeck.ConvertCardList(stateBuffered.CardsByZone[stateBuffered.MySeatId][ZoneSimpleEnum.ZoneType_Library].ToDictionary(i => i.Key, i => i.Value.Count));
-                //    RaisePropertyChangedEvent(nameof(FullDeck));
+                //    OnPropertyChanged(nameof(FullDeck));
                 //    isInitialized = true;
                 //}
 

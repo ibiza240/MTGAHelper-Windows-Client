@@ -27,7 +27,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
     #endregion
 
-    public class CardsListVM : ObservableObject
+    public class CardsListVM : BasicModel
     {
         #region Constructor
 
@@ -124,11 +124,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         private readonly Stats Stats = new Stats();
 
         /// <summary>
-        /// Deck utilities
-        /// </summary>
-        private readonly Utilities Util = new Utilities();
-
-        /// <summary>
         /// Calculator for card border gradients
         /// </summary>
         private readonly BorderGradientCalculator GradientCalculator = new BorderGradientCalculator();
@@ -141,7 +136,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         {
             Cards = null;
             Stats.Reset();
-            RaisePropertyChangedEvent(string.Empty);
+            OnPropertyChanged(string.Empty);
         }
 
         public void ConvertCardList(IReadOnlyCollection<CardDrawInfo> cardsRaw)
@@ -172,7 +167,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }));
             Stats.Reset(Cards);
 
-            RaisePropertyChangedEvent(string.Empty);
+            OnPropertyChanged(string.Empty);
         }
 
         #endregion
@@ -266,7 +261,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 Amount = amount,
                 Colors = card.colors,
                 ColorIdentity = card.color_identity,
-                ImageArtUrl = Util.GetThumbnailLocal(card.imageArtUrl),
+                ImageArtUrl = Utilities.GetThumbnailLocal(card.imageArtUrl),
                 ImageCardUrl = card.imageCardUrl,
                 Name = card.name,
                 Rarity = card.rarity,
@@ -281,9 +276,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         private void NotifyStatsChanged()
         {
-            RaisePropertyChangedEvent(nameof(CardCount));
-            RaisePropertyChangedEvent(nameof(LandCount));
-            RaisePropertyChangedEvent(nameof(DrawLandPct));
+            OnPropertyChanged(nameof(CardCount));
+            OnPropertyChanged(nameof(LandCount));
+            OnPropertyChanged(nameof(DrawLandPct));
         }
 
         #endregion
@@ -297,8 +292,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             var data = cards.Select(i => ConvertCard(i.ArenaId, 1, 1f / cards.Count));
             Cards = new ObservableCollection<LibraryCardWithAmountVM>(data.Select(AddBorderColor));
 
-            RaisePropertyChangedEvent(nameof(CardChosen));
-            RaisePropertyChangedEvent(nameof(Cards));
+            OnPropertyChanged(nameof(CardChosen));
+            OnPropertyChanged(nameof(Cards));
         }
 
         #endregion

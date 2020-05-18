@@ -8,8 +8,6 @@
     xmlns:uc="clr-namespace:MTGAHelper.Tracker.WPF.Views.UserControls"
     xmlns:viewModels="clr-namespace:MTGAHelper.Tracker.WPF.ViewModels"
     d:DataContext="{d:DesignInstance viewModels:MainWindowVM}"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
         <!--  Converter  -->
@@ -22,8 +20,8 @@
     <!--  Content Grid  -->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="26" />
         </Grid.RowDefinitions>
 
         <!--  Deck List Tabs  -->
@@ -57,8 +55,8 @@
                                 <Label
                                     Grid.Row="0"
                                     Grid.Column="0"
-                                    VerticalAlignment="Center"
                                     HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
                                     FontSize="24"
                                     FontWeight="Bold">
                                     <TextBlock Text="{Binding InMatchState.LibraryCardsCount, StringFormat={}{0} cards in library}" TextTrimming="CharacterEllipsis" />
@@ -181,17 +179,15 @@
         <Grid Grid.Row="1" Background="{StaticResource HeaderBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Label
                 Grid.Row="0"
-                Grid.Column="0" />
-            <Label
-                Grid.Row="0"
                 Grid.Column="1"
+                HorizontalAlignment="Center"
                 FontWeight="Bold">
                 <TextBlock Text="Priority" TextTrimming="CharacterEllipsis" />
             </Label>
@@ -207,9 +203,6 @@
                 FontWeight="{Binding InMatchState.TimerOpponent.HasPriority, Converter={StaticResource HasPriorityConverter}}">
                 <TextBlock Text="{Binding InMatchState.TimerOpponent.TimePlayed, StringFormat=Opponent: {0}}" />
             </Label>
-            <Label
-                Grid.Row="0"
-                Grid.Column="4" />
         </Grid>
     </Grid>
 </UserControl>

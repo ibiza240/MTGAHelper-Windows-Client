@@ -47,7 +47,7 @@
                 <TextBlock Style="{StaticResource HeaderStyle}">Options</TextBlock>
             </StatusBarItem>
             <StatusBarItem Grid.Column="3" HorizontalContentAlignment="Right">
-                <Menu Margin="0,2,2,2">
+                <Menu Margin="2,2,2,2">
                     <MenuItem
                         Background="{StaticResource HeaderBrush}"
                         BorderBrush="{StaticResource MenuBorderBrush}"
@@ -75,193 +75,286 @@
         </StatusBar>
 
         <!--  Options  -->
-        <StackPanel Grid.IsSharedSizeScope="True" Orientation="Vertical">
+        <StackPanel
+            Margin="0,6,0,6"
+            Grid.IsSharedSizeScope="True"
+            Orientation="Vertical">
             <!--  Log Location  -->
-            <Grid>
+            <Grid Margin="5,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
                     <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" HorizontalContentAlignment="Right">
-                    Log file full location
-                </Label>
+                <Label
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Right"
+                    Content="{Binding LogFile.DisplayName}" />
                 <TextBox
-                    x:Name="LogFilePathTextBox"
                     Grid.Column="1"
                     Height="20"
                     Margin="0,0,5,0"
-                    Text="{Binding LogFilePath}" />
+                    VerticalContentAlignment="Center"
+                    Text="{Binding LogFile.ViewValueString}" />
+                <Button
+                    Grid.Column="2"
+                    Command="{Binding LogFile.BrowseCmd}"
+                    Content="Browse" />
             </Grid>
             <!--  Game Location  -->
-            <Grid>
+            <Grid Margin="5,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
                     <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" HorizontalContentAlignment="Right">
-                    MTGA game full location
-                </Label>
+                <Label
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Right"
+                    Content="{Binding GameFile.DisplayName}" />
                 <TextBox
-                    x:Name="GameFilePathTextBox"
                     Grid.Column="1"
                     Height="20"
                     Margin="0,0,5,0"
-                    Text="{Binding GameFilePath}" />
+                    VerticalContentAlignment="Center"
+                    Text="{Binding GameFile.ViewValueString}" />
+                <Button
+                    Grid.Column="2"
+                    Command="{Binding GameFile.BrowseCmd}"
+                    Content="Browse" />
             </Grid>
-            <!--  Tray Option  -->
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <CheckBox
-                    x:Name="MinimizeToTrayCheckBox"
-                    Grid.Column="1"
-                    Height="20"
-                    Margin="0,5,0,0"
-                    Content="Minimize window to system tray"
-                    IsChecked="{Binding MinimizeToSystemTray}" />
-            </Grid>
-            <!--  Startup Option  -->
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <CheckBox
-                    x:Name="RunOnStartupCheckbox"
-                    Grid.Column="1"
-                    Height="20"
-                    Margin="0,5,0,0"
-                    Content="Start MTGAHelper tracker on Windows startup"
-                    IsChecked="{Binding RunOnStartup}" />
-            </Grid>
-            <!--  Auto Hide Option  -->
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <CheckBox
-                    x:Name="AutoShowHideForMatchCheckBox"
-                    Grid.Column="1"
-                    Height="20"
-                    Margin="0,5,0,0"
-                    Content="Automatically show in-match and minimize when not in-match"
-                    IsChecked="{Binding AutoShowHideForMatch}" />
-            </Grid>
-            <!--  Card Order Option  -->
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" HorizontalContentAlignment="Right">
-                    Order Library Cards by
-                </Label>
-                <ComboBox
-                    x:Name="OrderLibraryComboBox"
-                    Grid.Column="1"
-                    Margin="0,0,0,5"
-                    HorizontalAlignment="Left"
-                    ItemsSource="{Binding OrderLibraryCardsByItems, Mode=OneTime}"
-                    SelectedItem="{Binding OrderLibraryCardsBy}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Foreground="Black" Text="{Binding}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </Grid>
-            <!--  Auto Show Opponent Cards Option  -->
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <CheckBox
-                    x:Name="ShowOpponentCardsCheckbox"
-                    Grid.Column="1"
-                    Height="20"
-                    Margin="0,5,0,0"
-                    Content="Automatically show opponent cards"
-                    IsChecked="{Binding ShowOpponentCardsAuto}" />
-            </Grid>
-            <!--  Show Opponent Cards External Option  -->
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <CheckBox
-                    x:Name="ShowOpponentCardsExternalCheckBox"
-                    Grid.Column="1"
-                    Height="20"
-                    Margin="0,5,0,0"
-                    Content="Show opponent cards in external window"
-                    IsChecked="{Binding ShowOpponentCardsExternal}" />
-            </Grid>
-            <!--  Force Pop-up Option  -->
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Grid Grid.Column="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <CheckBox
-                        x:Name="ForceCardPopupCheckbox"
-                        Grid.Column="0"
-                        Height="20"
-                        Margin="0,0,5,0"
-                        HorizontalAlignment="Right"
-                        Content="Force popup position"
-                        IsChecked="{Binding ForceCardPopup}" />
-                    <ComboBox
-                        x:Name="ForceCardPopupSideComboBox"
-                        Grid.Column="1"
-                        Margin="0,0,0,5"
-                        HorizontalAlignment="Left"
-                        ItemsSource="{Binding ForceCardPopupSides, Mode=OneTime}"
-                        SelectedItem="{Binding ForceCardPopupSide}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Foreground="Black" Text="{Binding}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </Grid>
-            </Grid>
-            <!--  Limited Ratings Source  -->
-            <Grid>
+            <!--  Minimize Option  -->
+            <Grid Margin="5,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Label
                     Grid.Column="0"
-                    Height="20"
-                    Margin="0,0,5,0"
-                    Padding="0"
-                    HorizontalAlignment="Right"
-                    Content="Limited ratings source" />
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Right">
+                    Minimize Option
+                </Label>
                 <ComboBox
-                    x:Name="ShowLimitedRatingsSourceComboBox"
                     Grid.Column="1"
-                    Margin="0,0,0,5"
+                    Margin="0"
                     HorizontalAlignment="Left"
-                    ItemsSource="{Binding ShowLimitedRatingsSources, Mode=OneTime}"
-                    SelectedItem="{Binding ShowLimitedRatingsSource}"
-                    Visibility="{Binding ShowLimitedRatings, Converter={StaticResource BoolToVisHidden}}">
+                    VerticalAlignment="Center"
+                    ItemsSource="{Binding MinimizeOptions, Mode=OneWay}"
+                    SelectedItem="{Binding Minimize}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Foreground="Black" Text="{Binding}" />
+                            <TextBlock Text="{Binding}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+            </Grid>
+            <!--  Startup Option  -->
+            <Grid Margin="5,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <CheckBox
+                    Grid.Column="1"
+                    Height="20"
+                    Margin="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Content="Start MTGAHelper tracker on Windows startup"
+                    IsChecked="{Binding RunOnStartup}" />
+            </Grid>
+            <!--  Auto Hide Option  -->
+            <Grid Margin="5,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <CheckBox
+                    Grid.Column="1"
+                    Height="20"
+                    Margin="0,5,0,0"
+                    VerticalContentAlignment="Center"
+                    Content="Automatically show in-match and minimize when not in-match"
+                    IsChecked="{Binding AutoShowHideForMatch}" />
+            </Grid>
+            <!--  Card Order Option  -->
+            <Grid Margin="5,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label
+                    Grid.Column="0"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Right">
+                    Order Library Cards by
+                </Label>
+                <ComboBox
+                    Grid.Column="1"
+                    Margin="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    ItemsSource="{Binding OrderLibraryCardsByItems, Mode=OneTime}"
+                    SelectedItem="{Binding OrderLibraryCardsBy}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </Grid>
+            <!--  Show Opponent Cards External Option  -->
+            <Grid Margin="5,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <CheckBox
+                    Grid.Column="1"
+                    Height="20"
+                    Margin="0"
+                    VerticalContentAlignment="Center"
+                    Content="Show opponent cards in external window"
+                    IsChecked="{Binding ShowOpponentCardsExternal}" />
+            </Grid>
+            <!--  Auto Show Opponent Cards Option  -->
+            <Grid Margin="5,2" Visibility="{Binding ShowOpponentCardsExternal, Converter={StaticResource BoolToVisHidden}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <CheckBox
+                    Grid.Column="1"
+                    Height="20"
+                    Margin="0"
+                    VerticalContentAlignment="Center"
+                    Content="Automatically show opponent cards"
+                    IsChecked="{Binding ShowOpponentCardsAuto}" />
+            </Grid>
+            <!--  Force Pop-up Option  -->
+            <Grid Margin="5,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label
+                    Grid.Column="0"
+                    Margin="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="Card popup position" />
+                <ComboBox
+                    Grid.Column="1"
+                    Margin="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    ItemsSource="{Binding ForceCardPopupSides, Mode=OneTime}"
+                    SelectedItem="{Binding ForceCardPopupSide}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </Grid>
+            <!--  Limited Ratings Source  -->
+            <Grid Margin="5,2" Visibility="{Binding ShowLimitedRatings, Converter={StaticResource BoolToVisHidden}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label
+                    Grid.Column="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="Limited ratings source" />
+                <ComboBox
+                    Grid.Column="1"
+                    Margin="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    ItemsSource="{Binding LimitedRatingsSources, Mode=OneTime}"
+                    SelectedItem="{Binding LimitedRatingsSource}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </Grid>
+            <!--  Game Resolution  -->
+            <Grid Margin="5,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="Game Resolution" />
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Margin="5"
+                    Background="{StaticResource BackgroundBrush}"
+                    Click="TestDraftHelperButton_Click"
+                    Content="Test DraftHelper">
+                    <Button.ToolTip>
+                        <ToolTip Background="{StaticResource TooltipBackgroundBrush}" Content="You can test the DraftHelper visual analyzer by having a fullscreen image displayed (e.g. using MS Paint in Full screen view) showing 15 Ikoria cards" />
+                    </Button.ToolTip>
+                </Button>
+                <CheckBox
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Content="Override"
+                    IsChecked="{Binding ForceGameResolution}">
+                    <CheckBox.ToolTip>
+                        <ToolTip Background="{StaticResource TooltipBackgroundBrush}" Content="Check this to enter your game resolution manually if the auto-detection isn't working properly" />
+                    </CheckBox.ToolTip>
+                </CheckBox>
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="10,0,0,0"
+                    Orientation="Horizontal"
+                    Visibility="{Binding ForceGameResolution, Converter={StaticResource BoolToVis}, Mode=TwoWay}">
+                    <TextBox
+                        Width="60"
+                        Height="20"
+                        VerticalContentAlignment="Center"
+                        Text="{Binding GameResolution.Width}" />
+                    <Label VerticalContentAlignment="Center">x</Label>
+                    <TextBox
+                        Width="60"
+                        Height="20"
+                        VerticalContentAlignment="Center"
+                        Text="{Binding GameResolution.Height}" />
+                    <CheckBox
+                        Margin="10,0"
+                        VerticalContentAlignment="Center"
+                        Content="Panoramic"
+                        IsChecked="{Binding GameResolutionIsPanoramic}">
+                        <CheckBox.ToolTip>
+                            <ToolTip Background="{StaticResource TooltipBackgroundBrush}" Content="Check this if your MTGA game screen has black borders at the top and bottom" />
+                        </CheckBox.ToolTip>
+                    </CheckBox>
+                </StackPanel>
+
             </Grid>
         </StackPanel>
     </DockPanel>

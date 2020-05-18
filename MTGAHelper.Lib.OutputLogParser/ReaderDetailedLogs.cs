@@ -3,7 +3,6 @@ using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
 
 namespace MTGAHelper.Lib.OutputLogParser
 {
-    [AddMessageEvenIfDateNull]
     public class ReaderDetailedLogs : IReaderMtgaOutputLogPart
     {
         public ICollection<IMtgaOutputLogPartResult> ParsePart(string part)

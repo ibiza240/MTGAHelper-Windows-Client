@@ -15,6 +15,8 @@ using MtgaHelper.Web.Models.IoC;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.IoC;
 using MTGAHelper.Lib.OutputLogParser.IoC;
+using MTGAHelper.Tracker.DraftHelper.Shared;
+using MTGAHelper.Tracker.WPF.Business;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.Exceptions;
 using MTGAHelper.Tracker.WPF.IoC;
@@ -52,13 +54,17 @@ namespace MTGAHelper.Tracker.WPF
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            StartApp();
+            _ = StartApp();
         }
 
         private async Task StartApp()
         {
             try
             {
+                // IMPORTANT! https://stackoverflow.com/a/33091871/215553
+                // Web server is TLS 1.2
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+
                 StartupLogger.AppendLine("StartApp()");
 
                 FolderForConfigAndLog = new DebugOrRelease().GetConfigFolder();
@@ -78,6 +84,8 @@ namespace MTGAHelper.Tracker.WPF
                 await CheckDataAndDownloadIfOutOfDate(DataFileTypeEnum.AllCardsCached2);
                 StartupLogger.AppendLine("CheckDataAndDownloadIfOutOfDate(draftRatings)");
                 await CheckDataAndDownloadIfOutOfDate(DataFileTypeEnum.draftRatings);
+                StartupLogger.AppendLine("CheckDataAndDownloadIfOutOfDate(ConfigResolution)");
+                await CheckDataAndDownloadIfOutOfDate(DataFileTypeEnum.ConfigResolutions);
 
                 // Set cache content from local file
                 StartupLogger.AppendLine("Verifying container configuration");
@@ -256,13 +264,30 @@ namespace MTGAHelper.Tracker.WPF
             Directory.CreateDirectory(FolderData);
         }
 
+        /// <summary>
+        /// Create the DI container
+        /// ReSharper disable once MemberCanBePrivate.Global
+        /// </summary>
+        /// <param name="configModelApp"></param>
+        /// <param name="folderData"></param>
+        /// <returns></returns>
         public static Container CreateContainer(ConfigModel configModelApp, string folderData)
         {
-            return new Container()
+            var container = new Container();
+            container.Options.ConstructorResolutionBehavior = new InternalConstructorResolutionBehavior(container);
+
+            container.Register<IInputOutputOrchestrator, InputOutputOrchestratorMock>();
+
+            return container
                 .RegisterDataPath(folderData)
                 .RegisterServicesApp(configModelApp)
                 .RegisterServicesLibOutputLogParser()
                 .RegisterFileLoaders()
+                //.RegisterServicesDrafHelper(new ConfigDraftHelper
+                //{
+                //    FolderCommunication = configModelApp.DraftHelperFolderCommunication,
+                //    FolderData = folderData,
+                //})
                 .RegisterServicesTracker()
                 .RegisterServicesWebModels()
                 .RegisterServicesEntity()
@@ -275,7 +300,7 @@ namespace MTGAHelper.Tracker.WPF
 
             var mustDownload = true;
 
-            string filePathDateFormats = Path.Combine(FolderForConfigAndLog, "data", "dateFormats.json");
+            string filePathDateFormats = Path.Combine(FolderData, "dateFormats.json");
 
             if (File.Exists(filePathDateFormats))
             {
@@ -339,66 +364,6 @@ namespace MTGAHelper.Tracker.WPF
             }
         }
 
-        //void LoadCacheAllCards()
-        //{
-        //    // First try to get all cards from the local file
-        //    ICollection<Card> allCards = GetAllCardsFromDisk();
-        //    if (allCards == null)
-        //    {
-        //        // We need to download all cards remotely
-        //        var cardsResponse = TryDownloadFromServer(() =>
-        //        {
-        //            var raw = HttpClientGet_WithTimeoutNotification(server + "/api/misc/cards", 60).Result;
-        //            var response = TryDeserializeJson<GetCardsResponse>(raw);
-        //            return response;
-        //        });
-
-        //        if (cardsResponse != null)
-        //        {
-        //            // Cannot use AutoMapper since at this point it has not been initialized yet
-        //            //allCards = Mapper.Map<ICollection<Card>>(cardsResponse.Cards);
-        //            allCards = JsonConvert.DeserializeObject<ICollection<Card>>(JsonConvert.SerializeObject(cardsResponse.Cards));
-        //            SaveAllCardsToDisk(allCards);
-        //        }
-        //    }
-
-        //    cacheCards = provider.GetService<CacheSingleton<Dictionary<int, Card>>>();
-        //    cacheCards.PopulateIfNotSet(() => allCards.ToDictionary(i => i.grpId, i => i));
-        //}
-
-        //ICollection<Card> GetAllCardsFromDisk()
-        //{
-        //    if (File.Exists(filePathAllCards))
-        //    {
-        //        string fileContent = "";
-        //        using (FileStream fs = new FileStream(filePathAllCards, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-        //        using (var sr = new StreamReader(fs))
-        //            fileContent = sr.ReadToEnd();
-
-        //        var hashAllCardsLocal = new Entity.Util().To32BitFnv1aHash(fileContent);
-        //        var hashAllCardsRemote = TryDownloadFromServer(() =>
-        //        {
-        //            var raw = HttpClientGet_WithTimeoutNotification(server + "/api/misc/lastcardshash", 15).Result;
-        //            var response = TryDeserializeJson<LastHashResponse>(raw);
-        //            return Convert.ToUInt32(response.LastHash);
-        //        });
-
-        //        if (hashAllCardsLocal == hashAllCardsRemote)
-        //        {
-        //            // Local file for cards is up-to-date
-        //            // Will return null if the JSON is invalid and cards will be redownloaded from the server
-        //            return TryDeserializeJson<List<Card>>(fileContent);
-        //        }
-        //        else
-        //        {
-        //            Log.Information("Local cards out of date ({localHash}), must redownload ({remoteHash})", hashAllCardsLocal, hashAllCardsRemote);
-        //            File.Delete(filePathAllCards);
-        //        }
-        //    }
-
-        //    return null;
-        //}
-
         private async Task HttpClientDownloadFile_WithTimeoutNotification(string requestUri, double timeout, string filePath)
         {
             using HttpClient client = HttpClientFactory.Create(timeout);
@@ -422,13 +387,19 @@ namespace MTGAHelper.Tracker.WPF
                     string raw = await client.GetAsync(requestUri).Result.Content.ReadAsStringAsync();
                     return raw;
                 }
-                catch (Exception)
+                catch (WebException ex) when (ex.Status == WebExceptionStatus.Timeout)
                 {
+                    Log.Warning(ex, "TimeoutNotification({requestUri}, {timeout})", requestUri, timeout);
                     bool doRequest = MessageBox.Show($"It appears the server didn't reply in time ({timeout} seconds). Do you want to retry? Choosing No will stop the program.{Environment.NewLine}{Environment.NewLine}Maybe the server is down? Go check https://mtgahelper.com and if that is the case, please retry later.",
                         "MTGAHelper", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
 
                     if (doRequest == false)
                         throw new ServerNotAvailableException();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Unknown error in TimeoutNotification({requestUri}, {timeout})", requestUri, timeout);
+                    return string.Empty;
                 }
             }
         }
@@ -457,7 +428,7 @@ namespace MTGAHelper.Tracker.WPF
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
-            TrackerMainWindow?.ConfigModel?.Save();
+            TrackerMainWindow?.Config?.Save();
         }
 
         private static T TryDownloadFromServer<T>(Func<T> action)

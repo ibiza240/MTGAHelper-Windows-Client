@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.ViewModels;
 
 namespace MTGAHelper.Tracker.WPF.Views
@@ -18,7 +19,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             DataContext = vm;
         }
 
-        public void SetCardPopupPosition(ForceCardPopupSideEnum side, int mainWindowTop, int mainWindowLeft, int mainWindowWidth)
+        public void SetCardPopupPosition(CardPopupSide side, int mainWindowTop, int mainWindowLeft, int mainWindowWidth)
         {
             var popupWidth = (int)Width;
 
@@ -27,8 +28,8 @@ namespace MTGAHelper.Tracker.WPF.Views
 
             int leftAdjusted = side switch
             {
-                ForceCardPopupSideEnum.Left => toLeft,
-                ForceCardPopupSideEnum.Right => toRight,
+                CardPopupSide.Left => toLeft,
+                CardPopupSide.Right => toRight,
                 _ => (mainWindowLeft < SystemParameters.WorkArea.Width / 2 ? toRight : toLeft)
             };
 

@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace MTGAHelper.Lib.OutputLogParser
+namespace MTGAHelper.Lib.OutputLogParser.Models
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-    internal sealed class AddMessageEvenIfDateNullAttribute : Attribute
+    public sealed class AddMessageEvenIfDateNullAttribute : Attribute
     {
         public AddMessageEvenIfDateNullAttribute()
         {

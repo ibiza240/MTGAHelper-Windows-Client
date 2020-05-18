@@ -12,24 +12,15 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugWithServer|AnyCPU'">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
-    <OutputPath>$(SolutionDir)\_Output\bin\$(Configuration)\</OutputPath>
-    <OutDir>$(OutputPath)</OutDir>
+    <DefineConstants>DEBUG;DEBUGWITHSERVER;TRACE</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
-    <OutputPath>$(SolutionDir)\_Output\bin\$(Configuration)\</OutputPath>
-    <OutDir>$(OutputPath)</OutDir>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
-    <OutputPath>$(SolutionDir)\_Output\bin\$(Configuration)\</OutputPath>
-    <OutDir>$(OutputPath)</OutDir>
   </PropertyGroup>
 
   <ItemGroup>

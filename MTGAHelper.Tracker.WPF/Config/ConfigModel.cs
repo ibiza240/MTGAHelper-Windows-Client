@@ -1,9 +1,65 @@
 ﻿using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
+// All properties must have setters for reflection CopyProperties() method
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 namespace MTGAHelper.Tracker.WPF.Config
 {
+    public enum CardPopupSide
+    {
+        Auto,
+        Left,
+        Right,
+    }
+
+    public enum MinimizeOption
+    {
+        Taskbar,
+        Tray,
+        Height
+    }
+
+    public class Size
+    {
+        #region Constructors
+
+        /// <summary>
+        /// Serialization Constructor
+        /// </summary>
+        public Size()
+        {
+            // For Serialization
+        }
+
+        /// <summary>
+        /// Complete constructor
+        /// </summary>
+        /// <param name="w">Width</param>
+        /// <param name="h">Height</param>
+        public Size(int w, int h)
+        {
+            Width = w;
+            Height = h;
+        }
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Width Value
+        /// </summary>
+        public int Width { get; set; }
+
+        /// <summary>
+        /// Height Value
+        /// </summary>
+        public int Height { get; set; }
+
+        #endregion
+    }
+
     public class Point
     {
         #region Constructors
@@ -49,12 +105,12 @@ namespace MTGAHelper.Tracker.WPF.Config
         /// <summary>
         /// The Window Position
         /// </summary>
-        public Point Position { get; } = new Point();
+        public Point Position { get; private set; } = new Point();
 
         /// <summary>
         /// The Window Size
         /// </summary>
-        public Point Size { get; } = new Point();
+        public Point Size { get; private set; } = new Point();
 
         /// <summary>
         /// The Window Transparency
@@ -65,6 +121,18 @@ namespace MTGAHelper.Tracker.WPF.Config
         /// Whether the window is the topmost window
         /// </summary>
         public bool Topmost { get; set; } = true;
+
+        /// <summary>
+        /// Method for deep copying the window settings 
+        /// </summary>
+        /// <returns></returns>
+        public WindowSettings Copy()
+        {
+            var ws = (WindowSettings)MemberwiseClone();
+            ws.Position = new Point(Position.X, Position.Y);
+            ws.Size = new Point(Size.X, Size.Y);
+            return ws;
+        }
     }
 
     public class ConfigModel
@@ -79,33 +147,39 @@ namespace MTGAHelper.Tracker.WPF.Config
 
         public string GameFilePath { get; set; }
 
-        public string DraftHelperFolder { get; set; } = @".\DraftHelper";
-
         public string DraftHelperFolderCommunication { get; set; } = @"%AppData%\MTGAHelper\data\draftHelper";
 
         public bool RunOnStartup { get; set; }
 
         public bool AnimatedIcon { get; set; }
 
-        public bool MinimizeToSystemTray { get; set; }
+        public MinimizeOption Minimize { get; set; } = MinimizeOption.Taskbar;
 
         public bool AutoShowHideForMatch { get; set; }
 
-        public bool ForceCardPopup { get; set; }
-
-        public string ForceCardPopupSide { get; set; } = "On the left";
+        public CardPopupSide ForceCardPopupSide { get; set; } = CardPopupSide.Auto;
 
         public bool ShowLimitedRatings { get; set; } = true;
 
-        public string ShowLimitedRatingsSource { get; set; } = "Deathsie";
+        public string LimitedRatingsSource { get; set; } = "Deathsie";
 
         public bool ShowOpponentCardsAuto { get; set; } = true;
 
         public bool ShowOpponentCardsExternal { get; set; } = true;
 
+        public bool CardListCollapsed { get; set; }
+
         public string OrderLibraryCardsBy { get; set; } = "Converted Mana Cost";
 
+        public bool GameResolutionIsPanoramic { get; set; }
+
+        public bool ForceGameResolution { get; set; }
+
+        public Size GameResolution { get; set; } = new Size(1920, 1080);
+
         public WindowSettings WindowSettings { get; set; } = new WindowSettings();
+
+        public WindowSettings WindowSettingsOriginal { get; set; } = new WindowSettings();
 
         public WindowSettings WindowSettingsOpponentCards { get; set; } = new WindowSettings();
 

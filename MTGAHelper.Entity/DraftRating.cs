@@ -46,7 +46,10 @@ namespace MTGAHelper.Entity
 
         public static float GetRatingScale(string ratingSource)
         {
-            return ratingSource == "Mtg Community Review" ? 12f : 5f;
+            return ratingSource == "Mtg Community Review"     ? 12f :
+                   ratingSource == "Infinite Mythic Edition"  ? 5.4f :
+                   ratingSource == "MTG Arena Zone"           ? 5.4f :
+                                                                5f;
         }
     }
 

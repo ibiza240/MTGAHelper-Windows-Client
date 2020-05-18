@@ -8,16 +8,16 @@ namespace MTGAHelper.Entity
         {
         }
 
-        public DraftPickProgress(ICollection<int> cardPool)
+        public DraftPickProgress(IList<int> cardPool)
         {
             DraftPack = cardPool;
         }
 
         public string EventName { get; set; }
         public string DraftId { get; set; }
-        public int PackNumber { get; set; }
-        public int PickNumber { get; set; }
-        public ICollection<int> DraftPack { get; set; }
-        public ICollection<int> PickedCards { get; set; }
+        public int PackNumber { get; set; }     // 0 based
+        public int PickNumber { get; set; }     // 0 based
+        public IList<int> DraftPack { get; set; } = new List<int>();
+        public IList<int> PickedCards { get; set; } = new List<int>();
     }
 }

@@ -1,50 +1,112 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Windows;
+using System.Text;
 
 namespace MTGAHelper.Tracker.WPF.Tools
 {
-    public class Utilities
+    public static class Utilities
     {
-        [StructLayout(LayoutKind.Sequential)]
-        public struct Rect
-        {
-            public int left;
-            public int top;
-            public int right;
-            public int bottom;
-        }
-
         [DllImport("user32.dll")]
         public static extern int SetForegroundWindow(IntPtr hWnd);
 
         [DllImport("user32.dll")]
         public static extern IntPtr ShowWindow(IntPtr hWnd, int nCmdShow);
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetWindowRect(IntPtr hWnd, ref Rect rect);
+        private static readonly Entity.Util EntityUtil = new Entity.Util();
 
-        private readonly Entity.Util EntityUtil = new Entity.Util();
-
-        internal string GetThumbnailLocal(string imageArtUrl)
+        internal static string GetThumbnailLocal(string imageArtUrl)
         {
             string thumbnailUrl = EntityUtil.GetThumbnailUrl(imageArtUrl).Replace("/images", "Assets");
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper", thumbnailUrl);
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "MTGAHelper", thumbnailUrl);
             return path;
         }
 
-        public static void CopyProperties<T>(T source, T destination)
+        /// <summary>
+        /// Extension method for copying the properties of one object to another object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        public static void CopyPropertiesTo<T>(this T source, T destination)
         {
             // Iterate the Properties of the destination instance and  
             // populate them from their source counterparts  
-            PropertyInfo[] destinationProperties = destination.GetType().GetProperties();
+            var destinationProperties = destination.GetType().GetProperties();
             foreach (PropertyInfo destinationPi in destinationProperties)
             {
                 PropertyInfo sourcePi = source.GetType().GetProperty(destinationPi.Name);
-                destinationPi.SetValue(destination, sourcePi.GetValue(source, null), null);
+                if (destinationPi.CanWrite)
+                    destinationPi.SetValue(destination, sourcePi?.GetValue(source, null), null);
+                else
+                {
+                    Debug.WriteLine(destinationPi.Name);
+                }
             }
+        }
+
+        /// <summary>
+        /// Extension method for copying the properties of one object to another object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        public static void CopyPropertiesFrom<T>(this T destination, T source)
+        {
+            // Iterate the Properties of the destination instance and  
+            // populate them from their source counterparts  
+            var destinationProperties = destination.GetType().GetProperties();
+            foreach (PropertyInfo destinationPi in destinationProperties)
+            {
+                PropertyInfo sourcePi = source.GetType().GetProperty(destinationPi.Name);
+                if (destinationPi.CanWrite)
+                    destinationPi.SetValue(destination, sourcePi?.GetValue(source, null), null);
+                else
+                {
+                    Debug.WriteLine(destinationPi.Name);
+                }
+            }
+        }
+
+        public static string GetRealTypeName(this Type t)
+        {
+            if (!t.IsGenericType)
+                return t.Name;
+
+            var sb = new StringBuilder();
+            sb.Append(t.Name.Substring(0, t.Name.IndexOf('`')));
+            sb.Append('<');
+            var appendComma = false;
+            foreach (Type arg in t.GetGenericArguments())
+            {
+                if (appendComma) sb.Append(',');
+                sb.Append(GetRealTypeName(arg));
+                appendComma = true;
+            }
+            sb.Append('>');
+            return sb.ToString();
+        }
+
+        public static string GetRealTypeNameXML(this Type t)
+        {
+            if (!t.IsGenericType)
+                return t.Name;
+
+            var sb = new StringBuilder();
+            sb.Append(t.Name.Substring(0, t.Name.IndexOf('`')));
+            sb.Append('[');
+            var appendComma = false;
+            foreach (Type arg in t.GetGenericArguments())
+            {
+                if (appendComma) sb.Append(',');
+                sb.Append(GetRealTypeNameXML(arg));
+                appendComma = true;
+            }
+            sb.Append(']');
+            return sb.ToString();
         }
     }
 }

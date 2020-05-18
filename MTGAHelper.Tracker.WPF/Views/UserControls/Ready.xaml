@@ -74,7 +74,7 @@
                     Margin="0,6"
                     Source="/Assets/Images/MTGA.png" />
                 <Label>
-                    <Hyperlink Click="HyperlinkLaunchGame_Click">Launch the MTGArena game client</Hyperlink>
+                    <Hyperlink Command="{Binding LaunchArenaCommand}">Launch the MTGArena game client</Hyperlink>
                 </Label>
             </StackPanel>
 

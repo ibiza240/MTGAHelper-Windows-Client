@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using MTGAHelper.Lib.Cache;
+using MTGAHelper.Tracker.DraftHelper.Shared.Config;
 using MTGAHelper.Tracker.WPF.Business;
 using MTGAHelper.Tracker.WPF.Business.Monitoring;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.ViewModels;
 using MTGAHelper.Tracker.WPF.Views;
 using SimpleInjector;
+using System.Collections.Generic;
 
 namespace MTGAHelper.Tracker.WPF.IoC
 {
@@ -20,6 +23,8 @@ namespace MTGAHelper.Tracker.WPF.IoC
         {
             container.RegisterInstance(configApp);
             container.Register<MainWindow>();
+            container.RegisterSingleton<IEmailProvider, EmailProvider>();
+            container.RegisterSingleton<ICacheLoader<ICollection<ConfigResolution>>, CacheLoaderConfigResolutions>();
             container.RegisterSingleton<MainWindowVM>();
             container.RegisterSingleton<InMatchTrackerStateVM>();
             container.RegisterSingleton<ProcessMonitor>();
@@ -33,7 +38,6 @@ namespace MTGAHelper.Tracker.WPF.IoC
             container.RegisterSingleton<DraftCardsPicker>();
             container.RegisterSingleton<MtgaResourcesLocator>();
             container.Register<ExternalProviderTokenManager>();
-            container.Register<ScreenshotTaker>();
             container.Register<DraftHelperRunner>();
 
             return container;

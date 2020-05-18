@@ -33,7 +33,7 @@ namespace MTGAHelper.Tracker.WPF.AutoUpdater
 
             Console.WriteLine("Installing the latest version...");
             Process pInstall = new Process();
-            var folderInstalled = GetFolderInstalled("MTGAHelper.Tracker.dll");
+            var folderInstalled = GetFolderInstalled("MTGAHelper.Tracker.WPF.exe");
             var processFileName = localFilepath;
             if (folderInstalled == null)
             {
@@ -86,7 +86,7 @@ namespace MTGAHelper.Tracker.WPF.AutoUpdater
         {
             using (WebClient c = new WebClient())
             {
-                c.DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelperTracker.msi", localFilepath);
+                c.DownloadFile("https://www.mtgahelper.com/download/MTGAHelperTracker.msi", localFilepath);
             }
         }
 
