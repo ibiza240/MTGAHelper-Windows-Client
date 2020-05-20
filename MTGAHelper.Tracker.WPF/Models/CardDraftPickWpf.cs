@@ -14,6 +14,8 @@ namespace MTGAHelper.Tracker.WPF.Models
         public int NbMissingCollection { get; set; }
         public string NbMissingString => $"You are missing {NbMissingCollection} {(NbMissingCollection == 1 ? "copy" : "copies")} in your collection";
 
+        public int AmountInCollection => 4 - NbMissingCollection;
+
         public string Description { get; set; }
         public float RatingValue { get; set; }
         public string RatingToDisplay { get; set; }
