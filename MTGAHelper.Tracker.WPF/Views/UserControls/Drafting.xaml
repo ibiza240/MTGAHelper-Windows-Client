@@ -12,6 +12,7 @@
     GotFocus="UserControl_GotFocus"
     mc:Ignorable="d">
     <UserControl.Resources>
+        <helpers:MissingCardsToColorScaleConverter x:Key="MissingCardsToColorScaleConverter" />
         <helpers:IntToVisibilityConverter x:Key="IntToVisibilityConverter" Threshold="0" />
         <helpers:RatingFloatToColorScaleConverter x:Key="RatingToColorConverter" />
         <helpers:StringToValueConverter
@@ -109,7 +110,6 @@
                 <TextBlock Text="{Binding CardsWheelingMessage}" TextTrimming="CharacterEllipsis" />
             </Label>
         </Grid>
-
         <!--  Draft Choices  -->
         <ListBox
             x:Name="CardsListbox"
@@ -162,7 +162,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn" />
                             <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" SharedSizeGroup="FifthColumn" />
                         </Grid.ColumnDefinitions>
                         <!--  Card Image  -->
@@ -211,17 +211,8 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </Grid>
-                        <!--  Number of cards missing from collection  -->
-                        <Grid Grid.Column="2" Visibility="{Binding DataContext.ShowGlobalMTGAHelperSays, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVis}}">
-                            <Label
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Content="{Binding NbMissingCollection}"
-                                ContentStringFormat="{}{0} missing"
-                                Visibility="{Binding NbMissingCollection, Converter={StaticResource IntToVisibilityConverter}}" />
-                        </Grid>
                         <!--  RareDraft and Tracking Info  -->
-                        <Grid Grid.Column="3" Visibility="{Binding DataContext.ShowGlobalMTGAHelperSays, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVis}}">
+                        <Grid Grid.Column="2" Visibility="{Binding DataContext.ShowGlobalMTGAHelperSays, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVis}}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />
@@ -251,6 +242,17 @@
                                     Opacity="{Binding DataContext.RareDraftOpacity, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
                                     Source="/Assets/Images/Treasure.png" />
                             </Border>
+                        </Grid>
+                        <!--  Cards in collection  -->
+                        <Grid Grid.Column="3" 
+                              Visibility="{Binding DataContext.ShowGlobalMTGAHelperSays, Converter={StaticResource BoolToVis}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}">
+                            <Label
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                ToolTip="Cards in Collection">
+                                <TextBlock Text="{Binding AmountInCollection}" Foreground="{Binding AmountInCollection, Converter={StaticResource MissingCardsToColorScaleConverter}}">/4
+                                </TextBlock>
+                            </Label>
                         </Grid>
                         <!--  Limited Rating  -->
                         <Grid Grid.Column="4" Background="Black">

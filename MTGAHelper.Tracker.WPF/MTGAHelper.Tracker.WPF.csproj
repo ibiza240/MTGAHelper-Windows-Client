@@ -218,6 +218,7 @@
     <Compile Include="Views\CardListPopup.xaml.cs">
       <DependentUpon>CardListPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Helpers\MissingCardsToColorScaleConverter.cs" />
     <Compile Include="Views\OpponentWindow.xaml.cs">
       <DependentUpon>OpponentWindow.xaml</DependentUpon>
     </Compile>
