@@ -23,11 +23,13 @@ namespace MTGAHelper.Tracker.WPF.Business
             ICollection<int> pickedCards,
             string source,
             Dictionary<int, int> collection,
-            ICollection<CardCompareInfo> raredraftingInfo)
+            ICollection<CardCompareInfo> raredraftingInfo,
+            Dictionary<string, Dictionary<string, CustomDraftRating>> customRatingsBySetThenCardName
+            )
         {
             //var apiResponse = api.GetCardsForDraftPick(userId, grpIds, source);
 
-            var result = DraftPicksCalculator.GetCardsForDraftPick(
+            var result = DraftPicksCalculator.Init(customRatingsBySetThenCardName).GetCardsForDraftPick(
                 userId,
                 cardPool,
                 pickedCards,
@@ -40,7 +42,15 @@ namespace MTGAHelper.Tracker.WPF.Business
             var ret = Mapper.Map<ICollection<CardDraftPickWpf>>(apiDto);
 
             foreach (CardDraftPickWpf c in ret)
+            {
                 c.ImageArtUrl = Utilities.GetThumbnailLocal(c.ImageArtUrl);
+
+                if (customRatingsBySetThenCardName.ContainsKey(c.Set) && customRatingsBySetThenCardName[c.Set].ContainsKey(c.Name))
+                {
+                    c.CustomRatingValue = customRatingsBySetThenCardName[c.Set][c.Name].Rating;
+                    c.CustomRatingDescription = customRatingsBySetThenCardName[c.Set][c.Name].Note;
+                }
+            }
 
             return ret;
         }

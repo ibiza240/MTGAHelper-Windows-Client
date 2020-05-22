@@ -24,16 +24,24 @@ namespace MTGAHelper.Lib.CacheLoaders
             var fileSets = Path.Combine(folderData, "sets.json");
             LogExt.LogReadFile(fileSets);
             var content = File.ReadAllText(fileSets);
-            var data = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(content);
+            var data = JsonConvert.DeserializeObject<ICollection<dynamic>>(content);
 
             var dataCurated = data
-                .Where(i => string.IsNullOrWhiteSpace(i.Key) == false)
-                .Where(i => Convert.ToInt32(i.Value.collation) > 0)
-                .Select(i => JsonConvert.DeserializeObject<Set>(JsonConvert.SerializeObject(i.Value)))
-                .Cast<Set>()
+                .Where(i => string.IsNullOrWhiteSpace(i.Code?.ToString()) == false)
+                .Where(i => Convert.ToInt32(i.MtgaId ?? 0) > 0)
+                .Select(i => new Set
+                {
+                    Arenacode = i.CodeArena,
+                    Collation = i.MtgaId,
+                    Code = i.Code,
+                    Release = i.ReleaseDate,
+                    Scryfall = i.CodeScryfall,
+                    Tile = 0
+                })
                 .ToArray();
 
-            return dataCurated.ToDictionary(i => i.Collation, i => i);
+            var ret = dataCurated.ToDictionary(i => i.Collation, i => i);
+            return ret;
         }
     }
 }

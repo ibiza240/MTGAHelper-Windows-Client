@@ -12,6 +12,8 @@ namespace MTGAHelper.Tracker.WPF.IoC
         {
             CreateMap<CardForDraftPickDto, CardDraftPickWpf>()
                 .ForMember(i => i.RareDraftPickEnum, i => i.MapFrom(x => x.IsRareDraftPick))
+                .ForMember(m => m.CustomRatingDescription, opt => opt.Ignore())
+                .ForMember(m => m.CustomRatingValue, opt => opt.Ignore())
                 .ForMember(m => m.NbMissing, opt => opt.Ignore()) // todo Bruno?
                 .ForMember(m => m.ArenaId, opt => opt.MapFrom(x => x.IdArena))
                 .ForMember(m => m.ColorIdentity, opt => opt.Ignore()) // todo Bruno?

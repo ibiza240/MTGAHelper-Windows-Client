@@ -4,12 +4,6 @@ using System.Globalization;
 
 namespace MTGAHelper.Entity
 {
-    //public enum DraftRatingSourceEnum
-    //{
-    //    ChannelFireballLSV,
-    //    DraftSim,
-    //}
-
     public class DraftRatingTopCard
     {
         public int Rank { get; set; }
@@ -24,32 +18,26 @@ namespace MTGAHelper.Entity
 
     public class DraftRating
     {
-        //public Card Card { get; set; }
         public string CardName { get; set; }
         public string RatingToDisplay { get; set; }
-        
+
         [Obsolete]
         public string Rating { get; set; }
-        
+
         public float RatingValue { get; set; }
         public string Description { get; set; }
 
-        //public static float GetRatingAsFloat(string rating)
-        //{
-        //    return float.TryParse(
-        //        rating.Substring(0, System.Math.Min(3, rating.Length)).Trim(new[] { ' ', '(' }),
-        //        NumberStyles.AllowDecimalPoint,
-        //        CultureInfo.InvariantCulture, out var parsed)
-        //        ? parsed
-        //        : 0f;
-        //}
-
         public static float GetRatingScale(string ratingSource)
         {
-            return ratingSource == "Mtg Community Review"     ? 12f :
-                   ratingSource == "Infinite Mythic Edition"  ? 5.4f :
-                   ratingSource == "MTG Arena Zone"           ? 5.4f :
-                                                                5f;
+            var rating = ratingSource switch
+            {
+                "Mtg Community Review" => 12f,
+                "Infinite Mythic Edition" => 5.4f,
+                "MTG Arena Zone" => 5.4f,
+                "Your custom ratings" => 10f,
+                _ => 5f,
+            };
+            return rating;
         }
     }
 
@@ -62,6 +50,5 @@ namespace MTGAHelper.Entity
     public class DraftRatings
     {
         public Dictionary<string, DraftRatingScraperResultForSet> RatingsBySet { get; set; } = new Dictionary<string, DraftRatingScraperResultForSet>();
-        //public Dictionary<string, DraftRating> DictRatingByCardName { get; set; } = new Dictionary<string, DraftRating>();
     }
 }

@@ -61,7 +61,7 @@ namespace MTGAHelper.ConsoleSync
             Console.WriteLine("   2. The file location of the log file");
             Console.WriteLine("");
             Console.WriteLine("For example (on Windows):");
-            Console.WriteLine("MTGAHelper.ConsoleSync.exe cb4163864000000000061dcf728051d4 \"C:\\Users\\MyUser\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\output_log.txt\"");
+            Console.WriteLine("MTGAHelper.ConsoleSync.exe cb4163864000000000061dcf728051d4 \"C:\\Users\\MyUser\\AppData\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log\"");
             Console.WriteLine("");
             Console.WriteLine("The program will process your log file and upload the parsed content to the MTGAHelper server.");
             Console.WriteLine("You can then go to the MTGAHelper website to browse your latest data.");

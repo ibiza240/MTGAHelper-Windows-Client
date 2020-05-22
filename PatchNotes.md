@@ -1,3 +1,13 @@
+### v1.4.7.1 (2020-05-22)
+
+Hotfix
+
+### v1.4.7 (2020-05-22)
+
+Support for latest game patch
+
+DraftHelper: Use your own limited ratings
+
 ### v1.4.6 (2020-05-18)
 
 DraftHelper: "Copies missing" number is now considering new cards picked during the draft

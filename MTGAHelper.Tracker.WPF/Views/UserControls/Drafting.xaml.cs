@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using MTGAHelper.Tracker.WPF.Config;
+using System.Threading.Tasks;
+using MTGAHelper.Tracker.WPF.Business;
 
 namespace MTGAHelper.Tracker.WPF.Views.UserControls
 {
@@ -12,6 +14,8 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
     /// </summary>
     public partial class Drafting
     {
+        private bool IsMouseOnCard = false;
+
         private MainWindow MainWindow => (MainWindow)Window.GetWindow(this);
 
         private MainWindowVM ViewModel => (MainWindowVM)MainWindow.DataContext;
@@ -30,24 +34,33 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             //dataGrid.SelectionChanged += (obj, e) => Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => dataGrid.UnselectAll()));
         }
 
-        internal void Init(ICollection<Card> allCards, DraftingVM draftingVM)
+        internal void Init(ICollection<Card> allCards, DraftingVM draftingVM, ServerApiCaller api, string limitedRatingsSource)
         {
             draftingVM.Init(allCards);
             WindowCardsThatDidNotWheel.Init(draftingVM.CardsThatDidNotWheelVM);
             DataContext = draftingVM;
+            WindowCardPopupDrafting.Init(api, ViewModel.DraftingVM);
+            ViewModel.DraftingVM.LimitedRatingsSource = limitedRatingsSource;
         }
 
         private void CardRow_MouseEnter(object sender, MouseEventArgs e)
         {
             var vm = (sender as FrameworkElement)?.DataContext as CardDraftPickVM;
             WindowCardPopupDrafting.Refresh(vm, MainWindow.ViewModel.DraftingVM.ShowGlobalMTGAHelperSays);
-            WindowCardPopupDrafting.Visibility = Visibility.Visible;
+            WindowCardPopupDrafting.ShowPopup(true);
+            IsMouseOnCard = true;
 
         }
 
         private void CardRow_MouseLeave(object sender, MouseEventArgs e)
         {
-            WindowCardPopupDrafting.Visibility = Visibility.Hidden;
+            Task.Run(() =>
+            {
+                Task.Delay(400).Wait();
+                if (IsMouseOnCard == false)
+                    Dispatcher.Invoke(() => { WindowCardPopupDrafting.ShowPopup(false); });
+            });
+            IsMouseOnCard = false;
         }
 
         internal void SetCardPopupPosition(CardPopupSide side, int top, int left, int width)
@@ -81,20 +94,13 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             MainWindow.RunDraftHelper();
         }
 
-        private void ListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        public void PickCard(int grpId)
         {
-            var selected = (CardDraftPickVM)CardsListbox.SelectedItem;
-            // Don't keep selection
-            CardsListbox.SelectedItem = null;
-
-            if (ViewModel.DraftingVM.IsHumanDraft == false || selected == null)
-                return;
-
-            if (MessageBox.Show($"Confirm your pick? ({selected.Name})", "Card pick", MessageBoxButton.YesNo) == MessageBoxResult.No)
-                return;
-
-            ViewModel.DraftingVM.DraftHumanPickCard(selected.ArenaId);
-            HideCardListWheeled();
+            Dispatcher.Invoke(() =>
+            {
+                ViewModel.DraftingVM.DraftHumanPickCard(grpId);
+                HideCardListWheeled();
+            });
         }
 
         internal void HideCardListWheeled()

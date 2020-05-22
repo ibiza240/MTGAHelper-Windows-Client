@@ -53,13 +53,18 @@ namespace MTGAHelper.Tracker.WPF.Business
             return GetResponseWithCookie<AccountResponse>($"api/WpfLogin/AutoSigninLocalUser?email={System.Web.HttpUtility.UrlEncode(email)}&hash={System.Web.HttpUtility.UrlEncode(hash)}");
         }
 
-        internal TReturn PostResponseSimple<TReturn>(string apiEndpoint, object body)
+        internal TReturn PostResponseSimple<TReturn>(string apiEndpoint, object body, bool isPut = false)
         {
             //using (var client = new HttpClient() { BaseAddress = new Uri(server) })
             {
                 try
                 {
-                    var response = Client.PostAsync(apiEndpoint, new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json")).Result;
+                    HttpResponseMessage response = null;
+                    if (isPut)
+                        response = Client.PutAsync(apiEndpoint, new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json")).Result;
+                    else
+                        response = Client.PostAsync(apiEndpoint, new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json")).Result;
+
                     response.EnsureSuccessStatusCode();
                     string strResponse = response.Content.ReadAsStringAsync().Result;
                     var parsed = JsonConvert.DeserializeObject<TReturn>(strResponse);
@@ -106,6 +111,23 @@ namespace MTGAHelper.Tracker.WPF.Business
         internal string GetAccountSalt()
         {
             return GetResponseWithCookie<string>("api/WpfLogin/AccountSalt");
+        }
+
+        internal string GetCustomDraftRatings()
+        {
+            return GetResponseWithCookie<string>("api/user/customdraftratings");
+        }
+
+        internal void SaveCustomDraftRating(int grpId, int? ratingValue, string ratingNote)
+        {
+            var body = new PutUserCustomDraftRatingDto
+            {
+                IdArena = grpId,
+                Rating = ratingValue,
+                Note = ratingNote,
+            };
+
+            _ = PostResponseSimple<string>("api/user/customdraftrating", body, true);
         }
 
         internal DraftRaredraftingInfoResponse GetRaredraftingInfo(string mtgaHelperUserId)

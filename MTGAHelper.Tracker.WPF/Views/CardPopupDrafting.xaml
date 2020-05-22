@@ -17,7 +17,10 @@
     SizeToContent="Height"
     Topmost="True"
     WindowStyle="None"
-    mc:Ignorable="d">
+    Visibility="{Binding IsPopupVisible, Converter={StaticResource BoolToVisHidden}}"
+    mc:Ignorable="d"
+    MouseEnter="Window_MouseEnter"
+    MouseLeave="Window_MouseLeave">
     <Window.Resources>
         <helpers:IntToVisibilityConverter x:Key="IntToVisConverter" Threshold="0" />
         <helpers:StringToValueConverter
@@ -29,22 +32,75 @@
     </Window.Resources>
     <StackPanel>
         <StackPanel Margin="10">
+            <!-- Custom draft rating when available -->
+            <StackPanel Margin="0,0,0,20">
+                <!-- Header -->
+                <TextBlock
+                    Margin="0,0,0,5"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Text="You say"
+                    TextWrapping="WrapWithOverflow" />
+                <!-- Rating -->
+                <StackPanel> <!--Visibility="{Binding ShowCustomRating, Converter={StaticResource BoolToVis}}"-->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                            Margin="0,5,0,0"
+                            FontWeight="Bold"
+                            Text="Limited Rating: " />
+                        <ComboBox
+                            ItemsSource="{Binding CustomRatings, Mode=OneWay}"
+                            SelectedItem="{Binding CustomRatingSelected}"
+                            SelectionChanged="ComboBox_SelectionChanged">
+                        </ComboBox>
+                    </StackPanel>
+                    <!-- More details when available -->
+                    <Grid Width="290">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            Grid.Column="1"
+                            KeyUp="TextBox_KeyUp"
+                            Margin="0,5,0,0"
+                            MinHeight="43"
+                            Text="{Binding CustomRatingDescription, UpdateSourceTrigger=PropertyChanged}"
+                            TextWrapping="WrapWithOverflow" />
+                    </Grid>
+                </StackPanel>
+                <!--<StackPanel Visibility="{Binding ShowCustomRating, Converter={StaticResource BoolToVisInverse}}">
+                    <TextBlock
+                    Margin="0,5,0,0"
+                    FontWeight="Bold"
+                    Text="{Binding Card.CustomRatingValue, StringFormat='Limited Rating: {0}'}" />
+                    --><!-- More details when available --><!--
+                    <TextBlock
+                    Margin="0,5,0,0"
+                    Text="{Binding Card.CustomRatingDescription}"
+                    TextWrapping="WrapWithOverflow" />
+                </StackPanel>-->
+            </StackPanel>
+            <!-- Information from selected rating source -->
             <StackPanel Visibility="{Binding ShowRatingsSource, Converter={StaticResource BoolToVis}}">
+                <!-- Header -->
                 <TextBlock
                     Margin="0,0,0,5"
                     FontSize="16"
                     FontWeight="Bold"
                     Text="{Binding RatingsSource, StringFormat={}{0} says}"
                     TextWrapping="WrapWithOverflow" />
+                <!-- Rating -->
                 <TextBlock
                     Margin="0,5,0,0"
                     FontWeight="Bold"
                     Text="{Binding Card.RatingToDisplay, StringFormat='Limited Rating: {0}'}" />
+                <!-- More details when available -->
                 <TextBlock
                     Margin="0,5,0,0"
                     Text="{Binding Card.Description}"
                     TextWrapping="WrapWithOverflow"
                     Visibility="{Binding ShowDescription, Converter={StaticResource BoolToVis}}" />
+                <!-- Top x common when available -->
                 <TextBlock
                     Margin="0,5,0,0"
                     Foreground="White"
@@ -58,12 +114,15 @@
                 </TextBlock>
             </StackPanel>
 
+            <!-- Information from collection -->
             <StackPanel Margin="0,20,0,0" Visibility="{Binding ShowGlobalMTGAHelperSays, Converter={StaticResource BoolToVis}}">
+                <!-- Header -->
                 <TextBlock
                     Margin="0,0,0,5"
                     FontSize="16"
                     FontWeight="Bold"
                     Text="MTGAHelper says" />
+                <!-- You are missing X copies... -->
                 <TextBlock Margin="0,5,0,0" Text="{Binding Card.NbMissingString}">
                     <TextBlock.Visibility>
                         <MultiBinding Converter="{StaticResource MultiBooleanToVisibilityConverter}">
@@ -72,13 +131,7 @@
                         </MultiBinding>
                     </TextBlock.Visibility>
                 </TextBlock>
-
-                <!--<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,10,0,0" Visibility="{Binding Card.RareDraftPickEnum, Converter={StaticResource BoolToVisConverter}}">
-                <Image Source="/Assets/Images/Treasure.png" Width="20" Margin="0,0,4,0" />
-                <StackPanel>
-                    <TextBlock Text="{Binding Card.RareDraftPickReason}" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </StackPanel>-->
+                <!-- Raredraft pick reason when available -->
                 <Grid Margin="0,10,0,0" Visibility="{Binding Card.RareDraftPickEnum, Converter={StaticResource BoolToVis}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -94,6 +147,7 @@
                         Text="{Binding Card.RareDraftPickReason}"
                         TextWrapping="WrapWithOverflow" />
                 </Grid>
+                <!-- Card used in tracked decks info when available -->
                 <StackPanel
                     Margin="4,10,4,0"
                     HorizontalAlignment="Left"
@@ -110,6 +164,7 @@
                 </StackPanel>
             </StackPanel>
         </StackPanel>
+        <!-- Card image -->
         <Image Source="{Binding Card.ImageCardUrl, TargetNullValue='pack://application:,,,/Assets/Images/thumbnailUnknown.png'}" />
     </StackPanel>
 </Window>

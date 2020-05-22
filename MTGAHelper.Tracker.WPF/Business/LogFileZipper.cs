@@ -13,7 +13,7 @@ namespace MTGAHelper.Tracker.WPF.Business
             using var stream = new MemoryStream();
             using (var archive = new ZipArchive(stream, ZipArchiveMode.Create, true))
             {
-                ZipArchiveEntry manifest = archive.CreateEntry("output_log.txt");
+                ZipArchiveEntry manifest = archive.CreateEntry("Player.log");
                 using Stream st = manifest.Open();
                 using var writerManifest = new StreamWriter(st);
                 writerManifest.Write(text);

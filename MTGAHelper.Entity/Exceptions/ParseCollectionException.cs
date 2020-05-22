@@ -17,7 +17,7 @@ namespace MTGAHelper.Lib.Exceptions
     public class ParseCollectionEmptyException : ParseCollectionBaseException
     {
         public ParseCollectionEmptyException()
-            : base("There was no collection data in the provided file. Try regenerating the output_log.txt file by opening the MTGA game client and browsing your collection.")
+            : base("There was no collection data in the provided file. Try regenerating the Player.log file by opening the MTGA game client and browsing your collection.")
         {
         }
     }
@@ -33,7 +33,7 @@ namespace MTGAHelper.Lib.Exceptions
     public class ParseCollectionInvalidZipContentException : ParseCollectionBaseException
     {
         public ParseCollectionInvalidZipContentException()
-            : base("The content of the zip file is invalid - The zip file must contain the output_log.txt file only (not HTML logs)")
+            : base("The content of the zip file is invalid - The zip file must contain the Player.log file only (not HTML logs)")
         {
         }
     }
@@ -41,7 +41,7 @@ namespace MTGAHelper.Lib.Exceptions
     public class ParseCollectionEmptyZipContentException : ParseCollectionBaseException
     {
         public ParseCollectionEmptyZipContentException()
-            : base("The zip file is empty - The zip file must contain the output_log.txt file")
+            : base("The zip file is empty - The zip file must contain the Player.log file")
         {
         }
     }
@@ -49,7 +49,7 @@ namespace MTGAHelper.Lib.Exceptions
     public class ParseCollectionZipContentMultipleFilesException : ParseCollectionBaseException
     {
         public ParseCollectionZipContentMultipleFilesException()
-            : base("The zip file contains more than one file - The zip file must contain only the output_log.txt file")
+            : base("The zip file contains more than one file - The zip file must contain only the Player.log file")
         {
         }
     }
@@ -57,7 +57,7 @@ namespace MTGAHelper.Lib.Exceptions
     public class ParseCollectionInvalidHtmlFoundException : ParseCollectionBaseException
     {
         public ParseCollectionInvalidHtmlFoundException()
-            : base("The zip file contains the wrong log file - The output_log.txt file is required, not an HTML log file.")
+            : base("The zip file contains the wrong log file - The Player.log file is required, not an HTML log file.")
         {
         }
     }
@@ -65,7 +65,7 @@ namespace MTGAHelper.Lib.Exceptions
     public class ParseCollectionInvalidFileException : ParseCollectionBaseException
     {
         public ParseCollectionInvalidFileException()
-            : base("The zip file contains the wrong file - The output_log.txt file is required.")
+            : base("The zip file contains the wrong file - The Player.log file is required.")
         {
         }
     }

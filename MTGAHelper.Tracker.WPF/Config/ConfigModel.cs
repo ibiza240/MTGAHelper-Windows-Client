@@ -143,7 +143,7 @@ namespace MTGAHelper.Tracker.WPF.Config
 
         public string SigninPassword { get; set; }
 
-        public string LogFilePath { get; set; } = "E.g. C:\\xyz\\output_log.txt";
+        public string LogFilePath { get; set; } = "E.g. C:\\xyz\\Player.log";
 
         public string GameFilePath { get; set; }
 

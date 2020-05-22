@@ -354,7 +354,6 @@
                         </CheckBox.ToolTip>
                     </CheckBox>
                 </StackPanel>
-
             </Grid>
         </StackPanel>
     </DockPanel>

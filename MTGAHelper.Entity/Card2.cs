@@ -21,7 +21,7 @@ namespace MTGAHelper.Entity
         public int LinkedCardGrpId { get; set; }
 
         // From MTGA but with custom logic
-        public string Set { get; set; }
+        public string SetScryfall { get; set; }
 
         //// from Scryfall
         //public ICollection<string> Colors { get; set; }

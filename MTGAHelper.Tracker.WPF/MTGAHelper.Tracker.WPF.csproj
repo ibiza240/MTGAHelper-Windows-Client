@@ -50,6 +50,39 @@
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>8</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>8</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugWithServer|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\DebugWithServer\</OutputPath>
+    <DefineConstants>DEBUG;DEBUGWITHSERVER;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>8</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutoMapper, Version=8.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.8.0.0\lib\net461\AutoMapper.dll</HintPath>
@@ -176,12 +209,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Business\CacheLoaderConfigResolutions.cs" />
+    <Compile Include="Business\DataDownloader.cs" />
     <Compile Include="Business\DraftCardsPicker.cs" />
     <Compile Include="Business\DraftHelperRunner.cs" />
     <Compile Include="Business\EmailProvider.cs" />
     <Compile Include="Business\InputOutputOrchestratorMock.cs" />
     <Compile Include="Config\ConfigResolutions.cs" />
     <Compile Include="Config\ConfiguratorConfig.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Exceptions\DraftHelperMockException.cs" />
     <Compile Include="InternalConstructorResolutionBehaviour.cs" />
     <Compile Include="Program.cs" />
@@ -218,6 +253,7 @@
     <Compile Include="Views\CardListPopup.xaml.cs">
       <DependentUpon>CardListPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Helpers\MissingCardsToColorScaleConverter.cs" />
     <Compile Include="Views\OpponentWindow.xaml.cs">
       <DependentUpon>OpponentWindow.xaml</DependentUpon>
     </Compile>
@@ -412,7 +448,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MTGAHelper.Entity\MTGAHelper.Entity.csproj">
-      <Project>{17824c64-56bc-4e61-baca-0140788ce6a1}</Project>
+      <Project>{0c811c0b-d367-47b3-ba0b-5cd5bc00cff2}</Project>
       <Name>MTGAHelper.Entity</Name>
     </ProjectReference>
     <ProjectReference Include="..\MTGAHelper.Lib.OutputLogParser.Models\MTGAHelper.Lib.OutputLogParser.Models.csproj">
@@ -437,6 +473,5 @@
     <Resource Include="Assets\Images\patreon.png" />
     <Resource Include="Assets\Images\paypal.png" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

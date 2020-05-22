@@ -35,7 +35,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             new ConfigurablePath(ConfigurablePath.BrowseType.OpenFile, "")
             {
                 DefaultDisplayName = "Log File",
-                FileFilter = "Log Files|*.txt|All Files|*.*"
+                FileFilter = "Log Files|*.log|All Files|*.*"
             };
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <summary>
         /// Options for limited ratings sources
         /// </summary>
-        public IEnumerable<string> LimitedRatingsSources => DraftRatings.Get().Keys.ToArray();
+        public IEnumerable<string> LimitedRatingsSources => DraftRatings.Get().Keys.OrderBy(i => i).Append(Constants.LIMITEDRATINGS_SOURCE_CUSTOM).ToArray();
 
         /// <summary>
         /// Options for forcing the card popup side

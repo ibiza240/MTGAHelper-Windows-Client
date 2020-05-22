@@ -4,7 +4,8 @@
     {
         public int GrpId { get; set; }
         public string Name { get; set; }
-        public string Set { get; set; }
+        public string Set => SetScryfall;
+        public string SetScryfall { get; set; }
         public string Rarity { get; set; }
     }
 }

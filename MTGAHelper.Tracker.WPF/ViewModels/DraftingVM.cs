@@ -42,11 +42,13 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// </summary>
         private const int POD_SIZE = 8;
 
-        public int CardsPerPack { get; private set; }
-
         #endregion
 
+        public DraftInfoBuffered DraftInfoBuffered = new DraftInfoBuffered();
+
         #region Public Properties
+
+        public int CardsPerPack { get; private set; }
 
         /// <summary>
         /// Whether to show the card list that did not wheel
@@ -128,6 +130,12 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public int PxpxCardsNumber => CardsPerPack - (PxpxItemSelected?.PickNumber ?? 0);
 
+        public List<DraftPickProgress> DraftPicksHistory { get; private set; } = new List<DraftPickProgress>();
+
+        public Dictionary<string, Dictionary<string, CustomDraftRating>> CustomRatingsBySetThenCardName { get; internal set; }
+        
+        public string LimitedRatingsSource { get; internal set; }
+
         #endregion
 
         #region Private Backing Fields
@@ -155,10 +163,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         private bool UpdateCardsDraftBuffered;
 
         private readonly object LockCardsDraft = new object();
-
-        public DraftInfoBuffered DraftInfoBuffered = new DraftInfoBuffered();
-
-        public List<DraftPickProgress> DraftPicksHistory { get; private set; } = new List<DraftPickProgress>();
 
         #endregion
 
@@ -302,6 +306,11 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         internal void ToggleShowHideCardListPopupThatDidNotWheel()
         {
             ShowCardListThatDidNotWheel = !ShowCardListThatDidNotWheel;
+        }
+
+        internal void RefreshCardsDraft()
+        {
+            OnPropertyChanged(nameof(CardsDraft));
         }
 
         internal void SetCardsDraftFromBuffered()

@@ -1,12 +1,15 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading;
-using Microsoft.Win32;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 namespace MTGAHelper.Tracker.WPF.AutoUpdater
 {
@@ -46,7 +49,7 @@ namespace MTGAHelper.Tracker.WPF.AutoUpdater
                 Console.WriteLine($"Upgrading the version found at '{folderInstalled}'");
                 pInstall.StartInfo.FileName = "msiexec";
                 pInstall.StartInfo.Arguments = $"/i \"{localFilepath}\" /passive TARGETDIR=\"{folderInstalled}\"";
-                
+
             }
             pInstall.Start();
             pInstall.WaitForExit();
@@ -105,7 +108,7 @@ namespace MTGAHelper.Tracker.WPF.AutoUpdater
             if (dllKey == null)
                 return null;
 
-            var filePath = dllKey.Name.Replace(@$"HKEY_CURRENT_USER\{keyFolder}\", "").Replace("|", @"\");
+            var filePath = dllKey.Name.Replace($@"HKEY_CURRENT_USER\{keyFolder}\", "").Replace("|", @"\");
             var installationFolder = Path.GetDirectoryName(filePath);
             return installationFolder;
         }

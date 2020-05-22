@@ -76,6 +76,7 @@ namespace MTGAHelper.Lib.OutputLogParser.IoC
             container.Register<ClientToMatchConverter<PayloadEnterSideboardingReq>>();
             container.Register<PostMatchUpdateConverter>();
             container.Register<JoinPodmakingConverter>();
+            container.Register<MakeHumanDraftPickConverter>();
             container.Register<SelectNReqConverter>();
             container.Register<GroupReqConverter>();
             container.Register<ReaderMessageSummarized>();

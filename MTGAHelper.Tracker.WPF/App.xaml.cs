@@ -34,8 +34,6 @@ namespace MTGAHelper.Tracker.WPF
 {
     public partial class App
     {
-        private const string SERVER = DebugOrRelease.Server;
-
         private readonly StringBuilder StartupLogger = new StringBuilder();
 
         private MainWindow TrackerMainWindow;
@@ -136,7 +134,7 @@ namespace MTGAHelper.Tracker.WPF
             StartupLogger.AppendLine("CheckForUpdate()");
             string latestVersion = TryDownloadFromServer(() =>
             {
-                string raw = HttpClientGet_WithTimeoutNotification(SERVER + "/api/misc/VersionTracker", 15).Result;
+                string raw = new DataDownloader().HttpClientGet_WithTimeoutNotification(DebugOrRelease.Server + "/api/misc/VersionTracker", 15);
                 return TryDeserializeJson<GetVersionTrackerResponse>(raw).Version;
             });
 
@@ -159,9 +157,7 @@ namespace MTGAHelper.Tracker.WPF
                 string folderForConfigAndLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");
                 string fileExe = Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.exe");
                 new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/Newtonsoft.Json.dll", Path.Combine(folderForConfigAndLog, "Newtonsoft.Json.dll"));
-                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.dll", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.dll"));
                 new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.exe", fileExe);
-                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json", Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.runtimeconfig.json"));
 
                 var ps = new ProcessStartInfo(fileExe)
                 {
@@ -180,7 +176,7 @@ namespace MTGAHelper.Tracker.WPF
 
             var msgs = TryDownloadFromServer(() =>
                 {
-                    string raw = HttpClientGet_WithTimeoutNotification(SERVER + "/api/misc/TrackerClientMessages", 15).Result;
+                    string raw = new DataDownloader().HttpClientGet_WithTimeoutNotification(DebugOrRelease.Server + "/api/misc/TrackerClientMessages", 15);
                     return TryDeserializeJson<Dictionary<string, string>>(raw, true);
                 }
             );
@@ -259,6 +255,8 @@ namespace MTGAHelper.Tracker.WPF
 
             ConfigApp = configuration.Get<ConfigModel>();
 
+            ConfigApp.LogFilePath = ConfigApp.LogFilePath.Replace("output_log.txt", "Player.log");
+
             Container = CreateContainer(ConfigApp, FolderData);
 
             Directory.CreateDirectory(FolderData);
@@ -276,18 +274,13 @@ namespace MTGAHelper.Tracker.WPF
             var container = new Container();
             container.Options.ConstructorResolutionBehavior = new InternalConstructorResolutionBehavior(container);
 
-            container.Register<IInputOutputOrchestrator, InputOutputOrchestratorMock>();
+            //container.Register<IInputOutputOrchestrator, InputOutputOrchestratorMock>();
 
             return container
                 .RegisterDataPath(folderData)
                 .RegisterServicesApp(configModelApp)
                 .RegisterServicesLibOutputLogParser()
                 .RegisterFileLoaders()
-                //.RegisterServicesDrafHelper(new ConfigDraftHelper
-                //{
-                //    FolderCommunication = configModelApp.DraftHelperFolderCommunication,
-                //    FolderData = folderData,
-                //})
                 .RegisterServicesTracker()
                 .RegisterServicesWebModels()
                 .RegisterServicesEntity()
@@ -321,7 +314,7 @@ namespace MTGAHelper.Tracker.WPF
 
             var dateFormatsResponse = TryDownloadFromServer(() =>
             {
-                string raw = HttpClientGet_WithTimeoutNotification(SERVER + "/api/misc/dateFormats", 15).Result;
+                string raw = new DataDownloader().HttpClientGet_WithTimeoutNotification(DebugOrRelease.Server + "/api/misc/dateFormats", 15);
                 var response = TryDeserializeJson<GetDateFormatsResponse>(raw);
                 return response;
             });
@@ -346,7 +339,7 @@ namespace MTGAHelper.Tracker.WPF
             bool isUpToDate = TryDownloadFromServer(() =>
             {
                 StartupLogger.AppendLine($"isUpToDate({dataFileType})");
-                string raw = HttpClientGet_WithTimeoutNotification(SERVER + $"/api/misc/filehash?id={dataFileType}&hash={hashLocal}", 15).Result;
+                string raw = new DataDownloader().HttpClientGet_WithTimeoutNotification(DebugOrRelease.Server + $"/api/misc/filehash?id={dataFileType}&hash={hashLocal}", 15);
                 var response = TryDeserializeJson<bool>(raw);
                 return response;
             });
@@ -356,51 +349,10 @@ namespace MTGAHelper.Tracker.WPF
             {
                 StartupLogger.AppendLine($"redownloading({dataFileType})");
                 Log.Information("Data [{dataType}] out of date, redownloading", dataFileType);
-                await TryDownloadFromServer<Task<object>>(async () =>
+                await TryDownloadFromServer(async () =>
                 {
-                    await HttpClientDownloadFile_WithTimeoutNotification(SERVER + $"/api/download/{dataFileType}", 60, filePath);
-                    return null;
+                    await new DataDownloader().HttpClientDownloadFile_WithTimeoutNotification(DebugOrRelease.Server + $"/api/download/{dataFileType}", 60, filePath);
                 });
-            }
-        }
-
-        private async Task HttpClientDownloadFile_WithTimeoutNotification(string requestUri, double timeout, string filePath)
-        {
-            using HttpClient client = HttpClientFactory.Create(timeout);
-
-            using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
-
-            using Stream contentStream = await (await client.SendAsync(request)).Content.ReadAsStreamAsync(),
-                stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Read);
-
-            await contentStream.CopyToAsync(stream);
-        }
-
-        private async Task<string> HttpClientGet_WithTimeoutNotification(string requestUri, double timeout)
-        {
-            using var client = HttpClientFactory.Create(timeout);
-
-            while (true)
-            {
-                try
-                {
-                    string raw = await client.GetAsync(requestUri).Result.Content.ReadAsStringAsync();
-                    return raw;
-                }
-                catch (WebException ex) when (ex.Status == WebExceptionStatus.Timeout)
-                {
-                    Log.Warning(ex, "TimeoutNotification({requestUri}, {timeout})", requestUri, timeout);
-                    bool doRequest = MessageBox.Show($"It appears the server didn't reply in time ({timeout} seconds). Do you want to retry? Choosing No will stop the program.{Environment.NewLine}{Environment.NewLine}Maybe the server is down? Go check https://mtgahelper.com and if that is the case, please retry later.",
-                        "MTGAHelper", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
-
-                    if (doRequest == false)
-                        throw new ServerNotAvailableException();
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Unknown error in TimeoutNotification({requestUri}, {timeout})", requestUri, timeout);
-                    return string.Empty;
-                }
             }
         }
 

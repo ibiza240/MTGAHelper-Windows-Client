@@ -1,6 +1,11 @@
 ﻿using MTGAHelper.Tracker.WPF.ViewModels;
 using System.Windows;
 using MTGAHelper.Tracker.WPF.Config;
+using System.Collections;
+using System.Collections.Generic;
+using System;
+using MTGAHelper.Tracker.WPF.Business;
+using System.Windows.Input;
 
 namespace MTGAHelper.Tracker.WPF.Views
 {
@@ -9,6 +14,19 @@ namespace MTGAHelper.Tracker.WPF.Views
     /// </summary>
     public partial class CardPopupDrafting
     {
+        #region Private Fields
+
+        /// <summary>
+        /// The view model and window data context
+        /// </summary>
+        private readonly DraftingCardPopupVM ViewModel = new DraftingCardPopupVM();
+
+        private DraftingVM ViewModelDrafting;
+
+        private ServerApiCaller api;
+
+        #endregion
+
         #region Constructor
 
         /// <summary>
@@ -17,22 +35,18 @@ namespace MTGAHelper.Tracker.WPF.Views
         public CardPopupDrafting()
         {
             DataContext = ViewModel;
-
             InitializeComponent();
         }
 
         #endregion
 
-        #region Private Fields
-
-        /// <summary>
-        /// The view model and window data context
-        /// </summary>
-        private readonly DraftingCardPopupVM ViewModel = new DraftingCardPopupVM();
-
-        #endregion
-
         #region Public Methods
+
+        public void Init(ServerApiCaller api, DraftingVM draftingVM)
+        {
+            this.api = api;
+            this.ViewModelDrafting = draftingVM;
+        }
 
         public void Refresh(CardDraftPickVM cardVM, bool showGlobalMTGAHelperSays)
         {
@@ -62,6 +76,61 @@ namespace MTGAHelper.Tracker.WPF.Views
             ViewModel.SetPopupRatingsSource(showRatingsSource, source);
         }
 
+        public void ShowPopup(bool isVisible)
+        {
+            if (ViewModel.IsMouseInPopup == false)
+                ViewModel.IsPopupVisible = isVisible;
+        }
         #endregion
+
+        private void Window_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ViewModel.IsMouseInPopup = true;
+        }
+
+        private void Window_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ViewModel.IsMouseInPopup = false;
+            ViewModel.IsPopupVisible = false;
+
+            SaveCustomRating();
+        }
+
+        private void SaveCustomRating()
+        {
+            var valuesChanged = ViewModel.Card.CustomRatingValue != ViewModel.CustomRatingSelected ||
+                ViewModel.Card.CustomRatingDescription != ViewModel.CustomRatingDescription;
+
+            if (valuesChanged)
+            {
+                ViewModel.Card.CustomRatingDescription = ViewModel.CustomRatingDescription;
+                ViewModel.Card.CustomRatingValue = ViewModel.CustomRatingSelected;
+
+                ViewModelDrafting.RefreshCardsDraft();
+                api.SaveCustomDraftRating(ViewModel.Card.ArenaId, ViewModel.CustomRatingSelected, ViewModel.CustomRatingDescription);
+            }
+        }
+
+        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            // On startup apparently
+            if (ViewModelDrafting == null)
+                return;
+
+            if (ViewModelDrafting.LimitedRatingsSource == Constants.LIMITEDRATINGS_SOURCE_CUSTOM)
+            {
+                ViewModel.Card.RatingValue = ViewModel.CustomRatingSelected;
+                ViewModel.Card.RatingToDisplay = ViewModel.CustomRatingSelected.ToString();
+            }
+        }
+
+        private void TextBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                // Just remove the cursor from textbox for some feedback
+                Keyboard.ClearFocus();
+            }
+        }
     }
 }

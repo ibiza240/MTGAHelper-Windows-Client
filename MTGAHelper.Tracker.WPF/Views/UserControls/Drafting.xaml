@@ -12,6 +12,7 @@
     GotFocus="UserControl_GotFocus"
     mc:Ignorable="d">
     <UserControl.Resources>
+        <helpers:MissingCardsToColorScaleConverter x:Key="MissingCardsToColorScaleConverter" />
         <helpers:IntToVisibilityConverter x:Key="IntToVisibilityConverter" Threshold="0" />
         <helpers:RatingFloatToColorScaleConverter x:Key="RatingToColorConverter" />
         <helpers:StringToValueConverter
@@ -66,7 +67,7 @@
                 <ComboBox
                     x:Name="PxpxComboBox"
                     Height="14"
-                    IsEnabled="{Binding IsHumanDraft}"
+                    IsEnabled="false"
                     ItemsSource="{Binding PxpxItems}"
                     SelectedItem="{Binding PxpxItemSelected}">
                     <ComboBox.ItemTemplate>
@@ -123,7 +124,6 @@
             ItemsSource="{Binding CardsDraft}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             ScrollViewer.VerticalScrollBarVisibility="Auto"
-            SelectionChanged="ListBox_SelectionChanged"
             SelectionMode="Single"
             VirtualizingPanel.IsVirtualizing="False">
             <ListBox.ItemContainerStyle>
@@ -160,10 +160,10 @@
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="SecondColumn" />
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="FourthColumn" />
-                            <ColumnDefinition Width="Auto" SharedSizeGroup="FifthColumn" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" MinWidth="26" SharedSizeGroup="FourthColumn" />
+                            <ColumnDefinition Width="Auto" MinWidth="30" SharedSizeGroup="FifthColumn" />
                         </Grid.ColumnDefinitions>
                         <!--  Card Image  -->
                         <Border
@@ -189,7 +189,7 @@
                             </Grid.RowDefinitions>
                             <!--  Card Name  -->
                             <Label Grid.Row="0" Padding="5,4,0,0">
-                                <TextBlock Text="{Binding Name}" />
+                                <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                             </Label>
                             <!--  Converted Mana Cost Symbols  -->
                             <ItemsControl
@@ -211,15 +211,16 @@
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </Grid>
-                        <!--  Number of cards missing from collection  -->
-                        <Grid Grid.Column="2" Visibility="{Binding DataContext.ShowGlobalMTGAHelperSays, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVis}}">
-                            <Label
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Content="{Binding NbMissingCollection}"
-                                ContentStringFormat="{}{0} missing"
-                                Visibility="{Binding NbMissingCollection, Converter={StaticResource IntToVisibilityConverter}}" />
-                        </Grid>
+                        <!--  Cards in collection  -->
+                        <TextBlock
+                            Grid.Column="2"
+                            Text="{Binding AmountInCollection, StringFormat={}{0} / 4}"
+                            Foreground="{Binding AmountInCollection, Converter={StaticResource MissingCardsToColorScaleConverter}}"
+                            ToolTip="Cards in Collection"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Visibility="{Binding DataContext.ShowGlobalMTGAHelperSays, Converter={StaticResource BoolToVis}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}">
+                        </TextBlock>
                         <!--  RareDraft and Tracking Info  -->
                         <Grid Grid.Column="3" Visibility="{Binding DataContext.ShowGlobalMTGAHelperSays, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVis}}">
                             <Grid.RowDefinitions>
@@ -231,7 +232,7 @@
                                 Margin="3"
                                 ToolTipService.InitialShowDelay="50">
                                 <Border.ToolTip>
-                                    <TextBlock Foreground="Black" Text="Used in your tracked decks" />
+                                    <TextBlock Text="Used in your tracked decks" />
                                 </Border.ToolTip>
                                 <Image
                                     Width="12"
@@ -244,7 +245,7 @@
                                 ToolTipService.InitialShowDelay="50"
                                 Visibility="{Binding RareDraftPickEnum, Converter={StaticResource BoolToVis}}">
                                 <Border.ToolTip>
-                                    <TextBlock Foreground="Black" Text="RareDraft Choice" />
+                                    <TextBlock Text="RareDraft Choice" />
                                 </Border.ToolTip>
                                 <Image
                                     Width="20"

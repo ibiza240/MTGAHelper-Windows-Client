@@ -19,7 +19,8 @@ namespace MTGAHelper.Entity.IoC
                 .ForMember(i => i.colors, i => i.MapFrom(x => x.Colors))
                 .ForMember(i => i.color_identity, i => i.MapFrom(x => x.ColorIdentity))
                 .ForMember(i => i.notInBooster, i => i.MapFrom(x => !x.IsInBooster))
-                .ForMember(i => i.artistCredit, i => i.MapFrom(x => x.Artist));
+                .ForMember(i => i.artistCredit, i => i.MapFrom(x => x.Artist))
+                .ForMember(i => i.set, i => i.MapFrom(x => x.SetScryfall.ToUpper()));
         }
     }
 

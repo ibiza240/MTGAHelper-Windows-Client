@@ -43,6 +43,36 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>8</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>8</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugWithServer|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\DebugWithServer\</OutputPath>
+    <DefineConstants>DEBUG;DEBUGWITHSERVER;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>8</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -83,6 +113,1605 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71068.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71068_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71069.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71069_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71070.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71070_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71071.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71071_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71072.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71072_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71073.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71073_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71074.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71074_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71075.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71075_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71076.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71076_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71077.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71077_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71078.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71078_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71079.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71079_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71080.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71080_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71081.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71081_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71082.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71082_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71083.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71083_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71084.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71084_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71085.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71085_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71086.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71086_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71087.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71087_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71088.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71088_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71089.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71089_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71090.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71090_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71091.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71091_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71092.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71092_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71093.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71093_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71094.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71094_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71095.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71095_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71096.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71096_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71097.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71097_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71098.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71098_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71099.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71099_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71100.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71100_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71101.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71101_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71102.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71102_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71103.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71103_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71104.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71104_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71105.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71105_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71106.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71106_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71107.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71107_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71108.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71108_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71109.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71109_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71110.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71110_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71111.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71111_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71112.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71112_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71113.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71113_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71114.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71114_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71115.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71115_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71116.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71116_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71117.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71117_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71118.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71118_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71119.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71119_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71120.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71120_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71121.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71121_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71122.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71122_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71123.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71123_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71124.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71124_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71125.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71125_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71126.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71126_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71127.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71127_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71128.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71128_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71129.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71129_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71130.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71130_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71131.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71131_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71132.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71132_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71133.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71133_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71134.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71134_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71135.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71135_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71136.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71136_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71137.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71137_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71138.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71138_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71139.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71139_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71140.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71140_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71141.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71141_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71142.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71142_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71143.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71143_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71144.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71144_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71145.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71145_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71146.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71146_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71147.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71147_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71148.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71148_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71149.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71149_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71150.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71150_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71151.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71151_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71152.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71152_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71153.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71153_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71154.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71154_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71155.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71155_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71156.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71156_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71157.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71157_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71158.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71158_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71159.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71159_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71160.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71160_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71161.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71161_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71162.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71162_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71163.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71163_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71164.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71164_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71165.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71165_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71166.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71166_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71167.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71167_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71168.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71168_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71169.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71169_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71170.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71170_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71171.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71171_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71172.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71172_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71173.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71173_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71174.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71174_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71175.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71175_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71176.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71176_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71177.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71177_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71178.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71178_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71179.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71179_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71180.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71180_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71181.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71181_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71182.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71182_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71183.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71183_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71184.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71184_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71185.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71185_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71186.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71186_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71187.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71187_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71188.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71188_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71189.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71189_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71190.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71190_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71191.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71191_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71192.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71192_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71193.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71193_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71194.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71194_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71195.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71195_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71196.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71196_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71197.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71197_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71198.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71198_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71199.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71199_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71200.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71200_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71201.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71201_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71202.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71202_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71203.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71203_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71204.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71204_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71205.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71205_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71206.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71206_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71207.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71207_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71208.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71208_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71209.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71209_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71210.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71210_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71211.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71211_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71212.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71212_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71213.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71213_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71214.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71214_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71215.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71215_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71216.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71216_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71217.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71217_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71218.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71218_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71219.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71219_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71220.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71220_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71221.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71221_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71222.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71222_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71223.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71223_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71224.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71224_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71225.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71225_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71226.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71226_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71227.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71227_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71228.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71228_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71229.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71229_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71230.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71230_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71231.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71231_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71232.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71232_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71233.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71233_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71234.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71234_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71235.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71235_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71236.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71236_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71237.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71237_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71238.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71238_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71239.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71239_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71240.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71240_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71241.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71241_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71242.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71242_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71243.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71243_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71244.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71244_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71245.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71245_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71246.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71246_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71247.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71247_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71248.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71248_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71249.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71249_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71250.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71250_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71251.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71251_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71252.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71252_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71253.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71253_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71254.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71254_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71255.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71255_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71256.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71256_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71257.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71257_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71258.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71258_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71259.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71259_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71260.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71260_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71261.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71261_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71262.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71262_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71263.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71263_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71264.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71264_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71265.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71265_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71266.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71266_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71267.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71267_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71268.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71268_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71269.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71269_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71270.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71270_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71271.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71271_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71272.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71272_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71273.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71273_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71274.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71274_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71275.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71275_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71276.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71276_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71277.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71277_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71278.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71278_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71279.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71279_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71280.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71280_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71281.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71281_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71282.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71282_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71283.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71283_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71284.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71284_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71285.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71285_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71286.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71286_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71287.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71287_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71288.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71288_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71289.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71289_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71290.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71290_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71291.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71291_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71292.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71292_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71293.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71293_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71294.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71294_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71295.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71295_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71296.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71296_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71297.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71297_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71298.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71298_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71299.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71299_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71300.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71300_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71301.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71301_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71302.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71302_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71303.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71303_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71304.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71304_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71305.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71305_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71306.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71306_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71307.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71307_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71308.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71308_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71309.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71309_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71310.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71310_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71311.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71311_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71312.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71312_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71313.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71313_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71314.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71314_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71315.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71315_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71316.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71316_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71317.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71317_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71318.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71318_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71319.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71319_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71320.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71320_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71321.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71321_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71322.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71322_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71323.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71323_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71324.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71324_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71325.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71325_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71326.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\71326_1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73121.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73122.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73123.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73124.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73125.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73126.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73127.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73128.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73129.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73130.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73131.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73132.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73133.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73134.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\73135.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

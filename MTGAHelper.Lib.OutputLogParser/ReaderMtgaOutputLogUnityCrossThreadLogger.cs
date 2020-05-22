@@ -164,7 +164,8 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
             PostMatchUpdateConverter postMatchUpdateConverter,
             CrackBoostersConverter crackBoostersConverter,
             CompleteVaultConverter completeVaultConverter,
-            JoinPodmakingConverter JoinPodmakingConverter
+            JoinPodmakingConverter JoinPodmakingConverter,
+            MakeHumanDraftPickConverter makeHumanDraftPickConverter
         )
         {
             converters.Add("GetActiveEventsV2", converterGetActiveEventsV2);
@@ -172,11 +173,11 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
             converters.Add("GetCombinedRankInfo", converterGetCombinedRankInfo);
             converters.Add("GetPlayerCardsV3", converterGetPlayerCardsV3);
             converters.Add("GetPlayerInventory", converterGetPlayerInventory);
-            converters.Add("==> Event.MatchCreated", converterMatchCreated);
+            converters.Add("<== Event.MatchCreated", converterMatchCreated);
             converters.Add("==> Event.JoinPodmaking", JoinPodmakingConverter);
             converters.Add("Event.DeckSubmit", converterDeckSubmit);
             converters.Add("==> Rank.Updated", converterRankUpdated);
-            converters.Add("==> Inventory.Updated", converterInventoryUpdated);
+            converters.Add("<== Inventory.Updated", converterInventoryUpdated);
             //converters.Add(UnityCrossThreadLogger_DuelSceneGameStop, converterDuelSceneGameStop);
             //converters.Add(UnityCrossThreadLogger_DuelSceneSideboardingStart, duelSceneSideboardingStartConverter);
             //converters.Add(UnityCrossThreadLogger_DuelSceneSideboardingStop, duelSceneSideboardingStopConverter);
@@ -198,9 +199,10 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
             converters.Add("ClaimPrize", eventClaimPrizeConverter);
             converters.Add("Progression.GetAllTracks", progressionGetAllTracksConverter);
             converters.Add("GetPlayerQuests", getPlayerQuestsConverter);
-            converters.Add("==> PostMatch.Update", postMatchUpdateConverter);
+            converters.Add("<== PostMatch.Update", postMatchUpdateConverter);
             converters.Add("PlayerInventory.CrackBoostersV3", crackBoostersConverter);
             converters.Add("PlayerInventory.CompleteVault", completeVaultConverter);
+            converters.Add("==> Draft.MakeHumanDraftPick", makeHumanDraftPickConverter);
             converters.Add("==> Log", logInfoRequestConverter);                     // Order is important, some events now are in requests (MatchCreated,....)
 
             // After the Client GRE messages disappeared in July 25 patch
@@ -233,10 +235,8 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
                 //part.Contains(UnityCrossThreadLogger_ClientConnected) == false &&
                 ((part.Contains("==>") &&
                     part.Contains("==> Log") == false &&
+                    part.Contains("==> Draft.MakeHumanDraftPick") == false &&
                     part.Contains("==> Event.JoinPodmaking") == false &&
-                    part.Contains("==> Event.MatchCreated") == false &&
-                    part.Contains("==> Inventory.Updated") == false &&
-                    part.Contains("==> PostMatch.Update") == false &&
                     part.Contains("==> Rank.Updated") == false
                 ) || ignored.Any(i => part.Contains(i)));
 

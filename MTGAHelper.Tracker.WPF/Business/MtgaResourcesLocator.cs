@@ -39,7 +39,7 @@ namespace MTGAHelper.Tracker.WPF.Business
                 if (Directory.Exists(pathDir))
                 {
                     // File deduced
-                    configApp.LogFilePath = Path.GetFullPath($"{pathDir}/output_log.txt");
+                    configApp.LogFilePath = Path.GetFullPath($"{pathDir}/Player.log");
                     configApp.Save();
                     SetProblem?.Invoke(ProblemsFlags.LogFileNotFound, false);
                     return;

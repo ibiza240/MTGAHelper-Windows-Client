@@ -1,4 +1,5 @@
 ﻿using MTGAHelper.Tracker.WPF.Tools;
+using System.Collections.Generic;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
@@ -36,6 +37,51 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             set => SetField(ref _ShowDescription, value, nameof(ShowDescription));
         }
 
+        public bool ShowCustomRating
+        {
+            get => _ShowCustomRating;
+            set => SetField(ref _ShowCustomRating, value, nameof(ShowCustomRating));
+        }
+
+        public bool IsPopupVisible
+        {
+            get => _IsPopupVisible;
+            set => SetField(ref _IsPopupVisible, value, nameof(IsPopupVisible));
+        }
+
+        public bool IsMouseInPopup
+        {
+            get => _IsMouseInPopup;
+            set => SetField(ref _IsMouseInPopup, value, nameof(IsMouseInPopup));
+        }
+
+        public string CustomRatingDescription
+        {
+            get => _CustomRatingDescription;
+            set => SetField(ref _CustomRatingDescription, value, nameof(CustomRatingDescription));
+        }
+
+        public int CustomRatingSelected
+        {
+            get => _CustomRatingSelected;
+            set => SetField(ref _CustomRatingSelected, value, nameof(CustomRatingSelected));
+        }
+
+        public ICollection<int> CustomRatings { get; } = new[]
+        {
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10
+        };
+
         #endregion
 
         #region Private Backing Fields
@@ -50,6 +96,16 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         private bool _ShowDescription;
 
+        private bool _ShowCustomRating;
+
+        private bool _IsPopupVisible;
+
+        private bool _IsMouseInPopup;
+
+        private string _CustomRatingDescription;
+
+        private int _CustomRatingSelected;
+
         #endregion
 
         #region Public Methods
@@ -57,8 +113,11 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public void SetDraftCard(CardDraftPickVM cardVM, bool showGlobalMTGAHelperSays)
         {
             Card = cardVM;
+            CustomRatingSelected = Card.CustomRatingValue ?? 0;
+            CustomRatingDescription = Card.CustomRatingDescription;
             ShowDescription = string.IsNullOrEmpty(Card.Description) == false;
             ShowGlobalMTGAHelperSays = showGlobalMTGAHelperSays;
+            ShowCustomRating = cardVM.CustomRatingValue != null || cardVM.CustomRatingDescription != null;
             OnPropertyChanged(nameof(Card));
         }
 

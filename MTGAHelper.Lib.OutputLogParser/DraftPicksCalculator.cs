@@ -11,6 +11,7 @@ namespace MTGAHelper.Lib.OutputLogParser
     public class DraftPicksCalculator
     {
         readonly Dictionary<int, Card> allCards;
+        //CacheSingleton<Dictionary<string, DraftRatings>> draftRatings;
         readonly Dictionary<string,
             Dictionary<string,
                 (Dictionary<string, DraftRating> ratings, Dictionary<string, ICollection<DraftRatingTopCard>> topCardsByColor)>> ratingsBySourceSet;
@@ -20,6 +21,7 @@ namespace MTGAHelper.Lib.OutputLogParser
             CacheSingleton<Dictionary<string, DraftRatings>> draftRatings)
         {
             this.allCards = cacheAllCards.Get();
+            //this.draftRatings = draftRatings;
             var ratingsBySource = draftRatings.Get();
             ratingsBySourceSet = ratingsBySource.ToDictionary(
                 source => source.Key, source => source.Value.RatingsBySet.ToDictionary(
@@ -27,6 +29,25 @@ namespace MTGAHelper.Lib.OutputLogParser
                         set.Value.Ratings.ToDictionary(card => card.CardName, card => card),
                         set.Value.TopCommonCardsByColor
                     )));
+        }
+
+        public DraftPicksCalculator Init(Dictionary<string, Dictionary<string, CustomDraftRating>> customRatingsBySetThenCardName)
+        {
+            var dictCustomRatings = customRatingsBySetThenCardName
+                .ToDictionary(i => i.Key, i => (
+                    i.Value.ToDictionary(x => x.Key, x => new DraftRating
+                    {
+                        CardName = x.Value.Name,
+                        Description = x.Value.Note,
+                        RatingValue = x.Value.Rating ?? 0f,
+                        RatingToDisplay = x.Value.Rating?.ToString() ?? "N/A",
+                    }),
+                    (Dictionary<string, ICollection<DraftRatingTopCard>>)null
+                ));
+
+            ratingsBySourceSet["Your custom ratings"] = dictCustomRatings;
+
+            return this;
         }
 
         public ICollection<CardForDraftPick> GetCardsForDraftPick(
@@ -56,6 +77,13 @@ namespace MTGAHelper.Lib.OutputLogParser
 
                     try
                     {
+                        if (source == null)
+                            Log.Error("GetCardsForDraftPick Source is null");
+                        if (i.set == null)
+                            Log.Error("GetCardsForDraftPick Card set is null {grpId}", i.grpId);
+                        if (i.name == null)
+                            Log.Error("GetCardsForDraftPick Card name is null", i.grpId);
+
                         card.NbMissingCollection = calculateMissingAmount(collection, card, pickedCards);
 
                         if (weights.ContainsKey(i.grpId))
@@ -77,7 +105,7 @@ namespace MTGAHelper.Lib.OutputLogParser
                             card.RatingSource = source;
 
                             var cardColors = string.Join("", card.colors);
-                            if (ratingsBySourceSet[source][i.set].topCardsByColor.ContainsKey(cardColors))
+                            if (ratingsBySourceSet[source][i.set].topCardsByColor?.ContainsKey(cardColors) == true)
                             {
                                 var rank = ratingsBySourceSet[source][i.set].topCardsByColor[card.colors.First()].FirstOrDefault(x => x.Name == card.name)?.Rank ?? 0;
                                 card.TopCommonCard = new DraftRatingTopCard(rank, cardColors);
