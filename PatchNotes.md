@@ -1,4 +1,8 @@
-### v1.4.7.1 (2020-05-22)
+### v1.5 (2020-06-05)
+
+Support for latest game patch
+
+### v1.4.8 (2020-05-22)
 
 Hotfix
 
