@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using AutoMapper;
+using MTGAHelper.Lib;
+using MTGAHelper.Lib.OutputLogParser;
 using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
 using MTGAHelper.Tracker.WPF.Models;
 using MTGAHelper.Tracker.WPF.Tools;
-using MTGAHelper.Utility;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
@@ -29,6 +30,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
     public class CardsListVM : BasicModel
     {
+        readonly IMapper mapper;
         #region Constructor
 
         /// <summary>
@@ -36,10 +38,12 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// </summary>
         /// <param name="display"></param>
         /// <param name="cardsListOrder"></param>
-        public CardsListVM(DisplayType display, CardsListOrder cardsListOrder)
+        /// <param name="mapper"></param>
+        public CardsListVM(DisplayType display, CardsListOrder cardsListOrder, IMapper mapper)
         {
             CardsListOrder = cardsListOrder;
             Display = display;
+            this.mapper = mapper;
         }
 
         #endregion
@@ -253,7 +257,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         private LibraryCardWithAmountVM ConvertCard(int grpId, int amount, float drawChance)
         {
-            var card = Mapper.Map<Entity.Card>(grpId);
+            var card = mapper.Map<Entity.Card>(grpId);
 
             var ret = new LibraryCardWithAmountVM
             {

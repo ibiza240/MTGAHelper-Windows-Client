@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.GameStateMessage.Raw
+namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.GameStateMessage
 {
     public class GameStateMessageRaw : GreMatchToClientSubMessageBase
     {
@@ -188,19 +188,6 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.GameStateMess
         public List<Timer> timers { get; set; }
         public TurnInfo turnInfo { get; set; }
         public int? pendingMessageCount { get; set; }
-    }
-
-    public class Parameter
-    {
-        public string parameterName { get; set; }
-        public string type { get; set; }
-        public int numberValue { get; set; }
-    }
-
-    public class Prompt
-    {
-        public int promptId { get; set; }
-        public List<Parameter> parameters { get; set; }
     }
 
     public class ManaCost2

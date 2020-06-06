@@ -1,7 +1,7 @@
 ﻿using MTGAHelper.Entity;
 using MTGAHelper.Entity.OutputLogParsing;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
     public class DeckSubmitResult : MtgaOutputLogPartResultBase<PayloadRaw<DeckSubmitRaw>>//, ITagMatchResult//, IMtgaOutputLogPartResult<DeckSubmitRaw>
     {

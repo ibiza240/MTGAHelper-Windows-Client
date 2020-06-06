@@ -7,7 +7,7 @@
     <ProjectGuid>{28625CCA-088D-4A06-8159-8B463832895B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>MTGAHelper.Tracker.WPF.AutoUpdater</RootNamespace>
-    <AssemblyName>MTGAHelper.Tracker.WPF.AutoUpdater</AssemblyName>
+    <AssemblyName>MTGAHelper.Tracker.AutoUpdater</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

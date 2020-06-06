@@ -1,8 +1,8 @@
-﻿using MTGAHelper.Entity;
-//using Serilog;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace MTGAHelper.Lib.CollectionDecksCompare
+//using Serilog;
+
+namespace MTGAHelper.Entity.CollectionDecksCompare
 {
     public class CardRequiredInfo
     {

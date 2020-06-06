@@ -1,4 +1,4 @@
-﻿using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
+﻿using MTGAHelper.Lib.OutputLogParser.Models;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Web.Models.Request;
 using MTGAHelper.Web.Models.Response.Account;
@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using MTGAHelper.Entity.MtgaOutputLog;
 using WebApplication1.Model.Account;
 
 namespace MTGAHelper.Tracker.WPF.Business
@@ -113,6 +114,11 @@ namespace MTGAHelper.Tracker.WPF.Business
             return GetResponseWithCookie<string>("api/WpfLogin/AccountSalt");
         }
 
+        internal bool IsSupporter(string email)
+        {
+            return GetResponseWithCookie<bool>("api/user/issupporter?userEmail=" + email);
+        }
+
         internal string GetCustomDraftRatings()
         {
             return GetResponseWithCookie<string>("api/user/customdraftratings");
@@ -137,6 +143,10 @@ namespace MTGAHelper.Tracker.WPF.Business
         internal CollectionResponse UploadOutputLogResult(string userId, OutputLogResult result)
         {
             return PostResponseSimple<CollectionResponse>("/api/User/LogFileProcessed", new PostOutputLogProcessedRequest(result));
+        }
+        internal CollectionResponse UploadOutputLogResult2(string userId, OutputLogResult2 result2)
+        {
+            return PostResponseSimple<CollectionResponse>("/api/User/LogFileProcessed2", new PostOutputLogProcessedRequest2(result2));
         }
 
         internal bool IsSameLastUploadHash(uint uploadHash)

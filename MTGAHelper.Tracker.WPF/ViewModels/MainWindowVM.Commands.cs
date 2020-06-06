@@ -173,6 +173,30 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         #endregion
 
+        #region Open Website Command
+
+        public ICommand GoToWebsiteCommand
+        {
+            get
+            {
+                return _GoToWebsiteCommand ??= new RelayCommand(param => GoToWebsite(), param => Can_GoToWebsite());
+            }
+        }
+
+        private ICommand _GoToWebsiteCommand;
+
+        private static bool Can_GoToWebsite()
+        {
+            return true;
+        }
+
+        private void GoToWebsite()
+        {
+            Process.Start("https://mtgahelper.com");
+        }
+
+        #endregion
+
         #region Reset Window Positions Command
 
         public ICommand ResetWindowsCommand

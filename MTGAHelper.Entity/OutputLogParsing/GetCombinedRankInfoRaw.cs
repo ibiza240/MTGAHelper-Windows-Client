@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using MTGAHelper.Lib.Config.Users;
+using MTGAHelper.Entity.Config.Users;
 
 namespace MTGAHelper.Entity.OutputLogParsing
 {

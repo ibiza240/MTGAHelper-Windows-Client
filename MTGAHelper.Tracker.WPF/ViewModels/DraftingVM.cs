@@ -1,9 +1,10 @@
-﻿using AutoMapper;
-using MTGAHelper.Entity;
-using MTGAHelper.Tracker.WPF.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
+using MTGAHelper.Entity;
+using MTGAHelper.Tracker.WPF.Business;
+using MTGAHelper.Tracker.WPF.Models;
 using MTGAHelper.Tracker.WPF.Tools;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
@@ -22,10 +23,15 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <summary>
         /// Initialize the class using dependency injection
         /// </summary>
-        /// <param name="all"></param>
-        internal void Init(ICollection<Card> all)
+        /// <param name="mapper"></param>
+        /// <param name="allCards"></param>
+        /// <param name="api"></param>
+        public DraftingVM(IMapper mapper, ICollection<Card> allCards, ServerApiCaller api)
         {
-            AllCards = all;
+            this.mapper = mapper;
+            AllCards = allCards;
+            Api = api;
+            CardsThatDidNotWheelVM = new CardsListVM(DisplayType.None, CardsListOrder.ManaCost, mapper);
         }
 
         public void SetCardsPerPack(int cardsPerPack)
@@ -75,7 +81,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <summary>
         /// List of cards that did not wheel
         /// </summary>
-        public CardsListVM CardsThatDidNotWheelVM { get; set; } = new CardsListVM(DisplayType.None, CardsListOrder.ManaCost);
+        public CardsListVM CardsThatDidNotWheelVM { get; set; }
+
+        public ServerApiCaller Api { get; }
 
         /// <summary>
         /// True while draft picking, False else (eg. looking at card pool after picking)
@@ -124,7 +132,11 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public IList<DraftingVMPxpx> PxpxItems { get; set; }
 
-        public DraftingVMPxpx PxpxItemSelected { get; set; }
+        public DraftingVMPxpx PxpxItemSelected
+        {
+            get => _PxpxItemSelected;
+            set => SetField(ref _PxpxItemSelected, value, nameof(PxpxItemSelected));
+        }
 
         public DraftPickProgress DraftProgressHuman { get; set; }
 
@@ -133,7 +145,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         public List<DraftPickProgress> DraftPicksHistory { get; private set; } = new List<DraftPickProgress>();
 
         public Dictionary<string, Dictionary<string, CustomDraftRating>> CustomRatingsBySetThenCardName { get; internal set; }
-        
+
         public string LimitedRatingsSource { get; internal set; }
 
         #endregion
@@ -162,7 +174,11 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         private bool UpdateCardsDraftBuffered;
 
+        private DraftingVMPxpx _PxpxItemSelected;
+
         private readonly object LockCardsDraft = new object();
+
+        readonly IMapper mapper;
 
         #endregion
 
@@ -214,7 +230,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
             OnPropertyChanged(nameof(ShowGlobalMTGAHelperSays));
             OnPropertyChanged(nameof(PxpxItems));
-            OnPropertyChanged(nameof(PxpxItemSelected));
         }
 
         internal void SetCardsDraftBuffered(DraftPickProgress draftPick, ICollection<CardDraftPickWpf> ratingsInfo, bool isHuman)
@@ -272,8 +287,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                             CardsThatDidNotWheel = originalPack.DraftPack.Where(i => draftPick.DraftPack.Contains(i) == false).ToArray();
 
                             var packFollowing = DraftPicksHistory.FirstOrDefault(i => i.PackNumber == originalPack.PackNumber && i.PickNumber == originalPack.PickNumber + 1);
-                            if (packFollowing != null)
-                                CardChosenThatDidNotWheel = Mapper.Map<Card>(packFollowing.PickedCards.Last()).name;
+                            if (packFollowing != null && packFollowing.PickedCards.Any())
+                                CardChosenThatDidNotWheel = mapper.Map<Card>(packFollowing.PickedCards.Last()).name;
                         }
                     }
 
@@ -320,7 +335,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
             lock (LockCardsDraft)
             {
-                CardsDraft = Mapper.Map<ICollection<CardDraftPickVM>>(DraftInfoBuffered.CardsDraftBuffered);
+                CardsDraft = mapper.Map<ICollection<CardDraftPickVM>>(DraftInfoBuffered.CardsDraftBuffered);
 
                 UpdateCardsDraftBuffered = false;
                 OnPropertyChanged(nameof(CardsDraft));
@@ -332,7 +347,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 // Setup the card list popup content
                 var cardsWheeled = AllCards
                     .Where(i => CardsThatDidNotWheel.Contains(i.grpId))
-                    .Select(Mapper.Map<CardWpf>)
+                    .Select(mapper.Map<CardWpf>)
                     .ToArray();
 
                 CardsThatDidNotWheelVM.SetCards(CardChosenThatDidNotWheel, cardsWheeled);

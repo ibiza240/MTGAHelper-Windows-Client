@@ -1,13 +1,10 @@
 ﻿using AutoMapper;
-using MTGAHelper.Lib.Cache;
-using MTGAHelper.Tracker.DraftHelper.Shared.Config;
+using MTGAHelper.Entity.Config.App;
 using MTGAHelper.Tracker.WPF.Business;
 using MTGAHelper.Tracker.WPF.Business.Monitoring;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.ViewModels;
-using MTGAHelper.Tracker.WPF.Views;
 using SimpleInjector;
-using System.Collections.Generic;
 
 namespace MTGAHelper.Tracker.WPF.IoC
 {
@@ -15,17 +12,20 @@ namespace MTGAHelper.Tracker.WPF.IoC
     {
         public static Container RegisterDataPath(this Container container, string folderDataPath)
         {
-            container.RegisterInstance<Lib.Config.IDataPath>(new Lib.Config.DataFolderPath(folderDataPath));
+            container.RegisterInstance<IDataPath>(new DataFolderPath(folderDataPath));
             return container;
         }
 
         public static Container RegisterServicesApp(this Container container, ConfigModel configApp)
         {
+            var registration = Lifestyle.Transient.CreateRegistration(typeof(MainWindowVM), container);
+            container.AddRegistration(typeof(MainWindowVM), registration);
+            // disable this diagnostic. We (for now) don't want to deal with making all dependencies Singleton.
+            // we might in the future make this a scoped lifetime and enable LoosenedLifestyleMismatchBehavior for the container. This works great for now though.
+            registration.SuppressDiagnosticWarning(SimpleInjector.Diagnostics.DiagnosticType.DisposableTransientComponent, "This VM lives as long as the application");
+
             container.RegisterInstance(configApp);
-            container.Register<MainWindow>();
-            container.RegisterSingleton<IEmailProvider, EmailProvider>();
-            container.RegisterSingleton<ICacheLoader<ICollection<ConfigResolution>>, CacheLoaderConfigResolutions>();
-            container.RegisterSingleton<MainWindowVM>();
+            container.RegisterSingleton<DraftingVM>();
             container.RegisterSingleton<InMatchTrackerStateVM>();
             container.RegisterSingleton<ProcessMonitor>();
             container.RegisterSingleton<FileMonitor>();
@@ -37,8 +37,10 @@ namespace MTGAHelper.Tracker.WPF.IoC
             container.RegisterSingleton<StartupShortcutManager>();
             container.RegisterSingleton<DraftCardsPicker>();
             container.RegisterSingleton<MtgaResourcesLocator>();
+            //container.RegisterSingleton<ISupporterChecker, SupporterChecker>();
             container.Register<ExternalProviderTokenManager>();
             container.Register<DraftHelperRunner>();
+            //container.Register<CacheLoaderConfigResolutions>();
 
             return container;
         }

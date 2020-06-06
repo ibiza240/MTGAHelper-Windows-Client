@@ -29,7 +29,7 @@ namespace MTGAHelper.Tracker.WPF.Business
             await contentStream.CopyToAsync(stream);
         }
 
-        public string HttpClientGet_WithTimeoutNotification(string requestUri, double timeout)
+        public async Task<string> HttpClientGet_WithTimeoutNotification(string requestUri, double timeout)
         {
             using var client = httpClientFactory.Create(timeout);
 
@@ -37,10 +37,10 @@ namespace MTGAHelper.Tracker.WPF.Business
             {
                 try
                 {
-                    string raw = client.GetAsync(requestUri).Result.Content.ReadAsStringAsync().Result;
+                    string raw = await client.GetAsync(requestUri).Result.Content.ReadAsStringAsync();
                     return raw;
                 }
-                catch (WebException ex) when (ex.Status == WebExceptionStatus.Timeout)
+                catch (Exception ex)
                 {
                     Log.Warning(ex, "TimeoutNotification({requestUri}, {timeout})", requestUri, timeout);
                     bool doRequest = MessageBox.Show($"It appears the server didn't reply in time ({timeout} seconds). Do you want to retry? Choosing No will stop the program.{Environment.NewLine}{Environment.NewLine}Maybe the server is down? Go check https://mtgahelper.com and if that is the case, please retry later.",
@@ -49,13 +49,7 @@ namespace MTGAHelper.Tracker.WPF.Business
                     if (doRequest == false)
                         throw new ServerNotAvailableException();
                 }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Unknown error in TimeoutNotification({requestUri}, {timeout})", requestUri, timeout);
-                    return string.Empty;
-                }
             }
         }
-
     }
 }

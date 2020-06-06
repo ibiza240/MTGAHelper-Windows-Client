@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Lib
+﻿namespace MTGAHelper.Entity
 {
     public class UserWeightDto
     {

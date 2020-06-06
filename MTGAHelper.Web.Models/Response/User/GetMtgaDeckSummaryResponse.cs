@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using AutoMapper;
-using MTGAHelper.Entity.MtgaDeckStats;
 
 namespace MTGAHelper.Web.Models.Response.User
 {
@@ -8,9 +6,9 @@ namespace MTGAHelper.Web.Models.Response.User
     {
         public ICollection<MtgaDeckSummaryDto> Summary { get; set; }
 
-        public GetMtgaDeckSummaryResponse(ICollection<MtgaDeckSummary> summary)
+        public GetMtgaDeckSummaryResponse(ICollection<MtgaDeckSummaryDto> summary)
         {
-            Summary = Mapper.Map<ICollection<MtgaDeckSummaryDto>>(summary);
+            Summary = summary;
         }
     }
 

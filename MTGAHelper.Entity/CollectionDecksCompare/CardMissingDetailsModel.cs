@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Lib.CollectionDecksCompare
+﻿namespace MTGAHelper.Entity.CollectionDecksCompare
 {
     public class CardMissingDetailsModel
     {

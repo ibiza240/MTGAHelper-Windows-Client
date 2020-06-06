@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
+using MTGAHelper.Entity.MtgaOutputLog;
+
 
 namespace MTGAHelper.Entity.MtgaDeckStats
 {

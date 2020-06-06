@@ -1,8 +1,7 @@
-﻿using MTGAHelper.Entity;
-using MTGAHelper.Lib.CollectionDecksCompare;
-using MTGAHelper.Lib.Config;
+﻿using MTGAHelper.Entity.CollectionDecksCompare;
+using MTGAHelper.Entity.Config.Decks;
 
-namespace MTGAHelper.Lib.Model
+namespace MTGAHelper.Entity
 {
     public class DeckDetails
     {

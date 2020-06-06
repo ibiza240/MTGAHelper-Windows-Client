@@ -1,12 +1,14 @@
-﻿using MTGAHelper.Entity;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient;
-using Serilog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MTGAHelper.Entity;
+using MTGAHelper.Entity.MtgaOutputLog;
+using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient;
+using MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress;
+using Serilog;
+using Zone = MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress.Zone;
 
-namespace MTGAHelper.Lib.OutputLogProgress
+namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 {
     internal class GameStateDiffInterpreter
     {

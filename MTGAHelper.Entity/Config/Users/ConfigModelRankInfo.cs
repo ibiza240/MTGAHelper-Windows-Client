@@ -1,6 +1,4 @@
-﻿using MTGAHelper.Entity;
-
-namespace MTGAHelper.Lib.Config.Users
+﻿namespace MTGAHelper.Entity.Config.Users
 {
     public class ConfigModelRankInfo : Rank
     {

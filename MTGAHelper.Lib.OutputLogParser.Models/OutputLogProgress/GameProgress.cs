@@ -1,11 +1,11 @@
-﻿using MTGAHelper.Entity;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
-using Serilog;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MTGAHelper.Entity;
+using MTGAHelper.Entity.MtgaOutputLog;
+using Serilog;
 
-namespace MTGAHelper.Lib.OutputLogProgress
+namespace MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress
 {
     public class GameProgress
     {
@@ -30,7 +30,7 @@ namespace MTGAHelper.Lib.OutputLogProgress
         public Dictionary<int, IList<CardForTurn>> CardTransfersByTurn { get; set; } = new Dictionary<int, IList<CardForTurn>>();
 
         // For public usage
-        public Dictionary<int, IO.Reader.MtgaOutputLog.GRE.MatchToClient.GameStateMessage.Raw.Zone> Zones { get; set; }
+        public Dictionary<int, OutputLogParser.Models.GRE.MatchToClient.GameStateMessage.Zone> Zones { get; set; }
         public int systemSeatId { get; set; }
         public int systemSeatIdOpponent { get; set; }
         public DateTime LastMessage { get; set; }
@@ -57,7 +57,7 @@ namespace MTGAHelper.Lib.OutputLogProgress
             systemSeatIdOpponent = isPlayerSeat1 ? 2 : 1;
         }
 
-        public bool InitPlayerLibrary(ICollection<IO.Reader.MtgaOutputLog.GRE.MatchToClient.GameStateMessage.Raw.Zone> zones)
+        public bool InitPlayerLibrary(ICollection<OutputLogParser.Models.GRE.MatchToClient.GameStateMessage.Zone> zones)
         {
             var myLibrary = zones?.FirstOrDefault(i => i.type == "ZoneType_Library" && i.ownerSeatId == systemSeatId);
             var ids = myLibrary?.objectInstanceIds;
@@ -80,7 +80,7 @@ namespace MTGAHelper.Lib.OutputLogProgress
             return true;
         }
 
-        public void InitLibraries(ICollection<IO.Reader.MtgaOutputLog.GRE.MatchToClient.GameStateMessage.Raw.Zone> zones)
+        public void InitLibraries(ICollection<OutputLogParser.Models.GRE.MatchToClient.GameStateMessage.Zone> zones)
         {
             Zones = zones.ToDictionary(i => i.zoneId, i => i);
 

@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using MTGAHelper.Entity;
-using MTGAHelper.Lib.Config.Users;
 using MTGAHelper.Web.UI.Model.SharedDto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MTGAHelper.Entity.Config.Users;
 
 namespace MTGAHelper.Web.UI.Model.Response.User
 {
@@ -30,6 +30,7 @@ namespace MTGAHelper.Web.UI.Model.Response.User
             string playerName,
             DateTime date,
             string lastUploadHash,
+            IMapper mapper,
             ICollection<CardWithAmount> collection,
             Inventory inventory,
             IReadOnlyCollection<ConfigModelRankInfo> ranks,
@@ -38,7 +39,7 @@ namespace MTGAHelper.Web.UI.Model.Response.User
             PlayerName = playerName;
             CollectionDate = date.ToString("yyyy-MM-dd HH:mm:ss");
             LastUploadHash = lastUploadHash;
-            Cards = Mapper.Map<ICollection<CollectionCardDto>>(collection);
+            Cards = mapper.Map<ICollection<CollectionCardDto>>(collection);
 
             //if (Cards.Any(i => i.Color == null))
             //{
@@ -46,10 +47,10 @@ namespace MTGAHelper.Web.UI.Model.Response.User
             //    System.Diagnostics.Debugger.Break();
             //}
 
-            Inventory = inventory == null ? new InventoryResponseDto() : Mapper.Map<InventoryResponseDto>(inventory);
-            ConstructedRank = Mapper.Map<RankInfoDto>(ranks.FirstOrDefault(i => i.Format == RankFormatEnum.Constructed));
-            LimitedRank = Mapper.Map<RankInfoDto>(ranks.FirstOrDefault(i => i.Format == RankFormatEnum.Limited));
-            PlayerProgress = Mapper.Map<Dictionary<string, PlayerProgressDto>>(playerProgress);
+            Inventory = inventory == null ? new InventoryResponseDto() : mapper.Map<InventoryResponseDto>(inventory);
+            ConstructedRank = mapper.Map<RankInfoDto>(ranks.FirstOrDefault(i => i.Format == RankFormatEnum.Constructed));
+            LimitedRank = mapper.Map<RankInfoDto>(ranks.FirstOrDefault(i => i.Format == RankFormatEnum.Limited));
+            PlayerProgress = mapper.Map<Dictionary<string, PlayerProgressDto>>(playerProgress);
         }
     }
 

@@ -26,13 +26,11 @@ namespace MTGAHelper.Web.UI.Model.Response
 
         public DeckListResponse(int totalDecks, ICollection<T> decks)
         {
-            var util = new Util();
-
             TotalDecks = totalDecks;
             Decks = decks;
 
             foreach (var d in Decks)
-                d.Hash = util.To32BitFnv1aHash(d.Id);
+                d.Hash = Fnv1aHasher.To32BitFnv1aHash(d.Id);
         }
     }
 }

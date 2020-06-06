@@ -1,22 +1,27 @@
-﻿using AutoMapper;
-using MTGAHelper.Entity;
-using MTGAHelper.Lib.Model;
-using MTGAHelper.Web.Models;
-using MTGAHelper.Web.UI.Model.Response.Dto;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
+using MTGAHelper.Entity;
+using MTGAHelper.Web.Models;
+using MTGAHelper.Web.UI.Model.Response.Dto;
 
 namespace MTGAHelper.Web.UI.Model.Response
 {
     public class DeckResponse
     {
-        public DeckDto Deck { get; set; }
+        public DeckDto Deck { get; }
 
-        public DeckResponse(DeckTrackedDetails deckInfo, UtilManaCurve utilManaCurve)
+        public DeckResponse(DeckDto deck)
         {
-            var util = new Util();
+            Deck = deck;
+        }
 
+        public static DeckResponse FromDeckInfo(
+            DeckTrackedDetails deckInfo,
+            UtilManaCurve utilManaCurve,
+            IMapper mapper)
+        {
             var hCards = new Dictionary<bool, HashSet<string>>
             {
                 { true, new HashSet<string>() },
@@ -47,7 +52,7 @@ namespace MTGAHelper.Web.UI.Model.Response
                     //        hCards[i.IsSideboard].Contains(i.Card.name) ? 0 : (deckInfo.CardsRequired.ByCard.ContainsKey(i.Card) ?
                     //        (i.IsSideboard ? deckInfo.CardsRequired.ByCard[i.Card].NbMissingSideboard : deckInfo.CardsRequired.ByCard[i.Card].NbMissingMain) : 0),
                     //}
-                    Mapper.Map<DeckCardDto>(i)
+                    mapper.Map<DeckCardDto>(i)
                 );
 
                 info.Item2.NbMissing =
@@ -72,11 +77,11 @@ namespace MTGAHelper.Web.UI.Model.Response
                 .ThenByDescending(i => i.NbMissing)
                 .ToArray();
 
-            Deck = new DeckDto
+            var deck = new DeckDto
             {
                 OriginalDeckId = deckInfo.OriginalDeckId,
                 Id = deckInfo.Deck.Id,
-                Hash = util.To32BitFnv1aHash(deckInfo.OriginalDeckId),
+                Hash = Fnv1aHasher.To32BitFnv1aHash(deckInfo.OriginalDeckId),
                 Name = deckInfo.Deck.Name,
                 Url = deckInfo.Config.Url,
                 ScraperTypeId = deckInfo.Deck.ScraperType.Id,
@@ -84,13 +89,14 @@ namespace MTGAHelper.Web.UI.Model.Response
                 CardsSideboard = cards.Where(i => i.IsSideboard).Select(i => i.Card).ToArray(),
                 MtgaImportFormat = deckInfo.MtgaImportFormat,
                 CompareResults = compareResults,
-                ManaCurve = utilManaCurve.CalculateManaCurve(deckInfo.Deck.Cards.QuickCardsMain.Values.Cast<CardWithAmount>().ToArray())
+                ManaCurve = utilManaCurve.CalculateManaCurve(deckInfo.Deck.Cards.QuickCardsMain.Values
+                    .Cast<CardWithAmount>().ToArray())
             };
 
-            if (deckInfo.Deck is DeckAverageArchetype)
+            if (deckInfo.Deck is DeckAverageArchetype archetype)
             {
                 throw new Exception("TO REVISE");
-                Deck.CardsMainOther = ((DeckAverageArchetype)deckInfo.Deck).CardsMainOther.Select(i => new DeckCardDto
+                deck.CardsMainOther = archetype.CardsMainOther.Select(i => new DeckCardDto
                 {
                     Name = i.name,
                     Rarity = i.GetRarityEnum(false).ToString(),
@@ -100,6 +106,8 @@ namespace MTGAHelper.Web.UI.Model.Response
                     //ImageArtUrl = i.imageArtUrl,//.images["normal"]
                 }).ToArray();
             }
+
+            return new DeckResponse(deck);
         }
     }
 }

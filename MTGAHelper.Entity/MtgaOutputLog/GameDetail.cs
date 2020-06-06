@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
+namespace MTGAHelper.Entity.MtgaOutputLog
 {
     public enum CardForTurnEnum
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.IntermissionReq.Raw
+namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.IntermissionReq
 {
     public class IntermissionReqRaw : GreMatchToClientSubMessageBase
     {
@@ -16,13 +16,6 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.IntermissionR
     {
         public OptionPrompt optionPrompt { get; set; }
         public string responseType { get; set; }
-    }
-
-    public class Parameter
-    {
-        public string parameterName { get; set; }
-        public string type { get; set; }
-        public int numberValue { get; set; }
     }
 
     public class IntermissionPrompt

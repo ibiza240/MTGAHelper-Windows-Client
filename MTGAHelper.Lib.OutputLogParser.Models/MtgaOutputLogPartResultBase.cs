@@ -1,35 +1,22 @@
 ﻿using System;
-using MTGAHelper.Lib.OutputLogParser.Models;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
+namespace MTGAHelper.Lib.OutputLogParser.Models
 {
     public interface IMtgaOutputLogPartResult
     {
-        //ReaderMtgaOutputLogPartTypeEnum ResultType { get; }
         string Part { get; }
         string Prefix { get; }
         DateTime LogDateTime { get; }
         string SubPart { get; set; }
         long Timestamp { get; set; }
         string MatchId { get; set; }
-        //bool IsMessageSummarized { get; set; }
+        string LogTextKey { get; set; }
 
         IMtgaOutputLogPartResult SetCommonFields(string part, string prefix, DateTime logDateTime);
     }
 
     public interface IMtgaOutputLogPartResult<T> : IMtgaOutputLogPartResult
     {
-        //ReaderMtgaOutputLogPartTypeEnum ResultType { get; }
-        //string Part { get; }
-        //string Prefix { get; }
-        //DateTime LogDateTime { get; }
-        //string SubPart { get; set; }
-        //long Timestamp { get; set; }
-        //string MatchId { get; set; }
-        //bool IsMessageSummarized { get; set; }
-
-        //IMtgaOutputLogPartResult<T> SetCommonFields(string part, string prefix, DateTime logDateTime);
-
         T Raw { get; set; }
     }
 
@@ -41,8 +28,9 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
         public string Prefix { get; private set; }
         public long Timestamp { get; set; }
         public string MatchId { get; set; }
+        public string LogTextKey { get; set; }
         public DateTime LogDateTime { get; set; }
-        public T Raw { get; set; }
+        public virtual T Raw { get; set; }
 
         //public bool IsMessageSummarized { get; set; }
 

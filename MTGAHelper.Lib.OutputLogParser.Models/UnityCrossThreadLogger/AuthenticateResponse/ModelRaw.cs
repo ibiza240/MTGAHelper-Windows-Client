@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger.ClientConnected.Raw
+﻿namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
     public class AuthenticateResponseRaw
     {

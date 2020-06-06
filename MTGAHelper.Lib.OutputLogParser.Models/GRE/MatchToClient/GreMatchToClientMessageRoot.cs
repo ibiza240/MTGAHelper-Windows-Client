@@ -1,7 +1,7 @@
-﻿using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.MatchGameRoomStateChanged.Raw;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.MatchGameRoomStateChanged;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient
+namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient
 {
     public class GreMatchToClientMessageRoot
     {

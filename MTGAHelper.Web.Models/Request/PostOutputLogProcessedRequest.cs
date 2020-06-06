@@ -1,4 +1,5 @@
-﻿using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
+﻿using MTGAHelper.Entity.MtgaOutputLog;
+using MTGAHelper.Lib.OutputLogParser.Models;
 
 namespace MTGAHelper.Web.Models.Request
 {
@@ -14,5 +15,19 @@ namespace MTGAHelper.Web.Models.Request
         }
 
         public OutputLogResult OutputLogResult { get; set; }
+    }
+
+    public class PostOutputLogProcessedRequest2
+    {
+        public PostOutputLogProcessedRequest2()
+        {
+        }
+
+        public PostOutputLogProcessedRequest2(OutputLogResult2 result2)
+        {
+            OutputLogResult2 = result2;
+        }
+
+        public OutputLogResult2 OutputLogResult2 { get; set; }
     }
 }

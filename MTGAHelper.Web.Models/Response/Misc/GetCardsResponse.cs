@@ -1,21 +1,15 @@
-﻿using AutoMapper;
-using MTGAHelper.Entity;
+﻿using System.Collections.Generic;
 using MTGAHelper.Web.Models.SharedDto;
-using System.Collections.Generic;
 
 namespace MTGAHelper.Web.Models.Response.Misc
 {
     public class GetCardsResponse
     {
-        public ICollection<CardDtoFull> Cards { get; set; }
+        public ICollection<CardDtoFull> Cards { get; }
 
-        public GetCardsResponse()
+        public GetCardsResponse(ICollection<CardDtoFull> cards)
         {
-        }
-
-        public GetCardsResponse(ICollection<Card> cards)
-        {
-            Cards = Mapper.Map<ICollection<CardDtoFull>>(cards);
+            Cards = cards;
         }
     }
 }

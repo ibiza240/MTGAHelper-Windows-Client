@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace MTGAHelper.Lib.CollectionDecksCompare
+namespace MTGAHelper.Entity.CollectionDecksCompare
 {
     public class CardRequiredInfoByDeck
     {

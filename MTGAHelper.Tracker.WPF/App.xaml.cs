@@ -8,20 +8,18 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using AutoMapper;
-using AutoMapper.Configuration;
 using Microsoft.Extensions.Configuration;
 using MtgaHelper.Web.Models.IoC;
 using MTGAHelper.Entity;
-using MTGAHelper.Entity.IoC;
+using MTGAHelper.Lib.IoC;
 using MTGAHelper.Lib.OutputLogParser.IoC;
-using MTGAHelper.Tracker.DraftHelper.Shared;
 using MTGAHelper.Tracker.WPF.Business;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.Exceptions;
 using MTGAHelper.Tracker.WPF.IoC;
 using MTGAHelper.Tracker.WPF.Logging;
 using MTGAHelper.Tracker.WPF.Tools;
+using MTGAHelper.Tracker.WPF.ViewModels;
 using MTGAHelper.Tracker.WPF.Views;
 using MTGAHelper.Web.Models.Response.Misc;
 using MTGAHelper.Web.UI.Model.Response.Misc;
@@ -48,6 +46,8 @@ namespace MTGAHelper.Tracker.WPF
 
         private string FolderData;
 
+        private DataDownloader dataDownloader = new DataDownloader();
+
         //CacheSingleton<Dictionary<int, Card>> cacheCards;
 
         protected override void OnStartup(StartupEventArgs e)
@@ -71,11 +71,11 @@ namespace MTGAHelper.Tracker.WPF
 
                 ConfigureApp();
 
-                CheckForServerMessage();
+                await CheckForServerMessage();
 
-                CheckForUpdate();
+                await CheckForUpdate();
 
-                SetDateFormats();
+                await SetDateFormats();
 
                 // Get the local file up-to-date
                 StartupLogger.AppendLine("CheckDataAndDownloadIfOutOfDate(AllCardsCached2)");
@@ -87,20 +87,16 @@ namespace MTGAHelper.Tracker.WPF
 
                 // Set cache content from local file
                 StartupLogger.AppendLine("Verifying container configuration");
-                //Container.Verify();
+                Container.Verify();
 
                 // This requires cacheCards to be ready
                 StartupLogger.AppendLine("cacheCards");
-
-
-                Mapper.Initialize(Container.GetInstance<MapperConfigurationExpression>());
-                Mapper.AssertConfigurationIsValid();
 
                 // Add a log entry
                 StartupLogger.AppendLine("LoadMainWindow()");
 
                 // Create the main window instance
-                TrackerMainWindow = Container.GetInstance<MainWindow>();
+                TrackerMainWindow = new MainWindow(Container.GetInstance<MainWindowVM>());
             }
             catch (ServerNotAvailableException)
             {
@@ -129,12 +125,12 @@ namespace MTGAHelper.Tracker.WPF
             }
         }
 
-        private void CheckForUpdate()
+        private async Task CheckForUpdate()
         {
             StartupLogger.AppendLine("CheckForUpdate()");
-            string latestVersion = TryDownloadFromServer(() =>
+            string latestVersion = await TryDownloadFromServer(async () =>
             {
-                string raw = new DataDownloader().HttpClientGet_WithTimeoutNotification(DebugOrRelease.Server + "/api/misc/VersionTracker", 15);
+                string raw = await dataDownloader.HttpClientGet_WithTimeoutNotification(DebugOrRelease.Server + "/api/misc/VersionTracker", 15);
                 return TryDeserializeJson<GetVersionTrackerResponse>(raw).Version;
             });
 
@@ -153,12 +149,32 @@ namespace MTGAHelper.Tracker.WPF
 
             if (MessageBox.Show("A new version of the MTGAHelper Tracker is available, you must install it to continue. Proceed now?", "MTGAHelper", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                // Download latest auto-updater
                 string folderForConfigAndLog = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MTGAHelper");
                 string fileExe = Path.Combine(folderForConfigAndLog, "MTGAHelper.Tracker.AutoUpdater.exe");
-                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/Newtonsoft.Json.dll", Path.Combine(folderForConfigAndLog, "Newtonsoft.Json.dll"));
-                new WebClient().DownloadFile("https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.Tracker.AutoUpdater.exe", fileExe);
 
+                var isDownloaded = false;
+                int iRetry = 0;
+                while (isDownloaded == false)
+                {
+                    try
+                    {
+                        // Download latest auto-updater
+                        var wc = new WebClient();
+                        wc.DownloadFile("https://mtgahelper.com/download/Newtonsoft.Json.dll", Path.Combine(folderForConfigAndLog, "Newtonsoft.Json.dll"));
+                        wc.DownloadFile("https://mtgahelper.com/download/MTGAHelper.Tracker.AutoUpdater.exe", fileExe);
+                        isDownloaded = true;
+                    }
+                    catch (Exception)
+                    {
+                        iRetry++;
+                        // Sometimes connection closed unexpectedly
+                        if (iRetry >= 5)
+                        {
+                            MessageBox.Show("Failed to download the files for updating. Maybe the server is down? Go check https://mtgahelper.com and if that is the case, please retry later.");
+                            throw;
+                        }
+                    }
+                }
                 var ps = new ProcessStartInfo(fileExe)
                 {
                     UseShellExecute = true,
@@ -170,13 +186,13 @@ namespace MTGAHelper.Tracker.WPF
             Current.Shutdown();
         }
 
-        private void CheckForServerMessage()
+        private async Task CheckForServerMessage()
         {
             StartupLogger.AppendLine("CheckForServerMessage()");
 
-            var msgs = TryDownloadFromServer(() =>
+            var msgs = await TryDownloadFromServer(async () =>
                 {
-                    string raw = new DataDownloader().HttpClientGet_WithTimeoutNotification(DebugOrRelease.Server + "/api/misc/TrackerClientMessages", 15);
+                    string raw = await dataDownloader.HttpClientGet_WithTimeoutNotification(DebugOrRelease.Server + "/api/misc/TrackerClientMessages", 15);
                     return TryDeserializeJson<Dictionary<string, string>>(raw, true);
                 }
             );
@@ -272,7 +288,7 @@ namespace MTGAHelper.Tracker.WPF
         public static Container CreateContainer(ConfigModel configModelApp, string folderData)
         {
             var container = new Container();
-            container.Options.ConstructorResolutionBehavior = new InternalConstructorResolutionBehavior(container);
+            //container.Options.ConstructorResolutionBehavior = new InternalConstructorResolutionBehavior(container);
 
             //container.Register<IInputOutputOrchestrator, InputOutputOrchestratorMock>();
 
@@ -281,13 +297,18 @@ namespace MTGAHelper.Tracker.WPF
                 .RegisterServicesApp(configModelApp)
                 .RegisterServicesLibOutputLogParser()
                 .RegisterFileLoaders()
+                //.RegisterServicesDrafHelperShared()
+                //.RegisterServicesDrafHelper(new ConfigDraftHelper
+                //{
+                //    FolderData = folderData,
+                //})
                 .RegisterServicesTracker()
                 .RegisterServicesWebModels()
-                .RegisterServicesEntity()
+                .RegisterServicesShared()
                 .RegisterMapperConfig();
         }
 
-        private void SetDateFormats()
+        private async Task SetDateFormats()
         {
             StartupLogger.AppendLine("SetDateFormats()");
 
@@ -312,9 +333,9 @@ namespace MTGAHelper.Tracker.WPF
 
             if (!mustDownload) return;
 
-            var dateFormatsResponse = TryDownloadFromServer(() =>
+            var dateFormatsResponse = await TryDownloadFromServer(async () =>
             {
-                string raw = new DataDownloader().HttpClientGet_WithTimeoutNotification(DebugOrRelease.Server + "/api/misc/dateFormats", 15);
+                string raw = await dataDownloader.HttpClientGet_WithTimeoutNotification(DebugOrRelease.Server + "/api/misc/dateFormats", 15);
                 var response = TryDeserializeJson<GetDateFormatsResponse>(raw);
                 return response;
             });
@@ -333,13 +354,13 @@ namespace MTGAHelper.Tracker.WPF
             if (File.Exists(filePath))
                 fileContent = File.ReadAllText(filePath);
 
-            uint hashLocal = new Util().To32BitFnv1aHash(fileContent);
+            uint hashLocal = Fnv1aHasher.To32BitFnv1aHash(fileContent);
 
             // Compare hash to server
-            bool isUpToDate = TryDownloadFromServer(() =>
+            bool isUpToDate = await TryDownloadFromServer(async () =>
             {
                 StartupLogger.AppendLine($"isUpToDate({dataFileType})");
-                string raw = new DataDownloader().HttpClientGet_WithTimeoutNotification(DebugOrRelease.Server + $"/api/misc/filehash?id={dataFileType}&hash={hashLocal}", 15);
+                string raw = await dataDownloader.HttpClientGet_WithTimeoutNotification(DebugOrRelease.Server + $"/api/misc/filehash?id={dataFileType}&hash={hashLocal}", 15);
                 var response = TryDeserializeJson<bool>(raw);
                 return response;
             });
@@ -351,7 +372,7 @@ namespace MTGAHelper.Tracker.WPF
                 Log.Information("Data [{dataType}] out of date, redownloading", dataFileType);
                 await TryDownloadFromServer(async () =>
                 {
-                    await new DataDownloader().HttpClientDownloadFile_WithTimeoutNotification(DebugOrRelease.Server + $"/api/download/{dataFileType}", 60, filePath);
+                    await dataDownloader.HttpClientDownloadFile_WithTimeoutNotification(DebugOrRelease.Server + $"/api/download/{dataFileType}", 60, filePath);
                 });
             }
         }
@@ -380,7 +401,7 @@ namespace MTGAHelper.Tracker.WPF
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
-            TrackerMainWindow?.Config?.Save();
+            TrackerMainWindow?.ViewModel?.Config?.Save();
         }
 
         private static T TryDownloadFromServer<T>(Func<T> action)

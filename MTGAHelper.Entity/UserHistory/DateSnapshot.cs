@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Lib.UserHistory
+﻿namespace MTGAHelper.Entity.UserHistory
 {
     public class DateSnapshot
     {

@@ -1,4 +1,5 @@
 ﻿using MTGAHelper.Entity;
+using MTGAHelper.Lib.OutputLogParser.Models;
 using Serilog;
 
 namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking

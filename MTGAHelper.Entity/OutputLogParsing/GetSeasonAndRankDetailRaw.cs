@@ -1,15 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
+namespace MTGAHelper.Entity.OutputLogParsing
 {
-    public class LocParams
-    {
-        public int number1 { get; set; }
-        public int number2 { get; set; }
-        public int number3 { get; set; }
-    }
-
     public class RankInfo
     {
         public string image1 { get; set; }

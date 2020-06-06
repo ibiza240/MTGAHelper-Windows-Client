@@ -50,20 +50,6 @@ namespace MTGAHelper.Entity.OutputLogParsing
 
     public class LogInfoRequestRaw
     {
-        public string id { get; set; }
-        public string request { get; set; }
-    }
-
-    public class LogInfoRequestInnerRaw
-    {
-        public string jsonrpc { get; set; }
-        public string method { get; set; }
-        public Params @params { get; set; }
-        public string id { get; set; }
-    }
-
-    public class Params
-    {
         public string messageName { get; set; }
         public string humanContext { get; set; }
         public dynamic payloadObject { get; set; }

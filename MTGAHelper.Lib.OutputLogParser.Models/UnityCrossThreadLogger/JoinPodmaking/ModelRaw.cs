@@ -1,8 +1,7 @@
-﻿namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
+﻿namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
     public class JoinPodmakingRaw
     {
-        public string id { get; set; }
-        public string request { get; set; }
+        public string queueId { get; set; }
     }
 }

@@ -171,7 +171,7 @@ namespace MTGAHelper.Tracker.WPF.Config
 
         public string OrderLibraryCardsBy { get; set; } = "Converted Mana Cost";
 
-        public bool GameResolutionIsPanoramic { get; set; }
+        //public ConfigResolutionBlackBorders GameResolutionBlackBorders { get; set; }
 
         public bool ForceGameResolution { get; set; }
 

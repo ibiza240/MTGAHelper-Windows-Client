@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using AutoMapper;
 using MTGAHelper.Entity;
-using MTGAHelper.Lib.Cache;
+using MTGAHelper.Lib;
 
 namespace MTGAHelper.Web.UI.Shared
 {

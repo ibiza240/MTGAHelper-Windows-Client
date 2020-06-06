@@ -14,10 +14,31 @@ namespace MTGAHelper.Tracker.WPF.Business
     {
         [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
-        [DllImport("user32.dll")]
-        public static extern bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, int nFlags);
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetClientRect(IntPtr hWnd, out RECT lpRect);
+        //[DllImport("user32.dll")]
+        //public static extern bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, int nFlags);
+        //[DllImport("user32.dll")]
+        //public static extern IntPtr GetClientRect(IntPtr hWnd, out RECT lpRect);
+
+        //[DllImport("user32.dll")]
+        //public static extern IntPtr GetWindowDC(IntPtr hWnd);
+        //[DllImport("user32.dll")]
+        //public static extern IntPtr ReleaseDC(IntPtr handle, IntPtr hSrc);
+
+        //[DllImport("gdi32.dll")]
+        //public static extern IntPtr CreateCompatibleDC(IntPtr hWnd);
+        //[DllImport("gdi32.dll")]
+        //public static extern IntPtr CreateCompatibleBitmap(IntPtr hWnd, int width, int height);
+        //[DllImport("gdi32.dll")]
+        //public static extern IntPtr SelectObject(IntPtr hdcDest, IntPtr hBitmap);
+        //[DllImport("gdi32.dll")]
+        //public static extern IntPtr BitBlt(IntPtr hdcDest, int i1, int i2, int width, int height, IntPtr hdcSrc, int i3, int i4, CopyPixelOperation srcCopy);
+        //[DllImport("gdi32.dll")]
+        //public static extern IntPtr DeleteDC(IntPtr hWnd);
+        //[DllImport("gdi32.dll")]
+        //public static extern IntPtr DeleteObject(IntPtr hWnd);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool GetWindowInfo(IntPtr hWnd, out WINDOWINFO pwi);
 
         public static Bitmap TakeScreenshot(string processName)
         {
@@ -42,7 +63,7 @@ namespace MTGAHelper.Tracker.WPF.Business
 
         private static Bitmap TakeScreenshotWindow(string processName)
         {
-            Log.Information("TakeScreenshotWindow {procName}", processName ?? "NULL");
+            Log.Information("TakeScreenshotWindow {procName}", processName ?? "[no process]");
 
             Process proc = Process.GetProcessesByName(processName)[0];
             IntPtr hwnd = proc.MainWindowHandle;
@@ -58,35 +79,49 @@ namespace MTGAHelper.Tracker.WPF.Business
 
             Log.Information("TakeScreenshotWindow WindowSize {rc}", rc.Size);
 
-            Bitmap bmp = new Bitmap(rc.Width, rc.Height, PixelFormat.Format24bppRgb);
-            using (Graphics gfxBmp = Graphics.FromImage(bmp))
+            //Bitmap bmp = new Bitmap(rc.Width, rc.Height, PixelFormat.Format24bppRgb);
+            //using (Graphics gfxBmp = Graphics.FromImage(bmp))
+            //{
+            //    IntPtr hdcBitmap = gfxBmp.GetHdc();
+            //    PrintWindow(hwnd, hdcBitmap, 0);
+            //    gfxBmp.ReleaseHdc(hdcBitmap);
+            //}
+            WINDOWINFO wi;
+            var  windowRect = GetWindowRectLooped(hwnd);
+            GetWindowInfo(hwnd, out wi);
+
+            var captionHeight = wi.rcClient.Top - wi.rcWindow.Top;
+            var rect = new RECT(windowRect.Left + (int)wi.cxWindowBorders, windowRect.Top + captionHeight,
+                windowRect.Right - (int)wi.cxWindowBorders, windowRect.Bottom - (int)wi.cyWindowBorders);
+            Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb);
+            using (var g = Graphics.FromImage(bmp))
             {
-                IntPtr hdcBitmap = gfxBmp.GetHdc();
-                PrintWindow(hwnd, hdcBitmap, 0);
-                gfxBmp.ReleaseHdc(hdcBitmap);
+                g.FillRectangle(Brushes.Black, 0, 0, bmp.Width, bmp.Height); // fix black -> transparent
+                g.CopyFromScreen(rect.Location, Point.Empty, rect.Size, CopyPixelOperation.SourceCopy);
             }
             //bmp.Save(@"C:\Users\BL\source\repos\test.bmp");
+            return bmp;
 
-            // Adjust to client size
-            RECT rcSize;
-            GetClientRect(hwnd, out rcSize);
+            //// Adjust to client size
+            //RECT rcSize;
+            //GetClientRect(hwnd, out rcSize);
 
-            // Calculate border at the sides of the raw screenshot
-            var border = (rc.Width - rcSize.Width) / 2;
-            var y = rc.Height - border - rcSize.Height;
-            Bitmap windowContent = new Bitmap(rcSize.Width, rcSize.Height, PixelFormat.Format24bppRgb);
-            using (Graphics gfxBmp = Graphics.FromImage(windowContent))
-            {
-                gfxBmp.DrawImage(bmp, new Point(-border, -y));
-            }
+            //// Calculate border at the sides of the raw screenshot
+            //var border = (rc.Width - rcSize.Width) / 2;
+            //var y = rc.Height - border - rcSize.Height;
+            //Bitmap windowContent = new Bitmap(rcSize.Width, rcSize.Height, PixelFormat.Format24bppRgb);
+            //using (Graphics gfxBmp = Graphics.FromImage(windowContent))
+            //{
+            //    gfxBmp.DrawImage(bmp, new Point(-border, -y));
+            //}
 
-            //windowContent.Save(@"C:\Users\BL\source\repos\test.bmp");
-            return windowContent;
+            ////windowContent.Save(@"C:\Users\BL\source\repos\test.bmp");
+            //return windowContent;
         }
 
         static Bitmap TakeScreenshotFullscreen(string procName)
         {
-            Log.Information("TakeScreenshotFullscreen {procName}", procName ?? "NULL");
+            Log.Information("TakeScreenshotFullscreen {procName}", procName ?? "[no process]");
 
             if (procName != null)
             {
@@ -161,6 +196,27 @@ namespace MTGAHelper.Tracker.WPF.Business
 
             return rect;
         }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct WINDOWINFO
+    {
+        public uint cbSize;
+        public RECT rcWindow;
+        public RECT rcClient;
+        public uint dwStyle;
+        public uint dwExStyle;
+        public uint dwWindowStatus;
+        public uint cxWindowBorders;
+        public uint cyWindowBorders;
+        public ushort atomWindowType;
+        public ushort wCreatorVersion;
+
+        public WINDOWINFO(Boolean? filler) : this() // Allows automatic initialization of "cbSize" with "new WINDOWINFO(null/true/false)".
+        {
+            cbSize = (UInt32)(Marshal.SizeOf(typeof(WINDOWINFO)));
+        }
+
     }
 
     [StructLayout(LayoutKind.Sequential)]

@@ -221,7 +221,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// Application version
         /// </summary>
         public string Version =>
-            System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(2);
 
         /// <summary>
         /// Whether to show the game launcher

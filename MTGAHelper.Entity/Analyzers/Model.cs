@@ -1,8 +1,7 @@
-﻿using MTGAHelper.Entity;
-using System.Collections.Generic;
-using MTGAHelper.Lib.Config;
+﻿using System.Collections.Generic;
+using MTGAHelper.Entity.Config.Decks;
 
-namespace MTGAHelper.Lib.Analyzers.Cards
+namespace MTGAHelper.Entity.Analyzers
 {
 
     public class SimilarityGroup

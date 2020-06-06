@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using MTGAHelper.Entity;
-using MTGAHelper.Lib.Cache;
 using Serilog;
 
 namespace MTGAHelper.Lib.OutputLogParser
 {
     public class DraftPicksCalculator
     {
+        readonly IMapper mapper;
         readonly Dictionary<int, Card> allCards;
         //CacheSingleton<Dictionary<string, DraftRatings>> draftRatings;
         readonly Dictionary<string,
@@ -17,9 +17,11 @@ namespace MTGAHelper.Lib.OutputLogParser
                 (Dictionary<string, DraftRating> ratings, Dictionary<string, ICollection<DraftRatingTopCard>> topCardsByColor)>> ratingsBySourceSet;
 
         public DraftPicksCalculator(
+            IMapper mapper,
             CacheSingleton<Dictionary<int, Card>> cacheAllCards,
             CacheSingleton<Dictionary<string, DraftRatings>> draftRatings)
         {
+            this.mapper = mapper;
             this.allCards = cacheAllCards.Get();
             //this.draftRatings = draftRatings;
             var ratingsBySource = draftRatings.Get();
@@ -51,7 +53,6 @@ namespace MTGAHelper.Lib.OutputLogParser
         }
 
         public ICollection<CardForDraftPick> GetCardsForDraftPick(
-            string userId,
             ICollection<int> cardPool,
             ICollection<int> pickedCards,
             string source,
@@ -73,7 +74,7 @@ namespace MTGAHelper.Lib.OutputLogParser
             var dataUnordered = byCard
                 .Select(i =>
                 {
-                    var card = Mapper.Map<CardForDraftPick>(i);
+                    var card = mapper.Map<CardForDraftPick>(i);
 
                     try
                     {

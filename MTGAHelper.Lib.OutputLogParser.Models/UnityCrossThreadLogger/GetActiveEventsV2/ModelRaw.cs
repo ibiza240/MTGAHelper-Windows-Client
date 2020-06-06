@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
     public class GetActiveEventsV2Raw
     {

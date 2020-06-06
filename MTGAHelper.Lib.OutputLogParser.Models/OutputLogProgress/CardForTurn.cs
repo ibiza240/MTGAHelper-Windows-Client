@@ -1,6 +1,6 @@
-﻿using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
+﻿using MTGAHelper.Entity.MtgaOutputLog;
 
-namespace MTGAHelper.Lib.OutputLogProgress
+namespace MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress
 {
     public class CardForTurn
     {

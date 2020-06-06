@@ -1,7 +1,7 @@
 ﻿using MTGAHelper.Entity.Archetypes;
-using MTGAHelper.Lib.Config;
 using System.Collections.Generic;
 using System.Linq;
+using MTGAHelper.Entity.Config.Decks;
 
 namespace MTGAHelper.Web.UI.Model.Response.Meta
 {

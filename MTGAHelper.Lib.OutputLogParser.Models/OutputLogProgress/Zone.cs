@@ -1,10 +1,10 @@
-﻿using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
+﻿using MTGAHelper.Entity.MtgaOutputLog;
 
-namespace MTGAHelper.Lib.OutputLogProgress
+namespace MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress
 {
     public class Zone
     {
-        public Zone(IO.Reader.MtgaOutputLog.GRE.MatchToClient.GameStateMessage.Raw.Zone zone, int opponentSeatId, PlayerEnum playerFromInstanceId)
+        public Zone(OutputLogParser.Models.GRE.MatchToClient.GameStateMessage.Zone zone, int opponentSeatId, PlayerEnum playerFromInstanceId)
         {
             this.Name = zone.type;
             if (zone.ownerSeatId.HasValue)

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using AutoMapper;
 using MTGAHelper.Entity;
+using MTGAHelper.Lib;
 using MTGAHelper.Web.UI.Model.SharedDto;
 
 namespace MTGAHelper.Web.UI.Shared

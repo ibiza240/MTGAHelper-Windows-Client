@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using MTGAHelper.Entity;
-using MTGAHelper.Lib.Cache;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.ClientToMatch;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.GameStateMessage.Raw;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
+using MTGAHelper.Lib.OutputLogParser.Models;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.ClientToMatch;
-using MTGAHelper.Utility;
+using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient;
+using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.GameStateMessage;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
 using Serilog;
 
 namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking

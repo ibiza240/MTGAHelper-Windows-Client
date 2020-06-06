@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
+﻿namespace MTGAHelper.Lib.OutputLogParser.Models
 {
     public enum ZoneSimpleEnum
     {

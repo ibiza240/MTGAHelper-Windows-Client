@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using MTGAHelper.Entity.OutputLogParsing;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
-using Newtonsoft.Json;
+using MTGAHelper.Lib.OutputLogParser.Models;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
 
 namespace MTGAHelper.Lib.OutputLogParser
 {
@@ -32,7 +30,7 @@ namespace MTGAHelper.Lib.OutputLogParser
             {
                 //if (m.Part.Contains("\"duration\": 12.896253999999999,")) System.Diagnostics.Debugger.Break();
 
-                var matchDisconnected = m is StateChangedResult stateChanged && (stateChanged.Raw.Contains("\"new\":8}"));
+                var matchDisconnected = m is StateChangedResult stateChanged && stateChanged.SignifiesMatchEnd;
                 bool logRequestEndOfMatch = false;
                 //try
                 //{
@@ -45,8 +43,8 @@ namespace MTGAHelper.Lib.OutputLogParser
                 //}
                 if (m is LogInfoRequestResult logRequestContainer)
                 {
-                    var logRequest = JsonConvert.DeserializeObject<LogInfoRequestInnerRaw>(logRequestContainer.Raw.request);
-                    logRequestEndOfMatch = (logRequest.@params.humanContext.Contains("during a match") || logRequest.@params.humanContext == "End of match report");
+                    var logRequest = logRequestContainer.RequestParams;
+                    logRequestEndOfMatch = (logRequest.humanContext.Contains("during a match") || logRequest.humanContext == "End of match report");
                 }
 
                 if (matchDisconnected || logRequestEndOfMatch)

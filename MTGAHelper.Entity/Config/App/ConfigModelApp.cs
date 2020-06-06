@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace MTGAHelper.Lib.Config
+namespace MTGAHelper.Entity.Config.App
 {
     public enum ConfigAppFeatureEnum
     {
@@ -15,7 +15,7 @@ namespace MTGAHelper.Lib.Config
         public ICollection<string> Formats { get; set; }
     }
 
-    public class ConfigModelApp : IAccountPath, IConfigUsersPath, IDataPath
+    public class ConfigModelApp : IAccountPath, IConfigUsersPath, IDataPath, IConfigConnectionString
     {
         //public const string CURRENT_SET = "ELD";
 
@@ -43,6 +43,8 @@ namespace MTGAHelper.Lib.Config
         public Dictionary<string, ConfigModelSetInfo> InfoBySet { get; set; }
 
         public string CurrentSet { get; set; }
+
+        public string ConnectionString { get; set; }
 
         //public void BuildEmailConfig()
         //{

@@ -1,9 +1,8 @@
-﻿using MTGAHelper.Entity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
+namespace MTGAHelper.Entity.MtgaOutputLog
 {
     public enum GameOutcomeEnum
     {

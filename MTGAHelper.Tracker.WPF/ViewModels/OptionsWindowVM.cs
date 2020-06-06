@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using MTGAHelper.Entity;
-using MTGAHelper.Lib.Cache;
+using MTGAHelper.Lib;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.Tools;
 
@@ -172,11 +172,11 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <summary>
         /// Whether the game resolution is panoramic 
         /// </summary>
-        public bool GameResolutionIsPanoramic
-        {
-            get => _GameResolutionIsPanoramic;
-            set => SetField(ref _GameResolutionIsPanoramic, value, nameof(GameResolutionIsPanoramic));
-        }
+        //public ConfigResolutionBlackBorders GameResolutionBlackBorders
+        //{
+        //    get => _GameResolutionBlackBorders;
+        //    set => SetField(ref _GameResolutionBlackBorders, value, nameof(GameResolutionBlackBorders));
+        //}
 
         #endregion
 
@@ -284,7 +284,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <summary>
         /// Whether the game resolution is panoramic 
         /// </summary>
-        private bool _GameResolutionIsPanoramic;
+        //private ConfigResolutionBlackBorders _GameResolutionBlackBorders;
 
         #endregion
 

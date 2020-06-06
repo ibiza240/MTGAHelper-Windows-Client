@@ -1,8 +1,8 @@
 ﻿using MTGAHelper.Entity.OutputLogParsing;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
-    public class DraftMakePickResult : MtgaOutputLogPartResultBase<PayloadRaw<DraftMakePickRaw>>, IResultDraftPick//, IMtgaOutputLogPartResult<DraftMakePickRaw>
+    public class DraftMakePickResult : DraftResultBase//, IMtgaOutputLogPartResult<DraftMakePickRaw>
     {
         //public List<string> DraftPack => Raw.draftPack;
     }

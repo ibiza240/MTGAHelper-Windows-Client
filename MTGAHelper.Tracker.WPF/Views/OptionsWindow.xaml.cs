@@ -8,7 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using MTGAHelper.Entity;
-using MTGAHelper.Lib.Cache;
+using MTGAHelper.Lib;
 using Point = System.Windows.Point;
 using MTGAHelper.Tracker.WPF.Exceptions;
 
@@ -33,25 +33,18 @@ namespace MTGAHelper.Tracker.WPF.Views
         /// Dependency Injection Initializer
         /// </summary>
         /// <param name="mvm"></param>
-        /// <param name="configApp"></param>
-        /// <param name="draftRatings"></param>
-        /// <param name="draftHelperRunner"></param>
-        /// <param name="email"></param>
+        /// <param name="optionsVM"></param>
         /// <returns></returns>
         public OptionsWindow Init(
             MainWindowVM mvm,
-            ConfigModel configApp,
-            CacheSingleton<Dictionary<string, DraftRatings>> draftRatings,
-            DraftHelperRunner draftHelperRunner,
-            string email)
+            OptionsWindowVM optionsVM
+            )
         {
             MainWindowVM = mvm;
-            OptionsViewModel = Mapper.Map<OptionsWindowVM>(configApp);
-            OptionsViewModel.DraftRatings = draftRatings;
-            DataContext = OptionsViewModel;
-            DraftHelperRunner = draftHelperRunner;
-            ConfigApp = configApp;
-            Email = email;
+            DataContext = OptionsViewModel = optionsVM;
+            DraftHelperRunner = mvm.DraftHelperRunner;
+            ConfigApp = mvm.Config;
+            CardNames = mvm.AllCards.ToDictionary(i => i.grpId, i => i.name);
             return this;
         }
 
@@ -78,10 +71,7 @@ namespace MTGAHelper.Tracker.WPF.Views
         /// </summary>
         private ConfigModel ConfigApp { get; set; }
 
-        /// <summary>
-        /// Email used to validate the draft helper access
-        /// </summary>
-        private string Email { get; set; }
+        private Dictionary<int, string> CardNames;
 
         /// <summary>
         /// Reference to the main window view model for testing draft helper
@@ -138,68 +128,69 @@ namespace MTGAHelper.Tracker.WPF.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TestDraftHelperButton_Click(object sender, RoutedEventArgs e)
-        {
-            ConfigApp.ForceGameResolution = OptionsViewModel.ForceGameResolution;
-            ConfigApp.GameResolution = OptionsViewModel.GameResolution;
-            ConfigApp.GameResolutionIsPanoramic = OptionsViewModel.GameResolutionIsPanoramic;
+        //private void TestDraftHelperButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    ConfigApp.ForceGameResolution = OptionsViewModel.ForceGameResolution;
+        //    ConfigApp.GameResolution = OptionsViewModel.GameResolution;
+        //    ConfigApp.GameResolutionBlackBorders = OptionsViewModel.GameResolutionBlackBorders;
 
-            DraftHelperRunner.Set = "IKO";
+        //    DraftHelperRunner.Set = "IKO";
 
-            // Hide the options dialog and hide the main window
-            this.WindowState = WindowState.Minimized;
-            MainWindowVM.MinimizeWindow();
+        //    // Hide the options dialog and hide the main window
+        //    this.WindowState = WindowState.Minimized;
+        //    MainWindowVM.MinimizeWindow();
 
-            // Validate all the requirements to run draft helper (including taking the screenshot)
-            DraftHelperRunnerValidationResultEnum validation = DraftHelperRunnerValidationResultEnum.Unknown;
-            try
-            {
-                validation = DraftHelperRunner.Validate(Email);
-            }
-            catch (DraftHelperMockException ex)
-            {
-                validation = DraftHelperRunnerValidationResultEnum.NotAvailable;
-                MessageBox.Show(ex.Message, "Not available", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
-                return;
-            }
-            finally
-            {
-                // Restore the options dialog and main window
-                this.WindowState = WindowState.Normal;
-                MainWindowVM.RestoreWindow();
-            }
+        //    // Validate all the requirements to run draft helper (including taking the screenshot)
+        //    DraftHelperRunnerValidationResultEnum validation = DraftHelperRunnerValidationResultEnum.Unknown;
+        //    try
+        //    {
+        //        validation = DraftHelperRunner.Validate(ConfigApp.LimitedRatingsSource);
+        //    }
+        //    catch (DraftHelperMockException ex)
+        //    {
+        //        validation = DraftHelperRunnerValidationResultEnum.NotAvailable;
+        //        MessageBox.Show(ex.Message, "Not available", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
+        //        return;
+        //    }
+        //    finally
+        //    {
+        //        // Restore the options dialog and main window
+        //        this.WindowState = WindowState.Normal;
+        //        MainWindowVM.RestoreWindow();
+        //    }
 
-            // If the validation failed for any reason, provide a user output
-            if (validation != DraftHelperRunnerValidationResultEnum.Success)
-            {
-                string text = validation switch
-                {
-                    DraftHelperRunnerValidationResultEnum.SetMissing =>
-                    "DraftHelper doesn't know which set to draft",
-                    DraftHelperRunnerValidationResultEnum.UnknownConfigResolution =>
-                    "Impossible to determining the DraftHelper configuration for your game resolution",
-                    _ => "Unknown error",
-                };
-                MessageBox.Show(text, "Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK,
-                    MessageBoxOptions.DefaultDesktopOnly);
-            }
-            else
-            {
+        //    // If the validation failed for any reason, provide a user output
+        //    if (validation != DraftHelperRunnerValidationResultEnum.Success)
+        //    {
+        //        string text = validation switch
+        //        {
+        //            DraftHelperRunnerValidationResultEnum.SetMissing => "DraftHelper doesn't know which set to draft",
+        //            DraftHelperRunnerValidationResultEnum.NoRatingsForSet => $"The Ratings source '{ConfigApp.LimitedRatingsSource}' does not have ratings for set '{DraftHelperRunner.Set}'",
+        //            DraftHelperRunnerValidationResultEnum.UnknownConfigResolution => "Impossible to determining the DraftHelper configuration for your game resolution",
+        //            _ => "Unknown error",
+        //        };
+        //        MessageBox.Show(text, "Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK,
+        //            MessageBoxOptions.DefaultDesktopOnly);
+        //    }
+        //    else
+        //    {
 
-                var result = DraftHelperRunner.Run(15, "Deathsie");
+        //        var result = DraftHelperRunner.Run(15);
 
-                string textResult = result.Any() switch
-                {
-                    true =>
-                    $"{result.Count} cards detected:{Environment.NewLine}{string.Join(Environment.NewLine, result.Select(i => i.CardName))}",
-                    false => "No cards detected",
-                };
-                MessageBox.Show($"[Set: {DraftHelperRunner.Set}] {textResult}", "DraftHelper test", MessageBoxButton.OK,
-                    MessageBoxImage.Information, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
-            }
+        //        //var test = result.Where(i => CardNames.ContainsKey(i.CardId) == false).ToList();
+        //        var foundIds = result.Select(i => i.CardId).Where(i => i != 0).ToArray();
+        //        string textResult = result.Any() switch
+        //        {
+        //            true =>
+        //            $"{foundIds.Length} cards detected:{Environment.NewLine}{string.Join(Environment.NewLine, foundIds.Select(i => CardNames[i]))}",
+        //            false => "No cards detected",
+        //        };
+        //        MessageBox.Show($"[Set: {DraftHelperRunner.Set}] {textResult}", "DraftHelper test", MessageBoxButton.OK,
+        //            MessageBoxImage.Information, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
+        //    }
 
 
-        }
+        //}
 
         #endregion
     }

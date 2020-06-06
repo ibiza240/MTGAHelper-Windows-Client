@@ -1,8 +1,7 @@
-﻿using MTGAHelper.Entity;
-using MTGAHelper.Lib.CollectionDecksCompare;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using MTGAHelper.Entity.CollectionDecksCompare;
 
-namespace MTGAHelper.Lib
+namespace MTGAHelper.Entity
 {
     public class DashboardModel
     {

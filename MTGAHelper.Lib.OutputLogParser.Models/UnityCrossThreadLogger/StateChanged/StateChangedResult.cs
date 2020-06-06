@@ -1,10 +1,8 @@
-﻿namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
+﻿namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
-    public class StateChangedResult : MtgaOutputLogPartResultBase<string>, ITagMatchResult//, IMtgaOutputLogPartResult<RankUpdatedRaw>
+    public class StateChangedResult : MtgaOutputLogPartResultBase<StateChangedRaw>, ITagMatchResult//, IMtgaOutputLogPartResult<RankUpdatedRaw>
     {
-        //public override ReaderMtgaOutputLogPartTypeEnum ResultType => ReaderMtgaOutputLogPartTypeEnum.RankUpdated;
-
-        //public new RankUpdatedRaw Raw { get; set; }
+        public bool SignifiesMatchEnd => Raw.@new == 8;
     }
 
 }

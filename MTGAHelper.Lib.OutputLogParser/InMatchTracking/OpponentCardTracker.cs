@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using MTGAHelper.Utility;
+using MTGAHelper.Lib.OutputLogParser.Models;
 using Serilog;
 
 namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking

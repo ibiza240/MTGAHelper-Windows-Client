@@ -1,9 +1,10 @@
-﻿using MTGAHelper.Entity;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using MTGAHelper.Entity;
+using MTGAHelper.Entity.Config.Decks;
+using Newtonsoft.Json;
 
-namespace MTGAHelper.Entity
+namespace MTGAHelper.Entity.Config.Users
 {
     public enum FormatEnum
     {
@@ -11,10 +12,7 @@ namespace MTGAHelper.Entity
         Standard,
         Historic
     }
-}
 
-namespace MTGAHelper.Lib.Config
-{
     public enum UserPreferenceEnum
     {
         Unknown,
@@ -47,15 +45,15 @@ namespace MTGAHelper.Lib.Config
         public DateTime LastLoginUtc { get; set; } = DateTime.UtcNow;
         public int NbLogin { get; set; }
         public Dictionary<RarityEnum, UserWeightDto> Weights { get; set; } = new Dictionary<RarityEnum, UserWeightDto>
-        // Default weights but can be changed
-        {
-            {  RarityEnum.Mythic, new UserWeightDto(150, 1) },
-            {  RarityEnum.RareLand, new UserWeightDto(0, 0) },
-            {  RarityEnum.RareNonLand, new UserWeightDto(120, 1) },
-            {  RarityEnum.Uncommon, new UserWeightDto(30, 1) },
-            {  RarityEnum.Common, new UserWeightDto(40, 1) },
-            {  RarityEnum.Other, new UserWeightDto(0, 0) },
-        };
+            // Default weights but can be changed
+            {
+                {  RarityEnum.Mythic, new UserWeightDto(150, 1) },
+                {  RarityEnum.RareLand, new UserWeightDto(0, 0) },
+                {  RarityEnum.RareNonLand, new UserWeightDto(120, 1) },
+                {  RarityEnum.Uncommon, new UserWeightDto(30, 1) },
+                {  RarityEnum.Common, new UserWeightDto(40, 1) },
+                {  RarityEnum.Other, new UserWeightDto(0, 0) },
+            };
 
         //public MtgaUserProfile MtgaUserProfile { get; set; } = new MtgaUserProfile();
 

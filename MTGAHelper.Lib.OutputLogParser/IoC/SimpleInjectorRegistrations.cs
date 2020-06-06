@@ -1,18 +1,11 @@
-﻿using System.Collections.Generic;
-using MTGAHelper.Entity;
-using MTGAHelper.Lib.Cache;
-using MTGAHelper.Lib.CacheLoaders;
-using MTGAHelper.Lib.EventsSchedule;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.ClientToMatch;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
-using MTGAHelper.Lib.Ioc;
+﻿using MTGAHelper.Lib.IoC;
+using MTGAHelper.Lib.OutputLogParser.EventsSchedule;
 using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.ClientToMatch;
-using MTGAHelper.Lib.OutputLogProgress;
-using MTGAHelper.Web.UI.Shared;
+using MTGAHelper.Lib.OutputLogParser.OutputLogProgress;
+using MTGAHelper.Lib.OutputLogParser.Readers;
+using MTGAHelper.Lib.OutputLogParser.Readers.GreMessageType;
+using MTGAHelper.Lib.OutputLogParser.Readers.UnityCrossThreadLogger;
 using SimpleInjector;
 
 namespace MTGAHelper.Lib.OutputLogParser.IoC
@@ -29,68 +22,43 @@ namespace MTGAHelper.Lib.OutputLogParser.IoC
             container.Collection.Append<AutoMapper.Profile, MapperProfileLibOutputLogParser>(Lifestyle.Singleton);
 
             container.Register<ReaderMtgaOutputLog>();
-            container.Register<MtgaOutputLogResultsPreparer2>();
-            container.Register<ReaderMtgaOutputLogUnityCrossThreadLogger>();
-            container.Register<GetDecksListV3Converter>();
-            container.Register<GetCombinedRankInfoConverter>();
-            container.Register<GetPlayerV3CardsConverter>();
-            container.Register<GetPlayerInventoryConverter>();
-            container.Register<DeckSubmitConverter>();
-            container.Register<MatchCreatedConverter>();
-            //container.Register<DuelSceneGameStopConverter>();
-            //container.Register<DuelSceneSideboardingStartConverter>();
-            //container.Register<DuelSceneSideboardingStopConverter>();
-            container.Register<AuthenticateResponseConverter>();
-            container.Register<MythicRatingUpdatedConverter>();
-            container.Register<RankUpdatedConverter>();
-            container.Register<InventoryUpdatedConverter>();
-            container.Register<ReaderMtgaOutputLogGre>();
-            container.Register<ReaderMtgaOutputLogGreMatchToClient>();
+            //container.Register<ReaderMtgaOutputLogGre>();
             container.Register<ReaderDetailedLogs>();
+            container.Register<ReaderMessageSummarized>();
             container.Register<ReaderAccountsClient>();
-            container.Register<IntermissionReqConverter>();
-            container.Register<ConnectRespConverter>();
-            container.Register<MulliganReqConverter>();
-            container.Register<GameStateMessageConverter>();
-            container.Register<GetActiveEventsV2Converter>();
-            container.Register<GetEventPlayerCourseV2Converter>();
-            container.Register<GetEventPlayerCoursesV2Converter>();
-            container.Register<CompleteDraftConverter>();
-            container.Register<SubmitDeckReqConverter>();
-            container.Register<LogInfoRequestConverter>();
-            container.Register<GetPreconDecksV3Converter>();
-            container.Register<DraftStatusConverter>();
-            container.Register<DraftMakePickConverter>();
-            container.Register<CrackBoostersConverter>();
-            container.Register<CompleteVaultConverter>();
-            container.Register<StateChangedConverter>();
+            container.Register<ReaderAccountsAccountClient>();
+            container.Register<ReaderMtgaOutputLogUnityCrossThreadLogger>();
+            container.Collection.Register<IMessageReaderUnityCrossThreadLogger>(typeof(IMessageReaderUnityCrossThreadLogger).Assembly);
+            container.Collection.Register<IMessageReaderRequestToServer>(typeof(IMessageReaderRequestToServer).Assembly);
+
+            container.Register<AuthenticateResponseConverter>();
+
+            // === GreMessageType readers === //
             container.Register<DieRollResultsRespConverter>();
-            container.Register<GetPlayerProgressConverter>();
-            container.Register<GetSeasonAndRankDetailConverter>();
-            container.Register<EventClaimPrizeConverter>();
-            container.Register<PayEntryConverter>();
-            container.Register<ProgressionGetAllTracksConverter>();
-            container.Register<GetPlayerQuestsConverter>();
-            container.Register<ClientToMatchConverterGeneric>();
+            container.Register<GameStateMessageConverter>();
+            container.Register<GreConnectRespConverter>();
+            container.Register<GroupReqConverter>();
+            container.Register<IntermissionReqConverter>();
+            container.Register<MulliganReqConverter>();
+            container.Register<QueuedGameStateMessageConverter>();
+            container.Register<SelectNReqConverter>();
+            container.Register<SubmitDeckReqConverter>();
+
+            // === ClientToMatch readers === //
             container.Register<ClientToMatchConverter<PayloadSubmitDeckResp>>();
             container.Register<ClientToMatchConverter<PayloadEnterSideboardingReq>>();
-            container.Register<PostMatchUpdateConverter>();
-            container.Register<JoinPodmakingConverter>();
-            container.Register<MakeHumanDraftPickConverter>();
-            container.Register<SelectNReqConverter>();
-            container.Register<GroupReqConverter>();
-            container.Register<ReaderMessageSummarized>();
-            container.Register<ZipDeflator>();
+
+            container.Register<LogSplitter>();
+            container.Register<MtgaOutputLogResultsPreparer>();
             container.Register<OutputLogMessagesBatcher>();
+            container.Register<ZipDeflator>();
 
             return container;
         }
 
         public static Container RegisterFileLoaders(this Container container)
         {
-            container.RegisterSingleton<ICacheLoader<Dictionary<int, Set>>, CacheLoaderSets>();
-            container.RegisterSingleton<ICacheLoader<Dictionary<string, DraftRatings>>, CacheLoaderDraftRatings>();
-            container.RegisterSingleton<ICacheLoader<Dictionary<int, Card>>, CacheLoaderAllCards>();
+            container.RegisterFileLoadersShared();
             container.RegisterSingleton<IPossibleDateFormats, DateFormatsFromFile>();
 
             return container;

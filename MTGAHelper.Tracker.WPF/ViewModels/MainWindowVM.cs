@@ -4,7 +4,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using AutoMapper;
+using MTGAHelper.Entity;
+using MTGAHelper.Lib;
+using MTGAHelper.Lib.OutputLogParser;
 using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
+using MTGAHelper.Tracker.WPF.Business;
+using MTGAHelper.Tracker.WPF.Business.Monitoring;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.Tools;
 using MTGAHelper.Web.Models.Response.Account;
@@ -17,25 +23,46 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
     {
         #region Constructor
 
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        /// <param name="statusBlinker"></param>
-        /// <param name="inMatchState"></param>
-        /// <param name="config"></param>
-        public MainWindowVM(StatusBlinker statusBlinker, InMatchTrackerStateVM inMatchState, ConfigModel config)
+        public MainWindowVM(StatusBlinker statusBlinker, InMatchTrackerStateVM inMatchState, ConfigModel config, DraftingVM draftingVM,
+            IMapper mapper,
+            ProcessMonitor processMonitor,
+            ServerApiCaller api,
+            StartupShortcutManager startupManager,
+            MtgaResourcesLocator resourcesLocator,
+            FileMonitor fileMonitor,
+            DraftCardsPicker draftHelper,
+            ReaderMtgaOutputLog readerMtgaOutputLog,
+            InGameTracker2 inMatchTracker,
+            ExternalProviderTokenManager tokenManager,
+            PasswordHasher passwordHasher,
+            CacheSingleton<Dictionary<string, DraftRatings>> draftRatings,
+            DraftHelperRunner draftHelperRunner,
+            //IEmailProvider emailProvider,
+            ICollection<Card> allCards)
         {
-            // Set the reference the config
-            Config = config;
-
             // Set the status blinker reference
             StatusBlinker = statusBlinker;
-
             // Set the network status emission handler
             StatusBlinker.EmitStatus += status => { NetworkStatus = status; };
 
-            // Set the match state reference
             InMatchState = inMatchState;
+            Config = config;
+            DraftingVM = draftingVM;
+            Mapper = mapper;
+            ProcessMonitor = processMonitor;
+            Api = api;
+            StartupManager = startupManager;
+            ResourcesLocator = resourcesLocator;
+            FileMonitor = fileMonitor;
+            DraftHelper = draftHelper;
+            ReaderMtgaOutputLog = readerMtgaOutputLog;
+            InMatchTracker = inMatchTracker;
+            TokenManager = tokenManager;
+            PasswordHasher = passwordHasher;
+            DraftRatings = draftRatings;
+            DraftHelperRunner = draftHelperRunner;
+            //this.emailProvider = emailProvider;
+            AllCards = allCards;
 
             // Set the initial state of the compression
             SetCompressedCardList(Config.CardListCollapsed);
@@ -82,7 +109,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <summary>
         /// The view model for the opponent window
         /// </summary>
-        public OpponentWindowVM OpponentWindowVM { get; } 
+        public OpponentWindowVM OpponentWindowVM { get; }
 
         /// <summary>
         /// Card list sort type
@@ -252,6 +279,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// </summary>
         private readonly StatusBlinker StatusBlinker;
 
+        //readonly IEmailProvider emailProvider;
+
         /// <summary>
         /// Whether the initial setup is complete
         /// </summary>
@@ -295,7 +324,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         internal void SetMainWindowContext(WindowContext newContext)
         {
             // Confirm that the user has signed-in before changing the context
-            if (Context != WindowContext.Welcome)
+            if (Context != WindowContext.Welcome && Context != newContext)
                 Context = newContext;
         }
 
@@ -305,15 +334,15 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <param name="account"></param>
         internal void SetSignedIn(AccountResponse account)
         {
-            // Set the account
             Account = account;
 
-            // Clear the sign-in required flag
             SetProblem(ProblemsFlags.SigninRequired, Account.IsAuthenticated == false);
 
-            // If the account is authenticated, set the main context to Home
             if (Account.IsAuthenticated)
+            {
                 Context = WindowContext.Home;
+                //emailProvider.Email = account.Email;
+            }
         }
 
         /// <summary>
@@ -359,54 +388,54 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             switch (e.PropertyName)
             {
                 case nameof(PositionLeft):
-                {
-                    WindowSettings.Position.X = PositionLeft;
-                    break;
-                }
-                case nameof(PositionTop):
-                {
-                    WindowSettings.Position.Y = PositionTop;
-                    break;
-                }
-                case nameof(WindowWidth):
-                {
-                    WindowSettings.Size.X = WindowWidth;
-                    break;
-                }
-                case nameof(WindowHeight):
-                {
-                    WindowSettings.Size.Y = WindowHeight;
-                    break;
-                }
-                case nameof(WindowOpacity):
-                {
-                    WindowSettings.Opacity = WindowOpacity;
-                    break;
-                }
-                case nameof(WindowTopmost):
-                {
-                    WindowSettings.Topmost = WindowTopmost;
-                    break;
-                }
-                case nameof(AnimatedIcon):
-                {
-                    Config.AnimatedIcon = AnimatedIcon;
-                    break;
-                }
-                case nameof(Context):
-                {
-                    // Handle context changes related to window state if AutoShowHide is enabled
-                    if (Config.AutoShowHideForMatch)
                     {
-                        // If the context is Home, hide the window, otherwise restore it
-                        if (Context == WindowContext.Home)
-                            MinimizeWindow();
-                        else
-                            RestoreWindow();
+                        WindowSettings.Position.X = PositionLeft;
+                        break;
                     }
+                case nameof(PositionTop):
+                    {
+                        WindowSettings.Position.Y = PositionTop;
+                        break;
+                    }
+                case nameof(WindowWidth):
+                    {
+                        WindowSettings.Size.X = WindowWidth;
+                        break;
+                    }
+                case nameof(WindowHeight):
+                    {
+                        WindowSettings.Size.Y = WindowHeight;
+                        break;
+                    }
+                case nameof(WindowOpacity):
+                    {
+                        WindowSettings.Opacity = WindowOpacity;
+                        break;
+                    }
+                case nameof(WindowTopmost):
+                    {
+                        WindowSettings.Topmost = WindowTopmost;
+                        break;
+                    }
+                case nameof(AnimatedIcon):
+                    {
+                        Config.AnimatedIcon = AnimatedIcon;
+                        break;
+                    }
+                case nameof(Context):
+                    {
+                        // Handle context changes related to window state if AutoShowHide is enabled
+                        if (Config.AutoShowHideForMatch)
+                        {
+                            // If the context is Home, hide the window, otherwise restore it
+                            if (Context == WindowContext.Home)
+                                MinimizeWindow();
+                            else
+                                RestoreWindow();
+                        }
 
-                    break;
-                }
+                        break;
+                    }
             }
         }
 
@@ -441,7 +470,21 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public ProblemsFlags Problems { get; private set; } = ProblemsFlags.None;
 
-        public DraftingVM DraftingVM { get; set; } = new DraftingVM();
+        public DraftingVM DraftingVM { get; }
+        public IMapper Mapper { get; }
+        public ProcessMonitor ProcessMonitor { get; }
+        public ServerApiCaller Api { get; }
+        public StartupShortcutManager StartupManager { get; }
+        public MtgaResourcesLocator ResourcesLocator { get; }
+        public FileMonitor FileMonitor { get; }
+        public DraftCardsPicker DraftHelper { get; }
+        public ReaderMtgaOutputLog ReaderMtgaOutputLog { get; }
+        public InGameTracker2 InMatchTracker { get; }
+        public ExternalProviderTokenManager TokenManager { get; }
+        public PasswordHasher PasswordHasher { get; }
+        public CacheSingleton<Dictionary<string, DraftRatings>> DraftRatings { get; }
+        public DraftHelperRunner DraftHelperRunner { get; }
+        public ICollection<Card> AllCards { get; }
 
         private string CollectionDateAsOf =>
             string.IsNullOrWhiteSpace(Collection.CollectionDate) || Collection.CollectionDate.StartsWith("0001")

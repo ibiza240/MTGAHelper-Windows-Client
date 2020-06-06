@@ -1,6 +1,6 @@
 ﻿using MTGAHelper.Entity.OutputLogParsing;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
     public class MatchCreatedResult : MtgaOutputLogPartResultBase<PayloadRaw<MatchCreatedRaw>>, ITagMatchResult//, IMtgaOutputLogPartResult<MatchCreatedRaw>
     {

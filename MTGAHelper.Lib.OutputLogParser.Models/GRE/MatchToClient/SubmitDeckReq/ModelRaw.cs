@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.SubmitDeckReq.Raw
+namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.SubmitDeckReq
 {
     public class SubmitDeckReqRaw : GreMatchToClientSubMessageBase
     {

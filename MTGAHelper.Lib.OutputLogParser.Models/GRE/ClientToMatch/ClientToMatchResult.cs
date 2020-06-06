@@ -1,7 +1,4 @@
-﻿using MTGAHelper.Entity.OutputLogParsing;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.ClientToMatch.Raw;
-
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.ClientToMatch
+﻿namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.ClientToMatch
 {
     public class ClientToMatchResultGeneric : MtgaOutputLogPartResultBase<ClientToMatchRawGeneric>, ITagMatchResult
     {

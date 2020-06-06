@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using AutoMapper;
 using MTGAHelper.Entity;
 using MTGAHelper.Web.UI.Model.SharedDto;
 
@@ -22,19 +21,5 @@ namespace MTGAHelper.Web.Models.Response.User
         public DraftRatingTopCard TopCommonCard { get; set; }
         public ICollection<string> Colors { get; set; }
         public string ImageArtUrl { get; set; }
-    }
-
-    public class GetCardsForDraftPickResponse
-    {
-        public ICollection<CardForDraftPickDto> CardsForDraft { get; set; }
-
-        public GetCardsForDraftPickResponse()
-        {
-        }
-
-        public GetCardsForDraftPickResponse(ICollection<CardForDraftPick> data)
-        {
-            CardsForDraft = Mapper.Map<ICollection<CardForDraftPickDto>>(data);
-        }
     }
 }

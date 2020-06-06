@@ -11,7 +11,6 @@ namespace MTGAHelper.Entity
         DeckCards Cards { get; }
 
         string Id { get; }
-        string GetId();
 
         bool FilterName(string filter);
         bool FilterColor(string filter);
@@ -21,8 +20,6 @@ namespace MTGAHelper.Entity
 
     public abstract class DeckBase : IDeck
     {
-        readonly Util util = new Util();
-
         protected DeckBase(string name, ScraperType scraperType)
         {
             Name = name;
@@ -43,11 +40,11 @@ namespace MTGAHelper.Entity
 
             var m = string.Join("_", cardsMain);
             var s = string.Join("_", cardsSideboard);
-            var id = util.To32BitFnv1aHash($"{m}|{s}");
+            var id = Fnv1aHasher.To32BitFnv1aHash($"{m}|{s}");
 
             return $"{ScraperType}_{id}";
         }
-        
+
         public bool FilterSource(string scraperTypeId, string filter)
         {
             if (string.IsNullOrWhiteSpace(filter))

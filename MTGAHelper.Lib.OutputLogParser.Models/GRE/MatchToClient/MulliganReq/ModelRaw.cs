@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.MulliganReq.Raw
+namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.MulliganReq
 {
     public class MulliganReqRaw : GreMatchToClientSubMessageBase
     {
-        public Prompt prompt { get; set; }
-        public NonDecisionPlayerPrompt nonDecisionPlayerPrompt { get; set; }
+        public MulPrompt prompt { get; set; }
+        public MulNonDecisionPlayerPrompt nonDecisionPlayerPrompt { get; set; }
     }
 
     public class Choice
@@ -14,10 +14,10 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.MulliganReq.R
         public int responseValue { get; set; }
     }
 
-    public class Prompt
+    public class MulPrompt
     {
         public int promptId { get; set; }
-        public List<Parameter> parameters { get; set; }
+        public List<MulParameter> parameters { get; set; }
         public List<Choice> choices { get; set; }
     }
 
@@ -27,7 +27,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.MulliganReq.R
         public string id { get; set; }
     }
 
-    public class Parameter
+    public class MulParameter
     {
         public string parameterName { get; set; }
         public string type { get; set; }
@@ -35,9 +35,9 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.MulliganReq.R
         public int? numberValue { get; set; }
     }
 
-    public class NonDecisionPlayerPrompt
+    public class MulNonDecisionPlayerPrompt
     {
         public int promptId { get; set; }
-        public List<Parameter> parameters { get; set; }
+        public List<MulParameter> parameters { get; set; }
     }
 }

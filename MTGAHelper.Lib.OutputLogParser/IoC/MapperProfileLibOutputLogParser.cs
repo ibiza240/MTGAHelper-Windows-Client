@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using AutoMapper;
 using MTGAHelper.Entity;
+using MTGAHelper.Entity.MtgaOutputLog;
 using MTGAHelper.Entity.OutputLogParsing;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
 
 namespace MTGAHelper.Lib.OutputLogParser.IoC
 {

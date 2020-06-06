@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using MTGAHelper.Lib.EventsSchedule;
+using MTGAHelper.Lib.OutputLogParser.EventsSchedule;
 
-namespace MTGAHelper.Web.UI.Shared
+namespace MTGAHelper.Lib.OutputLogParser.IoC
 {
     public class AutoMapperEventNameToTypeConverter : IValueConverter<string, string>
     {

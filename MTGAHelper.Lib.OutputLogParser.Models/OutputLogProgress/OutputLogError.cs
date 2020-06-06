@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace MTGAHelper.Lib.OutputLogProgress
+namespace MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress
 {
     public enum OutputLogErrorType
     {

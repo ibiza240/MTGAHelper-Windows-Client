@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MTGAHelper.Entity;
+using MTGAHelper.Entity.Config.Users;
 using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Entity.UserHistory;
-using MTGAHelper.Lib.Config.Users;
-using MTGAHelper.Lib.UserHistory;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
+namespace MTGAHelper.Entity.MtgaOutputLog
 {
     public interface ILockableOutputLogResultData<T>
     {

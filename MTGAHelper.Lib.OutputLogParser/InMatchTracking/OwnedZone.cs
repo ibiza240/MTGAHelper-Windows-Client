@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MTGAHelper.Lib.OutputLogParser.Models;
 using static MTGAHelper.Lib.OutputLogParser.InMatchTracking.OwnedZone;
 
 namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking

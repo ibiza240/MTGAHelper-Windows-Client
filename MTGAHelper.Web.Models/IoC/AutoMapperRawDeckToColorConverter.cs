@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoMapper;
 using MTGAHelper.Entity;
+using MTGAHelper.Lib;
 using Serilog;
 
 namespace MTGAHelper.Web.UI.Shared

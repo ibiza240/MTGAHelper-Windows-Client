@@ -4,7 +4,9 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using MTGAHelper.Entity;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
+using MTGAHelper.Entity.MtgaOutputLog;
+using MTGAHelper.Lib.OutputLogParser.Models;
+using MTGAHelper.Web.Models.Request;
 using Newtonsoft.Json;
 
 namespace MTGAHelper.ConsoleSync.Services
@@ -13,21 +15,7 @@ namespace MTGAHelper.ConsoleSync.Services
     {
         public ICollection<Card> cards { get; set; }
     }
-
-    public class PostOutputLogProcessedRequest
-    {
-        public PostOutputLogProcessedRequest()
-        {
-        }
-
-        public PostOutputLogProcessedRequest(OutputLogResult result)
-        {
-            OutputLogResult = result;
-        }
-
-        public OutputLogResult OutputLogResult { get; set; }
-    }
-
+    
     public class ServerApiCaller
     {
         readonly string baseAddress = "https://mtgahelper.com";
@@ -75,9 +63,10 @@ namespace MTGAHelper.ConsoleSync.Services
             }
         }
 
-        internal void UploadOutputLogResult(string userId, OutputLogResult result)
+        internal void UploadOutputLogResult(string userId, OutputLogResult result, OutputLogResult2 result2)
         {
             PostResponseSimple("/api/User/LogFileProcessed", userId, new PostOutputLogProcessedRequest(result));
+            PostResponseSimple("/api/User/LogFileProcessed2", userId, new PostOutputLogProcessedRequest2(result2));
         }
 
         internal ICollection<Card> GetCards()

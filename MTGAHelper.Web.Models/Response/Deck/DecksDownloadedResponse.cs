@@ -1,6 +1,6 @@
-﻿using MTGAHelper.Lib.DeckScraper;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using MTGAHelper.Entity.DeckScraper;
 
 namespace MTGAHelper.Web.UI.Model.Response
 {

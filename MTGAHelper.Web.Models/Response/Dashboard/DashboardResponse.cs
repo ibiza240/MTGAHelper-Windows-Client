@@ -2,6 +2,7 @@
 using MTGAHelper.Lib;
 using System.Collections.Generic;
 using System.Linq;
+using MTGAHelper.Entity;
 
 namespace MTGAHelper.Web.UI.Model.Response
 {
@@ -31,15 +32,20 @@ namespace MTGAHelper.Web.UI.Model.Response
 
     public class DashboardResponse
     {
-        public CardMissingDetailsModelResponseDto[] Details { get; set; }
-        public KeyValuePair<string, InfoCardMissingSummaryResponseDto[]>[] Summary { get; set; }
+        public CardMissingDetailsModelResponseDto[] Details { get; }
+        public KeyValuePair<string, InfoCardMissingSummaryResponseDto[]>[] Summary { get; }
 
-        public DashboardResponse(DashboardModel model)
+        public DashboardResponse(CardMissingDetailsModelResponseDto[] details, KeyValuePair<string, InfoCardMissingSummaryResponseDto[]>[] summary)
         {
-            Details = Mapper.Map<CardMissingDetailsModelResponseDto[]>(model.Details);
+            Details = details;
+            Summary = summary;
+        }
 
-            var summary = Mapper.Map<Dictionary<string, InfoCardMissingSummaryResponseDto[]>>(model.Summary);
-            Summary = summary.Select(i => i).ToArray();
+        public static DashboardResponse FromModel(DashboardModel model, IMapper mapper)
+        {
+            var details = mapper.Map<CardMissingDetailsModelResponseDto[]>(model.Details);
+            var summary = mapper.Map<Dictionary<string, InfoCardMissingSummaryResponseDto[]>>(model.Summary);
+            return new DashboardResponse(details, summary.ToArray());
         }
     }
 }

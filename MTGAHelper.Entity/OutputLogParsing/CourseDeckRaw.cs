@@ -5,13 +5,14 @@ namespace MTGAHelper.Entity.OutputLogParsing
 {
     public class CardSkin
     {
-        public int grpId { get; set; }
+        public int artId { get; set; }
         public string ccv { get; set; }
     }
 
     public class CourseDeckRaw
     {
-        public int commandZoneGRPId { get; set; }
+        public int companionGRPId { get; set; }
+        public List<int> commandZoneGRPIds { get; set; }
         public bool isValid { get; set; }
         public bool lockedForUse { get; set; }
         public bool lockedForEdit { get; set; }

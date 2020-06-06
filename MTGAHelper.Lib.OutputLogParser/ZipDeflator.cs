@@ -2,9 +2,11 @@
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
+using MTGAHelper.Entity.MtgaOutputLog;
 using MTGAHelper.Lib.Exceptions;
+using MTGAHelper.Lib.OutputLogParser.Models;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
+namespace MTGAHelper.Lib.OutputLogParser
 {
     public class ZipDeflator
     {
@@ -15,7 +17,7 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
             this.reader = reader;
         }
 
-        public async Task<(OutputLogResult result, Guid? errorId)> UnzipAndGetCollection(string userId, Stream fileStream)
+        public async Task<(OutputLogResult result, Guid? errorId, OutputLogResult2 outputLogResult2)> UnzipAndGetCollection(string userId, Stream fileStream)
         {
             if (fileStream == null)
                 throw new ParseCollectionBaseException("No file provided");

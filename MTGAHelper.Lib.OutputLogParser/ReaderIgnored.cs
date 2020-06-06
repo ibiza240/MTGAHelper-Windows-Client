@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using MTGAHelper.Lib.OutputLogParser.Models;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
+namespace MTGAHelper.Lib.OutputLogParser
 {
     internal class ReaderIgnored : IReaderMtgaOutputLogPart, IReaderMtgaOutputLogJson<string>
     {
+        public string LogTextKey => Constants.LOGTEXTKEY_UNKNOWN;
+
         public bool IsJson => false;
 
         public IMtgaOutputLogPartResult ParseJson(string json)
@@ -19,6 +22,8 @@ namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
 
     internal class ReaderIgnoredMatch : IReaderMtgaOutputLogPart, IReaderMtgaOutputLogJson<string>
     {
+        public string LogTextKey => Constants.LOGTEXTKEY_UNKNOWN;
+
         public bool IsJson => false;
 
         public IMtgaOutputLogPartResult ParseJson(string json)

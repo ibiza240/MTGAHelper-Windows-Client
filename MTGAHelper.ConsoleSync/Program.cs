@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using AutoMapper;
-using AutoMapper.Configuration;
 using MTGAHelper.ConsoleSync.Services;
 using MTGAHelper.Entity;
-using MTGAHelper.Entity.IoC;
 using MTGAHelper.Lib;
-using MTGAHelper.Lib.Cache;
+using MTGAHelper.Lib.IoC;
+using MTGAHelper.Lib.OutputLogParser;
 using MTGAHelper.Lib.OutputLogParser.IoC;
 using SimpleInjector;
 
@@ -27,8 +25,6 @@ namespace MTGAHelper.ConsoleSync
                 Console.WriteLine("Initializing...");
                 container.Verify();
 
-                Mapper.Initialize(container.GetInstance<MapperConfigurationExpression>());
-
                 var userId = args[0];
                 var logFilePath = args[1];
 
@@ -41,7 +37,7 @@ namespace MTGAHelper.ConsoleSync
         {
             var container = new Container()
                 .RegisterServicesLibOutputLogParser()
-                .RegisterServicesEntity();
+                .RegisterServicesShared();
 
             container.RegisterSingleton<IPossibleDateFormats, DateFormatsHardCoded>();
             container.Register<LogFileProcessor>();

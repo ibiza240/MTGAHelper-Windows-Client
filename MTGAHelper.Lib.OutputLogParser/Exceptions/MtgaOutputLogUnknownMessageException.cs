@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.Exceptions
+namespace MTGAHelper.Lib.OutputLogParser.Exceptions
 {
     internal class MtgaOutputLogUnknownMessageException : Exception
     {

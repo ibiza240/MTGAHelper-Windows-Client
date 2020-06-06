@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using MTGAHelper.Entity;
-using MTGAHelper.Lib.Cache;
+using MTGAHelper.Lib;
 
 namespace MTGAHelper.ConsoleSync.Services
 {

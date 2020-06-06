@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using MTGAHelper.Utility;
 using Serilog;
 
 namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking

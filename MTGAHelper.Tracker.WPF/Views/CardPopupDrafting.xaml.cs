@@ -23,8 +23,6 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         private DraftingVM ViewModelDrafting;
 
-        private ServerApiCaller api;
-
         #endregion
 
         #region Constructor
@@ -42,9 +40,8 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         #region Public Methods
 
-        public void Init(ServerApiCaller api, DraftingVM draftingVM)
+        public void Init(DraftingVM draftingVM)
         {
-            this.api = api;
             this.ViewModelDrafting = draftingVM;
         }
 
@@ -107,7 +104,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                 ViewModel.Card.CustomRatingValue = ViewModel.CustomRatingSelected;
 
                 ViewModelDrafting.RefreshCardsDraft();
-                api.SaveCustomDraftRating(ViewModel.Card.ArenaId, ViewModel.CustomRatingSelected, ViewModel.CustomRatingDescription);
+                ViewModelDrafting.Api.SaveCustomDraftRating(ViewModel.Card.ArenaId, ViewModel.CustomRatingSelected, ViewModel.CustomRatingDescription);
             }
         }
 

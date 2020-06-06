@@ -1,6 +1,6 @@
 ﻿using MTGAHelper.Entity.OutputLogParsing;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
     public class GetCombinedRankInfoResult : MtgaOutputLogPartResultBase<PayloadRaw<GetCombinedRankInfoRaw>>//, IMtgaOutputLogPartResult<GetCombinedRankInfoRaw>
     {

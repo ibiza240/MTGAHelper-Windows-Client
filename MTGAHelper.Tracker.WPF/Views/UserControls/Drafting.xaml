@@ -30,14 +30,17 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <!--  General Drafting Info  -->
-        <Grid Grid.Row="0" Visibility="{Binding ShowGlobalMTGAHelperSays, Converter={StaticResource BoolToVis}}" Height="30">
+        <Grid
+            Grid.Row="0"
+            Height="30"
+            Visibility="{Binding ShowGlobalMTGAHelperSays, Converter={StaticResource BoolToVis}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
                 <!--  Button to run the DraftHelper  -->
-                <Menu
+                <!--<Menu
                     Margin="2"
                     Background="Transparent"
                     Visibility="{Binding IsHumanDraft, Converter={StaticResource BoolToVis}}">
@@ -62,7 +65,7 @@
                             <ToolTip Background="{StaticResource TooltipBackgroundBrush}" Content="Run DraftHelper" />
                         </MenuItem.ToolTip>
                     </MenuItem>
-                </Menu>
+                </Menu>-->
                 <!--  ComboBox for Pack and Pick  -->
                 <ComboBox
                     x:Name="PxpxComboBox"
@@ -162,8 +165,14 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" MinWidth="26" SharedSizeGroup="FourthColumn" />
-                            <ColumnDefinition Width="Auto" MinWidth="30" SharedSizeGroup="FifthColumn" />
+                            <ColumnDefinition
+                                Width="Auto"
+                                MinWidth="26"
+                                SharedSizeGroup="FourthColumn" />
+                            <ColumnDefinition
+                                Width="Auto"
+                                MinWidth="30"
+                                SharedSizeGroup="FifthColumn" />
                         </Grid.ColumnDefinitions>
                         <!--  Card Image  -->
                         <Border
@@ -214,13 +223,12 @@
                         <!--  Cards in collection  -->
                         <TextBlock
                             Grid.Column="2"
-                            Text="{Binding AmountInCollection, StringFormat={}{0} / 4}"
-                            Foreground="{Binding AmountInCollection, Converter={StaticResource MissingCardsToColorScaleConverter}}"
-                            ToolTip="Cards in Collection"
-                            VerticalAlignment="Center"
                             HorizontalAlignment="Right"
-                            Visibility="{Binding DataContext.ShowGlobalMTGAHelperSays, Converter={StaticResource BoolToVis}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}">
-                        </TextBlock>
+                            VerticalAlignment="Center"
+                            Foreground="{Binding AmountInCollection, Converter={StaticResource MissingCardsToColorScaleConverter}}"
+                            Text="{Binding AmountInCollection, StringFormat={}{0} / 4}"
+                            ToolTip="Cards in Collection"
+                            Visibility="{Binding DataContext.ShowGlobalMTGAHelperSays, Converter={StaticResource BoolToVis}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
                         <!--  RareDraft and Tracking Info  -->
                         <Grid Grid.Column="3" Visibility="{Binding DataContext.ShowGlobalMTGAHelperSays, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Converter={StaticResource BoolToVis}}">
                             <Grid.RowDefinitions>

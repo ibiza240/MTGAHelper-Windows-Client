@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient
+﻿namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient
 {
     public class MatchGameRoomStateChangedEventResult : MtgaOutputLogPartResultBase<MatchGameRoomStateChangedEvent>, ITagMatchResult
     {

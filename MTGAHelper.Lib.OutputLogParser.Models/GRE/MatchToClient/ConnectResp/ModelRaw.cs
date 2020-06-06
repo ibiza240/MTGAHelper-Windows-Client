@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.ConnectResp.Raw
+namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.ConnectResp
 {
     public class ConnectRespRaw : GreMatchToClientSubMessageBase
     {

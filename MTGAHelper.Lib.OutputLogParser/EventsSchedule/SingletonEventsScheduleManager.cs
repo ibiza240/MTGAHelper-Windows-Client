@@ -3,12 +3,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MTGAHelper.Lib.Config;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
+using MTGAHelper.Entity.Config.App;
 using MTGAHelper.Lib.Logging;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
 using Newtonsoft.Json;
 
-namespace MTGAHelper.Lib.EventsSchedule
+namespace MTGAHelper.Lib.OutputLogParser.EventsSchedule
 {
     public interface IEventTypeCache
     {

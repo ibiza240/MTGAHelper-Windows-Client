@@ -1,6 +1,4 @@
-﻿using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger.ClientConnected.Raw;
-
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
+﻿namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
     public class AuthenticateResponseResult : MtgaOutputLogPartResultBase<AuthenticateResponseRaw>//, IMtgaOutputLogPartResult<AuthenticateResponseRaw>
     {

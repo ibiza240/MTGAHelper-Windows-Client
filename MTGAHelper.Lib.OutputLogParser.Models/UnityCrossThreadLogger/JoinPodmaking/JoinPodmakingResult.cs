@@ -1,8 +1,6 @@
-﻿using MTGAHelper.Entity.OutputLogParsing;
-
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
+﻿namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
-    public class JoinPodmakingResult : MtgaOutputLogPartResultBase<JoinPodmakingRaw>, ITagMatchResult//, IMtgaOutputLogPartResult<MatchCreatedRaw>
+    public class JoinPodmakingResult : RequestParamsResult<JoinPodmakingRaw>, ITagMatchResult//, IMtgaOutputLogPartResult<MatchCreatedRaw>
     {
         //public override ReaderMtgaOutputLogPartTypeEnum ResultType => ReaderMtgaOutputLogPartTypeEnum.MatchCreated;
 

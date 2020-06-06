@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Lib.Config
+﻿namespace MTGAHelper.Entity.Config.App
 {
     public interface IConfigUsersPath
     {

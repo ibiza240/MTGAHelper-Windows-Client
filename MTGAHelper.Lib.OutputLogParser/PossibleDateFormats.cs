@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MTGAHelper.Lib.Config;
+using MTGAHelper.Entity.Config.App;
 using Newtonsoft.Json;
 
-namespace MTGAHelper.Lib
+namespace MTGAHelper.Lib.OutputLogParser
 {
     public class PossibleDateFormats : IPossibleDateFormats
     {

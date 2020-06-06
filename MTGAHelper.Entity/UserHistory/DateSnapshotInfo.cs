@@ -1,12 +1,10 @@
-﻿using MTGAHelper.Entity;
-using MTGAHelper.Entity.OutputLogParsing;
-using MTGAHelper.Entity.UserHistory;
-using MTGAHelper.Lib.Config.Users;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using MTGAHelper.Entity.Config.Users;
+using MTGAHelper.Entity.MtgaOutputLog;
+using MTGAHelper.Entity.OutputLogParsing;
 
-namespace MTGAHelper.Lib.UserHistory
+namespace MTGAHelper.Entity.UserHistory
 {
     public class DateSnapshotInfo
     {

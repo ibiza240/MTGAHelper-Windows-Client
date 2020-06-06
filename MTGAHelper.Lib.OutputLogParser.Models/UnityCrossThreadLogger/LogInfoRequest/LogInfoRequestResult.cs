@@ -1,8 +1,8 @@
 ﻿using MTGAHelper.Entity.OutputLogParsing;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
-    public class LogInfoRequestResult : MtgaOutputLogPartResultBase<LogInfoRequestRaw>
+    public class LogInfoRequestResult : RequestParamsResult<LogInfoRequestRaw>
     {
         //public override ReaderMtgaOutputLogPartTypeEnum ResultType => ReaderMtgaOutputLogPartTypeEnum.LogInfoRequest;
 

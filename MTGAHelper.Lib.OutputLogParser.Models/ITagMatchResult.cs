@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog
+﻿namespace MTGAHelper.Lib.OutputLogParser.Models
 {
     public interface ITagMatchResult
     {

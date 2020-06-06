@@ -1,10 +1,9 @@
-﻿using MTGAHelper.Entity;
-using MTGAHelper.Entity.UserHistory;
-using MTGAHelper.Lib.CollectionDecksCompare;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using MTGAHelper.Entity.CollectionDecksCompare;
+using MTGAHelper.Entity.UserHistory;
 
-namespace MTGAHelper.Lib
+namespace MTGAHelper.Entity.Config.Users
 {
     public enum DashboardStatusEnum
     {

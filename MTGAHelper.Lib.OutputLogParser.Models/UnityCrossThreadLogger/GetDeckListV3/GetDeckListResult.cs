@@ -1,7 +1,7 @@
-﻿using MTGAHelper.Entity.OutputLogParsing;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using MTGAHelper.Entity.OutputLogParsing;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
     public class GetDecksListResult : MtgaOutputLogPartResultBase<PayloadRaw<ICollection<CourseDeckRaw>>>//, IMtgaOutputLogPartResult<ICollection<GetDeckListResultDeckRaw>>
     {

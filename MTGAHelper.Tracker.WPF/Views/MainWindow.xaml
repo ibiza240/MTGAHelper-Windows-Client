@@ -200,8 +200,25 @@
                             </Viewbox>
                         </MenuItem.Icon>
                     </MenuItem>
+                    <!--  Go to website  -->
+                    <MenuItem Command="{Binding GoToWebsiteCommand}" Header="Go to _Website">
+                        <MenuItem.Icon>
+                            <Viewbox>
+                                <Rectangle
+                                    Width="40"
+                                    Height="40"
+                                    Margin="0,5"
+                                    Fill="White"
+                                    Stretch="Uniform">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Uniform" Visual="{StaticResource WebPath}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Viewbox>
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <!--  Reset Window  -->
-                    <MenuItem Command="{Binding ResetWindowsCommand}" Header="_Reset Window Locations">
+                    <MenuItem Command="{Binding ResetWindowsCommand}" Header="_Reset Window Location">
                         <MenuItem.Icon>
                             <Viewbox>
                                 <Rectangle
@@ -236,8 +253,6 @@
                     </MenuItem>
                 </ContextMenu>
             </tb:TaskbarIcon.ContextMenu>
-
         </tb:TaskbarIcon>
-
     </Grid>
 </Window>

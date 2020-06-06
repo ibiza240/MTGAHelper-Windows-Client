@@ -10,15 +10,16 @@ namespace MTGAHelper.Tracker.WPF.Business
 {
     public class DraftCardsPicker
     {
-        private readonly DraftPicksCalculator DraftPicksCalculator;
+        readonly DraftPicksCalculator DraftPicksCalculator;
+        readonly IMapper mapper;
 
-        public DraftCardsPicker(DraftPicksCalculator draftPicksCalculator)
+        public DraftCardsPicker(DraftPicksCalculator draftPicksCalculator, IMapper mapper)
         {
             DraftPicksCalculator = draftPicksCalculator;
+            this.mapper = mapper;
         }
 
         public ICollection<CardDraftPickWpf> GetDraftPicksForCards(
-            string userId,
             ICollection<int> cardPool,
             ICollection<int> pickedCards,
             string source,
@@ -30,16 +31,15 @@ namespace MTGAHelper.Tracker.WPF.Business
             //var apiResponse = api.GetCardsForDraftPick(userId, grpIds, source);
 
             var result = DraftPicksCalculator.Init(customRatingsBySetThenCardName).GetCardsForDraftPick(
-                userId,
                 cardPool,
                 pickedCards,
                 source,
                 collection,
                 raredraftingInfo);
-            
-            var apiDto = Mapper.Map<ICollection<CardForDraftPickDto>>(result);
 
-            var ret = Mapper.Map<ICollection<CardDraftPickWpf>>(apiDto);
+            var apiDto = mapper.Map<ICollection<CardForDraftPickDto>>(result);
+
+            var ret = mapper.Map<ICollection<CardDraftPickWpf>>(apiDto);
 
             foreach (CardDraftPickWpf c in ret)
             {

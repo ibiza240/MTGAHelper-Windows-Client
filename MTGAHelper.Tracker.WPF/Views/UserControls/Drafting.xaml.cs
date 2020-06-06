@@ -1,11 +1,8 @@
-﻿using MTGAHelper.Entity;
-using MTGAHelper.Tracker.WPF.ViewModels;
-using System.Collections.Generic;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using MTGAHelper.Tracker.WPF.Config;
-using System.Threading.Tasks;
-using MTGAHelper.Tracker.WPF.Business;
+using MTGAHelper.Tracker.WPF.ViewModels;
 
 namespace MTGAHelper.Tracker.WPF.Views.UserControls
 {
@@ -18,7 +15,8 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
 
         private MainWindow MainWindow => (MainWindow)Window.GetWindow(this);
 
-        private MainWindowVM ViewModel => (MainWindowVM)MainWindow.DataContext;
+        private MainWindowVM MainViewModel => (MainWindowVM)MainWindow.DataContext;
+        private DraftingVM ViewModel => MainViewModel.DraftingVM;
 
         //DraftingCardPopupVM vmCardPopup = new DraftingCardPopupVM();
 
@@ -34,13 +32,12 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             //dataGrid.SelectionChanged += (obj, e) => Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => dataGrid.UnselectAll()));
         }
 
-        internal void Init(ICollection<Card> allCards, DraftingVM draftingVM, ServerApiCaller api, string limitedRatingsSource)
+        internal void Init(DraftingVM draftingVM, string limitedRatingsSource)
         {
-            draftingVM.Init(allCards);
             WindowCardsThatDidNotWheel.Init(draftingVM.CardsThatDidNotWheelVM);
             DataContext = draftingVM;
-            WindowCardPopupDrafting.Init(api, ViewModel.DraftingVM);
-            ViewModel.DraftingVM.LimitedRatingsSource = limitedRatingsSource;
+            WindowCardPopupDrafting.Init(ViewModel);
+            ViewModel.LimitedRatingsSource = limitedRatingsSource;
         }
 
         private void CardRow_MouseEnter(object sender, MouseEventArgs e)
@@ -77,9 +74,9 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         private void ShowHideCardsThatDidNotWheel_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             MainWindow.UpdateCardPopupPosition();
-            ViewModel.DraftingVM.ToggleShowHideCardListPopupThatDidNotWheel();
+            ViewModel.ToggleShowHideCardListPopupThatDidNotWheel();
 
-            WindowCardsThatDidNotWheel.Visibility = ViewModel.DraftingVM.ShowCardListThatDidNotWheel
+            WindowCardsThatDidNotWheel.Visibility = ViewModel.ShowCardListThatDidNotWheel
                 ? Visibility.Visible
                 : Visibility.Hidden;
         }
@@ -89,19 +86,19 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             WindowCardsThatDidNotWheel.Focus();
         }
 
-        private void btnRunDraftHelper_Click(object sender, RoutedEventArgs e)
-        {
-            MainWindow.RunDraftHelper();
-        }
+        //private void btnRunDraftHelper_Click(object sender, RoutedEventArgs e)
+        //{
+        //    MainWindow.RunDraftHelper();
+        //}
 
-        public void PickCard(int grpId)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                ViewModel.DraftingVM.DraftHumanPickCard(grpId);
-                HideCardListWheeled();
-            });
-        }
+        //public void PickCard(int grpId)
+        //{
+        //    Dispatcher.Invoke(() =>
+        //    {
+        //        ViewModel.DraftHumanPickCard(grpId);
+        //        HideCardListWheeled();
+        //    });
+        //}
 
         internal void HideCardListWheeled()
         {

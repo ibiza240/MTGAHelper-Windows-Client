@@ -3,19 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release;DebugWithServer</Configurations>
-    <Version>1.4.7.1</Version>
+    <Version>1.5</Version>
     <LangVersion>8</LangVersion>
     <IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
     <OutputPath>$(SolutionDir)\_Output\bin\$(Configuration)\</OutputPath>
     <OutDir>$(OutputPath)</OutDir>
-    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugWithServer|AnyCPU'">
-    <DefineConstants>DEBUG;DEBUGWITHSERVER;TRACE</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugWithServer|x64'">
     <DefineConstants>DEBUG;DEBUGWITHSERVER;TRACE</DefineConstants>
   </PropertyGroup>
 
@@ -23,25 +18,19 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Serilog" Version="2.9.0" />
-    <PackageReference Include="SimpleInjector" Version="4.9.1" />
+    <PackageReference Include="SimpleInjector" Version="4.10.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MTGAHelper.Entity\MTGAHelper.Entity.csproj" />
+    <ProjectReference Include="..\MTGAHelper.Lib.OutputLogParser.Models\MTGAHelper.Lib.OutputLogParser.Models.csproj" />
+    <ProjectReference Include="..\MTGAHelper.Lib.Shared\MTGAHelper.Lib.Shared.csproj" />
   </ItemGroup>
 
 </Project>

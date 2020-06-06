@@ -2,11 +2,12 @@
 using System.Linq;
 using AutoMapper;
 using MTGAHelper.Entity;
+using MTGAHelper.Entity.CollectionDecksCompare;
+using MTGAHelper.Entity.Config.Users;
 using MTGAHelper.Entity.MtgaDeckStats;
+using MTGAHelper.Entity.MtgaOutputLog;
 using MTGAHelper.Entity.UserHistory;
-using MTGAHelper.Lib.CollectionDecksCompare;
-using MTGAHelper.Lib.Config.Users;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
+using MTGAHelper.Lib;
 using MTGAHelper.Web.Models.Response.Account;
 using MTGAHelper.Web.Models.Response.User;
 using MTGAHelper.Web.Models.Response.User.History;
@@ -50,7 +51,8 @@ namespace MTGAHelper.Web.UI.IoC
 
             CreateMap<CardWithAmount, CollectionCardDto>()
                 .IncludeBase<CardWithAmount, CardWithAmountDto>()
-                .ForMember(i => i.NotInBooster, i => i.MapFrom(x => x.Card.notInBooster));
+                .ForMember(i => i.NotInBooster, i => i.MapFrom(x => x.Card.notInBooster))
+                .ForMember(i => i.Rarity, i => i.MapFrom(x => x.Card.rarity));
 
 
             //CreateMap<DateSnapshotInfo, GetUserHistoryDto>();
@@ -150,8 +152,8 @@ namespace MTGAHelper.Web.UI.IoC
                 //.ForMember(i => i.DeckColor, i => i.ConvertUsing(rawDeckToColorConverter, x => x.DeckUsed))
                 //.ForMember(i => i.CardsMain, i => i.MapFrom(x => x.DeckUsed.CardsMain))
                 //.ForMember(i => i.CardsSideboard, i => i.MapFrom(x => x.DeckUsed.CardsSideboard));
-                .ForMember(i => i.CardsMain, i => i.MapFrom(x => Mapper.Map<ICollection<CardWithAmount>>(x.CardsMain)))
-                .ForMember(i => i.CardsSideboard, i => i.MapFrom(x => Mapper.Map<ICollection<CardWithAmount>>(x.CardsSideboard)))
+                .ForMember(i => i.CardsMain, i => i.MapFrom((src, dst, dstMb, ctx) => ctx.Mapper.Map<ICollection<CardWithAmount>>(src.CardsMain)))
+                .ForMember(i => i.CardsSideboard, i => i.MapFrom((src, dst, dstMb, ctx) => ctx.Mapper.Map<ICollection<CardWithAmount>>(src.CardsSideboard)))
                 .ForMember(i => i.ManaCurve, i => i.ConvertUsing(manaCurveConverter, x => x.CardsMain));
 
             CreateMap<MtgaDeckAnalysis, MtgaDeckAnalysisDto>();

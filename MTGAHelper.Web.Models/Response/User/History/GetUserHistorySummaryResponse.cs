@@ -30,25 +30,17 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
         {
         }
 
-        public GetUserHistorySummaryResponse(HistorySummaryForDate[] summary, ICollection<HistorySummaryForDate> summary2, int totalItems, ICollection<string> datesAvailable)
+        public GetUserHistorySummaryResponse(IEnumerable<GetUserHistorySummaryDto> summary, IEnumerable<GetUserHistorySummaryDto> summary2, int totalItems, ICollection<string> datesAvailable)
         {
             TotalItems = totalItems;
 
-            var History = summary
-                .Select(i => Mapper.Map<GetUserHistorySummaryDto>(i))
-                .ToArray();
-
-            var history2 = summary2
-                .Select(i => Mapper.Map<GetUserHistorySummaryDto>(i))
-                .ToArray();
-
             History2 = Merge(
-                History.Where(i => datesAvailable.Contains(i.Date.ToString("yyyyMMdd"))).ToArray(),
-                history2.Where(i => datesAvailable.Contains(i.Date.ToString("yyyyMMdd"))).ToArray()
+                summary.Where(i => datesAvailable.Contains(i.Date.ToString("yyyyMMdd"))).ToArray(),
+                summary2.Where(i => datesAvailable.Contains(i.Date.ToString("yyyyMMdd")))
             );
         }
 
-        ICollection<GetUserHistorySummaryDto> Merge(ICollection<GetUserHistorySummaryDto> history, GetUserHistorySummaryDto[] history2)
+        ICollection<GetUserHistorySummaryDto> Merge(ICollection<GetUserHistorySummaryDto> history, IEnumerable<GetUserHistorySummaryDto> history2)
         {
             foreach (var i in history)
             {

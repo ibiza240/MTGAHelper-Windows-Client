@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
+using MTGAHelper.Entity.MtgaOutputLog;
+using MTGAHelper.Lib.OutputLogParser;
+using MTGAHelper.Lib.OutputLogParser.Models;
 
 namespace MTGAHelper.ConsoleSync.Services
 {
@@ -22,13 +24,14 @@ namespace MTGAHelper.ConsoleSync.Services
         public void Process(string userId, string logFilePath)
         {
             OutputLogResult result;
+            OutputLogResult2 result2;
             Guid? errorId;
 
             // Process
             Console.WriteLine("Processing file...");
             using (var stream = File.Open(logFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                (result, errorId) = reader.LoadFileContent(userId, stream).Result;
+                (result, errorId, result2) = reader.LoadFileContent(userId, stream).Result;
             }
 
             var matchCount = result.MatchesByDate.Sum(i => i.Info.Count);
@@ -37,7 +40,7 @@ namespace MTGAHelper.ConsoleSync.Services
 
             // Upload
             Console.WriteLine("Uploading data to server...");
-            api.UploadOutputLogResult(userId, result);
+            api.UploadOutputLogResult(userId, result, result2);
 
             Console.WriteLine("Success! Your data on the server was updated.");
         }

@@ -287,7 +287,7 @@
                 </ComboBox>
             </Grid>
             <!--  Game Resolution  -->
-            <Grid Margin="5,2">
+            <!--<Grid Margin="5,2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
                     <ColumnDefinition Width="Auto" />
@@ -354,7 +354,7 @@
                         </CheckBox.ToolTip>
                     </CheckBox>
                 </StackPanel>
-            </Grid>
+            </Grid>-->
         </StackPanel>
     </DockPanel>
 </Window>

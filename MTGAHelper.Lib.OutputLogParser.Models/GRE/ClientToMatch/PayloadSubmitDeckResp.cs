@@ -1,9 +1,5 @@
-﻿using MTGAHelper.Entity.OutputLogParsing;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.ConnectResp.Raw;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient;
+using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.ConnectResp;
 
 namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.ClientToMatch
 {

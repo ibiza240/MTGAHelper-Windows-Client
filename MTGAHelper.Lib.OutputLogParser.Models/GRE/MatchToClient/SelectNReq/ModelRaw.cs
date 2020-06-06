@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.SelectNReq.Raw
+namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.SelectNReq
 {
     public class SelectNReqRaw : GreMatchToClientSubMessageBase
     {

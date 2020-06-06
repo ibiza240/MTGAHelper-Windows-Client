@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AutoMapper;
 using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
 using MTGAHelper.Tracker.WPF.Tools;
 
@@ -18,6 +19,16 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         private bool UpdateCardsInMatchTrackingBuffered;
 
+        readonly IMapper mapper;
+
+        public InMatchTrackerStateVM(IMapper mapper)
+        {
+            this.mapper = mapper;
+            MySideboard = new CardsListVM(DisplayType.CountOnly, CardsListOrder.ManaCost, this.mapper);
+            OpponentCardsSeen = new CardsListVM(DisplayType.CountOnly, CardsListOrder.ManaCost, this.mapper);
+            MyLibrary = new CardsListVM(DisplayType.Percent, CardsListOrder.ManaCost, this.mapper);
+        }
+
         internal void Init(CardsListOrder cardsListOrder)
         {
             MyLibrary.CardsListOrder = cardsListOrder;
@@ -34,17 +45,17 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <summary>
         /// Current Deck
         /// </summary>
-        public CardsListVM MyLibrary { get; } = new CardsListVM(DisplayType.Percent, CardsListOrder.ManaCost);
+        public CardsListVM MyLibrary { get; }
 
         /// <summary>
         /// Opponent Deck
         /// </summary>
-        public CardsListVM OpponentCardsSeen { get; } = new CardsListVM(DisplayType.CountOnly, CardsListOrder.ManaCost);
+        public CardsListVM OpponentCardsSeen { get; }
 
         /// <summary>
         /// Sideboard
         /// </summary>
-        public CardsListVM MySideboard { get; } = new CardsListVM(DisplayType.CountOnly, CardsListOrder.ManaCost);
+        public CardsListVM MySideboard { get; }
 
         //public CardsListVM FullDeck { get; set; } = new CardsListVM(false);
 

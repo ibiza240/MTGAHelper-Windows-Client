@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using AutoMapper;
 using MTGAHelper.Entity;
+using MTGAHelper.Entity.MtgaOutputLog;
 using MTGAHelper.Entity.OutputLogParsing;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger;
-using MTGAHelper.Lib.OutputLogProgress;
-using MTGAHelper.Web.UI.Shared;
+using MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
 
-namespace MTGAHelper.Lib.Ioc
+namespace MTGAHelper.Lib.OutputLogParser.IoC
 {
     public class MapperProfileLibCardConvert : Profile
     {
@@ -22,6 +20,8 @@ namespace MTGAHelper.Lib.Ioc
                     .ToDictionary(y => y.Key, y => y.Count())))
                 .ForMember(i => i.CardTransfers, i => i.MapFrom(x => x.CardTransfersByTurn.SelectMany(y => y.Value).ToArray()));
 
+            CreateMap<CardForTurn, CardTurnAction>();
+
             // To map all the opponent fields
             CreateMap<MatchCreatedResult, MatchResult>()
                 .ForMember(i => i.StartDateTime, i => i.MapFrom(x => x.LogDateTime))
@@ -34,7 +34,7 @@ namespace MTGAHelper.Lib.Ioc
             //CreateMap<CourseDeckRaw, MtgaDeck>()
             CreateMap<CourseDeckRaw, ConfigModelRawDeck>()
                 .ForMember(i => i.DeckTileId, i => i.MapFrom(x => x.deckTileId ?? default(int)))
-                .ForMember(i => i.CardCommander, i => i.MapFrom(x => x.commandZoneGRPId))
+                .ForMember(i => i.CardCommander, i => i.MapFrom(x => x.commandZoneGRPIds.FirstOrDefault()))
                 .ForMember(i => i.CardsMain, i => i.ConvertUsing(deckListConverter, x => x.mainDeck))
                 .ForMember(i => i.CardsSideboard, i => i.ConvertUsing(deckListConverter, x => x.sideboard))
                 .ForMember(m => m.ArchetypeId, o => o.Ignore()) // todo Bruno?

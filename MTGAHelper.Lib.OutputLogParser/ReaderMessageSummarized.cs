@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
+using MTGAHelper.Lib.OutputLogParser.Models;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient
+namespace MTGAHelper.Lib.OutputLogParser
 {
     public class ReaderMessageSummarized : IReaderMtgaOutputLogPart
     {
+        public string LogTextKey => Constants.PREFIX_MESSAGESUMMARIZED;
+
         public ICollection<IMtgaOutputLogPartResult> ParsePart(string part)
         {
             ////e.g.

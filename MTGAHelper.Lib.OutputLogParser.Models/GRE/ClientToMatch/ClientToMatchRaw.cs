@@ -1,6 +1,6 @@
 ﻿using MTGAHelper.Entity.OutputLogParsing;
 
-namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.ClientToMatch.Raw
+namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.ClientToMatch
 {
     public class ClientToMatchRawGeneric
     {

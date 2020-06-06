@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MTGAHelper.Lib.IO.Reader.MtgaOutputLog.GRE.MatchToClient.GameStateMessage.Raw;
+using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.GameStateMessage;
 using Newtonsoft.Json;
 using Serilog;
 

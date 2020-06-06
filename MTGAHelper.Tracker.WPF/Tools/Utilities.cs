@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using MTGAHelper.Lib;
 
 namespace MTGAHelper.Tracker.WPF.Tools
 {
@@ -15,7 +16,7 @@ namespace MTGAHelper.Tracker.WPF.Tools
         [DllImport("user32.dll")]
         public static extern IntPtr ShowWindow(IntPtr hWnd, int nCmdShow);
 
-        private static readonly Entity.Util EntityUtil = new Entity.Util();
+        private static readonly Util EntityUtil = new Util();
 
         internal static string GetThumbnailLocal(string imageArtUrl)
         {

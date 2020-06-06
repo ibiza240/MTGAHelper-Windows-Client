@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using AutoMapper;
-using MTGAHelper.Entity.MtgaDeckStats;
 
 namespace MTGAHelper.Web.Models.Response.User
 {
@@ -9,9 +7,9 @@ namespace MTGAHelper.Web.Models.Response.User
     {
         public MtgaDeckAnalysisDto Analysis { get; set; }
 
-        public GetMtgaDeckAnalysisResponse(MtgaDeckAnalysis analysis)
+        public GetMtgaDeckAnalysisResponse(MtgaDeckAnalysisDto analysis)
         {
-            Analysis = Mapper.Map<MtgaDeckAnalysisDto>(analysis);
+            Analysis = analysis;
         }
     }
 

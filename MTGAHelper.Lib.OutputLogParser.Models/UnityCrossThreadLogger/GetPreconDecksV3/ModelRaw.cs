@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Lib.IO.Reader.MtgaOutputLog.UnityCrossThreadLogger.GetDeckListV3.Raw
+﻿namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
     //public class GetPreconDecksV3Raw
     //{

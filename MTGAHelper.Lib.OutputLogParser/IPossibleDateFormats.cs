@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MTGAHelper.Lib
+namespace MTGAHelper.Lib.OutputLogParser
 {
     public interface IPossibleDateFormats
     {

@@ -1,7 +1,6 @@
-﻿using AutoMapper;
-using MTGAHelper.Lib.Config;
+﻿using MTGAHelper.Entity.Config.Users;
 
-namespace MTGAHelper.Lib.Model
+namespace MTGAHelper.Entity
 {
     public class UserInfo : ConfigModelUser
     {

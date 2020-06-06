@@ -1,7 +1,7 @@
-﻿using MTGAHelper.Lib.Config;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using MTGAHelper.Entity.Config.Decks;
 
-namespace MTGAHelper.Lib.DeckScraper
+namespace MTGAHelper.Entity.DeckScraper
 {
     public class DeckScraperResult
     {

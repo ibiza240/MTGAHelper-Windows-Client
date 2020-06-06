@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using AutoMapper;
 using MTGAHelper.Entity.MtgaDeckStats;
 using MTGAHelper.Web.UI.Model.Response.Dto;
 using MTGAHelper.Web.UI.Model.Response.User.History;
@@ -10,9 +9,9 @@ namespace MTGAHelper.Web.Models.Response.User
     {
         public MtgaDeckDetailDto Detail { get; set; }
 
-        public GetMtgaDeckDetailResponse(MtgaDeckDetail detail)
+        public GetMtgaDeckDetailResponse(MtgaDeckDetailDto detail)
         {
-            Detail = Mapper.Map<MtgaDeckDetailDto>(detail);
+            Detail = detail;
         }
     }
 

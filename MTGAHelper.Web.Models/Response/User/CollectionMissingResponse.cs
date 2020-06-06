@@ -1,17 +1,15 @@
-﻿using AutoMapper;
-using MTGAHelper.Entity;
+﻿using System.Collections.Generic;
 using MTGAHelper.Web.UI.Model.SharedDto;
-using System.Collections.Generic;
 
 namespace MTGAHelper.Web.UI.Model.Response.User
 {
     public class CollectionMissingResponse
     {
-        public ICollection<CollectionCardDto> CardsMissing { get; set; }
+        public ICollection<CollectionCardDto> CardsMissing { get; }
 
-        public CollectionMissingResponse(ICollection<CardWithAmount> cardsMissing)
+        public CollectionMissingResponse(ICollection<CollectionCardDto> cardsMissing)
         {
-            CardsMissing = Mapper.Map<ICollection<CollectionCardDto>>(cardsMissing);
+            CardsMissing = cardsMissing;
         }
     }
 }

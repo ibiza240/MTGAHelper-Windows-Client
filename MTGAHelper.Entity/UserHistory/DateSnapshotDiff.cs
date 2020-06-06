@@ -1,7 +1,6 @@
-﻿using MTGAHelper.Entity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace MTGAHelper.Lib.UserHistory
+namespace MTGAHelper.Entity.UserHistory
 {
     public class DateSnapshotDiff
     {
