@@ -1,3 +1,9 @@
+### v1.6 (2020-06-25)
+
+Support for M21 expansion
+
+Bugfix for mislabeled win/loss
+
 ### v1.5 (2020-06-05)
 
 Support for latest game patch
