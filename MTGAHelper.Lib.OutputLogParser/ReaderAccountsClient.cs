@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using MTGAHelper.Lib.OutputLogParser.Models;
+using Serilog;
 
 namespace MTGAHelper.Lib.OutputLogParser
 {
@@ -45,6 +46,7 @@ namespace MTGAHelper.Lib.OutputLogParser
             }
             else
             {
+                Log.Warning("couldn't parse player name from '{part}'", part);
                 Debugger.Break();
                 return new IMtgaOutputLogPartResult[0];
             }

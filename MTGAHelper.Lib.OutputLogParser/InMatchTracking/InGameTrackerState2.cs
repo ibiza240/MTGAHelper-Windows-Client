@@ -183,8 +183,14 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             }
         }
 
+        public void HandleScryDone(IReadOnlyCollection<int> topIds, IReadOnlyCollection<int> bottomIds)
+        {
+            MyLibraryTracker.ScryComplete(topIds, bottomIds);
+        }
+
         public void SetInstIdsAboutToMove(IReadOnlyCollection<int> instanceIds)
         {
+            Log.Debug("SetInstIdsAboutToMove({instanceIds})", instanceIds);
             MyLibraryTracker.SetInstIdsAboutToMove(instanceIds);
         }
 

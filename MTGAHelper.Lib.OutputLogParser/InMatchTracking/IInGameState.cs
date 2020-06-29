@@ -7,6 +7,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
         bool IsReset { get; }
         int MySeatId { get; }
         int OpponentSeatId { get; }
+        string OpponentScreenName { get; }
         int PriorityPlayer { get; }
         bool IsSideboarding { get; }
 

@@ -83,6 +83,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public int OpponentCardsSeenCount => OpponentCardsSeen.CardCount;
 
+        public string OpponentScreenName { get; set; }
+
         public PlayerTimerVM TimerMe { get; set; } = new PlayerTimerVM();
 
         public PlayerTimerVM TimerOpponent { get; set; } = new PlayerTimerVM();
@@ -130,6 +132,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
             lock (LockCardsInMatchTracking)
             {
+                OpponentScreenName = StateBuffered.OpponentScreenName;
+
                 // Timers
                 if (StateBuffered.IsSideboarding)
                 {

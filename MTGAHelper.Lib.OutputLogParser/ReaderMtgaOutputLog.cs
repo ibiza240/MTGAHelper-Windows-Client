@@ -63,7 +63,7 @@ namespace MTGAHelper.Lib.OutputLogParser
 
         public DateTime LogDateTime { get; private set; }
 
-        List<ConverterUsage> convertersUsage = new List<ConverterUsage>();
+        readonly List<ConverterUsage> convertersUsage = new List<ConverterUsage>();
 
         public ReaderMtgaOutputLog(
             LogSplitter logSplitter,

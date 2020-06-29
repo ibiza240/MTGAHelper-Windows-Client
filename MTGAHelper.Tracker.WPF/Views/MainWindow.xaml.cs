@@ -56,6 +56,7 @@ namespace MTGAHelper.Tracker.WPF.Views
         private readonly PasswordHasher PasswordHasher;
         private readonly DraftHelperRunner DraftHelperRunner;
         private ICollection<CardCompareInfo> RareDraftingInfo;
+        private IList<int> lastCardsAetherized = new int[0];
 
         /// <summary>
         /// Complete constructor
@@ -455,7 +456,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                 //if (ex is InvalidEmailException)
                 //    MessageBox.Show(ex.Message, "Not available", MessageBoxButton.OK, MessageBoxImage.Information);
                 //else
-                    Log.Write(LogEventLevel.Error, ex, "Unexpected error:");
+                Log.Write(LogEventLevel.Error, ex, "Unexpected error:");
             }
         }
 
@@ -661,7 +662,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                             {
                                 // Set the set drafted for the Human DraftHelper
                                 string set = null;
-                                var regexMatch = Regex.Match(playerCourse.Raw.payload.InternalEventName, "Draft_(.*?)_");
+                                var regexMatch = Regex.Match(playerCourse.Raw.payload.InternalEventName, "(?:Draft|Sealed)_(.*?)_");
                                 if (regexMatch.Success)
                                 {
                                     //DraftHelperRunner.Set = regexMatch.Groups[1].Value;
@@ -792,12 +793,23 @@ namespace MTGAHelper.Tracker.WPF.Views
                     case PostMatchUpdateResult _:
                     case RankUpdatedResult _:
                     case GetCombinedRankInfoResult _:
+                        mustUpload = true;
+                        break;
                     case InventoryUpdatedResult inventoryUpdated:
                         mustUpload = true;
 
-                        if (ViewModel.DraftingVM.DraftProgressHuman?.PickedCards?.Count >= 42)
+                        var aetherizedCards = inventoryUpdated.Raw.payload.updates.LastOrDefault()?.aetherizedCards;
+                        if (aetherizedCards != null && aetherizedCards.Any())
+                            lastCardsAetherized = aetherizedCards.Select(i => i.grpId).ToArray();
+
+                        break;
+                    case SceneChangeResult sceneChange:
+                        if (sceneChange.Raw.toSceneName == "SealedBoosterOpen")
                         {
-                            Log.Information("Must upload human draft:{NewLine}{humanDraft}", JsonConvert.SerializeObject(ViewModel.DraftingVM.DraftPicksHistory));
+                            // Refresh the drafting window to show whole card pool
+                            ViewModel.DraftingVM.ShowGlobalMTGAHelperSays = false;
+                            SetCardsDraft(new DraftPickProgress(lastCardsAetherized));
+                            ViewModel.SetMainWindowContext(WindowContext.Drafting);
                         }
                         break;
                 }
@@ -811,10 +823,15 @@ namespace MTGAHelper.Tracker.WPF.Views
 
             if (mustUpload)
             {
+                //if (ViewModel.DraftingVM.DraftProgressHuman?.PickedCards?.Count >= 42)
+                //{
+                //    Log.Information("Must upload human draft:{NewLine}{humanDraft}", JsonConvert.SerializeObject(ViewModel.DraftingVM.DraftPicksHistory));
+                //}
+
                 UploadLogFragment();
             }
         }
-        
+
         //private void InitDraftHelperForHumanDraft(string set)
         //{
         //    RefreshCustomRatingsFromServer();

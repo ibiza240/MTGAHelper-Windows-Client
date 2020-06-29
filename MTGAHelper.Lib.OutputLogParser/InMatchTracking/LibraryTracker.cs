@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using MTGAHelper.Lib.OutputLogParser.Exceptions;
 using Serilog;
 
 namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
@@ -35,17 +36,19 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
 
         IReadOnlyDictionary<int, float> GetDrawChancesTopCard()
         {
-            if (cards == null || cards.Count <= topCardIdx)
+            if (cards == null || cards.Count <= drawCardIdx)
                 return new Dictionary<int, float>(0);
 
-            return cards[topCardIdx].GetDrawChances();
+            return cards[drawCardIdx].GetDrawChances();
         }
 
         /// <summary>Ordered collection of the instanceIds in the library</summary>
         List<LibraryCard> cards;
 
         ReadOnlyCollection<int> originalGrpIds;
-        int topCardIdx;
+
+        /// <summary>usually 0, unless viewing the top card(s) of the library</summary>
+        int drawCardIdx;
 
 
         public void ResetWithGrpIds(IEnumerable<int> grpIds)
@@ -79,6 +82,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
 
         public void ShuffleCards(IReadOnlyCollection<int> oldIds, IReadOnlyCollection<int> newIds)
         {
+            // check if whole library shuffled (easier case)
             if (cards.Count == oldIds.Count)
             {
                 Log.Debug("Shuffle lib {fz}?", ForZone);
@@ -91,16 +95,131 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                 cardIds.Clear();
                 cardIds.Add(grpIdsInLib);
                 cards = newIds.Select(i => new LibraryCard(i, grpIdsInLib)).ToList();
-                topCardIdx = 0;
+                drawCardIdx = 0;
 
                 Log.Debug("Shuffling complete.{nl}New cards    : {cards}", Environment.NewLine, cards);
+                return;
             }
-            else if (oldIds.Intersect(cards.Select(c => c.InstId)).Any())
+
+            var intersect = oldIds.Intersect(cards.Select(c => c.InstId)).ToArray();
+            if (!intersect.Any())
+                return;
+
+            drawCardIdx = 0;
+            Log.Debug("Shuffle cards in lib {fz}?", ForZone);
+
+            if (intersect.Length < oldIds.Count)
             {
-                Log.Warning($"(ShuffleCards) cards.Count {cards.Count} != {oldIds.Count} oldIds.Count but overlapping cards detected: {{intersect}}",
-                    cards.Where(c => oldIds.Contains(c.InstId)));
+                Log.Warning(
+                    "(ShuffleCards) WEIRDLY, some cards overlap, but not all. Intersection: {intersect}; oldIds: {oldIds}",
+                    cards.Where(c => oldIds.Contains(c.InstId)), oldIds);
                 Debugger.Break();
+                return;
             }
+
+            var oldCards = oldIds.Select(id => cards.First(c => c.InstId == id)).ToArray();
+            if (oldCards.Any(c => !c.IsKnown))
+            {
+                // Lukka apparently does not reveal cards he sees... so we need a workaround
+                ShuffleCardsWithUnknown(oldCards, newIds);
+                return;
+            }
+
+            var grpIds = oldCards.Select(c => c.GrpId).ToList();
+            cardIds.Add(grpIds);
+            foreach (var c in oldCards)
+            {
+                c.SetRevealed(c.GrpId);
+            }
+            CleanCardIds();
+
+            cards.RemoveAll(c => oldIds.Contains(c.InstId));
+            cards.AddRange(newIds.Select(i => new LibraryCard(i, grpIds)));
+
+            Log.Debug("Shuffling complete.{nl}New cards    : {cards}", Environment.NewLine, cards);
+        }
+
+        void ShuffleCardsWithUnknown(IReadOnlyCollection<LibraryCard> oldCards, IReadOnlyCollection<int> newIds)
+        {
+            // known issue: after this, some cards that should be known to be in the bottom half of de deck might still show up in de draw%...
+            // not as accurate as maybe possible, but it's the best we can do with the current tracking method
+
+            var (knownCards, unknownCards) = oldCards.SplitBy(c => c.IsKnown);
+            var distinctGrpIdGroups = unknownCards.Select(c => c.PossibleGrpIds).Distinct().ToArray();
+            cards.RemoveAll(c => oldCards.Any(o => o.InstId == c.InstId));
+
+            List<int> grpIds;
+            if (!distinctGrpIdGroups.Any())
+                throw new InvalidOperationException("ShuffleCardsWithUnknown: distinctGrpIdGroups empty!");
+
+            if (distinctGrpIdGroups.Length == 1)
+            {
+                grpIds = distinctGrpIdGroups[0];
+            }
+            else
+            {
+                grpIds = distinctGrpIdGroups.SelectMany(i => i).ToList();
+
+                var cardsWithOverlappingGrpIdGroups = cards
+                    .Select((c, i) => (c, i))
+                    .Where(x => distinctGrpIdGroups.Contains(x.c.PossibleGrpIds))
+                    .Select(x => x.i)
+                    .ToArray();
+                foreach (var i in cardsWithOverlappingGrpIdGroups)
+                {
+                    cards[i] = new LibraryCard(cards[i].InstId, grpIds);
+                }
+
+                foreach (var distinctGrpIdGroup in distinctGrpIdGroups)
+                {
+                    cardIds.Remove(distinctGrpIdGroup);
+                }
+                cardIds.Add(grpIds);
+            }
+
+            foreach (var knownCard in knownCards)
+            {
+                grpIds.Add(knownCard.GrpId);
+                knownCard.SetRevealed(knownCard.GrpId);
+            }
+            CleanCardIds();
+
+            var newCards = newIds.Select(i => new LibraryCard(i, grpIds));
+            cards.AddRange(newCards);
+        }
+
+        public void ScryComplete(IReadOnlyCollection<int> topIds, IReadOnlyCollection<int> bottomIds)
+        {
+            // Scrying triggers SetInstIdsAboutToMove(), reset when Scry done.
+            drawCardIdx = 0;
+
+            if (topIds != null)
+                MoveToTop(topIds);
+
+            if (bottomIds != null)
+                MoveToBottom(bottomIds);
+        }
+
+        void MoveToTop(IReadOnlyCollection<int> topIds)
+        {
+            var topCards = topIds.Select(i => cards.Find(c => c.InstId == i)).ToArray();
+            if (topCards.Any(c => c == null) && topCards.Any(c => c != null))
+            {
+                Log.Warning("could not find cards {ids} in library", topIds.Where(i => cards.All(c => c.InstId != i)));
+            }
+            cards.RemoveAll(c => topIds.Contains(c.InstId));
+            cards.InsertRange(0, topCards.Where(c => c != null));
+        }
+
+        void MoveToBottom(IReadOnlyCollection<int> bottomIds)
+        {
+            var bottomCards = bottomIds.Select(i => cards.Find(c => c.InstId == i)).ToArray();
+            if (bottomCards.Any(c => c == null) && bottomCards.Any(c => c != null))
+            {
+                Log.Warning("could not find cards {ids} in library", bottomIds.Where(i => cards.All(c => c.InstId != i)));
+            }
+            cards.RemoveAll(c => bottomIds.Contains(c.InstId));
+            cards.AddRange(bottomCards.Where(c => c != null));
         }
 
         public override void SetInstanceIds(IReadOnlyCollection<ITrackedCard> newCards)
@@ -111,13 +230,24 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             if (cards == null)
                 Debugger.Break();
 
+            drawCardIdx = 0;
+
             if (cards.Count != newCards.Count)
             {
-                Log.Error("(LibraryTracker.SetInstanceIds) counts differ: {cardsCount} != {newCardsCount}", cards.Count, newCards.Count);
-                throw new ArgumentOutOfRangeException(nameof(newCards), newCards, null);
+                Log.Warning("(LibraryTracker.SetInstanceIds) counts differ: {cardsCount} != {newCardsCount}", cards.Count, newCards.Count);
+                try
+                {
+                    TryGetCountsEqual(newCards);
+                }
+                catch (InvalidTrackerOperationException)
+                {
+                    // IMPROVE: add method to request a reverse engineer of the grpIds in library (by inspecting other trackers' cards)
+                    // and keep tracking library (albeit with reduced accuracy, probably)
+                    //TryReverseEngineerGrpIdsInLib();
+                    throw;
+                }
             }
 
-            topCardIdx = 0;
             if (TryReOrderCards(newCards) == false)
             {
                 if (cardIds.Count <= 1)
@@ -144,6 +274,24 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             }
 
             RevealCards(newCards);
+        }
+
+        void TryGetCountsEqual(IReadOnlyCollection<ITrackedCard> newCards)
+        {
+            // handle added cards
+            var addedCards = newCards.Where(nc => cards.All(c => c.InstId != nc.InstId)).ToArray();
+            if (addedCards.Any(c => !c.IsKnown))
+                throw new InvalidTrackerOperationException("unknown cards added to library");
+
+            cards.AddRange(CreateKnownCards(addedCards));
+
+
+            // handle removed cards
+            var removedCards = cards.Where(c => newCards.All(nc => nc.InstId != c.InstId)).ToArray();
+            if (removedCards.Any(c => !c.IsKnown))
+                throw new InvalidTrackerOperationException("unknown cards removed from library");
+
+            TakeCardsInternal(removedCards);
         }
 
         public void RevealCards(IEnumerable<ITrackedCard> revealedCards)
@@ -182,8 +330,16 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
         public override IReadOnlyCollection<StateCard2> TakeCards(IReadOnlyCollection<ITrackedCard> cardsToTake)
         {
             Log.Debug("(LibraryTracker.TakeCards) taking {cards}", cardsToTake);
-            topCardIdx = 0;
+            drawCardIdx = 0;
 
+            TakeCardsInternal(cardsToTake);
+
+            // IMPROVE: maybe track StateCards that remain known (e.g. cards put on top by Mystic Sanctuary or Witch's Cottage)
+            return cardsToTake.Select(c => CreateStateCard(c.GrpId).UpdateInstanceId(c.InstId)).ToArray();
+        }
+
+        void TakeCardsInternal(IReadOnlyCollection<ITrackedCard> cardsToTake)
+        {
             foreach (var toTake in cardsToTake)
             {
                 Debug.Assert(toTake.IsKnown || IsTrackingOpponentZone);
@@ -191,10 +347,9 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                 var idx = cards.FindIndex(c => c.InstId == toTake.InstId);
                 if (idx < 0)
                 {
-                    var ex = new ArgumentException($"[Message summarized?] Failed to match instanceId {toTake.InstId}!", nameof(cardsToTake));
+                    var ex = new InvalidTrackerOperationException($"[Message summarized?] Failed to match instanceId {toTake.InstId}!");
                     Log.Error(ex, "(LibraryTracker.TakeCards) card toTake {toTake}{nl}not in cards : {cards}",
                         toTake, Environment.NewLine, cards);
-                    Debugger.Break();
                     throw ex;
                 }
 
@@ -203,9 +358,6 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             }
 
             CleanCardIds();
-
-            // IMPROVE: maybe track StateCards that remain known (e.g. cards put on top by Mystic Sanctuary or Witch's Cottage)
-            return cardsToTake.Select(c => CreateStateCard(c.GrpId).UpdateInstanceId(c.InstId)).ToArray();
         }
 
         public override bool Clear()
@@ -215,7 +367,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             cardIds.Clear();
             cards = null;
             originalGrpIds = null;
-            topCardIdx = 0;
+            drawCardIdx = 0;
             return true;
         }
 
@@ -277,11 +429,11 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
         {
             bool isKnown;
             public override int GrpId => IsKnown ? PossibleGrpIds.First() : 0;
-            ICollection<int> PossibleGrpIds { get; }
+            internal List<int> PossibleGrpIds { get; }
 
             public override bool IsKnown => isKnown;
 
-            public LibraryCard(int instId, ICollection<int> possibleGrpIds) : base(instId)
+            public LibraryCard(int instId, List<int> possibleGrpIds) : base(instId)
             {
                 PossibleGrpIds = possibleGrpIds ?? throw new ArgumentNullException(nameof(possibleGrpIds));
                 isKnown = PossibleGrpIds.IsRepeatedUniqueValue();
@@ -315,7 +467,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
         {
             if (cards.Take(instanceIds.Count).Select(c => c.InstId).Except(instanceIds).Any())
                 return;
-            topCardIdx = instanceIds.Count;
+            drawCardIdx = instanceIds.Count;
         }
     }
 }

@@ -1,15 +1,11 @@
-﻿using MTGAHelper.Tracker.WPF.Exceptions;
-using MTGAHelper.Tracker.WPF.Tools;
-using Serilog;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using MTGAHelper.Tracker.WPF.Exceptions;
+using MTGAHelper.Tracker.WPF.Tools;
+using Serilog;
 
 namespace MTGAHelper.Tracker.WPF.Business
 {

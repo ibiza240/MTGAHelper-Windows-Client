@@ -21,6 +21,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.GroupReq
 
     public class GroupSpec
     {
+        public int lowerBound { get; set; }
         public int upperBound { get; set; }
         public string zoneType { get; set; }
         public string subZoneType { get; set; }

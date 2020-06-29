@@ -8,5 +8,10 @@ namespace MTGAHelper.Lib.Exceptions
             : base(msg)
         {
         }
+
+        public DeckScraperWarningException(string msg, Exception ex)
+            : base(msg, ex)
+        {
+        }
     }
 }

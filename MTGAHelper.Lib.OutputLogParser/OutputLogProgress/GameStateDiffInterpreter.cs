@@ -41,13 +41,17 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             // Set the turn number
             var turnInfo = gsm.Raw.gameStateMessage?.turnInfo;
             if (turnInfo?.turnNumber != null)
+            {
                 currentGameProgress.CurrentTurn = turnInfo.turnNumber;
 
-            //if (gsm.Timestamp == 636922646535459255)
-            //    System.Diagnostics.Debugger.Break();
+                if (turnInfo.turnNumber == 1 && turnInfo.activePlayer > 0)
+                {
+                    currentGameProgress.FirstTurn = turnInfo.activePlayer == currentGameProgress.SystemSeatId
+                        ? FirstTurnEnum.Play
+                        : FirstTurnEnum.Draw;
+                }
 
-            //if (gsm.Timestamp == 636896160671918127)
-            //    System.Diagnostics.Debugger.Break();
+            }
 
             // Protection
             if (gsm.Raw?.gameStateMessage?.annotations != null)
@@ -74,7 +78,7 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 
             foreach (var o in gsm.Raw.gameStateMessage.gameObjects)
             {
-                var library = o.ownerSeatId == currentGameProgress.systemSeatId ? currentGameProgress.Library : currentGameProgress.LibraryOpponent;
+                var library = o.ownerSeatId == currentGameProgress.SystemSeatId ? currentGameProgress.Library : currentGameProgress.LibraryOpponent;
 
                 //try
                 //{
@@ -98,7 +102,7 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             var opponentGameObjects = gsm.Raw.gameStateMessage.gameObjects
                 .Where(i => i.type == "GameObjectType_Card")
                 .Where(i => i.visibility == "Visibility_Public")
-                .Where(i => i.ownerSeatId == currentGameProgress.systemSeatIdOpponent)
+                .Where(i => i.ownerSeatId == currentGameProgress.SystemSeatIdOpponent)
                 .Where(i => i.isFacedown != true)
                 .ToArray();
 
@@ -136,8 +140,8 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             if (currentGameProgress.CardTransfersByTurn.Any() || gsm.Raw.gameStateMessage.zones == null)
                 return;
 
-            var handIds = gsm.Raw.gameStateMessage.zones?.FirstOrDefault(i => i.type == "ZoneType_Hand" && i.ownerSeatId == currentGameProgress.systemSeatId)?.objectInstanceIds;
-            var handOpponent = gsm.Raw.gameStateMessage.zones?.FirstOrDefault(i => i.type == "ZoneType_Hand" && i.ownerSeatId == currentGameProgress.systemSeatIdOpponent)?.objectInstanceIds;
+            var handIds = gsm.Raw.gameStateMessage.zones?.FirstOrDefault(i => i.type == "ZoneType_Hand" && i.ownerSeatId == currentGameProgress.SystemSeatId)?.objectInstanceIds;
+            var handOpponent = gsm.Raw.gameStateMessage.zones?.FirstOrDefault(i => i.type == "ZoneType_Hand" && i.ownerSeatId == currentGameProgress.SystemSeatIdOpponent)?.objectInstanceIds;
 
             if (handIds != null)
             {
@@ -231,8 +235,8 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                     instanceId = id,
                     affectorId = i.affectorId,
                     annotationId = i.id,
-                    zone_src = new Zone(currentGameProgress.Zones[i.details.Single(x => x.key == "zone_src").valueInt32.Single()], currentGameProgress.systemSeatIdOpponent, currentGameProgress.GetPlayerFromId(id)),
-                    zone_dest = new Zone(currentGameProgress.Zones[i.details.Single(x => x.key == "zone_dest").valueInt32.Single()], currentGameProgress.systemSeatIdOpponent, currentGameProgress.GetPlayerFromId(id)),
+                    zone_src = new Zone(currentGameProgress.Zones[i.details.Single(x => x.key == "zone_src").valueInt32.Single()], currentGameProgress.SystemSeatIdOpponent, currentGameProgress.GetPlayerFromId(id)),
+                    zone_dest = new Zone(currentGameProgress.Zones[i.details.Single(x => x.key == "zone_dest").valueInt32.Single()], currentGameProgress.SystemSeatIdOpponent, currentGameProgress.GetPlayerFromId(id)),
                 }))
                 .ToArray();
 
@@ -255,9 +259,11 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                     if (gameObject != null)
                     {
                         if (gameObject.ownerSeatId == gameObject.controllerSeatId)
-                            playerId = gameObject.ownerSeatId == gameObject.controllerSeatId ? (
-                                gameObject.ownerSeatId == currentGameProgress.systemSeatId ? PlayerEnum.Me : PlayerEnum.Opponent
-                                ) : PlayerEnum.Unknown;
+                        {
+                            playerId = gameObject.ownerSeatId == currentGameProgress.SystemSeatId
+                                ? PlayerEnum.Me
+                                : PlayerEnum.Opponent;
+                        }
                         else
                         {
                             //System.Diagnostics.Debugger.Break();

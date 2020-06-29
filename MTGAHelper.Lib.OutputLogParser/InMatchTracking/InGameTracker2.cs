@@ -52,10 +52,13 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
 
                 case MatchGameRoomStateChangedEventResult gameRoom:
                     {
-                        var opponentInfo = gameRoom.Raw.gameRoomInfo.gameRoomConfig.reservedPlayers?.FirstOrDefault(i => i.playerName == State.OpponentScreenName);
+                        var opponentInfo = gameRoom.Raw.gameRoomInfo.gameRoomConfig.reservedPlayers?
+                            .FirstOrDefault(i => i.playerName.StartsWith(State.OpponentScreenName));
                         if (opponentInfo != null)
                         {
                             State.SetSeatIds(State.OpponentSeatId == 1 ? 2 : 1, opponentInfo.systemSeatId);
+                            if (opponentInfo.playerName.Contains("#"))
+                                State.OpponentScreenName = opponentInfo.playerName;
                         }
 
                         return;
@@ -95,7 +98,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                         return;
                     }
 
-                case SelectNReqResult nReq when nReq.AllowCancel == AllowCancel.AllowCancel_No &&
+                case SelectNReqResult nReq when (nReq.AllowCancel == AllowCancel.AllowCancel_No || nReq.AllowCancel == AllowCancel.AllowCancel_Continue) &&
                                                 nReq.SeatId == State.MySeatId &&
                                                 nReq.IdType == IdType.IdType_InstanceId:
                     {
@@ -159,6 +162,10 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             var objectIdChanges = ParseObjectIdChanges(annotationsByType);
             var zoneTransfers = ParseZoneTransfers(annotationsByType, objectIdChanges);
 
+            var scries = ParseScryAnnotations(annotationsByType);
+            foreach (var (topIds, bottomIds) in scries) State.HandleScryDone(topIds, bottomIds);
+            // Surveils should be handled by ZoneTransfers
+
             var shuffles = ParseShuffles(annotationsByType);
             // Clear the Mind draws in the same message with the shuffle
             // so we have to handle shuffles before moves
@@ -213,6 +220,17 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                 .Select(d => (
                     origId: d.First(x => x.key == "orig_id").valueInt32[0],
                     newId: d.First(x => x.key == "new_id").valueInt32[0]))
+                .ToArray();
+        }
+
+        static IReadOnlyCollection<(List<int> topIds, List<int> bottomIds)> ParseScryAnnotations(ILookup<AnnotationType, Annotation> annotationsByType)
+        {
+            return annotationsByType[AnnotationType.AnnotationType_Scry]
+                .Where(a => a.details != null)
+                .Select(a => a.details)
+                .Select(d => (
+                    topIds: d.FirstOrDefault(x => x.key == "topIds")?.valueInt32,
+                    bottomIds: d.FirstOrDefault(x => x.key == "bottomIds")?.valueInt32))
                 .ToArray();
         }
 

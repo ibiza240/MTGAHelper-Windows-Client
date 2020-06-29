@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Windows;
+using System.Windows.Input;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.ViewModels;
 
@@ -87,5 +88,10 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         }
 
         #endregion
+
+        private void CopyOpponentNameToClipboard(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(MainWindowVM.InMatchState.OpponentScreenName);
+        }
     }
 }

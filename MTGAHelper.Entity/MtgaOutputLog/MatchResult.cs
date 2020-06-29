@@ -30,18 +30,11 @@ namespace MTGAHelper.Entity.MtgaOutputLog
             (long)(Games.Last().StartDateTime.AddSeconds(Games.Last().SecondsCount) - Games.First().StartDateTime).TotalSeconds;
         public ICollection<GameDetail> Games { get; set; } = new List<GameDetail>();
 
+        private GameOutcomeEnum _outcome;
         public GameOutcomeEnum Outcome
         {
-            get
-            {
-                var wins = Games.Count(i => i.Outcome == GameOutcomeEnum.Victory);
-                var defeats = Games.Count(i => i.Outcome == GameOutcomeEnum.Defeat);
-
-                if (wins == 0 && defeats == 0)
-                    return Games.All(i => i.Outcome == GameOutcomeEnum.Draw) ? GameOutcomeEnum.Draw : GameOutcomeEnum.Unknown;
-
-                return wins > defeats ? GameOutcomeEnum.Victory : wins == defeats ? GameOutcomeEnum.Draw : GameOutcomeEnum.Defeat;
-            }
+            get => _outcome != GameOutcomeEnum.Unknown ? _outcome : DeriveOutcome();
+            set => _outcome = value;
         }
 
         public MatchOpponentInfo Opponent { get; set; }
@@ -67,6 +60,17 @@ namespace MTGAHelper.Entity.MtgaOutputLog
                     RankingClass = "Beginner",
                 },
             };
+        }
+
+        private GameOutcomeEnum DeriveOutcome()
+        {
+            var wins = Games.Count(i => i.Outcome == GameOutcomeEnum.Victory);
+            var defeats = Games.Count(i => i.Outcome == GameOutcomeEnum.Defeat);
+
+            if (wins == 0 && defeats == 0)
+                return Games.All(i => i.Outcome == GameOutcomeEnum.Draw) ? GameOutcomeEnum.Draw : GameOutcomeEnum.Unknown;
+
+            return wins > defeats ? GameOutcomeEnum.Victory : wins == defeats ? GameOutcomeEnum.Draw : GameOutcomeEnum.Defeat;
         }
     }
 

@@ -200,7 +200,13 @@
             <Label
                 Grid.Row="0"
                 Grid.Column="3"
+                MouseDoubleClick="CopyOpponentNameToClipboard"
                 FontWeight="{Binding InMatchState.TimerOpponent.HasPriority, Converter={StaticResource HasPriorityConverter}}">
+                <Label.ToolTip>
+                    <ToolTip>
+                        <TextBlock Text="{Binding InMatchState.OpponentScreenName, StringFormat={}{0} (double click to copy)}"></TextBlock>
+                    </ToolTip>
+                </Label.ToolTip>
                 <TextBlock Text="{Binding InMatchState.TimerOpponent.TimePlayed, StringFormat=Opponent: {0}}" />
             </Label>
         </Grid>

@@ -1,3 +1,9 @@
+### v1.6.1 (2020-06-28)
+
+Bugfix to support correctly limited ratings in Sealed
+
+Bugfix during in-game tracking
+
 ### v1.6 (2020-06-25)
 
 Support for M21 expansion

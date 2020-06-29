@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MTGAHelper.Entity;
 using MTGAHelper.Entity.MtgaOutputLog;
 using Serilog;
 
@@ -10,7 +9,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress
     public class GameProgress
     {
         // Mapped to GameDetail
-        public DateTime StartDateTime { get; set; }
+        public DateTime StartDateTime { get; }
         public long SecondsCount => (long)(LastMessage - StartDateTime).TotalSeconds;
         public GameOutcomeEnum Outcome { get; set; }
         public FirstTurnEnum FirstTurn { get; set; }
@@ -25,41 +24,28 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress
         //    .Where(i => i.CardGrpId != default(int))
         //    .GroupBy(i => i.CardGrpId)
         //    .ToDictionary(i => i.Key, i => i.Count());
-        public Dictionary<int, int> OpponentCardsSeenByInstanceId { get; set; } = new Dictionary<int, int>();
-        public IList<ICollection<int>> StartingHands { get; set; } = new List<ICollection<int>>();
-        public Dictionary<int, IList<CardForTurn>> CardTransfersByTurn { get; set; } = new Dictionary<int, IList<CardForTurn>>();
+        public Dictionary<int, int> OpponentCardsSeenByInstanceId { get; } = new Dictionary<int, int>();
+        public IList<ICollection<int>> StartingHands { get; } = new List<ICollection<int>>();
+        public Dictionary<int, IList<CardForTurn>> CardTransfersByTurn { get; } = new Dictionary<int, IList<CardForTurn>>();
 
         // For public usage
-        public Dictionary<int, OutputLogParser.Models.GRE.MatchToClient.GameStateMessage.Zone> Zones { get; set; }
-        public int systemSeatId { get; set; }
-        public int systemSeatIdOpponent { get; set; }
+        public Dictionary<int, GRE.MatchToClient.GameStateMessage.Zone> Zones { get; private set; }
+        public int SystemSeatId { get; private set; }
+        public int SystemSeatIdOpponent { get; private set; }
         public DateTime LastMessage { get; set; }
-        public ICollection<CardIdentifier> Library { get; set; } = new CardIdentifier[0];
-        public ICollection<CardIdentifier> LibraryOpponent { get; set; } = new CardIdentifier[0];
+        public ICollection<CardIdentifier> Library { get; private set; } = new CardIdentifier[0];
+        public ICollection<CardIdentifier> LibraryOpponent { get; private set; } = new CardIdentifier[0];
         public int CurrentTurn { get; set; }
 
-        private GameProgress(DateTime dateStart)
+        public GameProgress(DateTime dateStart)
         {
             StartDateTime = dateStart;
             LastMessage = dateStart;
         }
 
-        public GameProgress(ConfigModelRawDeck deckUsed, DateTime dateStart)
-            : this(dateStart)
+        public bool InitPlayerLibrary(ICollection<GRE.MatchToClient.GameStateMessage.Zone> zones)
         {
-            DeckCards = deckUsed.CardsMain;
-        }
-
-        public GameProgress(bool isPlayerSeat1, DateTime dateStart)
-            : this(dateStart)
-        {
-            systemSeatId = isPlayerSeat1 ? 1 : 2;
-            systemSeatIdOpponent = isPlayerSeat1 ? 2 : 1;
-        }
-
-        public bool InitPlayerLibrary(ICollection<OutputLogParser.Models.GRE.MatchToClient.GameStateMessage.Zone> zones)
-        {
-            var myLibrary = zones?.FirstOrDefault(i => i.type == "ZoneType_Library" && i.ownerSeatId == systemSeatId);
+            var myLibrary = zones?.FirstOrDefault(i => i.type == "ZoneType_Library" && i.ownerSeatId == SystemSeatId);
             var ids = myLibrary?.objectInstanceIds;
 
             if (myLibrary == null || ids == null)
@@ -73,7 +59,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress
                     return false;
                 else
                     // Library was reinitialized because of mulligan
-                    ids.AddRange(zones.First(i => i.type == "ZoneType_Hand" && i.ownerSeatId == systemSeatId).objectInstanceIds);
+                    ids.AddRange(zones.First(i => i.type == "ZoneType_Hand" && i.ownerSeatId == SystemSeatId).objectInstanceIds);
             }
 
             Library = ids.Select(i => new CardIdentifier(i)).ToArray();
@@ -88,7 +74,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress
             //{
             if (InitPlayerLibrary(zones))
             {
-                var idsOpponent = zones.First(i => i.type == "ZoneType_Library" && i.ownerSeatId == systemSeatIdOpponent).objectInstanceIds;
+                var idsOpponent = zones.First(i => i.type == "ZoneType_Library" && i.ownerSeatId == SystemSeatIdOpponent).objectInstanceIds;
                 LibraryOpponent = idsOpponent.Select(i => new CardIdentifier(i)).ToArray();
             }
 
@@ -106,17 +92,17 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress
 
             //if (Library.Any(i => i.Ids.Contains(newId)))
             //    System.Diagnostics.Debugger.Break();
-            var NewIdAlreadyExistingForCard = Library.FirstOrDefault(i => i.Ids.Contains(newId));
-            if (NewIdAlreadyExistingForCard != null)
+            var newIdAlreadyExistingForCard = Library.FirstOrDefault(i => i.Ids.Contains(newId));
+            if (newIdAlreadyExistingForCard != null)
             {
-                NewIdAlreadyExistingForCard.Ids.Remove(newId);
+                newIdAlreadyExistingForCard.Ids.Remove(newId);
                 Log.Warning("{outputLogError}: newId {newId} already existing in Library [{ts}]", "OUTPUTLOG", newId, timestamp);
             }
 
-            NewIdAlreadyExistingForCard = LibraryOpponent.FirstOrDefault(i => i.Ids.Contains(newId));
-            if (NewIdAlreadyExistingForCard != null)
+            newIdAlreadyExistingForCard = LibraryOpponent.FirstOrDefault(i => i.Ids.Contains(newId));
+            if (newIdAlreadyExistingForCard != null)
             {
-                NewIdAlreadyExistingForCard.Ids.Remove(newId);
+                newIdAlreadyExistingForCard.Ids.Remove(newId);
                 Log.Warning("{outputLogError}: newId {newId} already existing in LibraryOpponent [{ts}]", "OUTPUTLOG", newId, timestamp);
             }
 
@@ -149,13 +135,16 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress
 
         public void AddCardTransfer(CardForTurn c)
         {
-            if (CardTransfersByTurn.Count == 0)
-                FirstTurn = c.Player == PlayerEnum.Me ? FirstTurnEnum.Play : FirstTurnEnum.Draw;
-
             if (CardTransfersByTurn.ContainsKey(c.Turn) == false)
                 CardTransfersByTurn.Add(c.Turn, new List<CardForTurn>());
 
             CardTransfersByTurn[c.Turn].Add(c);
+        }
+
+        public void SetOpponentId(int opponentSystemId)
+        {
+            SystemSeatIdOpponent = opponentSystemId;
+            SystemSeatId = opponentSystemId == 2 ? 1 : 2;
         }
     }
 }

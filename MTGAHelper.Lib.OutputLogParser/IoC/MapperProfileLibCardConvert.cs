@@ -29,7 +29,8 @@ namespace MTGAHelper.Lib.OutputLogParser.IoC
                 .ForMember(i => i.EventType, i => i.ConvertUsing(eventNameToType, x => x.Raw.payload.eventId))
                 .ForMember(i => i.Opponent, i => i.MapFrom(x => x.Raw.payload))
                 .ForMember(m => m.Games, o => o.Ignore())
-                .ForMember(m => m.DeckUsed, o => o.Ignore());
+                .ForMember(m => m.DeckUsed, o => o.Ignore())
+                .ForMember(m => m.Outcome, o => o.Ignore());
 
             //CreateMap<CourseDeckRaw, MtgaDeck>()
             CreateMap<CourseDeckRaw, ConfigModelRawDeck>()

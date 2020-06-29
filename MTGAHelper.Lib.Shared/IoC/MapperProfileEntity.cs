@@ -39,7 +39,7 @@ namespace MTGAHelper.Lib.IoC
                 .ForCtorParam("amount", opt => opt.MapFrom(kvp => kvp.Value))
                 .ForAllMembers(o => o.Ignore());
 
-            CreateMap<QuestUpdate, PlayerQuest>();
+            //CreateMap<QuestUpdate, PlayerQuest>();// TODO: delete?
             CreateMap<TrackDiff, PlayerProgress>(MemberList.None);
             CreateMap<DraftMakePickRaw, DraftPickProgress>();
 
