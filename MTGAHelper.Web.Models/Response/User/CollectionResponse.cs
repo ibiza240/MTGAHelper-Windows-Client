@@ -47,9 +47,9 @@ namespace MTGAHelper.Web.UI.Model.Response.User
             //    System.Diagnostics.Debugger.Break();
             //}
 
-            Inventory = inventory == null ? new InventoryResponseDto() : mapper.Map<InventoryResponseDto>(inventory);
-            ConstructedRank = mapper.Map<RankInfoDto>(ranks.FirstOrDefault(i => i.Format == RankFormatEnum.Constructed));
-            LimitedRank = mapper.Map<RankInfoDto>(ranks.FirstOrDefault(i => i.Format == RankFormatEnum.Limited));
+            Inventory = mapper.Map<InventoryResponseDto>(inventory ?? new Inventory());
+            ConstructedRank = mapper.Map<RankInfoDto>(ranks.FirstOrDefault(i => i.Format == RankFormatEnum.Constructed) ?? new ConfigModelRankInfo());
+            LimitedRank = mapper.Map<RankInfoDto>(ranks.FirstOrDefault(i => i.Format == RankFormatEnum.Limited) ?? new ConfigModelRankInfo());
             PlayerProgress = mapper.Map<Dictionary<string, PlayerProgressDto>>(playerProgress);
         }
     }
