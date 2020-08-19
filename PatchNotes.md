@@ -1,3 +1,9 @@
+### v1.6.2 (2020-08-19)
+
+Support for the Jumpstart (JMP) and Amonkhet Remastered (AKR) card image thumbnails 
+
+Limited Ratings for AKR available from Deathsie
+
 ### v1.6.1 (2020-06-28)
 
 Bugfix to support correctly limited ratings in Sealed
