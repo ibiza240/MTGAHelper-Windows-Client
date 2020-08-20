@@ -1,3 +1,7 @@
+### v1.6.3 (2020-08-20)
+
+Hotfix for reported crashes
+
 ### v1.6.2 (2020-08-19)
 
 Support for the Jumpstart (JMP) and Amonkhet Remastered (AKR) card image thumbnails 
