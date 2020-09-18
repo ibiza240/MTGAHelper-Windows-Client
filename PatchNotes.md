@@ -1,3 +1,17 @@
+### v1.7.0 (2020-09-17)
+
+Support for the Zendikar Rising (ZNR) card image thumbnails
+
+Support for the Zendikar Rising (ZNR) Limited Ratings (MTG Arena Zone, Deathsie, Infinite Mythic Edition sources)
+
+Options window: Each Limited Ratings Source is now displaying which sets are being supported
+
+In-game tracker: The Lands icon at the top now has a tooltip detailing the draw % chance for each mana source
+
+In-game tracker: The Lands icon at the top can be clicked to show/hide land entries in your library
+
+In-game tracker: The Opponent label at the bottom (on the timer) is now clickable to copy the opponent's full name 
+
 ### v1.6.3 (2020-08-20)
 
 Hotfix for reported crashes
