@@ -1,4 +1,6 @@
-﻿namespace MTGAHelper.Entity
+﻿using System;
+
+namespace MTGAHelper.Entity
 {
     public class Set
     {
@@ -7,6 +9,6 @@
         public string Code { get; set; }
         public string Arenacode { get; set; }
         public int Tile { get; set; }
-        public string Release { get; set; }
+        public DateTime ReleaseDate { get; set; }
     }
 }

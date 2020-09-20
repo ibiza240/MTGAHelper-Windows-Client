@@ -22,20 +22,20 @@ namespace MTGAHelper.Entity.MtgaOutputLog
         public IList<InfoByDate<Dictionary<string, PlayerProgress>>> PlayerProgressByDate { get; set; } = new List<InfoByDate<Dictionary<string, PlayerProgress>>>();
         //public IList<InfoByDate<List<DraftMakePickRaw>>> DraftPickProgressByDate { get; set; } = new List<InfoByDate<List<DraftMakePickRaw>>>();
         //public IList<InfoByDate<DateSnapshotDiff>> DiffByDate { get; set; } = new List<InfoByDate<DateSnapshotDiff>>();
-        public IList<InfoByDate<Dictionary<DateTime, CrackBoosterRaw>>> CrackedBoostersByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, CrackBoosterRaw>>>();
+        //public IList<InfoByDate<Dictionary<DateTime, CrackBoosterRaw>>> CrackedBoostersByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, CrackBoosterRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, GetPlayerProgressRaw>>> PlayerProgressIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, GetPlayerProgressRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, InventoryUpdatedRaw>>> InventoryUpdatesByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, InventoryUpdatedRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, PostMatchUpdateRaw>>> PostMatchUpdatesByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, PostMatchUpdateRaw>>>();
-        public IList<InfoByDate<Dictionary<DateTime, CompleteVaultRaw>>> VaultsOpenedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, CompleteVaultRaw>>>();
+        //public IList<InfoByDate<Dictionary<DateTime, CompleteVaultRaw>>> VaultsOpenedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, CompleteVaultRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, DraftMakePickRaw>>> DraftPickProgressIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, DraftMakePickRaw>>>();
-        public IList<InfoByDate<Dictionary<DateTime, RankUpdatedRaw>>> RankUpdatedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, RankUpdatedRaw>>>();
+        //public IList<InfoByDate<Dictionary<DateTime, RankUpdatedRaw>>> RankUpdatedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, RankUpdatedRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, EventClaimPrizeRaw>>> EventClaimPriceByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, EventClaimPrizeRaw>>>();
 
-        public IList<InfoByDate<Dictionary<DateTime, MythicRatingUpdatedRaw>>> MythicRatingUpdatedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, MythicRatingUpdatedRaw>>>();
-        public IList<InfoByDate<Dictionary<DateTime, PayEntryRaw>>> PayEntryByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, PayEntryRaw>>>();
+        //public IList<InfoByDate<Dictionary<DateTime, MythicRatingUpdatedRaw>>> MythicRatingUpdatedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, MythicRatingUpdatedRaw>>>();
+        //public IList<InfoByDate<Dictionary<DateTime, PayEntryRaw>>> PayEntryByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, PayEntryRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, GetCombinedRankInfoRaw>>> CombinedRankInfoByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, GetCombinedRankInfoRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, Inventory>>> InventoryIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, Inventory>>>();
-        public IList<InfoByDate<Dictionary<DateTime, Dictionary<int, int>>>> CollectionIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, Dictionary<int, int>>>>();
+        //public IList<InfoByDate<Dictionary<DateTime, Dictionary<int, int>>>> CollectionIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, Dictionary<int, int>>>>();
 
         public GetSeasonAndRankDetailRaw SeasonAndRankDetail { get; set; } = new GetSeasonAndRankDetailRaw { currentSeason = new CurrentSeason() };
 
@@ -95,29 +95,29 @@ namespace MTGAHelper.Entity.MtgaOutputLog
             foreach (var draftPick in DraftPickProgressIntradayByDate)
                 CreateOrGetDateSnapshotInfo(draftPick.DateTime).DraftPickProgressIntraday = draftPick.Info;
 
-            foreach (var rankUpdated in RankUpdatedByDate)
-                CreateOrGetDateSnapshotInfo(rankUpdated.DateTime).RankUpdated = rankUpdated.Info;
+            //foreach (var rankUpdated in RankUpdatedByDate)
+            //    CreateOrGetDateSnapshotInfo(rankUpdated.DateTime).RankUpdated = rankUpdated.Info;
 
             foreach (var eventClaimPrice in EventClaimPriceByDate)
                 CreateOrGetDateSnapshotInfo(eventClaimPrice.DateTime).EventClaimPrize = eventClaimPrice.Info;
 
-            foreach (var mythicRatingUpdated in MythicRatingUpdatedByDate)
-                CreateOrGetDateSnapshotInfo(mythicRatingUpdated.DateTime).MythicRatingUpdated = mythicRatingUpdated.Info;
+            //foreach (var mythicRatingUpdated in MythicRatingUpdatedByDate)
+            //    CreateOrGetDateSnapshotInfo(mythicRatingUpdated.DateTime).MythicRatingUpdated = mythicRatingUpdated.Info;
 
-            foreach (var payEntry in PayEntryByDate)
-                CreateOrGetDateSnapshotInfo(payEntry.DateTime).PayEntry = payEntry.Info;
+            //foreach (var payEntry in PayEntryByDate)
+            //    CreateOrGetDateSnapshotInfo(payEntry.DateTime).PayEntry = payEntry.Info;
 
             foreach (var combinedRankInfo in CombinedRankInfoByDate)
                 CreateOrGetDateSnapshotInfo(combinedRankInfo.DateTime).CombinedRankInfo = combinedRankInfo.Info;
 
-            foreach (var booster in CrackedBoostersByDate)
-                CreateOrGetDateSnapshotInfo(booster.DateTime).CrackedBoosters = booster.Info;
+            //foreach (var booster in CrackedBoostersByDate)
+            //    CreateOrGetDateSnapshotInfo(booster.DateTime).CrackedBoosters = booster.Info;
 
-            foreach (var vault in VaultsOpenedByDate)
-                CreateOrGetDateSnapshotInfo(vault.DateTime).VaultsOpened = vault.Info;
+            //foreach (var vault in VaultsOpenedByDate)
+            //    CreateOrGetDateSnapshotInfo(vault.DateTime).VaultsOpened = vault.Info;
 
-            foreach (var vault in CollectionIntradayByDate)
-                CreateOrGetDateSnapshotInfo(vault.DateTime).CollectionIntraday = vault.Info;
+            //foreach (var vault in CollectionIntradayByDate)
+            //    CreateOrGetDateSnapshotInfo(vault.DateTime).CollectionIntraday = vault.Info;
 
             foreach (var vault in InventoryIntradayByDate)
                 CreateOrGetDateSnapshotInfo(vault.DateTime).InventoryIntraday = vault.Info;
@@ -154,7 +154,7 @@ namespace MTGAHelper.Entity.MtgaOutputLog
             var dates = InventoryIntradayByDate.Select(i => i.DateTime.Date)
                 .Union(PostMatchUpdatesByDate.Select(i => i.DateTime.Date))
                 .Union(MatchesByDate.Select(i => i.DateTime.Date))
-                .Union(CollectionIntradayByDate.Select(i => i.DateTime.Date))
+                .Union(CollectionByDate.Select(i => i.DateTime.Date))
                 .Distinct();
 
             return dates.Select(i => i.ToString("yyyyMMdd")).ToList();
@@ -196,7 +196,7 @@ namespace MTGAHelper.Entity.MtgaOutputLog
                 Inventory = InventoryByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Inventory(),
                 Matches = MatchesByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new List<MatchResult>(),
                 PlayerQuests = PlayerQuestsByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new List<PlayerQuest>(),
-                CrackedBoosters = CrackedBoostersByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, CrackBoosterRaw>(),
+                //CrackedBoosters = CrackedBoostersByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, CrackBoosterRaw>(),
                 RankSynthetic = RankSyntheticByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new List<ConfigModelRankInfo>(),
                 PlayerProgress = PlayerProgressByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<string, PlayerProgress>(),
                 PlayerProgressIntraday = PlayerProgressIntradayByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, GetPlayerProgressRaw>(),
@@ -204,14 +204,14 @@ namespace MTGAHelper.Entity.MtgaOutputLog
                 PostMatchUpdates = PostMatchUpdatesByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, PostMatchUpdateRaw>(),
                 //DraftPickProgress = DraftPickProgressByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new List<DraftMakePickRaw>(),
                 DraftPickProgressIntraday = DraftPickProgressIntradayByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, DraftMakePickRaw>(),
-                VaultsOpened = VaultsOpenedByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, CompleteVaultRaw>(),
-                CollectionIntraday = CollectionIntradayByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, Dictionary<int, int>>(),
+                //VaultsOpened = VaultsOpenedByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, CompleteVaultRaw>(),
+                //CollectionIntraday = CollectionIntradayByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, Dictionary<int, int>>(),
                 InventoryIntraday = InventoryIntradayByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, Inventory>(),
-                RankUpdated = RankUpdatedByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, RankUpdatedRaw>(),
+                //RankUpdated = RankUpdatedByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, RankUpdatedRaw>(),
                 CombinedRankInfo = CombinedRankInfoByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, GetCombinedRankInfoRaw>(),
                 EventClaimPrize = EventClaimPriceByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, EventClaimPrizeRaw>(),
-                MythicRatingUpdated = MythicRatingUpdatedByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, MythicRatingUpdatedRaw>(),
-                PayEntry = PayEntryByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, PayEntryRaw>(),
+                //MythicRatingUpdated = MythicRatingUpdatedByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, MythicRatingUpdatedRaw>(),
+                //PayEntry = PayEntryByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, PayEntryRaw>(),
             };
 
             //var diff = DiffByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new DateSnapshotDiff();

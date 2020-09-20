@@ -188,6 +188,7 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="Business\CacheLoaderConfigResolutions.cs" />
+    <Compile Include="Business\CardThumbnailDownloader.cs" />
     <Compile Include="Business\DataDownloader.cs" />
     <Compile Include="Business\DraftCardsPicker.cs" />
     <Compile Include="Business\DraftHelperRunner.cs" />
@@ -230,6 +231,7 @@
     <Compile Include="Views\CardListPopup.xaml.cs">
       <DependentUpon>CardListPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Helpers\StringFormatToImageSourceConverter.cs" />
     <Compile Include="Views\Helpers\MissingCardsToColorScaleConverter.cs" />
     <Compile Include="Views\OpponentWindow.xaml.cs">
       <DependentUpon>OpponentWindow.xaml</DependentUpon>

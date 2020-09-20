@@ -17,6 +17,7 @@ using MTGAHelper.Lib;
 using MTGAHelper.Lib.OutputLogParser;
 using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
 using MTGAHelper.Lib.OutputLogParser.Models;
+using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient;
 using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
 using MTGAHelper.Tracker.WPF.Business;
 using MTGAHelper.Tracker.WPF.Business.Monitoring;
@@ -330,8 +331,8 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         private void RefreshCustomRatingsFromServer()
         {
-            var strRatings = Api.GetCustomDraftRatings();
-            var ratings = JsonConvert.DeserializeObject<ICollection<CustomDraftRatingResponseDto>>(strRatings)
+            var ratingsRaw = Api.GetCustomDraftRatings();
+            var ratings = ratingsRaw
                 .Select(i => new CustomDraftRating
                 {
                     Set = i.Card.Set,
@@ -365,7 +366,10 @@ namespace MTGAHelper.Tracker.WPF.Views
             {
                 // Create the window, set the owner and show as a dialog window (blocking execution until closed)
                 var optionsVM = mapper.Map<OptionsWindowVM>(ViewModel.Config);
+                
+                optionsVM.Sets = ViewModel.Sets.ToDictionary(i => i.Code, i => i);
                 optionsVM.DraftRatings = DraftRatings;
+                optionsVM.LimitedRatingsSource = optionsVM.LimitedRatingsSourcesDict.First(i => i.Key == optionsVM.LimitedRatingsSource.Key);
 
                 OptionsWindow win = new OptionsWindow().Init(ViewModel, optionsVM);
                 win.Owner = this;
@@ -391,7 +395,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                 configModel.OrderLibraryCardsBy = ovm.OrderLibraryCardsBy;
                 configModel.ForceCardPopupSide = ovm.ForceCardPopupSide;
                 configModel.ShowLimitedRatings = ovm.ShowLimitedRatings;
-                configModel.LimitedRatingsSource = ovm.LimitedRatingsSource;
+                configModel.LimitedRatingsSource = ovm.LimitedRatingsSource.Key;
                 configModel.ForceGameResolution = ovm.ForceGameResolution;
                 //configModel.GameResolutionBlackBorders = ovm.GameResolutionBlackBorders;
                 configModel.GameResolution = ovm.GameResolution;
@@ -684,6 +688,8 @@ namespace MTGAHelper.Tracker.WPF.Views
 
                             if (isLimitedCardPool)
                             {
+                                ViewModel.CheckAndDownloadThumbnails(msgCardPool.CardPool);
+
                                 // Refresh the drafting window to show whole card pool
                                 ViewModel.DraftingVM.ShowGlobalMTGAHelperSays = false;
                                 SetCardsDraft(new DraftPickProgress(msgCardPool.CardPool));
@@ -722,6 +728,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                                     if (prms.humanContext.Contains("Client changed scene") &&
                                         context.Contains("Draft") == false &&
                                         context.Contains("Opening sealed boosters") == false &&
+                                        context.Contains("Sealed") == false &&
                                         context != "deck builder")
                                     {
                                         GoHome();
@@ -745,12 +752,14 @@ namespace MTGAHelper.Tracker.WPF.Views
                     case GetActiveEventsV2Result getActiveEvents:
                         GoHome();
                         break;
-                    //else if (msg is EventClaimPrizeResult claimPrize)
-                    //{
-                    //    // Clear the drafting window
-                    //    SetCardsDraft(new int[0]);
-                    //}
-                    case MatchCreatedResult matchCreated:
+
+                    case MatchCreatedResult _:
+                        ViewModel.SetMainWindowContext(WindowContext.Playing);
+                        break;
+
+                    case ConnectRespResult connectResp:
+                        var distinctCards = connectResp.Raw.connectResp.deckMessage.deckCards.Union(connectResp.Raw.connectResp.deckMessage.sideboardCards ?? new List<int>()).Distinct().ToArray();
+                        ViewModel.CheckAndDownloadThumbnails(distinctCards);
                         ViewModel.SetMainWindowContext(WindowContext.Playing);
                         break;
 
@@ -791,7 +800,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                     case GetPlayerInventoryResult _:
                     case GetPlayerCardsResult _:
                     case PostMatchUpdateResult _:
-                    case RankUpdatedResult _:
+                    //case RankUpdatedResult _:
                     case GetCombinedRankInfoResult _:
                         mustUpload = true;
                         break;

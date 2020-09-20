@@ -8,6 +8,7 @@ using MTGAHelper.Lib.OutputLogParser;
 using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
 using MTGAHelper.Tracker.WPF.Models;
 using MTGAHelper.Tracker.WPF.Tools;
+using MTGAHelper.Tracker.WPF.Business;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
@@ -31,6 +32,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
     public class CardsListVM : BasicModel
     {
         readonly IMapper mapper;
+        private readonly CardThumbnailDownloader CardThumbnailDownloader;
         #region Constructor
 
         /// <summary>
@@ -39,11 +41,12 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <param name="display"></param>
         /// <param name="cardsListOrder"></param>
         /// <param name="mapper"></param>
-        public CardsListVM(DisplayType display, CardsListOrder cardsListOrder, IMapper mapper)
+        public CardsListVM(DisplayType display, CardsListOrder cardsListOrder, IMapper mapper, CardThumbnailDownloader cardThumbnailDownloader)
         {
             CardsListOrder = cardsListOrder;
             Display = display;
             this.mapper = mapper;
+            CardThumbnailDownloader = cardThumbnailDownloader;
         }
 
         #endregion
@@ -182,8 +185,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         {
             return CardsListOrder switch
             {
-                CardsListOrder.ManaCost => cardsQuery.OrderBy(i => i.Type.Contains("Land") ? 0 : 1).ThenBy(i => i.Cmc),
-                CardsListOrder.DrawChance => cardsQuery.OrderByDescending(i => i.DrawPercent),
+                CardsListOrder.ManaCost => cardsQuery.OrderBy(i => i.Type.Contains("Land") ? 1 : 0).ThenBy(i => i.Cmc),
+                CardsListOrder.DrawChance => cardsQuery.OrderByDescending(i => i.DrawPercent).ThenBy(i => i.Type.Contains("Land") ? 1 : 0),
                 _ => throw new ArgumentOutOfRangeException()
             };
         }

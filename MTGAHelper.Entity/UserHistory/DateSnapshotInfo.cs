@@ -22,15 +22,15 @@ namespace MTGAHelper.Entity.UserHistory
         public Dictionary<DateTime, DraftMakePickRaw> DraftPickProgressIntraday { get; set; } = new Dictionary<DateTime, DraftMakePickRaw>();
         public Dictionary<DateTime, InventoryUpdatedRaw> InventoryUpdates { get; set; } = new Dictionary<DateTime, InventoryUpdatedRaw>();
         public Dictionary<DateTime, PostMatchUpdateRaw> PostMatchUpdates { get; set; } = new Dictionary<DateTime, PostMatchUpdateRaw>();
-        public Dictionary<DateTime, CrackBoosterRaw> CrackedBoosters { get; set; } = new Dictionary<DateTime, CrackBoosterRaw>();
-        public Dictionary<DateTime, CompleteVaultRaw> VaultsOpened { get; set; } = new Dictionary<DateTime, CompleteVaultRaw>();
+        //public Dictionary<DateTime, CrackBoosterRaw> CrackedBoosters { get; set; } = new Dictionary<DateTime, CrackBoosterRaw>();
+        //public Dictionary<DateTime, CompleteVaultRaw> VaultsOpened { get; set; } = new Dictionary<DateTime, CompleteVaultRaw>();
         public Dictionary<DateTime, EventClaimPrizeRaw> EventClaimPrize { get; set; } = new Dictionary<DateTime, EventClaimPrizeRaw>();
         public Dictionary<DateTime, Inventory> InventoryIntraday { get; set; } = new Dictionary<DateTime, Inventory>();
-        public Dictionary<DateTime, Dictionary<int, int>> CollectionIntraday { get; set; } = new Dictionary<DateTime, Dictionary<int, int>>();
-        public Dictionary<DateTime, RankUpdatedRaw> RankUpdated { get; set; } = new Dictionary<DateTime, RankUpdatedRaw>();
+        //public Dictionary<DateTime, Dictionary<int, int>> CollectionIntraday { get; set; } = new Dictionary<DateTime, Dictionary<int, int>>();
+        //public Dictionary<DateTime, RankUpdatedRaw> RankUpdated { get; set; } = new Dictionary<DateTime, RankUpdatedRaw>();
         public Dictionary<DateTime, GetCombinedRankInfoRaw> CombinedRankInfo { get; set; } = new Dictionary<DateTime, GetCombinedRankInfoRaw>();
-        public Dictionary<DateTime, PayEntryRaw> PayEntry { get; set; } = new Dictionary<DateTime, PayEntryRaw>();
-        public Dictionary<DateTime, MythicRatingUpdatedRaw> MythicRatingUpdated { get; set; } = new Dictionary<DateTime, MythicRatingUpdatedRaw>();
+        //public Dictionary<DateTime, PayEntryRaw> PayEntry { get; set; } = new Dictionary<DateTime, PayEntryRaw>();
+        //public Dictionary<DateTime, MythicRatingUpdatedRaw> MythicRatingUpdated { get; set; } = new Dictionary<DateTime, MythicRatingUpdatedRaw>();
 
         //public int Wins { get; set; }
         //public int Losses { get; set; }

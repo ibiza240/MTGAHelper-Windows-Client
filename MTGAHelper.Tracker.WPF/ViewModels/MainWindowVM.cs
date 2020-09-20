@@ -25,6 +25,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public MainWindowVM(StatusBlinker statusBlinker, InMatchTrackerStateVM inMatchState, ConfigModel config, DraftingVM draftingVM,
             IMapper mapper,
+            ICacheLoader<Dictionary<int, Set>> cacheSets,
             ProcessMonitor processMonitor,
             ServerApiCaller api,
             StartupShortcutManager startupManager,
@@ -38,13 +39,15 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             CacheSingleton<Dictionary<string, DraftRatings>> draftRatings,
             DraftHelperRunner draftHelperRunner,
             //IEmailProvider emailProvider,
-            ICollection<Card> allCards)
+            ICollection<Card> allCards,
+            CardThumbnailDownloader cardThumbnailDownloader)
         {
             // Set the status blinker reference
             StatusBlinker = statusBlinker;
             // Set the network status emission handler
             StatusBlinker.EmitStatus += status => { NetworkStatus = status; };
 
+            Sets = cacheSets.LoadData().Values.ToArray();
             InMatchState = inMatchState;
             Config = config;
             DraftingVM = draftingVM;
@@ -63,9 +66,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             DraftHelperRunner = draftHelperRunner;
             //this.emailProvider = emailProvider;
             AllCards = allCards;
-
-            // Set the initial state of the compression
-            SetCompressedCardList(Config.CardListCollapsed);
+            CardThumbnailDownloader = cardThumbnailDownloader;
 
             // Set the library order from the config
             OrderLibraryCardsBy = config.OrderLibraryCardsBy == "Converted Mana Cost"
@@ -278,6 +279,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// The network status indicator
         /// </summary>
         private readonly StatusBlinker StatusBlinker;
+        private readonly CardThumbnailDownloader CardThumbnailDownloader;
 
         //readonly IEmailProvider emailProvider;
 
@@ -439,31 +441,12 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }
         }
 
-        /// <summary>
-        /// Set the compression state of the match state card lists
-        /// </summary>
-        /// <param name="compressed"></param>
-        private void SetCompressedCardList(bool compressed)
-        {
-            // Simple error check
-            if (InMatchState == null) return;
-
-            // Set the compression state of the library
-            InMatchState.MyLibrary.ShowImage = !compressed;
-
-            // Set the compression state of the sideboard
-            InMatchState.MySideboard.ShowImage = !compressed;
-
-            // Set the compression state of the opponent cards
-            InMatchState.OpponentCardsSeen.ShowImage = !compressed;
-        }
-
         #endregion
 
         #region Originals
 
         public string FacebookAccessToken { get; set; }
-
+        public Set[] Sets { get; }
         public InMatchTrackerStateVM InMatchState { get; set; }
 
         public CollectionResponse Collection { get; set; } = new CollectionResponse();
@@ -528,8 +511,13 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         internal void SetInMatchStateBuffered(IInGameState state)
         {
-            InMatchState.Init(OrderLibraryCardsBy);
+            InMatchState.Init(OrderLibraryCardsBy, Config.CardListCollapsed);
             InMatchState.SetInMatchStateBuffered(state);
+        }
+
+        internal void CheckAndDownloadThumbnails(ICollection<int> grpIds)
+        {
+            CardThumbnailDownloader.CheckAndDownloadThumbnails(grpIds);
         }
 
         #endregion

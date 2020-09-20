@@ -95,7 +95,7 @@
                     <!--  Card Name And Converted Mana Cost  -->
                     <Grid Grid.Column="1">
                         <!--  Vertical Layout  -->
-                        <Grid>
+                        <Grid Visibility="{Binding DataContext.ShowImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVis}}">
                             <Grid.RowDefinitions>
                                 <RowDefinition />
                                 <RowDefinition />
@@ -103,16 +103,14 @@
                             <!--  Card Name  -->
                             <Label
                                 Grid.Row="0"
-                                Padding="5,4,0,0"
-                                Visibility="{Binding DataContext.ShowImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVis}}">
+                                Padding="5,4,0,0">
                                 <TextBlock Text="{Binding Name}" />
                             </Label>
                             <!--  Converted Mana Cost Symbols  -->
                             <ItemsControl
                                 Grid.Row="1"
                                 Padding="5,0,0,4"
-                                ItemsSource="{Binding CmcImages}"
-                                Visibility="{Binding DataContext.ShowImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVis}}">
+                                ItemsSource="{Binding CmcImages}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal" />
@@ -129,7 +127,7 @@
                             </ItemsControl>
                         </Grid>
                         <!--  Horizontal Layout  -->
-                        <Grid>
+                        <Grid Visibility="{Binding DataContext.ShowImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVisInverse}}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
@@ -138,8 +136,7 @@
                             <Label
                                 Grid.Column="0"
                                 Padding="2,0"
-                                VerticalAlignment="Center"
-                                Visibility="{Binding DataContext.ShowImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVisInverse}}">
+                                VerticalAlignment="Center">
                                 <TextBlock Text="{Binding Name}" />
                             </Label>
                             <!--  Converted Mana Cost Symbols  -->
@@ -147,8 +144,7 @@
                                 Grid.Row="0"
                                 Grid.Column="1"
                                 Padding="2,0"
-                                ItemsSource="{Binding CmcImages}"
-                                Visibility="{Binding DataContext.ShowImage, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}, Converter={StaticResource BoolToVisInverse}}">
+                                ItemsSource="{Binding CmcImages}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal" />

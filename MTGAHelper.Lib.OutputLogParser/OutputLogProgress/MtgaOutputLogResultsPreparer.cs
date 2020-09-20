@@ -215,31 +215,37 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                     Results2.ResultsByNameTag[currentAccount] = new OutputLogResult2ByNameTag();
                 Results2.ResultsByNameTag[currentAccount].PlayerNameResults.Add(playerName);
             }
-            else if (result is RankUpdatedResult rankUpdated)
-            {
-                AppendToListInfoByDate(Results.RankUpdatedByDate, rankUpdated.Raw.payload, rankUpdated.LogDateTime);
-                UpdateRank_Synthetic(rankUpdated);
+            //else if (result is RankUpdatedResult rankUpdated)
+            //{
+            //    AppendToListInfoByDate(Results.RankUpdatedByDate, rankUpdated.Raw.payload, rankUpdated.LogDateTime);
+            //    UpdateRank_Synthetic(rankUpdated);
 
-                Results2.ResultsByNameTag[currentAccount].RankUpdatedResults.Add(rankUpdated);
-            }
-            else if (result is MythicRatingUpdatedResult mythicRatingUpdated)
-            {
-                AppendToListInfoByDate(Results.MythicRatingUpdatedByDate, mythicRatingUpdated.Raw.payload, mythicRatingUpdated.LogDateTime);
+            //    Results2.ResultsByNameTag[currentAccount].RankUpdatedResults.Add(rankUpdated);
+            //}
+            //else if (result is MythicRatingUpdatedResult mythicRatingUpdated)
+            //{
+            //    AppendToListInfoByDate(Results.MythicRatingUpdatedByDate, mythicRatingUpdated.Raw.payload, mythicRatingUpdated.LogDateTime);
 
-                Results2.ResultsByNameTag[currentAccount].MythicRatingUpdatedResults.Add(mythicRatingUpdated);
-            }
+            //    Results2.ResultsByNameTag[currentAccount].MythicRatingUpdatedResults.Add(mythicRatingUpdated);
+            //}
             else if (result is GetPlayerCardsResult collection)
             {
                 var info = collection.Raw;
+                
+                // Always overwrite the Collection to have the latest copy
+                var dataForDate = Results.CollectionByDate.FirstOrDefault(i => i.DateTime.Date == collection.LogDateTime.Date);
+                if (dataForDate != null)
+                    Results.CollectionByDate.Remove(dataForDate);
+
                 AddToListInfoByDate(Results.CollectionByDate, info.payload, collection.LogDateTime);
 
-                var mustAppend = true;
-                var infoForDate = Results.CollectionIntradayByDate.FirstOrDefault(i => i.DateTime.Date == collection.LogDateTime.Date)?.Info;
-                if (infoForDate != null && infoForDate.Any())
-                    mustAppend = infoForDate.Last().Value.Sum(x => x.Value) != collection.Raw.payload.Sum(x => x.Value);
+                //var mustAppend = true;
+                //var infoForDate = Results.CollectionIntradayByDate.FirstOrDefault(i => i.DateTime.Date == collection.LogDateTime.Date)?.Info;
+                //if (infoForDate != null && infoForDate.Any())
+                //    mustAppend = infoForDate.Last().Value.Sum(x => x.Value) != collection.Raw.payload.Sum(x => x.Value);
 
-                if (mustAppend)
-                    AppendToListInfoByDate(Results.CollectionIntradayByDate, info.payload, collection.LogDateTime);
+                //if (mustAppend)
+                //    AppendToListInfoByDate(Results.CollectionIntradayByDate, info.payload, collection.LogDateTime);
 
                 Results2.ResultsByNameTag[currentAccount].GetPlayerCardsResults.Add(collection);
             }
@@ -283,24 +289,24 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 
                 Results2.ResultsByNameTag[currentAccount].GetPlayerQuestsResults.Add(quests);
             }
-            else if (result is CrackBoostersResult booster)
-            {
-                AppendToListInfoByDate(Results.CrackedBoostersByDate, booster.Raw.payload, booster.LogDateTime);
+            //else if (result is CrackBoostersResult booster)
+            //{
+            //    AppendToListInfoByDate(Results.CrackedBoostersByDate, booster.Raw.payload, booster.LogDateTime);
 
-                //Results2.ResultsByNameTag[currentAccount].CrackBoostersResults.Add(booster);
-            }
-            else if (result is CompleteVaultResult vault)
-            {
-                AppendToListInfoByDate(Results.VaultsOpenedByDate, vault.Raw.payload, vault.LogDateTime);
+            //    //Results2.ResultsByNameTag[currentAccount].CrackBoostersResults.Add(booster);
+            //}
+            //else if (result is CompleteVaultResult vault)
+            //{
+            //    AppendToListInfoByDate(Results.VaultsOpenedByDate, vault.Raw.payload, vault.LogDateTime);
 
-                //Results2.ResultsByNameTag[currentAccount].CompleteVaultResults.Add(vault);
-            }
-            else if (result is PayEntryResult payEntry)
-            {
-                AppendToListInfoByDate(Results.PayEntryByDate, payEntry.Raw.payload, payEntry.LogDateTime);
+            //    //Results2.ResultsByNameTag[currentAccount].CompleteVaultResults.Add(vault);
+            //}
+            //else if (result is PayEntryResult payEntry)
+            //{
+            //    AppendToListInfoByDate(Results.PayEntryByDate, payEntry.Raw.payload, payEntry.LogDateTime);
 
-                Results2.ResultsByNameTag[currentAccount].PayEntryResults.Add(payEntry);
-            }
+            //    Results2.ResultsByNameTag[currentAccount].PayEntryResults.Add(payEntry);
+            //}
             else if (result is InventoryUpdatedResult inventoryUpdate)
             {
                 AppendToListInfoByDate(Results.InventoryUpdatesByDate, inventoryUpdate.Raw.payload, inventoryUpdate.LogDateTime);
@@ -383,37 +389,37 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             //}
         }
 
-        private void UpdateRank_Synthetic(RankUpdatedResult rankUpdated)
-        {
-            var ru = rankUpdated.Raw.payload;
-            if (Enum.TryParse(ru.rankUpdateType, out RankFormatEnum format))
-            {
-                var currentRankInfo = Results.RankSyntheticByDate.FirstOrDefault(i => i.DateTime.Date == rankUpdated.LogDateTime.Date);
-                var currentRank = currentRankInfo?.Info?.FirstOrDefault(i => i.Format == format);
+        //private void UpdateRank_Synthetic(RankUpdatedResult rankUpdated)
+        //{
+        //    var ru = rankUpdated.Raw.payload;
+        //    if (Enum.TryParse(ru.rankUpdateType, out RankFormatEnum format))
+        //    {
+        //        var currentRankInfo = Results.RankSyntheticByDate.FirstOrDefault(i => i.DateTime.Date == rankUpdated.LogDateTime.Date);
+        //        var currentRank = currentRankInfo?.Info?.FirstOrDefault(i => i.Format == format);
 
-                if (currentRank == null)
-                {
-                    currentRank = new ConfigModelRankInfo(format)
-                    {
-                        Class = ru.newClass,
-                        Level = ru.newLevel,
-                        Step = ru.newStep,
-                    };
+        //        if (currentRank == null)
+        //        {
+        //            currentRank = new ConfigModelRankInfo(format)
+        //            {
+        //                Class = ru.newClass,
+        //                Level = ru.newLevel,
+        //                Step = ru.newStep,
+        //            };
 
-                    if (currentRankInfo == null)
-                        currentRankInfo = new InfoByDate<List<ConfigModelRankInfo>>(rankUpdated.LogDateTime, new List<ConfigModelRankInfo> { currentRank });
-                    else
-                        currentRankInfo.Info.Add(currentRank);
-                }
-                else
-                {
-                    currentRankInfo.DateTime = rankUpdated.LogDateTime;
-                    currentRank.Class = ru.newClass;
-                    currentRank.Level = ru.newLevel;
-                    currentRank.Step = ru.newStep;
-                }
-            }
-        }
+        //            if (currentRankInfo == null)
+        //                currentRankInfo = new InfoByDate<List<ConfigModelRankInfo>>(rankUpdated.LogDateTime, new List<ConfigModelRankInfo> { currentRank });
+        //            else
+        //                currentRankInfo.Info.Add(currentRank);
+        //        }
+        //        else
+        //        {
+        //            currentRankInfo.DateTime = rankUpdated.LogDateTime;
+        //            currentRank.Class = ru.newClass;
+        //            currentRank.Level = ru.newLevel;
+        //            currentRank.Step = ru.newStep;
+        //        }
+        //    }
+        //}
 
         private void CreateMatch(MatchCreatedResult r)
         {

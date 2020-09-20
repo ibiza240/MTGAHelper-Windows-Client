@@ -31,8 +31,8 @@ namespace MTGAHelper.Lib.OutputLogParser.Models
 
         public List<PlayerNameResult> PlayerNameResults { get; set; } = new List<PlayerNameResult>();
         public List<GetSeasonAndRankDetailResult> GetSeasonAndRankDetailResults { get; set; } = new List<GetSeasonAndRankDetailResult>();
-        public List<RankUpdatedResult> RankUpdatedResults { get; set; } = new List<RankUpdatedResult>();
-        public List<MythicRatingUpdatedResult> MythicRatingUpdatedResults { get; set; } = new List<MythicRatingUpdatedResult>();
+        //public List<RankUpdatedResult> RankUpdatedResults { get; set; } = new List<RankUpdatedResult>();
+        //public List<MythicRatingUpdatedResult> MythicRatingUpdatedResults { get; set; } = new List<MythicRatingUpdatedResult>();
         public List<GetPlayerCardsResult> GetPlayerCardsResults { get; set; } = new List<GetPlayerCardsResult>();
         public List<GetPlayerProgressResult> GetPlayerProgressResults { get; set; } = new List<GetPlayerProgressResult>();
         public List<GetCombinedRankInfoResult> GetCombinedRankInfoResults { get; set; } = new List<GetCombinedRankInfoResult>();
@@ -42,7 +42,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Models
         public List<EventClaimPrizeResult> EventClaimPrizeResults { get; set; } = new List<EventClaimPrizeResult>();
         //public List<PostMatchUpdateResult> PostMatchUpdateResults { get; set; } = new List<PostMatchUpdateResult>();
         public List<InventoryUpdatedResult> InventoryUpdatedResults { get; set; } = new List<InventoryUpdatedResult>();
-        public List<PayEntryResult> PayEntryResults { get; set; } = new List<PayEntryResult>();
+        //public List<PayEntryResult> PayEntryResults { get; set; } = new List<PayEntryResult>();
         //public List<CompleteVaultResult> CompleteVaultResults { get; set; } = new List<CompleteVaultResult>();
         //public List<CrackBoostersResult> CrackBoostersResults { get; set; } = new List<CrackBoostersResult>();
         public List<GetPlayerInventoryResult> GetPlayerInventoryResults { get; set; } = new List<GetPlayerInventoryResult>();

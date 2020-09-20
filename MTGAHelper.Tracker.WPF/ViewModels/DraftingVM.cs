@@ -26,12 +26,13 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <param name="mapper"></param>
         /// <param name="allCards"></param>
         /// <param name="api"></param>
-        public DraftingVM(IMapper mapper, ICollection<Card> allCards, ServerApiCaller api)
+        public DraftingVM(IMapper mapper, ICollection<Card> allCards, ServerApiCaller api, CardThumbnailDownloader cardThumbnailDownloader)
         {
             this.mapper = mapper;
             AllCards = allCards;
             Api = api;
-            CardsThatDidNotWheelVM = new CardsListVM(DisplayType.None, CardsListOrder.ManaCost, mapper);
+            this.cardThumbnailDownloader = cardThumbnailDownloader;
+            CardsThatDidNotWheelVM = new CardsListVM(DisplayType.None, CardsListOrder.ManaCost, mapper, cardThumbnailDownloader);
         }
 
         public void SetCardsPerPack(int cardsPerPack)
@@ -171,7 +172,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         private int NumCardsWheeling => Math.Max(0, CardsPerPack - (PxpxItemSelected?.PickNumber ?? 0) - POD_SIZE);
 
         private ICollection<Card> AllCards = new Card[0];
-
+        private readonly CardThumbnailDownloader cardThumbnailDownloader;
         private bool UpdateCardsDraftBuffered;
 
         private DraftingVMPxpx _PxpxItemSelected;
@@ -336,6 +337,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             lock (LockCardsDraft)
             {
                 CardsDraft = mapper.Map<ICollection<CardDraftPickVM>>(DraftInfoBuffered.CardsDraftBuffered);
+                cardThumbnailDownloader.CheckAndDownloadThumbnails(CardsDraft.Select(i => i.ArenaId).ToArray());
 
                 UpdateCardsDraftBuffered = false;
                 OnPropertyChanged(nameof(CardsDraft));

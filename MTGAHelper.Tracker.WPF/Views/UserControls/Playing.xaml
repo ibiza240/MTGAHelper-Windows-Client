@@ -62,11 +62,47 @@
                                     <TextBlock Text="{Binding InMatchState.LibraryCardsCount, StringFormat={}{0} cards in library}" TextTrimming="CharacterEllipsis" />
                                 </Label>
                                 <!--  Lands Remaining and Percent to Draw  -->
-                                <Border
+                                <Button
                                     Grid.Row="0"
                                     Grid.Column="1"
                                     Padding="5,0"
-                                    Background="Black">
+                                    Background="Black"
+                                    Command="{Binding InMatchState.ShowHideLandsCommand}"
+                                    ToolTipService.ShowDuration="10000">
+                                    <Button.ToolTip>
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Row="0">
+                                                <TextBlock Text="(click to show/hide lands in your library)" />
+                                            </Label>
+                                            <!--  Draw % by mana source -->
+                                            <ItemsControl
+                                                Grid.Row="1"
+                                                ItemsSource="{Binding InMatchState.LibraryDrawManaBySource}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Orientation="Vertical" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Image
+                                                                Width="14"
+                                                                Height="14"
+                                                                Source="{Binding Key, Converter={StaticResource StringToImage}, ConverterParameter=https://www.mtgahelper.com/images/manaIcons/{0}.png}" />
+                                                            <Label>
+                                                                <TextBlock Text="{Binding Value}" />
+                                                            </Label>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Grid>
+                                    </Button.ToolTip>
                                     <StackPanel Orientation="Horizontal">
                                         <Image
                                             Width="28"
@@ -99,16 +135,32 @@
 
                                         </Border>
                                     </StackPanel>
-                                </Border>
+                                </Button>
                             </Grid>
                         </Border>
 
-                        <!--  Card List  -->
-                        <uc:SimpleCardsList
-                            x:Name="CardsMyLibrary"
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            DataContext="{Binding InMatchState.MyLibrary}" />
+                        <!--  Card List with lands  -->
+                        <Grid Grid.Row="1" Visibility="{Binding InMatchState.ShowLands, Converter={StaticResource BoolToVis}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <uc:SimpleCardsList
+                                x:Name="CardsMyLibrary"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                DataContext="{Binding InMatchState.MyLibrary}" />
+                        </Grid>
+                        <!--  Card List without lands  -->
+                        <Grid Grid.Row="1" Visibility="{Binding InMatchState.ShowLands, Converter={StaticResource BoolToVisInverse}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <uc:SimpleCardsList
+                                x:Name="CardsMyLibraryWithoutLands"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                DataContext="{Binding InMatchState.MyLibraryWithoutLands}" />
+                        </Grid>
                     </Grid>
                 </TabItem.Content>
             </TabItem>
@@ -197,18 +249,18 @@
                 FontWeight="{Binding InMatchState.TimerMe.HasPriority, Converter={StaticResource HasPriorityConverter}}">
                 <TextBlock Text="{Binding InMatchState.TimerMe.TimePlayed, StringFormat=You: {0}}" />
             </Label>
-            <Label
+            <Button
                 Grid.Row="0"
                 Grid.Column="3"
-                MouseDoubleClick="CopyOpponentNameToClipboard"
+                Click="CopyOpponentNameToClipboard"
                 FontWeight="{Binding InMatchState.TimerOpponent.HasPriority, Converter={StaticResource HasPriorityConverter}}">
-                <Label.ToolTip>
+                <Button.ToolTip>
                     <ToolTip>
-                        <TextBlock Text="{Binding InMatchState.OpponentScreenName, StringFormat={}{0} (double click to copy)}"></TextBlock>
+                        <TextBlock Text="{Binding InMatchState.OpponentScreenName, StringFormat={}{0} (click to copy)}"></TextBlock>
                     </ToolTip>
-                </Label.ToolTip>
+                </Button.ToolTip>
                 <TextBlock Text="{Binding InMatchState.TimerOpponent.TimePlayed, StringFormat=Opponent: {0}}" />
-            </Label>
+            </Button>
         </Grid>
     </Grid>
 </UserControl>

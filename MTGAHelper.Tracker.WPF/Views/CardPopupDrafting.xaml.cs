@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System;
 using MTGAHelper.Tracker.WPF.Business;
 using System.Windows.Input;
+using System.Threading.Tasks;
 
 namespace MTGAHelper.Tracker.WPF.Views
 {
@@ -95,16 +96,21 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         private void SaveCustomRating()
         {
-            var valuesChanged = ViewModel.Card.CustomRatingValue != ViewModel.CustomRatingSelected ||
+            var customRatingInitialized = ViewModel.Card.CustomRatingValue != null || ViewModel.CustomRatingSelected != 0;
+
+            var valuesChanged = (customRatingInitialized && ViewModel.Card.CustomRatingValue != ViewModel.CustomRatingSelected) ||
                 ViewModel.Card.CustomRatingDescription != ViewModel.CustomRatingDescription;
 
             if (valuesChanged)
             {
-                ViewModel.Card.CustomRatingDescription = ViewModel.CustomRatingDescription;
-                ViewModel.Card.CustomRatingValue = ViewModel.CustomRatingSelected;
+                Task.Factory.StartNew(() =>
+                {
+                    ViewModel.Card.CustomRatingDescription = ViewModel.CustomRatingDescription;
+                    ViewModel.Card.CustomRatingValue = ViewModel.CustomRatingSelected;
 
-                ViewModelDrafting.RefreshCardsDraft();
-                ViewModelDrafting.Api.SaveCustomDraftRating(ViewModel.Card.ArenaId, ViewModel.CustomRatingSelected, ViewModel.CustomRatingDescription);
+                    ViewModelDrafting.RefreshCardsDraft();
+                    ViewModelDrafting.Api.SaveCustomDraftRating(ViewModel.Card.ArenaId, ViewModel.CustomRatingSelected, ViewModel.CustomRatingDescription);
+                });
             }
         }
 

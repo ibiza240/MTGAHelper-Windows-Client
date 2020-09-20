@@ -1,4 +1,11 @@
-﻿using MTGAHelper.Lib.OutputLogParser.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using MTGAHelper.Entity.MtgaOutputLog;
+using MTGAHelper.Lib.OutputLogParser.Models;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Web.Models.Request;
 using MTGAHelper.Web.Models.Response.Account;
@@ -7,12 +14,7 @@ using MTGAHelper.Web.Models.Response.User;
 using MTGAHelper.Web.UI.Model.Request;
 using MTGAHelper.Web.UI.Model.Response.User;
 using Newtonsoft.Json;
-using System;
-using System.Diagnostics;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using MTGAHelper.Entity.MtgaOutputLog;
+using Serilog;
 using WebApplication1.Model.Account;
 
 namespace MTGAHelper.Tracker.WPF.Business
@@ -101,8 +103,9 @@ namespace MTGAHelper.Tracker.WPF.Business
                 {
                     throw new HttpRequestException("Remote server unavailable", ex);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Log.Error(ex, "error in server API call");
                     Debugger.Break();
                     return default;
                 }
@@ -119,9 +122,9 @@ namespace MTGAHelper.Tracker.WPF.Business
             return GetResponseWithCookie<bool>("api/user/issupporter?userEmail=" + email);
         }
 
-        internal string GetCustomDraftRatings()
+        internal ICollection<CustomDraftRatingResponseDto> GetCustomDraftRatings()
         {
-            return GetResponseWithCookie<string>("api/user/customdraftratings");
+            return GetResponseWithCookie<ICollection<CustomDraftRatingResponseDto>>("api/user/customdraftratings");
         }
 
         internal void SaveCustomDraftRating(int grpId, int? ratingValue, string ratingNote)

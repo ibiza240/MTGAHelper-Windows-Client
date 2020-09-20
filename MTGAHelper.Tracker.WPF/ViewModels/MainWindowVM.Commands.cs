@@ -42,8 +42,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             Config.CardListCollapsed = compressed;
 
             // Set the state of the card lists
-            SetCompressedCardList(compressed);
-
+            InMatchState.SetCompressedCardList(compressed);
         }
 
         #endregion

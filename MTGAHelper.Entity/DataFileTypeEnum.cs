@@ -6,6 +6,7 @@
         AllCardsCached2,
         draftRatings,
         ConfigResolutions,
+        sets,
     }
 
 }

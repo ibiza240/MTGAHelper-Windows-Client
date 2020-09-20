@@ -72,6 +72,7 @@ namespace MTGAHelper.Tracker.WPF.Views
         private ConfigModel ConfigApp { get; set; }
 
         private Dictionary<int, string> CardNames;
+        private ICollection<Set> Sets;
 
         /// <summary>
         /// Reference to the main window view model for testing draft helper

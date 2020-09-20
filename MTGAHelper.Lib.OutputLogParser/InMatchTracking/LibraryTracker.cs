@@ -431,35 +431,46 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             public override int GrpId => IsKnown ? PossibleGrpIds.First() : 0;
             internal List<int> PossibleGrpIds { get; }
 
+            private object lockPossibleGrpIds = new object();
+
             public override bool IsKnown => isKnown;
 
             public LibraryCard(int instId, List<int> possibleGrpIds) : base(instId)
             {
-                PossibleGrpIds = possibleGrpIds ?? throw new ArgumentNullException(nameof(possibleGrpIds));
-                isKnown = PossibleGrpIds.IsRepeatedUniqueValue();
+                lock (lockPossibleGrpIds)
+                {
+                    PossibleGrpIds = possibleGrpIds ?? throw new ArgumentNullException(nameof(possibleGrpIds));
+                    isKnown = PossibleGrpIds.IsRepeatedUniqueValue();
+                }
             }
 
             public void SetRevealed(int grpId)
             {
-                if (PossibleGrpIds.Remove(grpId) || PossibleGrpIds.Remove(0))
+                lock (lockPossibleGrpIds)
                 {
-                    isKnown = PossibleGrpIds.IsRepeatedUniqueValue();
-                    return;
-                }
+                    if (PossibleGrpIds.Remove(grpId) || PossibleGrpIds.Remove(0))
+                    {
+                        isKnown = PossibleGrpIds.IsRepeatedUniqueValue();
+                        return;
+                    }
 
-                if (!IsKnown)
-                    Log.Warning("(LibraryCard.SetRevealed) couldn't remove {grpId} from {possibleGrpIds}", grpId, PossibleGrpIds);
+                    if (!IsKnown)
+                        Log.Warning("(LibraryCard.SetRevealed) couldn't remove {grpId} from {possibleGrpIds}", grpId, PossibleGrpIds);
+                }
             }
 
             public IReadOnlyDictionary<int, float> GetDrawChances()
             {
-                if (IsKnown)
-                    return new Dictionary<int, float> { { GrpId, 1f } };
+                lock (lockPossibleGrpIds)
+                {
+                    if (IsKnown)
+                        return new Dictionary<int, float> { { GrpId, 1f } };
 
-                return PossibleGrpIds
-                    .Distinct()
-                    .Select(grpId => (grpId, chance: (float)PossibleGrpIds.Count(i => i == grpId) / PossibleGrpIds.Count))
-                    .ToDictionary(x => x.grpId, x => x.chance);
+                    return PossibleGrpIds
+                        .Distinct()
+                        .Select(grpId => (grpId, chance: (float)PossibleGrpIds.Count(i => i == grpId) / PossibleGrpIds.Count))
+                        .ToDictionary(x => x.grpId, x => x.chance);
+                }
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using MTGAHelper.Entity.DeckScraper;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MTGAHelper.Entity
@@ -23,6 +24,8 @@ namespace MTGAHelper.Entity
         Unknown,
         Standard,
         ArenaStandard,
+        HistoricBo1,
+        HistoricBo3,
     }
 
 
@@ -41,11 +44,25 @@ namespace MTGAHelper.Entity
         {
             get
             {
-                Func<string, ScraperTypeFormatEnum, string> aetherhubAddFormat = (s, f) =>
-                s + (f == ScraperTypeFormatEnum.Standard ? "/Standard" : f == ScraperTypeFormatEnum.ArenaStandard ? "/Arena%20Standard" : "");
+                string aetherhubAddFormat(string urlPrefix, ScraperTypeFormatEnum format)
+                {
+                    var dictFormatToUrl = new Dictionary<ScraperTypeFormatEnum, string>
+                    {
+                        { ScraperTypeFormatEnum.Standard, "/Standard" },
+                        { ScraperTypeFormatEnum.ArenaStandard, "/Arena%20Standard" },
+                        { ScraperTypeFormatEnum.HistoricBo1, "/Historic-BO1" },
+                        { ScraperTypeFormatEnum.HistoricBo3, "/Traditional-Historic" },
+                    };
+
+                    if (dictFormatToUrl.ContainsKey(format) == false)
+                        return urlPrefix;
+
+                    return urlPrefix + dictFormatToUrl[format];
+                }
 
                 Func<ScraperTypeFormatEnum, string> mtgGoldfishAddFormat = (f) =>
-                f == ScraperTypeFormatEnum.Standard ? "standard" : f == ScraperTypeFormatEnum.ArenaStandard ? "arena_standard" : "";
+                    f == ScraperTypeFormatEnum.ArenaStandard ? "arena_standard" :
+                    f == ScraperTypeFormatEnum.HistoricBo3 ? "historic" : f.ToString().ToLower();
 
                 var url = "#";
                 switch (Type)
@@ -86,7 +103,7 @@ namespace MTGAHelper.Entity
                         else if (Name == MtgGoldfishArticleEnum.SingleScoop.ToString().ToLower())
                             url = "https://www.mtggoldfish.com/articles/search?author=93";
                         else if (Name == MtgGoldfishArticleEnum.Tournaments.ToString().ToLower())
-                            url = "https://www.mtggoldfish.com/tournaments/standard";
+                            url = $"https://www.mtggoldfish.com/tournaments/{mtgGoldfishAddFormat(Format)}";
 
                         break;
                     case ScraperTypeEnum.MtgDecks:
@@ -102,7 +119,11 @@ namespace MTGAHelper.Entity
                         url = "https://mtgdecks.net/Standard";
                         break;
                     case ScraperTypeEnum.MtgaTool:
-                        var format = Name == MtgaToolFormatEnum.Bo1.ToString().ToLower() ? "Bo1" : "Bo2";
+                        var format =
+                            Format == ScraperTypeFormatEnum.Standard ? "Bo1" :
+                            Format == ScraperTypeFormatEnum.ArenaStandard ? "Bo3" :
+                            Format == ScraperTypeFormatEnum.HistoricBo1 ? "Hbo1" : "Hbo3";
+
                         url = "http://mtgatool.com/metagame/{format}";
                         break;
 

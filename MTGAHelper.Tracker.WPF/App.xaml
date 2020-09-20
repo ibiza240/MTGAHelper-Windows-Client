@@ -25,6 +25,8 @@
                 x:Key="BoolToVisInverse"
                 FalseValue="Visible"
                 TrueValue="Collapsed" />
+            <helpers:StringFormatToImageSourceConverter
+                x:Key="StringToImage" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

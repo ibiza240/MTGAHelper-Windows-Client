@@ -82,8 +82,10 @@ namespace MTGAHelper.Tracker.WPF
                 await CheckDataAndDownloadIfOutOfDate(DataFileTypeEnum.AllCardsCached2);
                 StartupLogger.AppendLine("CheckDataAndDownloadIfOutOfDate(draftRatings)");
                 await CheckDataAndDownloadIfOutOfDate(DataFileTypeEnum.draftRatings);
-                StartupLogger.AppendLine("CheckDataAndDownloadIfOutOfDate(ConfigResolution)");
-                await CheckDataAndDownloadIfOutOfDate(DataFileTypeEnum.ConfigResolutions);
+                //StartupLogger.AppendLine("CheckDataAndDownloadIfOutOfDate(ConfigResolution)");
+                //await CheckDataAndDownloadIfOutOfDate(DataFileTypeEnum.ConfigResolutions);
+                StartupLogger.AppendLine("CheckDataAndDownloadIfOutOfDate(sets)");
+                await CheckDataAndDownloadIfOutOfDate(DataFileTypeEnum.sets);
 
                 // Set cache content from local file
                 StartupLogger.AppendLine("Verifying container configuration");

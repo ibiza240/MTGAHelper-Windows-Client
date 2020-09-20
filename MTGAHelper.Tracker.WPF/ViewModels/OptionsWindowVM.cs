@@ -145,7 +145,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <summary>
         /// The selected limited ratings source
         /// </summary>
-        public string LimitedRatingsSource
+        public KeyValuePair<string, string> LimitedRatingsSource
         {
             get => _LimitedRatingsSource;
             set => SetField(ref _LimitedRatingsSource, value, nameof(LimitedRatingsSource));
@@ -190,7 +190,13 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <summary>
         /// Options for limited ratings sources
         /// </summary>
-        public IEnumerable<string> LimitedRatingsSources => DraftRatings.Get().Keys.OrderBy(i => i).Append(Constants.LIMITEDRATINGS_SOURCE_CUSTOM).ToArray();
+        //public IEnumerable<string> LimitedRatingsSources => DraftRatings.Get().Keys.OrderBy(i => i).Append(Constants.LIMITEDRATINGS_SOURCE_CUSTOM).ToArray();
+
+        public Dictionary<string, string> LimitedRatingsSourcesDict => DraftRatings.Get().Keys
+            .OrderBy(i => i)
+            .Append(Constants.LIMITEDRATINGS_SOURCE_CUSTOM)
+            .ToDictionary(set => set, set => set + (set == Constants.LIMITEDRATINGS_SOURCE_CUSTOM ? "" : $" [{string.Join(", ", DraftRatings.Get()[set].RatingsBySet.Keys.OrderByDescending(i => Sets[i].ReleaseDate))}]"));
+
 
         /// <summary>
         /// Options for forcing the card popup side
@@ -211,6 +217,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// DraftRatings for accessing sources
         /// </summary>
         public CacheSingleton<Dictionary<string, DraftRatings>> DraftRatings { get; set; }
+        public Dictionary<string, Set> Sets { get; internal set; }
 
         #endregion
 
@@ -269,7 +276,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <summary>
         /// The selected limited ratings source
         /// </summary>
-        private string _LimitedRatingsSource;
+        private KeyValuePair<string, string> _LimitedRatingsSource;
 
         /// <summary>
         /// How to order the card list

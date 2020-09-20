@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release;DebugWithServer</Configurations>
-    <Version>1.6.1</Version>
+    <Version>1.7.0</Version>
     <LangVersion>8</LangVersion>
     <IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
     <OutputPath>$(SolutionDir)\_Output\bin\$(Configuration)\</OutputPath>

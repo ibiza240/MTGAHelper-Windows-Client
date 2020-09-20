@@ -33,7 +33,7 @@ namespace MTGAHelper.Lib.CacheLoaders
                     Arenacode = i.CodeArena,
                     Collation = i.MtgaId,
                     Code = i.Code,
-                    Release = i.ReleaseDate,
+                    ReleaseDate = i.ReleaseDate,
                     Scryfall = i.CodeScryfall,
                     Tile = 0
                 })

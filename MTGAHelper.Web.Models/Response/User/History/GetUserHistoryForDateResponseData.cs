@@ -15,12 +15,13 @@ namespace MTGAHelper.Web.Models.Response.User.History
         public ICollection<EconomyEventDto> EconomyEvents { get; }
         public ICollection<RankDeltaDto> RankUpdates { get; }
 
-        public GetUserHistoryForDateResponseData(DateTime date, ICollection<MatchDto> matches, ICollection<EconomyEventDto> economyEvents, ICollection<RankDeltaDto> rankUpdates)
+        public GetUserHistoryForDateResponseData(DateTime date, ICollection<MatchDto> matches, ICollection<EconomyEventDto> economyEvents)
         {
             Date = date;
             Matches = matches;
             EconomyEvents = economyEvents;
-            RankUpdates = rankUpdates;
+            // OBSOLETE
+            RankUpdates = new RankDeltaDto[0];
 
             foreach (var m in Matches.Where(i => i.DeckUsed == null))
                 m.DeckUsed = new SimpleDeckDto();

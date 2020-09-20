@@ -16,6 +16,7 @@ namespace MTGAHelper.Lib.IoC
                 c => !c.Handled);
 
             container.RegisterSingleton<ICollection<Card>>(() => container.GetInstance<CacheSingleton<Dictionary<int, Card>>>().Get().Values);
+            container.RegisterSingleton(() => container.GetInstance<CacheSingleton<Dictionary<int, Card>>>().Get());
             container.Collection.Append<AutoMapper.Profile, MapperProfileEntity>(Lifestyle.Singleton);
             container.RegisterSingleton<AutoMapperGrpIdToCardConverter>();
             container.RegisterSingleton<Util>();

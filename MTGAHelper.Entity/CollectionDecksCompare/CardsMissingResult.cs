@@ -36,6 +36,7 @@ namespace MTGAHelper.Entity.CollectionDecksCompare
         public Dictionary<string, InfoCardMissingSummary[]> GetModelSummary()
         {
             var ret = ByCard
+                .Where(i => i.Value.Card.set != "JMP")
                 .Where(i => i.Value.Card.notInBooster == false)
                 .Where(i => i.Value.NbMissing > 0)
                 //.GroupBy(i => i.Value.Card.setAndInBooster)

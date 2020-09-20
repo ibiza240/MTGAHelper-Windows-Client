@@ -277,13 +277,10 @@
                     Margin="0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    ItemsSource="{Binding LimitedRatingsSources, Mode=OneTime}"
+                    ItemsSource="{Binding LimitedRatingsSourcesDict, Mode=OneTime}"
+                    SelectedValuePath="Key"
+                    DisplayMemberPath="Value"
                     SelectedItem="{Binding LimitedRatingsSource}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
                 </ComboBox>
             </Grid>
             <!--  Game Resolution  -->

@@ -37,6 +37,7 @@ namespace MTGAHelper.Tracker.WPF.IoC
             container.RegisterSingleton<StartupShortcutManager>();
             container.RegisterSingleton<DraftCardsPicker>();
             container.RegisterSingleton<MtgaResourcesLocator>();
+            container.RegisterSingleton<CardThumbnailDownloader>();
             //container.RegisterSingleton<ISupporterChecker, SupporterChecker>();
             container.Register<ExternalProviderTokenManager>();
             container.Register<DraftHelperRunner>();
