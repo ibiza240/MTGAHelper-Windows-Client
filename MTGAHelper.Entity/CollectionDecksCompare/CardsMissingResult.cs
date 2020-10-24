@@ -33,11 +33,10 @@ namespace MTGAHelper.Entity.CollectionDecksCompare
             //var test2 = ByCard.FirstOrDefault(i => i.Key.name == "Teferi, Hero of Dominaria");
         }
 
-        public Dictionary<string, InfoCardMissingSummary[]> GetModelSummary()
+        public Dictionary<string, InfoCardMissingSummary[]> GetModelSummary(bool boostersOnly = false)
         {
             var ret = ByCard
-                .Where(i => i.Value.Card.set != "JMP")
-                .Where(i => i.Value.Card.notInBooster == false)
+                .Where(i => boostersOnly == false || (i.Value.Card.notInBooster == false && i.Value.Card.set != "JMP"))
                 .Where(i => i.Value.NbMissing > 0)
                 //.GroupBy(i => i.Value.Card.setAndInBooster)
                 .GroupBy(i => i.Value.Card.set)
@@ -106,6 +105,7 @@ namespace MTGAHelper.Entity.CollectionDecksCompare
         {
             if (ByDeck.ContainsKey(deckId) == false)
             {
+                //Log.Error
                 return new Dictionary<RarityEnum, int>();
             }
 

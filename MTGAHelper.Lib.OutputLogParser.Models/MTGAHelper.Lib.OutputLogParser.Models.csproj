@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>1.7.0</Version>
+    <Version>1.7.1</Version>
     <Configurations>Debug;Release;DebugWithServer</Configurations>
     <LangVersion>8</LangVersion>
     <IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
@@ -31,5 +31,4 @@
   <ItemGroup>
     <ProjectReference Include="..\MTGAHelper.Entity\MTGAHelper.Entity.csproj" />
   </ItemGroup>
-
 </Project>

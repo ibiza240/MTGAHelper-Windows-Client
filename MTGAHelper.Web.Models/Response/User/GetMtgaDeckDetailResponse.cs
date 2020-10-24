@@ -26,7 +26,7 @@ namespace MTGAHelper.Web.Models.Response.User
         public ICollection<MtgaDeckStatsByFormat> StatsByFormat { get; set; }
         public ICollection<MatchDtoLightweight> Matches { get; set; }
         public ICollection<DeckCardDto> CardsMain { get; set; }
-        public ICollection<DeckCardDto> CardsSideboard { get; set; }
+        public ICollection<KeyValuePair<string, DeckCardDto[]>> CardsNotMainByZone { get; set; }
 
         public ICollection<DeckManaCurveDto> ManaCurve { get; set; }
     }

@@ -215,13 +215,13 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                     Results2.ResultsByNameTag[currentAccount] = new OutputLogResult2ByNameTag();
                 Results2.ResultsByNameTag[currentAccount].PlayerNameResults.Add(playerName);
             }
-            //else if (result is RankUpdatedResult rankUpdated)
-            //{
-            //    AppendToListInfoByDate(Results.RankUpdatedByDate, rankUpdated.Raw.payload, rankUpdated.LogDateTime);
-            //    UpdateRank_Synthetic(rankUpdated);
+            else if (result is RankUpdatedResult rankUpdated)
+            {
+                AppendToListInfoByDate(Results.RankUpdatedByDate, rankUpdated.Raw.payload, rankUpdated.LogDateTime);
+                //    UpdateRank_Synthetic(rankUpdated);
 
-            //    Results2.ResultsByNameTag[currentAccount].RankUpdatedResults.Add(rankUpdated);
-            //}
+                Results2.ResultsByNameTag[currentAccount].RankUpdatedResults.Add(rankUpdated);
+            }
             //else if (result is MythicRatingUpdatedResult mythicRatingUpdated)
             //{
             //    AppendToListInfoByDate(Results.MythicRatingUpdatedByDate, mythicRatingUpdated.Raw.payload, mythicRatingUpdated.LogDateTime);
@@ -231,7 +231,7 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             else if (result is GetPlayerCardsResult collection)
             {
                 var info = collection.Raw;
-                
+
                 // Always overwrite the Collection to have the latest copy
                 var dataForDate = Results.CollectionByDate.FirstOrDefault(i => i.DateTime.Date == collection.LogDateTime.Date);
                 if (dataForDate != null)
@@ -325,14 +325,14 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 
                 Results2.ResultsByNameTag[currentAccount].EventClaimPrizeResults.Add(eventClaimPrize);
             }
-            else if (result is GetActiveEventsV2Result events)
+            else if (result is GetActiveEventsV3Result events)
             {
                 eventsScheduleManager.AddEvents(events.Raw.payload);
 
                 var eventResultsMissing = events.Raw.payload
-                    .Where(eventResult => Results2.ResultsByNameTag[currentAccount].GetActiveEventsV2Results.Raw.payload.Any(x => x.InternalEventName == eventResult.InternalEventName) == false);
+                    .Where(eventResult => Results2.ResultsByNameTag[currentAccount].ActiveEvents.Raw.payload.Any(x => x.InternalEventName == eventResult.InternalEventName) == false);
                 foreach (var e in eventResultsMissing)
-                    Results2.ResultsByNameTag[currentAccount].GetActiveEventsV2Results.Raw.payload.Add(e);
+                    Results2.ResultsByNameTag[currentAccount].ActiveEvents.Raw.payload.Add(e);
             }
             else if (result is GetPreconDecksV3Result preconDecks)
             {
@@ -443,7 +443,7 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 
             // GREMessageType_ConnectResp received first
             CurrentGameProgress ??= new GameProgress(logDateTime);
-            CurrentGameProgress.DeckCards = deckUsed.CardsMain;
+            CurrentGameProgress.DeckCards = deckUsed.CardsMainWithCommander.ToDictionary(i => i.GrpId, i => i.Amount);
         }
 
         private void UpdateMatch(IMtgaOutputLogPartResult r)
@@ -485,8 +485,17 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             {
                 //Name = currentMatch?.EventName?.Contains("Draft") == true ? "Draft deck" : currentMatch?.EventName?.Contains("Sealed") == true ? "Sealed deck" : "Other",
                 Name = GetDeckNameFromEventType(),
-                CardsMain = mainDeck,
-                CardsSideboard = sideboard
+                Cards = mainDeck.Select(i => new DeckCardRaw
+                {
+                    GrpId = i.Key,
+                    Amount = i.Value,
+                    Zone = DeckCardZoneEnum.Deck,
+                }).Union(sideboard.Select(i => new DeckCardRaw
+                {
+                    GrpId = i.Key,
+                    Amount = i.Value,
+                    Zone = DeckCardZoneEnum.Sideboard,
+                })).ToArray()
             };
         }
 
@@ -622,7 +631,7 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             }
 
             var matchOutcome = finalResult.resultList.LastOrDefault(i => i.scope == "MatchScope_Match");
-            if (matchOutcome != null && CurrentGameProgress != null)
+            if (matchOutcome != null && CurrentGameProgress != null && currentMatch != null)
             {
                 if (matchOutcome.winningTeamId == CurrentGameProgress.SystemSeatId)
                     currentMatch.Outcome = GameOutcomeEnum.Victory;

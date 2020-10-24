@@ -34,7 +34,8 @@ namespace MTGAHelper.Tracker.WPF.IoC
 
             CreateMap<ConfigModel, OptionsWindowVM>()
                 .IgnoreAllPropertiesWithAnInaccessibleSetter()
-                .ForMember(m => m.DraftRatings, opt => opt.Ignore())
+                .ForMember(m => m.DraftRatings, opt => opt.Ignore()) // currently set "by hand"
+                .ForMember(m => m.Sets, opt => opt.Ignore()) // currently set "by hand"
                 .ForMember(m => m.LimitedRatingsSource, opt => opt.MapFrom(x => new KeyValuePair<string, string>(x.LimitedRatingsSource, x.LimitedRatingsSource)));
             //.ForMember(i => i.ForceCardPopupSide, i => i.MapFrom(x =>  string.IsNullOrEmpty(x.ForceCardPopupSide) ? "On the left" : x.ForceCardPopupSide));
         }

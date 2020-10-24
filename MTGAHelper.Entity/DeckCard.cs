@@ -19,7 +19,7 @@
 
     public class DeckCard : CardWithAmount, IDeckCard
     {
-        public DeckCardZoneEnum Zone { get; private set; }
+        public DeckCardZoneEnum Zone { get; set; }
         //public bool IsSideboard => Zone == DeckCardZoneEnum.Sideboard;
 
         public new string DisplayMember
@@ -30,6 +30,11 @@
                 //return $"[{typeChar}] {Amount}x {Card.name} (Missing {NbMissing})";
                 return $"[{typeChar}] {Amount}x {Card.name}";
             }
+        }
+
+        public DeckCard()
+        {
+            // Required for serialization
         }
 
         public DeckCard(CardWithAmount card, DeckCardZoneEnum zone)

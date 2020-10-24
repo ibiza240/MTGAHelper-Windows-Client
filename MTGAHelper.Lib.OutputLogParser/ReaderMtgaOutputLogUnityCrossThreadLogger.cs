@@ -31,6 +31,7 @@ namespace MTGAHelper.Lib.OutputLogParser
         {
             /*^*/"Got non-message event",
             /*^*/"FrontDoor",
+            /*^*/"Client",
             "GetCatalogStatus",
             //"Incoming Log.Info True",
             "Log.Error",
@@ -87,6 +88,8 @@ namespace MTGAHelper.Lib.OutputLogParser
             "Survey.",
             "Carousel.DisabledItems",
             "Renewal.GetCurrentRenewalDefinition",
+            "Event.Join",
+            "Event.JoinQueue",
             "Event.LeaveQueue",
             //"Event.GetPlayerCourses",
             //"Event.GetPlayerCoursesV2",
@@ -95,6 +98,7 @@ namespace MTGAHelper.Lib.OutputLogParser
             "Connecting to matchId",
             "SetAvatarSelection",
             "Social.",
+            "<== CampaignGraph.GetPlayerState",
 
             // TO PARSE EVENTUALLY
             //"PayEntry",
@@ -105,6 +109,8 @@ namespace MTGAHelper.Lib.OutputLogParser
             // GOOD TO PARSE TO GET INFO, SAME FOR EVERYONE
             //"GetSeasonAndRankDetail",
             "GetEventAndSeasonPayouts",
+            "<== PlayerInventory.GetCardMetaDataInfo",
+            "<== CampaignGraph.GetDefinitions",
         };
 
         public ReaderMtgaOutputLogUnityCrossThreadLogger(

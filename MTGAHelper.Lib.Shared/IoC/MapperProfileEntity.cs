@@ -39,6 +39,9 @@ namespace MTGAHelper.Lib.IoC
                 .ForCtorParam("amount", opt => opt.MapFrom(kvp => kvp.Value))
                 .ForAllMembers(o => o.Ignore());
 
+            CreateMap<DeckCardRaw, CardWithAmount>()
+                .ForMember(i => i.Card, i => i.MapFrom(x => x.GrpId));
+
             //CreateMap<QuestUpdate, PlayerQuest>();// TODO: delete?
             CreateMap<TrackDiff, PlayerProgress>(MemberList.None);
             CreateMap<DraftMakePickRaw, DraftPickProgress>();
@@ -47,11 +50,11 @@ namespace MTGAHelper.Lib.IoC
                 .ForMember(i => i.ScraperTypeId, i => i.MapFrom(x => Constants.USERDECK_SOURCE_MTGADECK))
                 .ForMember(i => i.UrlDeckList, i => i.MapFrom(x => (string)null));
 
-            //CreateMap<RankUpdatedRaw, Rank>()
-            //    .ForMember(i => i.Format, i => i.MapFrom(x => Enum.Parse(typeof(RankFormatEnum), x.rankUpdateType)))
-            //    .ForMember(i => i.Class, i => i.MapFrom(x => x.newClass))
-            //    .ForMember(i => i.Level, i => i.MapFrom(x => x.newLevel))
-            //    .ForMember(i => i.Step, i => i.MapFrom(x => x.newStep));
+            CreateMap<RankUpdatedRaw, Rank>()
+                .ForMember(i => i.Format, i => i.MapFrom(x => Enum.Parse(typeof(RankFormatEnum), x.rankUpdateType)))
+                .ForMember(i => i.Class, i => i.MapFrom(x => x.newClass))
+                .ForMember(i => i.Level, i => i.MapFrom(x => x.newLevel))
+                .ForMember(i => i.Step, i => i.MapFrom(x => x.newStep));
 
             CreateMap<CardRequiredInfoByCard, CardCompareInfo>()
                 .ForMember(i => i.GrpId, i => i.MapFrom(x => x.Card.grpId))

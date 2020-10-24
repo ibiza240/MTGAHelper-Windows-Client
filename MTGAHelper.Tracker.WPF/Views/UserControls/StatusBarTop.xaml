@@ -156,7 +156,7 @@
                         <ToolTip Background="{StaticResource TooltipBackgroundBrush}" Content="Menu" />
                     </MenuItem.ToolTip>
                     <!--  Switch User  -->
-                    <MenuItem Command="{Binding SignOutCommand}" Header="_Switch user" />
+                    <MenuItem Command="{Binding SignOutCommand}" Header="_Sign out" />
                     <Separator />
                     <!--  Open Options Window  -->
                     <MenuItem Command="{Binding ShowOptionsCommand}" Header="_Options" />

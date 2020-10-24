@@ -12,19 +12,19 @@ namespace MTGAHelper.Lib.OutputLogParser.EventsSchedule
 {
     public interface IEventTypeCache
     {
-        IReadOnlyCollection<GetActiveEventsV2Raw> AddEvents(ICollection<GetActiveEventsV2Raw> currentEvents);
+        IReadOnlyCollection<GetActiveEventsV3Raw> AddEvents(ICollection<GetActiveEventsV3Raw> currentEvents);
         string GetEventType(string internalEventName);
-        ICollection<GetActiveEventsV2Raw> Events { get; }
+        ICollection<GetActiveEventsV3Raw> Events { get; }
     }
 
     public class SimpleEventCache : IEventTypeCache
     {
-        readonly ConcurrentDictionary<string, GetActiveEventsV2Raw> events = new ConcurrentDictionary<string, GetActiveEventsV2Raw>();
-        public ICollection<GetActiveEventsV2Raw> Events => events.Values;
+        readonly ConcurrentDictionary<string, GetActiveEventsV3Raw> events = new ConcurrentDictionary<string, GetActiveEventsV3Raw>();
+        public ICollection<GetActiveEventsV3Raw> Events => events.Values;
 
         public string GetEventType(string internalEventName) => events[internalEventName].EventType;
 
-        public IReadOnlyCollection<GetActiveEventsV2Raw> AddEvents(ICollection<GetActiveEventsV2Raw> currentEvents)
+        public IReadOnlyCollection<GetActiveEventsV3Raw> AddEvents(ICollection<GetActiveEventsV3Raw> currentEvents)
         {
             var newEvents = currentEvents.Where(i => !events.ContainsKey(i.InternalEventName)).ToArray();
 
@@ -43,7 +43,7 @@ namespace MTGAHelper.Lib.OutputLogParser.EventsSchedule
         readonly IEventTypeCache cache;
 
         public string GetEventType(string internalEventName) => cache.GetEventType(internalEventName);
-        public ICollection<GetActiveEventsV2Raw> Events => cache.Events;
+        public ICollection<GetActiveEventsV3Raw> Events => cache.Events;
 
         readonly string path;
 
@@ -59,13 +59,21 @@ namespace MTGAHelper.Lib.OutputLogParser.EventsSchedule
             if (File.Exists(path))
             {
                 LogExt.LogReadFile(path);
-                var eventCollection =
-                    JsonConvert.DeserializeObject<ICollection<GetActiveEventsV2Raw>>(File.ReadAllText(path));
+                var fileText = File.ReadAllText(path);
+                ICollection<GetActiveEventsV3Raw> eventCollection;
+                try
+                {
+                    eventCollection = JsonConvert.DeserializeObject<ICollection<GetActiveEventsV3Raw>>(fileText) ?? new GetActiveEventsV3Raw[0];
+                }
+                catch (Exception)
+                {
+                    eventCollection = new GetActiveEventsV3Raw[0];
+                }
                 cache.AddEvents(eventCollection);
             }
         }
 
-        public IReadOnlyCollection<GetActiveEventsV2Raw> AddEvents(ICollection<GetActiveEventsV2Raw> currentEvents)
+        public IReadOnlyCollection<GetActiveEventsV3Raw> AddEvents(ICollection<GetActiveEventsV3Raw> currentEvents)
         {
             var newEvents = cache.AddEvents(currentEvents);
             if (newEvents.Any())

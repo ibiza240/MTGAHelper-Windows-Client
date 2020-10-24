@@ -18,6 +18,7 @@ namespace MTGAHelper.Lib.OutputLogParser.IoC
 
             container.RegisterSingleton<AutoMapperEventNameToTypeConverter>();
             container.RegisterSingleton<DeckListConverter>();
+            container.RegisterSingleton<CourseDeckCardsConverter>();
             container.Collection.Append<AutoMapper.Profile, MapperProfileLibCardConvert>(Lifestyle.Singleton);
             container.Collection.Append<AutoMapper.Profile, MapperProfileLibOutputLogParser>(Lifestyle.Singleton);
 

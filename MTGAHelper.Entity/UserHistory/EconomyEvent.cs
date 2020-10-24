@@ -28,5 +28,7 @@ namespace MTGAHelper.Entity.UserHistory
         Xp,
         Wildcard,
         Booster,
+        TokenSealed,
+        TokenLimited,
     }
 }

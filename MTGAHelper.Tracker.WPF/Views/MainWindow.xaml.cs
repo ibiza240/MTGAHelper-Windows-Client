@@ -366,7 +366,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             {
                 // Create the window, set the owner and show as a dialog window (blocking execution until closed)
                 var optionsVM = mapper.Map<OptionsWindowVM>(ViewModel.Config);
-                
+
                 optionsVM.Sets = ViewModel.Sets.ToDictionary(i => i.Code, i => i);
                 optionsVM.DraftRatings = DraftRatings;
                 optionsVM.LimitedRatingsSource = optionsVM.LimitedRatingsSourcesDict.First(i => i.Key == optionsVM.LimitedRatingsSource.Key);
@@ -749,7 +749,8 @@ namespace MTGAHelper.Tracker.WPF.Views
                                 GoHome();
                             break;
                         }
-                    case GetActiveEventsV2Result getActiveEvents:
+                    case GetActiveEventsV2Result _:
+                    case GetActiveEventsV3Result _:
                         GoHome();
                         break;
 
@@ -800,7 +801,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                     case GetPlayerInventoryResult _:
                     case GetPlayerCardsResult _:
                     case PostMatchUpdateResult _:
-                    //case RankUpdatedResult _:
+                    case RankUpdatedResult _:
                     case GetCombinedRankInfoResult _:
                         mustUpload = true;
                         break;

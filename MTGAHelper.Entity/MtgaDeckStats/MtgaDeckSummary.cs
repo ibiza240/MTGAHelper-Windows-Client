@@ -34,8 +34,8 @@ namespace MTGAHelper.Entity.MtgaDeckStats
 
         //public ConfigModelRawDeck DeckUsed { get; set; }
         public string DeckColor { get; set; }
-        public Dictionary<int, int> CardsMain { get; set; }
-        public Dictionary<int, int> CardsSideboard { get; set; }
+        public ICollection<DeckCardRaw> CardsMain { get; set; }
+        public Dictionary<DeckCardZoneEnum, ICollection<DeckCardRaw>> CardsNotMainByZone { get; set; }
     }
 
     public class MtgaDeckAnalysis

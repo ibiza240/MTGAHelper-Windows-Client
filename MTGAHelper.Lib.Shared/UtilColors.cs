@@ -50,7 +50,7 @@ namespace MTGAHelper.Lib
                 .SelectMany(i => i.color_identity)
                 .Distinct();
 
-            var colors = cards
+            var colors = cards.Where(i => i.type.Contains("Land") == false)
                 .Where(i => i.color_identity != null)
                 .SelectMany(i => i.color_identity)
                 .Distinct()

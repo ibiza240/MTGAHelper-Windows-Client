@@ -11,8 +11,7 @@ namespace MTGAHelper.Web.UI.Model.Response.Dto
         public string Url { get; set; }
         public string ScraperTypeId { get; set; }
         public ICollection<DeckCardDto> CardsMain { get; set; }
-        public ICollection<DeckCardDto> CardsMainOther { get; set; }
-        public ICollection<DeckCardDto> CardsSideboard { get; set; }
+        public ICollection<KeyValuePair<string, DeckCardDto[]>> CardsNotMainByZone { get; set; }
         public string MtgaImportFormat { get; set; }
 
         public ICollection<DeckCompareResultDto> CompareResults { get; set; }

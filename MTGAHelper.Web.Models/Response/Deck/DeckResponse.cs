@@ -28,43 +28,26 @@ namespace MTGAHelper.Web.UI.Model.Response
                 { false, new HashSet<string>() },
             };
 
-            var cards = new List<(bool IsSideboard, DeckCardDto Card)>();
-            foreach (var i in deckInfo.Deck.Cards.All
+            var cards = deckInfo.Deck.Cards.All
                 .OrderBy(i => i.Card.type.Contains("Land") ? 0 : 1)
                 .ThenBy(i => i.Card.GetSimpleType())
                 .ThenBy(i => i.Card.cmc)
-                .ThenBy(i => i.Card.name))
-            {
-                //if (i.Card.name.StartsWith("Treasure"))
-                //    System.Diagnostics.Debugger.Break();
+                .ThenBy(i => i.Card.name)
+                .Select(i => 
+                {
 
-                var info = (
-                    i.Zone == DeckCardZoneEnum.Sideboard,
-                    //new DeckCardDto
-                    //{
-                    //    Name = i.Card.name,
-                    //    ImageCardUrl = i.Card.imageCardUrl,//.images["normal"],
-                    //    //ImageArtUrl = i.Card.imageArtUrl,//.images["normal"],
-                    //    Rarity = i.Card.GetRarityEnum(false).ToString(),
-                    //    Type = i.Card.GetSimpleType(),
-                    //    Amount = i.Amount,
-                    //    NbMissing =
-                    //        hCards[i.IsSideboard].Contains(i.Card.name) ? 0 : (deckInfo.CardsRequired.ByCard.ContainsKey(i.Card) ?
-                    //        (i.IsSideboard ? deckInfo.CardsRequired.ByCard[i.Card].NbMissingSideboard : deckInfo.CardsRequired.ByCard[i.Card].NbMissingMain) : 0),
-                    //}
-                    mapper.Map<DeckCardDto>(i)
-                );
+                    //if (i.Card.name.Contains("eace")) System.Diagnostics.Debugger.Break();
 
-                info.Item2.NbMissing =
-                    hCards[i.Zone == DeckCardZoneEnum.Sideboard].Contains(i.Card.name) ? 0 : (deckInfo.CardsRequired.ByCard.ContainsKey(i.Card.name) ?
-                    (i.Zone == DeckCardZoneEnum.Sideboard ? deckInfo.CardsRequired.ByCard[i.Card.name].NbMissingSideboard : deckInfo.CardsRequired.ByCard[i.Card.name].NbMissingMain) : 0);
+                    var card = mapper.Map<DeckCardDto>(i);
 
-                //if (i.Card.name.Contains("Guildgate"))
-                //    System.Diagnostics.Debugger.Break();
-                if (hCards[i.Zone == DeckCardZoneEnum.Sideboard].Contains(i.Card.name) == false) hCards[i.Zone == DeckCardZoneEnum.Sideboard].Add(i.Card.name);
+                    card.NbMissing =
+                        hCards[i.Zone == DeckCardZoneEnum.Sideboard].Contains(i.Card.name) ? 0 : (deckInfo.CardsRequired.ByCard.ContainsKey(i.Card.name) ?
+                        (i.Zone == DeckCardZoneEnum.Sideboard ? deckInfo.CardsRequired.ByCard[i.Card.name].NbMissingSideboard : deckInfo.CardsRequired.ByCard[i.Card.name].NbMissingMain) : 0);
 
-                cards.Add(info);
-            }
+                    if (hCards[i.Zone == DeckCardZoneEnum.Sideboard].Contains(i.Card.name) == false) hCards[i.Zone == DeckCardZoneEnum.Sideboard].Add(i.Card.name);
+
+                    return card;
+                }).ToArray();
 
             var compareResults = deckInfo.CompareResult.GetModelSummary()
                 .Select(i => new DeckCompareResultDto
@@ -85,27 +68,31 @@ namespace MTGAHelper.Web.UI.Model.Response
                 Name = deckInfo.Deck.Name,
                 Url = deckInfo.Config.Url,
                 ScraperTypeId = deckInfo.Deck.ScraperType.Id,
-                CardsMain = cards.Where(i => i.IsSideboard == false).Select(i => i.Card).ToArray(),
-                CardsSideboard = cards.Where(i => i.IsSideboard).Select(i => i.Card).ToArray(),
+                CardsMain = cards.Where(i => i.Zone == DeckCardZoneEnum.Deck.ToString()).ToArray(),
+                CardsNotMainByZone = cards
+                    .Where(i => i.Zone != DeckCardZoneEnum.Deck.ToString())
+                    .GroupBy(i => i.Zone)
+                    .Select(i => new KeyValuePair<string, DeckCardDto[]>(i.Key, i.ToArray()))
+                    .ToArray(),
                 MtgaImportFormat = deckInfo.MtgaImportFormat,
                 CompareResults = compareResults,
                 ManaCurve = utilManaCurve.CalculateManaCurve(deckInfo.Deck.Cards.QuickCardsMain.Values
                     .Cast<CardWithAmount>().ToArray())
             };
 
-            if (deckInfo.Deck is DeckAverageArchetype archetype)
-            {
-                throw new Exception("TO REVISE");
-                deck.CardsMainOther = archetype.CardsMainOther.Select(i => new DeckCardDto
-                {
-                    Name = i.name,
-                    Rarity = i.GetRarityEnum(false).ToString(),
-                    Type = i.GetSimpleType(),
-                    NbMissing = i.NbMissing,
-                    ImageCardUrl = i.imageCardUrl,//.images["normal"]
-                    //ImageArtUrl = i.imageArtUrl,//.images["normal"]
-                }).ToArray();
-            }
+            //if (deckInfo.Deck is DeckAverageArchetype archetype)
+            //{
+            //    throw new Exception("TO REVISE");
+            //    deck.CardsMainOther = archetype.CardsMainOther.Select(i => new DeckCardDto
+            //    {
+            //        Name = i.name,
+            //        Rarity = i.GetRarityEnum(false).ToString(),
+            //        Type = i.GetSimpleType(),
+            //        NbMissing = i.NbMissing,
+            //        ImageCardUrl = i.imageCardUrl,//.images["normal"]
+            //        //ImageArtUrl = i.imageArtUrl,//.images["normal"]
+            //    }).ToArray();
+            //}
 
             return new DeckResponse(deck);
         }

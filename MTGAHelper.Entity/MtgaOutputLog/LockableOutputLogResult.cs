@@ -67,7 +67,7 @@ namespace MTGAHelper.Entity.MtgaOutputLog
         //public LockableOutputLogResultData<Dictionary<DateTime, MythicRatingUpdatedRaw>> MythicRatingUpdatedByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, MythicRatingUpdatedRaw>>();
         //public LockableOutputLogResultData<Dictionary<DateTime, PayEntryRaw>> PayEntryByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, PayEntryRaw>>();
         public LockableOutputLogResultData<Dictionary<DateTime, GetCombinedRankInfoRaw>> CombinedRankInfoByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, GetCombinedRankInfoRaw>>();
-        //public LockableOutputLogResultData<Dictionary<DateTime, RankUpdatedRaw>> RankUpdatedByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, RankUpdatedRaw>>();
+        public LockableOutputLogResultData<Dictionary<DateTime, RankUpdatedRaw>> RankUpdatedByDate { get; set; } = new LockableOutputLogResultData<Dictionary<DateTime, RankUpdatedRaw>>();
 
         //InfoByDate<ICollection<CardWithAmount>> lastCollectionInMemory = null;
 
@@ -141,8 +141,8 @@ namespace MTGAHelper.Entity.MtgaOutputLog
             foreach (var combinedRankInfo in CombinedRankInfoByDate.GetData())
                 CreateOrGetDateSnapshotInfo(combinedRankInfo.DateTime).CombinedRankInfo = combinedRankInfo.Info;
 
-            //foreach (var rankUpdated in RankUpdatedByDate.GetData())
-            //    CreateOrGetDateSnapshotInfo(rankUpdated.DateTime).RankUpdated = rankUpdated.Info;
+            foreach (var rankUpdated in RankUpdatedByDate.GetData())
+                CreateOrGetDateSnapshotInfo(rankUpdated.DateTime).RankUpdated = rankUpdated.Info;
 
             foreach (var eventClaimPrice in EventClaimPriceByDate.GetData())
                 CreateOrGetDateSnapshotInfo(eventClaimPrice.DateTime).EventClaimPrize = eventClaimPrice.Info;
@@ -248,7 +248,7 @@ namespace MTGAHelper.Entity.MtgaOutputLog
                 CombinedRankInfo = CombinedRankInfoByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, GetCombinedRankInfoRaw>(),
                 EventClaimPrize = EventClaimPriceByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, EventClaimPrizeRaw>(),
                 //PayEntry = PayEntryByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, PayEntryRaw>(),
-                //RankUpdated = RankUpdatedByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, RankUpdatedRaw>(),
+                RankUpdated = RankUpdatedByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, RankUpdatedRaw>(),
                 //MythicRatingUpdated = MythicRatingUpdatedByDate.GetData().SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, MythicRatingUpdatedRaw>(),
             };
 

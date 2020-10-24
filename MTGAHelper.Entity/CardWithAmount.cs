@@ -3,7 +3,12 @@
     public class CardWithAmount
     {
         public Card Card { get; set; }
-        public int Amount { get; private set; }
+        public int Amount { get; set; }
+
+        public CardWithAmount()
+        {
+            // Required for serialization
+        }
 
         public CardWithAmount(Card card, int amount)
         {

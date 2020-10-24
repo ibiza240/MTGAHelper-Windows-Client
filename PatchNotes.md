@@ -1,3 +1,9 @@
+### v1.7.1 (2020-10-24)
+
+Support for the latest game patch
+
+Bugfix: Rank steps will show again on the website in the History
+
 ### v1.7.0 (2020-09-17)
 
 Support for the Zendikar Rising (ZNR) card image thumbnails

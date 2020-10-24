@@ -26,12 +26,12 @@ namespace MTGAHelper.Lib.OutputLogParser.Models
         #region Result message is already a list, we only keep the latest
         public GetDecksListResult GetDecksListResults { get; set; } = new GetDecksListResult { Raw = new PayloadRaw<ICollection<CourseDeckRaw>> { payload = new List<CourseDeckRaw>() } };
         public GetPreconDecksV3Result GetPreconDecksV3Results { get; set; } = new GetPreconDecksV3Result { Raw = new PayloadRaw<ICollection<CourseDeckRaw>> { payload = new List<CourseDeckRaw>() } };
-        public GetActiveEventsV2Result GetActiveEventsV2Results { get; set; } = new GetActiveEventsV2Result { Raw = new PayloadRaw<ICollection<GetActiveEventsV2Raw>> { payload = new List<GetActiveEventsV2Raw>() } };
+        public GetActiveEventsV3Result ActiveEvents { get; set; } = new GetActiveEventsV3Result { Raw = new PayloadRaw<ICollection<GetActiveEventsV3Raw>> { payload = new List<GetActiveEventsV3Raw>() } };
         #endregion
 
         public List<PlayerNameResult> PlayerNameResults { get; set; } = new List<PlayerNameResult>();
         public List<GetSeasonAndRankDetailResult> GetSeasonAndRankDetailResults { get; set; } = new List<GetSeasonAndRankDetailResult>();
-        //public List<RankUpdatedResult> RankUpdatedResults { get; set; } = new List<RankUpdatedResult>();
+        public List<RankUpdatedResult> RankUpdatedResults { get; set; } = new List<RankUpdatedResult>();
         //public List<MythicRatingUpdatedResult> MythicRatingUpdatedResults { get; set; } = new List<MythicRatingUpdatedResult>();
         public List<GetPlayerCardsResult> GetPlayerCardsResults { get; set; } = new List<GetPlayerCardsResult>();
         public List<GetPlayerProgressResult> GetPlayerProgressResults { get; set; } = new List<GetPlayerProgressResult>();

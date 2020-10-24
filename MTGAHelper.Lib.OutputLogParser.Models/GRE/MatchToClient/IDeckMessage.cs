@@ -6,5 +6,6 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient
     {
         List<int> deckCards { get; }
         List<int> sideboardCards { get; }
+        List<int> commanderCards { get; }
     }
 }

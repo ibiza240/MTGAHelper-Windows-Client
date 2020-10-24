@@ -33,7 +33,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
         {
             if (grpId != null && grpId != GrpId)
             {
-                Log.Warning($"changing grpId from {GrpId} to {grpId}");
+                Log.Warning($"changing grpId from {GrpId} to {grpId} (instId {newInstId} (was {InstId}))");
             }
             return new GameCardInZone(newInstId, OwnerSeatId, destZone, grpId ?? GrpId, GameObjectType, Visibility, Card);
         }

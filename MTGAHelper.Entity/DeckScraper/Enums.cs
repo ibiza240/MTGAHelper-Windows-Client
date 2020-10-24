@@ -6,6 +6,7 @@
         Meta,
         Tier1,
         User,
+        TournamentBo3,
     }
 
     public enum MtgGoldfishArticleEnum

@@ -80,6 +80,8 @@ namespace MTGAHelper.Entity
                             var id = new string(Name.Skip(NAME_PREFIX_USER.Length).ToArray());
                             url = aetherhubAddFormat($"https://aetherhub.com/User/{id}/Decks", Format);
                         }
+                        else if (Name == AetherhubListingEnum.TournamentBo3.ToString().ToLower())
+                            url = "https://aetherhub.com/Events/Historic/";
                         break;
                     case ScraperTypeEnum.MtgGoldfish:
                         if (Name == MtgGoldfishArticleEnum.Meta.ToString().ToLower())

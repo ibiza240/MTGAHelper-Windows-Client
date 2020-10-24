@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>MTGAHelper.Lib</RootNamespace>
-    <Version>1.7.0</Version>
+    <Version>1.7.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,5 +13,4 @@
   <ItemGroup>
     <ProjectReference Include="..\MTGAHelper.Entity\MTGAHelper.Entity.csproj" />
   </ItemGroup>
-
 </Project>

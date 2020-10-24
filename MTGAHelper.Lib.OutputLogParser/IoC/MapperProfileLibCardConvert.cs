@@ -12,7 +12,9 @@ namespace MTGAHelper.Lib.OutputLogParser.IoC
     {
         public MapperProfileLibCardConvert(
             AutoMapperEventNameToTypeConverter eventNameToType,
-            DeckListConverter deckListConverter)
+            DeckListConverter deckListConverter,
+            CourseDeckCardsConverter courseDeckCardsConverter
+            )
         {
             CreateMap<GameProgress, GameDetail>()
                 .ForMember(i => i.OpponentCardsSeen, i => i.MapFrom(x => x.OpponentCardsSeenByInstanceId.Values
@@ -35,11 +37,15 @@ namespace MTGAHelper.Lib.OutputLogParser.IoC
             //CreateMap<CourseDeckRaw, MtgaDeck>()
             CreateMap<CourseDeckRaw, ConfigModelRawDeck>()
                 .ForMember(i => i.DeckTileId, i => i.MapFrom(x => x.deckTileId ?? default(int)))
-                .ForMember(i => i.CardCommander, i => i.MapFrom(x => x.commandZoneGRPIds.FirstOrDefault()))
-                .ForMember(i => i.CardsMain, i => i.ConvertUsing(deckListConverter, x => x.mainDeck))
-                .ForMember(i => i.CardsSideboard, i => i.ConvertUsing(deckListConverter, x => x.sideboard))
+                //.ForMember(i => i.CardCommander, i => i.MapFrom(x => x.commandZoneGRPIds.FirstOrDefault()))
+                //.ForMember(i => i.CardsMain, i => i.ConvertUsing(deckListConverter, x => x.mainDeck))
+                //.ForMember(i => i.CardsSideboard, i => i.ConvertUsing(deckListConverter, x => x.sideboard))
+                .ForMember(i => i.Cards, i => i.ConvertUsing(courseDeckCardsConverter, x => x))
                 .ForMember(m => m.ArchetypeId, o => o.Ignore()) // todo Bruno?
-                .ForMember(m => m.CardsMainWithCommander, o => o.Ignore());
+                .ForMember(m => m.CardsMain, o => o.Ignore()) // Obsolete
+                .ForMember(m => m.CardsSideboard, o => o.Ignore()) // Obsolete
+                .ForMember(m => m.CardCommander, o => o.Ignore()) // Obsolete
+                .IgnoreAllPropertiesWithAnInaccessibleSetter();
 
             ////CreateMap<GetDeckListResultDeckRaw, MtgaDeck>()
             //CreateMap<GetDeckListResultDeckRaw, ConfigModelRawDeck>()

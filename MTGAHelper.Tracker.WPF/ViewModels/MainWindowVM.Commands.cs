@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using MTGAHelper.Tracker.WPF.Config;
+using MTGAHelper.Web.Models.Response.Account;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
@@ -71,30 +72,30 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             {
                 // Just hide the window to effectively minimize to the tray
                 case MinimizeOption.Tray:
-                {
-                    IsWindowVisible = false;
-                    break;
-                }
+                    {
+                        IsWindowVisible = false;
+                        break;
+                    }
                 // Set the window state to minimize to the taskbar
                 case MinimizeOption.Taskbar:
-                {
-                    WindowState = WindowState.Minimized;
-                    break;
-                }
+                    {
+                        WindowState = WindowState.Minimized;
+                        break;
+                    }
                 // Set the minimized height of the window
                 case MinimizeOption.Height:
-                {
-                    // Set the current window settings
-                    Config.WindowSettingsOriginal = WindowSettings.Copy();
+                    {
+                        // Set the current window settings
+                        Config.WindowSettingsOriginal = WindowSettings.Copy();
 
-                    // Set the width and height to zero, which will be bounded by the window min size
-                    WindowWidth = 0;
-                    WindowHeight = 0;
+                        // Set the width and height to zero, which will be bounded by the window min size
+                        WindowWidth = 0;
+                        WindowHeight = 0;
 
-                    // Set the flag, to flip the button
-                    IsHeightMinimized = true;
-                    break;
-                }
+                        // Set the flag, to flip the button
+                        IsHeightMinimized = true;
+                        break;
+                    }
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -125,7 +126,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         }
 
         public void RestoreWindow()
-        {         
+        {
             // If the height is minimized, restore the original size
             if (IsHeightMinimized)
             {
@@ -270,14 +271,16 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         private ICommand _SignOutCommand;
 
-        private static bool Can_SignOut()
+        private bool Can_SignOut()
         {
-            return true;
+            return Account.IsAuthenticated;
         }
 
         private void SignOut()
         {
             SetMainWindowContext(WindowContext.Welcome);
+            SetSignedIn(new AccountResponse());
+            Api.UnsetUserCookies();
         }
 
         #endregion

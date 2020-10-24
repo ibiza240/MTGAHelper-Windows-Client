@@ -25,20 +25,26 @@ namespace MTGAHelper.Tracker.WPF.Business
 
         private readonly Uri BaseAddress = new Uri(SERVER);
 
-        private readonly CookieContainer CookieContainer;
-        private readonly HttpClient Client;
+        private CookieContainer CookieContainer;
+        private HttpClient Client;
 
 
         public ServerApiCaller()
         {
-            CookieContainer = new CookieContainer();
-            var handler = new HttpClientHandler { CookieContainer = CookieContainer };
-            Client = new HttpClient(handler) { BaseAddress = BaseAddress };
+            UnsetUserCookies();
         }
 
         public void SetUserId(string userId)
         {
             CookieContainer.SetCookies(BaseAddress, "userId=" + userId);
+        }
+
+        public void UnsetUserCookies()
+        {
+            Client?.Dispose();
+            CookieContainer = new CookieContainer();
+            var handler = new HttpClientHandler { CookieContainer = CookieContainer };
+            Client = new HttpClient(handler) { BaseAddress = BaseAddress };
         }
 
         internal AccountResponse ValidateExternalToken(string provider, string token)

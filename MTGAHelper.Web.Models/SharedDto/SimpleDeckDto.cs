@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using MTGAHelper.Web.UI.Model.Response.Dto;
+using System.Collections.Generic;
 
 namespace MTGAHelper.Web.UI.Model.SharedDto
 {
     public class SimpleDeckDto
     {
         public string Name { get; set; } = "N/A";
-        public ICollection<CardWithAmountDto> Main { get; set; } = new CardWithAmountDto[0];
-        public ICollection<CardWithAmountDto> Sideboard { get; set; } = new CardWithAmountDto[0];
+        public ICollection<DeckCardDto> Cards { get; set; } = new DeckCardDto[0];
 
         public string Colors { get; set; } = "";
         public string DeckImage { get; set; } = "";

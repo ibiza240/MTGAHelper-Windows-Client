@@ -11,5 +11,7 @@
         SplitHalf = 6,
         AdventureAdventure = 7,
         AdventureCreature = 8,
+        MDFC_Back = 9,
+        MDFC_Front = 10,
     }
 }

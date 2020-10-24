@@ -38,6 +38,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.ConnectResp
     {
         public List<int> deckCards { get; set; }
         public List<int> sideboardCards { get; set; }
+        public List<int> commanderCards { get; set; }
     }
 
     public class ConnectResp

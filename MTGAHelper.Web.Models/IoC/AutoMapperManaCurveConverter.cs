@@ -6,7 +6,7 @@ using MTGAHelper.Web.UI.Model.Response.Dto;
 
 namespace MTGAHelper.Web.UI.Shared
 {
-    public class AutoMapperManaCurveConverter : IValueConverter<Dictionary<int, int>, ICollection<DeckManaCurveDto>>
+    public class AutoMapperManaCurveConverter : IValueConverter<ICollection<DeckCardRaw>, ICollection<DeckManaCurveDto>>
     {
         readonly UtilManaCurve utilManaCurve;
 
@@ -15,7 +15,7 @@ namespace MTGAHelper.Web.UI.Shared
             this.utilManaCurve = utilManaCurve;
         }
 
-        public ICollection<DeckManaCurveDto> Convert(Dictionary<int, int> sourceMember, ResolutionContext context)
+        public ICollection<DeckManaCurveDto> Convert(ICollection<DeckCardRaw> sourceMember, ResolutionContext context)
         {
             return utilManaCurve.CalculateManaCurve(context.Mapper.Map<ICollection<CardWithAmount>>(sourceMember));
         }
