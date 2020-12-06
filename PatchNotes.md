@@ -1,3 +1,9 @@
+### v1.7.2 (2020-12-06)
+
+Support all cards thumbnails (Kaladesh Remastered, Bob Ross lands)
+
+Bugfix: Rare double-logging of some history events
+
 ### v1.7.1 (2020-10-24)
 
 Support for the latest game patch
