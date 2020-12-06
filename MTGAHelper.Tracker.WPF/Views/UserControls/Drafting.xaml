@@ -39,33 +39,6 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="0" Orientation="Horizontal">
-                <!--  Button to run the DraftHelper  -->
-                <!--<Menu
-                    Margin="2"
-                    Background="Transparent"
-                    Visibility="{Binding IsHumanDraft, Converter={StaticResource BoolToVis}}">
-                    <MenuItem
-                        Padding="0"
-                        Background="Transparent"
-                        Click="btnRunDraftHelper_Click">
-                        <MenuItem.Header>
-                            <Viewbox>
-                                <Rectangle
-                                    Width="80"
-                                    Height="40"
-                                    Margin="0,5,5,5"
-                                    Fill="White">
-                                    <Rectangle.OpacityMask>
-                                        <VisualBrush Stretch="Uniform" Visual="{StaticResource DraftPath}" />
-                                    </Rectangle.OpacityMask>
-                                </Rectangle>
-                            </Viewbox>
-                        </MenuItem.Header>
-                        <MenuItem.ToolTip>
-                            <ToolTip Background="{StaticResource TooltipBackgroundBrush}" Content="Run DraftHelper" />
-                        </MenuItem.ToolTip>
-                    </MenuItem>
-                </Menu>-->
                 <!--  ComboBox for Pack and Pick  -->
                 <ComboBox
                     x:Name="PxpxComboBox"

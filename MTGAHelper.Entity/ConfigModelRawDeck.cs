@@ -21,11 +21,11 @@ namespace MTGAHelper.Entity
         public string Format { get; set; }
         public string ArchetypeId { get; set; }
 
-        [Obsolete]
+        [Obsolete("Will be phased out")]
         public Dictionary<int, int> CardsMain { get; set; } = new Dictionary<int, int>();
-        [Obsolete]
+        [Obsolete("Will be phased out")]
         public Dictionary<int, int> CardsSideboard { get; set; } = new Dictionary<int, int>();
-        [Obsolete]
+        [Obsolete("Will be phased out")]
         public int CardCommander { get; set; }
 
         public ICollection<DeckCardRaw> Cards { get; set; }
@@ -77,7 +77,7 @@ namespace MTGAHelper.Entity
             try
             {
                 return Cards
-                .Select(i => new DeckCard(new CardWithAmount(allCards[i.GrpId], i.Amount), i.Zone))
+                .Select(i => new DeckCard(allCards[i.GrpId], i.Amount, i.Zone))
                 .ToArray();
             }
             catch (Exception ex)

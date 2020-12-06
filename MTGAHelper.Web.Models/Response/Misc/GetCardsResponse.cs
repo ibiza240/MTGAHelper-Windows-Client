@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
-using MTGAHelper.Web.Models.SharedDto;
+using MTGAHelper.Entity;
 
 namespace MTGAHelper.Web.Models.Response.Misc
 {
     public class GetCardsResponse
     {
-        public ICollection<CardDtoFull> Cards { get; }
+        public ICollection<Card> Cards { get; }
 
-        public GetCardsResponse(ICollection<CardDtoFull> cards)
+        public GetCardsResponse(ICollection<Card> cards)
         {
             Cards = cards;
         }

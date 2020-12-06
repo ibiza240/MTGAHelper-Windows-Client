@@ -33,8 +33,9 @@
         MissingInCollection,
     }
 
-    public class CardForDraftPick : Card
+    public class CardForDraftPick
     {
+        public Card Card { get; set; }
         public string RatingSource { get; set; } = "";
         public float RatingValue { get; set; } = 0f;
         public string RatingToDisplay { get; set; } = "N/A";

@@ -59,7 +59,17 @@
                                     VerticalAlignment="Center"
                                     FontSize="24"
                                     FontWeight="Bold">
-                                    <TextBlock Text="{Binding InMatchState.LibraryCardsCount, StringFormat={}{0} cards in library}" TextTrimming="CharacterEllipsis" />
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock TextTrimming="CharacterEllipsis">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="Turn {0}{1}">
+                                                    <Binding Path="InMatchState.TurnNumber" />
+                                                    <Binding Path="InMatchState.OnThePlay" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                        <TextBlock Text="{Binding InMatchState.LibraryCardsCount, StringFormat={}{0} cards in library}" TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
                                 </Label>
                                 <!--  Lands Remaining and Percent to Draw  -->
                                 <Button
@@ -90,12 +100,15 @@
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
                                                         <StackPanel Orientation="Horizontal">
+                                                            <Label>
+                                                                <TextBlock Text="{Binding Value.Info}" />
+                                                            </Label>
                                                             <Image
                                                                 Width="14"
                                                                 Height="14"
                                                                 Source="{Binding Key, Converter={StaticResource StringToImage}, ConverterParameter=https://www.mtgahelper.com/images/manaIcons/{0}.png}" />
                                                             <Label>
-                                                                <TextBlock Text="{Binding Value}" />
+                                                                <TextBlock Text="{Binding Value.InfoIncludingSpellLands}" />
                                                             </Label>
                                                         </StackPanel>
                                                     </DataTemplate>
@@ -132,7 +145,6 @@
                                                     <TextBlock Text="{Binding InMatchState.LibraryDrawLandPct, StringFormat=p1}" />
                                                 </Label>
                                             </Grid>
-
                                         </Border>
                                     </StackPanel>
                                 </Button>
@@ -214,6 +226,32 @@
                             x:Name="CardsOpponent"
                             Grid.Row="1"
                             DataContext="{Binding InMatchState.OpponentCardsSeen}" />
+                    </Grid>
+                </TabItem.Content>
+            </TabItem>
+
+            <!--  All Opponent Cards Seen  -->
+            <TabItem
+                Header="Previous Games this Match">
+                <TabItem.Content>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Border
+                            Grid.Row="0"
+                            Margin="0,0,0,2"
+                            BorderBrush="{StaticResource HeaderBrush}"
+                            BorderThickness="0,0,0,1">
+                            <Label FontSize="16" FontWeight="Bold">
+                                <TextBlock Text="{Binding InMatchState.OpponentCardsPrevGamesCount, StringFormat={}{0} total cards seen}" TextTrimming="CharacterEllipsis" />
+                            </Label>
+                        </Border>
+                        <uc:SimpleCardsList
+                            x:Name="AllCardsOpponent"
+                            Grid.Row="1"
+                            DataContext="{Binding InMatchState.OpponentCardsPrevGames}" />
                     </Grid>
                 </TabItem.Content>
             </TabItem>

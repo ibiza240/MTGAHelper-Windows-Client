@@ -63,6 +63,7 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
             CardsMyLibrary.SetCardPopupPosition(side, mainWindowTop, mainWindowLeft, mainWindowWidth);
             CardsMySideboard.SetCardPopupPosition(side, mainWindowTop, mainWindowLeft, mainWindowWidth);
             CardsOpponent.SetCardPopupPosition(side, mainWindowTop, mainWindowLeft, mainWindowWidth);
+            AllCardsOpponent.SetCardPopupPosition(side, mainWindowTop, mainWindowLeft, mainWindowWidth);
             OpponentCardsWindow.SetCardsPopupPosition(side);
         }
 

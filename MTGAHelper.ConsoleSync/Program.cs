@@ -5,6 +5,7 @@ using System.Linq;
 using MTGAHelper.ConsoleSync.Services;
 using MTGAHelper.Entity;
 using MTGAHelper.Lib;
+using MTGAHelper.Lib.CacheLoaders;
 using MTGAHelper.Lib.IoC;
 using MTGAHelper.Lib.OutputLogParser;
 using MTGAHelper.Lib.OutputLogParser.IoC;
@@ -106,6 +107,7 @@ namespace MTGAHelper.ConsoleSync
             container.Register<LogFileProcessor>();
             container.RegisterSingleton<ServerApiCaller>();
             container.RegisterSingleton<ICacheLoader<Dictionary<int, Card>>, CacheLoaderCardsByApi>();
+            container.RegisterDecorator<ICacheLoader<Dictionary<int, Card>>, CardLoaderAddLinkedFaceCardDecorator>(Lifestyle.Singleton);
             container.RegisterMapperConfig();
             return container;
         }

@@ -11,27 +11,34 @@ namespace MTGAHelper.Entity
         public Dictionary<int, DeckCard> QuickCardsSideboard { get; protected set; }
         public DeckCard QuickCardCommander { get; protected set; }
         public DeckCard QuickCardCompanion { get; protected set; }
+        public string ColorsInDeck { get; protected set; }
 
-        public DeckCards(ICollection<DeckCard> Cards)
+        public DeckCards(IEnumerable<DeckCard> cards)
         {
-            this.All = Cards
+            All = cards
                 //.OrderBy(i => i.Card.cmc)
                 //.ThenBy(i => i.Card.name)
                 .OrderBy(i => i.Card.name)
                 .ToArray();
 
-            this.AllExceptBasicLands = All
+            AllExceptBasicLands = All
                 .Where(i => i.Card.type.StartsWith("Basic Land") == false)
                 .ToArray();
 
-            this.QuickCardsMain = All
+            QuickCardsMain = All
                 .Where(i => i.Zone == DeckCardZoneEnum.Deck)
                 .ToDictionary(i => i.Card.grpId, i => i);
-                /*.GroupBy(i => i.Card.grpId).ToDictionary(i => i.Key, i => new DeckCard(new CardWithAmount(i.First().Card, i.Sum(x => x.Amount)), false))*/;
 
-            this.QuickCardsSideboard = All
+            QuickCardsSideboard = All
                 .Where(i => i.Zone == DeckCardZoneEnum.Sideboard)
                 .ToDictionary(i => i.Card.grpId, i => i);
+
+            var colorsInDeck = All.Select(c => c.Card)
+                .Where(c => c.colors != null && c.colors.Any())
+                .SelectMany(c => c.colors)
+                .Distinct()
+                .OrderBy(c => c);
+            ColorsInDeck = string.Concat(colorsInDeck);
 
             QuickCardCommander = All.FirstOrDefault(i => i.Zone == DeckCardZoneEnum.Commander);
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MTGAHelper.Entity;
+using MTGAHelper.Entity.MtgaOutputLog;
 using MTGAHelper.Lib.OutputLogParser.Models;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.ClientToMatch;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient;
@@ -79,6 +80,9 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                         {
                             // Initialization of the state (beginning of the match)
                             zonesInfo = gameStateMessage.zones.ToDictionary(z => z.zoneId, GetZoneAndOwnerFromGameStateZone);
+                            State.OnThePlay = gameStateMessage.turnInfo.decisionPlayer == State.OpponentSeatId
+                                ? PlayerEnum.Opponent
+                                : PlayerEnum.Me;
                             // first gameStateMessage should not be processed as mulligan info will get messed up
                         }
                         else if (gameStateMessage.type == "GameStateType_Full" || gameStateMessage.type == "GameStateType_Diff")
@@ -143,6 +147,12 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             if (priorityPlayer.HasValue)
             {
                 State.PriorityPlayer = priorityPlayer.Value;
+            }
+
+            var turnNumber = gameStateMessage.turnInfo?.turnNumber ?? -1;
+            if (turnNumber >= 0)
+            {
+                State.TurnNumber = turnNumber;
             }
 
             if (gameStateMessage.players != null)
@@ -303,7 +313,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                     if (card?.linkedFaceType == enumLinkedFace.AdventureAdventure)
                     {
                         // display the creature half of adventure cards
-                        card = cardsByGrpId.GetValueOrDefault(card.LinkedCardGrpId);
+                        card = card.LinkedCard;
                     }
 
                     return new GameCardInZone(

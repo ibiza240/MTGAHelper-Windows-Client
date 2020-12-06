@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MTGAHelper.Entity.MtgaOutputLog;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.GameStateMessage;
 using Newtonsoft.Json;
 using Serilog;
@@ -13,12 +14,14 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
         public int OpponentSeatId { get; private set; }
         public int PriorityPlayer { get; internal set; }
         public string OpponentScreenName { get; set; }
-
+        public int TurnNumber { get; internal set; }
+        public PlayerEnum OnThePlay { get; internal set; }
 
         public Dictionary<int, Player> Players { get; } = new Dictionary<int, Player>(2);
 
         readonly IReadOnlyDictionary<OwnedZone, IZoneTracker> cardsInZones;
         readonly OpponentCardTracker oppCardTracker;
+        private bool _isSideboarding;
 
         static IReadOnlyDictionary<OwnedZone, IZoneTracker> CreateZoneTrackers(OpponentCardTracker oppCardTracker)
         {
@@ -64,9 +67,21 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
         public IReadOnlyCollection<CardDrawInfo> MyLibrary => MyLibraryTracker.GrpIdInfos.ToArray();
         public IReadOnlyCollection<CardDrawInfo> MySideboard => cardsInZones[OwnedZone.MySideboard].GrpIdInfos.ToArray();
         public IReadOnlyCollection<CardDrawInfo> OpponentCardsSeen => oppCardTracker.CardsSeen.ToArray();
+        public IReadOnlyCollection<CardDrawInfo> OpponentCardsPrevGames => oppCardTracker.CardsSeenPreviousGames.ToArray();
 
         public bool IsReset { get; internal set; }
-        public bool IsSideboarding { get; internal set; }
+
+        public bool IsSideboarding
+        {
+            get => _isSideboarding;
+            internal set
+            {
+                if (!_isSideboarding && value)
+                    OnInitSideboarding();
+                _isSideboarding = value;
+            }
+        }
+
         public int MyMulliganCount { get; internal set; }
 
         IEnumerable<string> TrackedZones => cardsInZones.Values.Select(t => t.ToString());
@@ -83,6 +98,8 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             IsReset = true;
 
             PriorityPlayer = 0;
+            TurnNumber = 0;
+            OnThePlay = PlayerEnum.Unknown;
             MyMulliganCount = -1;
             foreach (var zoneTracker in cardsInZones.Values)
             {
@@ -110,6 +127,11 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
         public void SetLibraryGrpIds(IEnumerable<int> grpIds)
         {
             MyLibraryTracker.ResetWithGrpIds(grpIds);
+        }
+
+        private void OnInitSideboarding()
+        {
+            oppCardTracker.SetSideboardStarted();
         }
 
         public void SetSideboardGrpIds(IEnumerable<int> grpIds)

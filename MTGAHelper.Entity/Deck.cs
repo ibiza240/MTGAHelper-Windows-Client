@@ -62,9 +62,39 @@ namespace MTGAHelper.Entity
             if (string.IsNullOrWhiteSpace(filter))
                 return true;
 
+            var colors = GetColorListFromString(filter);
+
+            if (colors.Count == 0)
+                return true;
+
+            if (colors.Any(filterColor => !Cards.ColorsInDeck.Contains(filterColor)))
+            {
+                // quickly filter decks that don't have this color at all
+                return false;
+            }
+
+            if (colors.Count == 1)
+            {
+                // Mono...we check for at least 80% cards of that single color
+                var minNbCards = (int)(Cards.All.Count * 0.8f);
+                var color = colors.Single();
+                var nbCards = Cards.All
+                    .Count(i => i.Card.colors == null || i.Card.colors.Count == 1 && i.Card.colors.Single() == color);
+                return nbCards >= minNbCards;
+            }
+
+            // multicolor, look for exactly these colors
+            return Cards.All
+                .Where(i => i.Card.colors != null)
+                .Where(i => i.Zone != DeckCardZoneEnum.Sideboard) //.Where(i => i.IsSideboard == false)
+                .All(i => i.Card.colors.All(c => colors.Contains(c)));
+        }
+
+        private static List<string> GetColorListFromString(string filter)
+        {
             var filterUpperCase = filter.ToUpper();
 
-            var colors = new List<string>();
+            var colors = new List<string>(5);
 
             if (filterUpperCase.Contains("W"))
                 colors.Add("W");
@@ -76,28 +106,7 @@ namespace MTGAHelper.Entity
                 colors.Add("R");
             if (filterUpperCase.Contains("G"))
                 colors.Add("G");
-
-            if (colors.Count == 0)
-            {
-                // No filter
-                return true;
-            }
-            else if (colors.Count == 1)
-            {
-                // Mono...we check for at least 80% cards of that single color
-                var minNbCards = (int)(this.Cards.All.Count * 0.8f);
-                var color = colors.Single();
-                var nbCards = this.Cards.All
-                    .Count(i => i.Card.colors == null || i.Card.colors.Count == 1 && i.Card.colors.Single() == color);
-                return nbCards >= minNbCards;
-            }
-            else
-            {
-                return this.Cards.All
-                    .Where(i => i.Card.colors != null)
-                    .Where(i => i.Zone != DeckCardZoneEnum.Sideboard) //.Where(i => i.IsSideboard == false)
-                    .All(i => i.Card.colors.All(c => colors.Contains(c)));
-            }
+            return colors;
         }
 
         public bool FilterName(string filter)
@@ -105,7 +114,7 @@ namespace MTGAHelper.Entity
             if (string.IsNullOrWhiteSpace(filter))
                 return true;
 
-            return this.Name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
+            return Name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         public bool FilterCard(string filter)
@@ -113,13 +122,13 @@ namespace MTGAHelper.Entity
             if (string.IsNullOrWhiteSpace(filter))
                 return true;
 
-            return this.Cards.All.Any(i => i.Card.name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0);
+            return Cards.All.Any(i => i.Card.name.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0);
         }
     }
 
     public class Deck : DeckBase
     {
-        public Deck(string name, ScraperType scraperTypeId, ICollection<DeckCard> cards)
+        public Deck(string name, ScraperType scraperTypeId, IEnumerable<DeckCard> cards)
             : base(name, scraperTypeId)
         {
             Cards = new DeckCards(cards);

@@ -669,7 +669,6 @@ namespace MTGAHelper.Tracker.WPF.Views
                                 var regexMatch = Regex.Match(playerCourse.Raw.payload.InternalEventName, "(?:Draft|Sealed)_(.*?)_");
                                 if (regexMatch.Success)
                                 {
-                                    //DraftHelperRunner.Set = regexMatch.Groups[1].Value;
                                     set = regexMatch.Groups[1].Value;
                                 }
 
@@ -677,10 +676,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                                 if (payload.CurrentEventState == "PreMatch")
                                 {
                                     RefreshCustomRatingsFromServer();
-                                    ViewModel.DraftingVM.ResetDraftPicks(set, false);
-                                    //ViewModel.DraftingVM.ResetDraftPicks(DraftHelperRunner.Set, false);
-                                    ////// TO SIMULATE HUMAN DRAFTING FROM A QUICKDRAFT LOG
-                                    ////MainWindowVM.DraftingVM.ResetDraftPicks(DraftHelperRunner.Set, true, Guid.NewGuid().ToString());
+                                    ViewModel.DraftingVM.ResetDraftPicks(set);
                                 }
 
                                 isLimitedCardPool = payload.InternalEventName.Contains("Draft") || payload.InternalEventName.Contains("Sealed");
@@ -706,8 +702,6 @@ namespace MTGAHelper.Tracker.WPF.Views
                             ViewModel.DraftingVM.ShowGlobalMTGAHelperSays = true;
                             var draftInfo = mapper.Map<DraftPickProgress>(msgDraftPack.Raw.payload);
                             SetCardsDraft(draftInfo);
-                            //// TO SIMULATE HUMAN DRAFTING FROM A QUICKDRAFT LOG
-                            //SetCardsDraft(draftInfo, true);
                             break;
                         }
                     case LogInfoRequestResult logInfoContainer:
@@ -773,7 +767,7 @@ namespace MTGAHelper.Tracker.WPF.Views
 
                             //InitDraftHelperForHumanDraft(set);
                             RefreshCustomRatingsFromServer();
-                            ViewModel.DraftingVM.ResetDraftPicks(set, false);
+                            ViewModel.DraftingVM.ResetDraftPicks(set);
                         }
                         break;
 
@@ -833,24 +827,11 @@ namespace MTGAHelper.Tracker.WPF.Views
 
             if (mustUpload)
             {
-                //if (ViewModel.DraftingVM.DraftProgressHuman?.PickedCards?.Count >= 42)
-                //{
-                //    Log.Information("Must upload human draft:{NewLine}{humanDraft}", JsonConvert.SerializeObject(ViewModel.DraftingVM.DraftPicksHistory));
-                //}
-
                 UploadLogFragment();
             }
         }
 
-        //private void InitDraftHelperForHumanDraft(string set)
-        //{
-        //    RefreshCustomRatingsFromServer();
-        //    ViewModel.SetMainWindowContext(WindowContext.Drafting);
-        //    DraftHelperRunner.Set = set;
-        //    ViewModel.DraftingVM.ResetDraftPicks(DraftHelperRunner.Set, true, Guid.NewGuid().ToString());
-        //}
-
-        private void SetCardsDraft(DraftPickProgress draftInfo, bool isHuman = false)
+        private void SetCardsDraft(DraftPickProgress draftInfo)
         {
             var cardPool = draftInfo?.DraftPack;
             if (cardPool == null)
@@ -868,7 +849,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                 RareDraftingInfo,
                 ViewModel.DraftingVM.CustomRatingsBySetThenCardName);
 
-            ViewModel.DraftingVM.SetCardsDraftBuffered(draftInfo, draftingInfo, isHuman);
+            ViewModel.DraftingVM.SetCardsDraftBuffered(draftInfo, draftingInfo);
 
             if (draftInfo.PickNumber == 0)
             {
@@ -960,52 +941,6 @@ namespace MTGAHelper.Tracker.WPF.Views
 
             DraftingControl.SetCardPopupPosition(ViewModel.Config.ForceCardPopupSide, top, left, width);
             PlayingControl.SetCardPopupPosition(ViewModel.Config.ForceCardPopupSide, top, left, width);
-        }
-
-        public void RunDraftHelper()
-        {
-            //try
-            //{
-            //    if (ViewModel.DraftingVM.PxpxItemSelected == null)
-            //        ViewModel.DraftingVM.PxpxItemSelected = ViewModel.DraftingVM.PxpxItems.FirstOrDefault();
-
-            //    // Validate all the requirements to run draft helper (including taking the screenshot)
-            //    ViewModel.MinimizeWindow();
-            //    DraftHelperRunnerValidationResultEnum validation = DraftHelperRunner.Validate(ViewModel.Config.LimitedRatingsSource);
-            //    ViewModel.RestoreWindow();
-
-            //    if (validation != DraftHelperRunnerValidationResultEnum.Success)
-            //    {
-            //        var text = validation switch
-            //        {
-            //            DraftHelperRunnerValidationResultEnum.SetMissing => "DraftHelper doesn't know which set to draft",
-            //            DraftHelperRunnerValidationResultEnum.NoRatingsForSet => $"The Ratings source '{ViewModel.Config.LimitedRatingsSource}' does not have ratings for set '{DraftHelperRunner.Set}'",
-            //            DraftHelperRunnerValidationResultEnum.UnknownConfigResolution => "Impossible to determing the DraftHelper configuration for your game resolution",
-            //            _ => "Unknown error",
-            //        };
-            //        MessageBox.Show(text, "Problem", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK, MessageBoxOptions.DefaultDesktopOnly);
-            //        return;
-            //    }
-
-            //    Visibility windowCardsThatDidNotWheelVisibility = DraftingControl.WindowCardsThatDidNotWheel.Visibility;
-            //    DraftingControl.WindowCardsThatDidNotWheel.Visibility = Visibility.Collapsed;
-
-            //    var draftHelperOutput = DraftHelperRunner.Run(ViewModel.DraftingVM.PxpxCardsNumber);
-            //    var cardIds = draftHelperOutput
-            //            .Select(i => i.CardId)
-            //            .Where(i => i != 0)
-            //            .ToArray();
-
-            //    SetCardsDraft(new DraftPickProgress(cardIds), true);
-
-            //    UpdateCardPopupPosition();
-            //    DraftingControl.WindowCardsThatDidNotWheel.Visibility = windowCardsThatDidNotWheelVisibility;
-            //}
-            //catch (Exception ex)
-            //{
-            //    Log.Fatal(ex, "Error in RunDraftHelper");
-            //    Debugger.Break();
-            //}
         }
     }
 }

@@ -3,15 +3,17 @@ using System.Linq;
 
 namespace MTGAHelper.Entity
 {
-    public class DeckAverageArchetypeOtherMainCard : Card, IDeckCard
+    public class DeckAverageArchetypeOtherMainCard : IDeckCard
     {
+        public Card Card { get; }
         public DeckCardZoneEnum Zone => DeckCardZoneEnum.Deck;
         public int NbMissing => 0;
         public float MissingWeight => 0.0f;
 
         public DeckAverageArchetypeOtherMainCard(Card card, int nbOwned)
-            //:base(card)
+        //:base(card)
         {
+            Card = card;
             throw new Exception("REIMPLEMENT CARD CONSTRUCTOR");
         }
 
@@ -23,14 +25,14 @@ namespace MTGAHelper.Entity
             {
                 var typeChars = "L";
 
-                if (type.Contains("Land") == false)
+                if (Card.type.Contains("Land") == false)
                 {
-                    var t = type.Replace("Legendary", "").Trim();
+                    var t = Card.type.Replace("Legendary", "").Trim();
                     var typeWords = t.Contains("—") ? t.Substring(0, t.IndexOf("—")).Trim() : t;
                     typeChars = string.Join("", typeWords.Split(' ').Select(i => i[0]));
                 }
 
-                return $"[{typeChars}] {name} ({NbOwned} owned)";
+                return $"[{typeChars}] {Card.name} ({NbOwned} owned)";
             }
         }
         public void ApplyCompareResult(int nbOwned)

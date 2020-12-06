@@ -45,12 +45,13 @@ namespace MTGAHelper.Lib
 
         IEnumerable<string> GetColorFromCards(IEnumerable<Card> cards)
         {
-            var landsColors = cards.Where(i => i.type.Contains("Land"))
+            var (lands, nonLands) = cards.SplitBy(i => i.type.Contains("Land"));
+            var landsColors = lands
                 .Where(i => i.color_identity != null)
                 .SelectMany(i => i.color_identity)
                 .Distinct();
 
-            var colors = cards.Where(i => i.type.Contains("Land") == false)
+            var colors = nonLands
                 .Where(i => i.color_identity != null)
                 .SelectMany(i => i.color_identity)
                 .Distinct()

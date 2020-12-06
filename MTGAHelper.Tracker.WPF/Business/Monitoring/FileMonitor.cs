@@ -9,27 +9,22 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
 {
     public class FileMonitor
     {
-        private readonly object LockFilePath = new object();
+        private readonly object lockFilePath = new object();
 
-        private string FilePath;
+        private string filePath;
 
-        private long LastSize;
+        private long lastSize;
 
-        private bool InitialLoad = true;
+        private bool initialLoad = true;
 
         public StringBuilder LogContentToSend { get; private set; } = new StringBuilder();
 
         public event Action<object, string> OnFileSizeChangedNewText;
 
-        public FileMonitor()
-        {
-            //filePath = configApp.CurrentValue.LogFilePath;
-        }
-
         public void SetFilePath(string filePath)
         {
-            lock (LockFilePath)
-                FilePath = filePath;
+            lock (lockFilePath)
+                this.filePath = filePath;
         }
 
         public async Task Start(CancellationToken cancellationToken)
@@ -47,16 +42,16 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
                 {
                     Task.Delay(1000, cancellationToken).Wait(cancellationToken);
 
-                    lock (LockFilePath)
+                    lock (lockFilePath)
                     {
-                        if (FilePath == null) continue;
+                        if (filePath == null) continue;
 
                         try
                         {
                             if (cancellationToken.IsCancellationRequested)
                                 throw new TaskCanceledException();// (task);
 
-                            if (File.Exists(FilePath) == false)
+                            if (File.Exists(filePath) == false)
                                 continue;
 
                             ReadFile();
@@ -72,42 +67,34 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
 
         private void ReadFile()
         {
-            long fileSize = new FileInfo(FilePath).Length;
-            if (fileSize == LastSize) return;
+            var fileSize = new FileInfo(filePath).Length;
+            if (fileSize == lastSize || fileSize == 0) return;
 
             string newText;
 
-            if (fileSize < LastSize)
+            if (fileSize < lastSize)
             {
-                // New file was created
-                using (var fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    using var reader = new StreamReader(fs);
-                    newText = reader.ReadToEnd();
-                }
-
-                LastSize = new FileInfo(FilePath).Length;
-                LogContentToSend = new StringBuilder(newText);
+                // New file was created, start at begin
+                lastSize = 0;
+                LogContentToSend = new StringBuilder();
             }
-            else
+
+            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
-                // File got bigger
-                using (var fs = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    long newTextSize = fs.Length - LastSize;
-                    var b = new byte[newTextSize];
+                var readUntil = fs.Length;
+                var readCount = readUntil - lastSize;
+                var b = new byte[readCount];
 
-                    fs.Seek(LastSize, SeekOrigin.Begin);
-                    fs.Read(b, 0, (int)(newTextSize));
+                fs.Seek(lastSize, SeekOrigin.Begin);
+                fs.Read(b, 0, (int)readCount);
 
-                    newText = Encoding.UTF8.GetString(b);
-                }
+                newText = Encoding.UTF8.GetString(b);
 
-                LastSize = fileSize;
+                lastSize = readUntil;
                 LogContentToSend.Append(newText);
             }
 
-            if (InitialLoad == false)
+            if (initialLoad == false)
             {
                 try
                 {
@@ -121,7 +108,7 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
                 }
             }
 
-            InitialLoad = false;
+            initialLoad = false;
         }
 
         public void ResetStringBuilder()

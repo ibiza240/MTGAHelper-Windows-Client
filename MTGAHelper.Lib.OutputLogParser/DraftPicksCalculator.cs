@@ -74,7 +74,7 @@ namespace MTGAHelper.Lib.OutputLogParser
             var dataUnordered = byCard
                 .Select(i =>
                 {
-                    var card = mapper.Map<CardForDraftPick>(i);
+                    var card = new CardForDraftPick { Card = i };
 
                     try
                     {
@@ -85,7 +85,7 @@ namespace MTGAHelper.Lib.OutputLogParser
                         if (i.name == null)
                             Log.Error("GetCardsForDraftPick Card name is null", i.grpId);
 
-                        card.NbMissingCollection = calculateMissingAmount(collection, card, pickedCards);
+                        card.NbMissingCollection = calculateMissingAmount(collection, i, pickedCards);
 
                         if (weights.ContainsKey(i.grpId))
                         {
@@ -95,26 +95,37 @@ namespace MTGAHelper.Lib.OutputLogParser
                             card.NbDecksUsedSideboard = weights[i.grpId].NbDecksSideboardOnly;
                         }
 
+                        Dictionary<string, DraftRating> ratings;
+                        Dictionary<string, ICollection<DraftRatingTopCard>> topCardsByColor;
                         if (ratingsBySourceSet.ContainsKey(source) &&
-                            ratingsBySourceSet[source].ContainsKey(i.set) &&
-                            ratingsBySourceSet[source][i.set].ratings.ContainsKey(i.name))
+                            ratingsBySourceSet[source].ContainsKey(i.set))
                         {
-                            var draftRating = ratingsBySourceSet[source][i.set].ratings[i.name];
-                            card.Description = draftRating.Description;
-                            card.RatingValue = draftRating.RatingValue;
-                            card.RatingToDisplay = draftRating.RatingToDisplay;
-                            card.RatingSource = source;
-
-                            var cardColors = string.Join("", card.colors);
-                            if (ratingsBySourceSet[source][i.set].topCardsByColor?.ContainsKey(cardColors) == true)
-                            {
-                                var rank = ratingsBySourceSet[source][i.set].topCardsByColor[card.colors.First()].FirstOrDefault(x => x.Name == card.name)?.Rank ?? 0;
-                                card.TopCommonCard = new DraftRatingTopCard(rank, cardColors);
-                            }
+                            (ratings, topCardsByColor) = ratingsBySourceSet[source][i.set];
                         }
                         else
                         {
+                            // This source does not have ratings for this set; use the first source that does
+                            var sourceWithSet = ratingsBySourceSet.FirstOrDefault(s => s.Value.ContainsKey(i.set));
+                            (ratings, topCardsByColor) = sourceWithSet.Value[i.set];
+                            source = sourceWithSet.Key;
+                        }
+
+                        if (!ratings.ContainsKey(i.name))
                             // Rating not found for card
+                            return card;
+
+                        var draftRating = ratings[i.name];
+                        card.Description = draftRating.Description;
+                        card.RatingValue = draftRating.RatingValue;
+                        card.RatingToDisplay = draftRating.RatingToDisplay;
+                        card.RatingSource = source;
+
+                        var cardColors = string.Join("", i.colors);
+                        if (topCardsByColor?.ContainsKey(cardColors) == true)
+                        {
+                            var rank = topCardsByColor[i.colors.First()]
+                                .FirstOrDefault(x => x.Name == i.name)?.Rank ?? 0;
+                            card.TopCommonCard = new DraftRatingTopCard(rank, cardColors);
                         }
                     }
                     catch (Exception ex)
@@ -129,10 +140,10 @@ namespace MTGAHelper.Lib.OutputLogParser
             var data = dataUnordered
                 .OrderByDescending(i => i.RatingValue)
                 .ThenByDescending(i => i.Weight)
-                .ThenByDescending(i => i.name)
+                .ThenByDescending(i => i.Card.name)
                 .ToArray();
 
-            var isMissingRareLand = data.FirstOrDefault(i => i.type.Contains("Land") && i.GetRarityEnum() == RarityEnum.Rare && i.NbMissingCollection > 0);
+            var isMissingRareLand = data.FirstOrDefault(i => i.Card.type.Contains("Land") && i.Card.GetRarityEnum() == RarityEnum.Rare && i.NbMissingCollection > 0);
 
             if (isMissingRareLand != null)
                 isMissingRareLand.IsRareDraftPick = RaredraftPickReasonEnum.RareLandMissing;
@@ -140,12 +151,12 @@ namespace MTGAHelper.Lib.OutputLogParser
             else if (maxWeight > 0 && data.Any(i => i.Weight == maxWeight))
                 data.First(i => i.Weight == maxWeight).IsRareDraftPick = RaredraftPickReasonEnum.HighestWeight;
 
-            else if (data.Any(i => i.type.StartsWith("Basic Land") == false && i.NbMissingCollection > 0))
+            else if (data.Any(i => i.Card.type.StartsWith("Basic Land") == false && i.NbMissingCollection > 0))
             {
                 var r = data
-                    .Where(i => i.type.StartsWith("Basic Land") == false)
+                    .Where(i => i.Card.type.StartsWith("Basic Land") == false)
                     .Where(i => i.NbMissingCollection > 0)
-                    .OrderBy(i => i.GetRarityEnum())
+                    .OrderBy(i => i.Card.GetRarityEnum())
                     .ThenByDescending(i => i.NbMissingCollection)
                     .First();
 
@@ -153,10 +164,10 @@ namespace MTGAHelper.Lib.OutputLogParser
             }
             else
             {
-                var bestRarity = data.OrderBy(i => i.GetRarityEnum()).First().GetRarityEnum();
+                var bestRarity = data.Select(c => c.Card.GetRarityEnum()).Min();
                 var cardsMatching = data
-                    .Where(i => i.GetRarityEnum() == bestRarity)
-                    .Where(i => i.type.StartsWith("Basic Land") == false);
+                    .Where(i => i.Card.GetRarityEnum() == bestRarity)
+                    .Where(i => i.Card.type.StartsWith("Basic Land") == false);
 
                 foreach (var c in cardsMatching)
                     c.IsRareDraftPick = RaredraftPickReasonEnum.BestVaultRarity;

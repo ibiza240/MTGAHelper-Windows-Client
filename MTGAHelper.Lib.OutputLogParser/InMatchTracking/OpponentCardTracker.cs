@@ -32,6 +32,11 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             .GroupBy(grpId => grpId)
             .Select(g => new CardDrawInfo(g.Key, g.Count()));
 
+        public IEnumerable<CardDrawInfo> CardsSeenPreviousGames => cardsSeenPrevGames
+            .SelectMany(c => c)
+            .GroupBy(grpId => grpId)
+            .Select(g => new CardDrawInfo(g.Key, g.Count()));
+
         internal void RegisterZone(OwnedZone zone, Func<IEnumerable<int>> getInstanceIds)
         {
             if (instanceIdsByZone.ContainsKey(zone))
@@ -141,6 +146,11 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             Log.Debug("added temp card {newCard}", newCard);
         }
 
+        public void SetSideboardStarted()
+        {
+            cardsSeenPrevGames.Add(knownCardsByInstId.Values.Select(c => c.GrpId).ToArray());
+        }
+
         public void Reset(bool isBo3SoftReset)
         {
             tempRevealed.Clear();
@@ -149,11 +159,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             shuffledKnownCards.Clear();
 
             if (isBo3SoftReset)
-            {
-                cardsSeenPrevGames.Add(knownCardsByInstId.Values.Select(c => c.GrpId).ToArray());
                 return;
-            }
-
             cardsSeenPrevGames.Clear();
             oppSeatId = 0;
         }

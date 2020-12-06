@@ -16,7 +16,8 @@ using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.MatchGameRoomState
 using MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress;
 using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
 using Newtonsoft.Json;
-using Serilog; //using MTGAHelper.Lib.EventsSchedule;
+using Serilog;
+using PlayerEnum = MTGAHelper.Entity.MtgaOutputLog.PlayerEnum; //using MTGAHelper.Lib.EventsSchedule;
 
 namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 {

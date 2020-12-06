@@ -37,8 +37,8 @@
             // Required for serialization
         }
 
-        public DeckCard(CardWithAmount card, DeckCardZoneEnum zone)
-            : base(card.Card, card.Amount)
+        public DeckCard(Card card, int amount, DeckCardZoneEnum zone)
+            : base(card, amount)
         {
             Zone = zone;
         }

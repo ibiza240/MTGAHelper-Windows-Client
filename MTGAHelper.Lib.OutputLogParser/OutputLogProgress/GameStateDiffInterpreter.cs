@@ -6,6 +6,7 @@ using MTGAHelper.Entity.MtgaOutputLog;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient;
 using MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress;
 using Serilog;
+using PlayerEnum = MTGAHelper.Entity.MtgaOutputLog.PlayerEnum;
 using Zone = MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress.Zone;
 
 namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress

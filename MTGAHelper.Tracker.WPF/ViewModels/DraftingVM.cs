@@ -97,34 +97,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         public ICollection<CardDraftPickVM> CardsDraft { get; set; } = new CardDraftPickVM[0];
 
-        public bool IsHumanDraft
-        {
-            get => _IsHumanDraft;
-            set => SetField(ref _IsHumanDraft, value, nameof(IsHumanDraft));
-        }
-
-        internal void DraftHumanPickCard(int arenaId)
-        {
-            var pxpxIndex = CardsPerPack * PxpxItemSelected.PackNumber + PxpxItemSelected.PickNumber;
-            if (pxpxIndex < PxpxItems.Count - 1)
-            {
-                // Increment the pick pack
-                var nextPxpx = PxpxItems[pxpxIndex + 1];
-                DraftProgressHuman.PackNumber = nextPxpx.PackNumber;
-                DraftProgressHuman.PickNumber = nextPxpx.PickNumber;
-                PxpxItemSelected = nextPxpx;
-                OnPropertyChanged(nameof(PxpxItemSelected));
-            }
-
-            // Save the pick
-            DraftProgressHuman.PickedCards.Add(arenaId);
-
-            // Clear cards list
-            RefreshCardList(new DraftPickProgress(new int[0]), new CardDraftPickWpf[0]);
-            ShowCardListThatDidNotWheel = false;
-            OnPropertyChanged(nameof(ShowCardListThatDidNotWheel));
-        }
-
         public ICollection<int> CardsThatDidNotWheel { get; set; } = new int[0];
 
         public string CardChosenThatDidNotWheel { get; private set; }
@@ -139,8 +111,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             set => SetField(ref _PxpxItemSelected, value, nameof(PxpxItemSelected));
         }
 
-        public DraftPickProgress DraftProgressHuman { get; set; }
-
         public int PxpxCardsNumber => CardsPerPack - (PxpxItemSelected?.PickNumber ?? 0);
 
         public List<DraftPickProgress> DraftPicksHistory { get; private set; } = new List<DraftPickProgress>();
@@ -153,17 +123,11 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         #region Private Backing Fields
 
-        /// <summary>
-        /// Whether to show the card list that did not wheel
-        /// </summary>
+        /// <summary>backing field</summary>
         private bool _ShowCardListThatDidNotWheel;
 
-        /// <summary>
-        /// True while draft picking, False else (eg. looking at card pool after picking)
-        /// </summary>
+        /// <summary>backing field</summary>
         private bool _ShowGlobalMTGAHelperSays;
-
-        private bool _IsHumanDraft;
 
         #endregion
 
@@ -171,7 +135,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         private int NumCardsWheeling => Math.Max(0, CardsPerPack - (PxpxItemSelected?.PickNumber ?? 0) - POD_SIZE);
 
-        private ICollection<Card> AllCards = new Card[0];
+        private readonly ICollection<Card> AllCards;
         private readonly CardThumbnailDownloader cardThumbnailDownloader;
         private bool UpdateCardsDraftBuffered;
 
@@ -185,18 +149,36 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         #region Internal Methods
 
-        internal void ResetDraftPicks(string set, bool isHumanDraft, string humanDraftId = null)
+        internal void ResetDraftPicks(string set)
         {
-            Dictionary<string, int> cardsPerPackBySet = new Dictionary<string, int>
+            CardsPerPack = set switch
             {
-                { "IKO", 15 },
-                { "ELD", 14 },
+                "ELD" => 14,
+                "IKO" => 15,
+                _ => 15,
             };
 
-            CardsPerPack = cardsPerPackBySet.ContainsKey(set) ? cardsPerPackBySet[set] : 15;
+            PxpxItems = GeneratePxpxList();
+            PxpxItemSelected = PxpxItems.First();
 
-            var itemsPxpx = new List<DraftingVMPxpx>();
-            for (int iPack = 0; iPack < 3; iPack++)
+            CardsDraft = new CardDraftPickVM[0];
+            CardChosenThatDidNotWheel = default;
+            CardsThatDidNotWheel = new int[0];
+            DraftPicksHistory = new List<DraftPickProgress>();
+            DraftInfoBuffered = new DraftInfoBuffered();
+            ShowGlobalMTGAHelperSays = true;
+
+            UpdateCardsDraftBuffered = true;
+
+            OnPropertyChanged(nameof(ShowGlobalMTGAHelperSays));
+            OnPropertyChanged(nameof(PxpxItems));
+        }
+
+        private List<DraftingVMPxpx> GeneratePxpxList()
+        {
+            const int packs = 3;
+            var itemsPxpx = new List<DraftingVMPxpx>(packs * CardsPerPack);
+            for (int iPack = 0; iPack < packs; iPack++)
             {
                 for (int iPick = 0; iPick < CardsPerPack; iPick++)
                 {
@@ -208,56 +190,23 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 }
             }
 
-            PxpxItems = itemsPxpx;
-            PxpxItemSelected = PxpxItems.First();
-
-            CardsDraft = new CardDraftPickVM[0];
-            CardChosenThatDidNotWheel = default;
-            CardsThatDidNotWheel = new int[0];
-            DraftPicksHistory = new List<DraftPickProgress>();
-            DraftInfoBuffered = new DraftInfoBuffered();
-            ShowGlobalMTGAHelperSays = true;
-            IsHumanDraft = isHumanDraft;
-
-            if (isHumanDraft)
-            {
-                DraftProgressHuman = new DraftPickProgress()
-                {
-                    DraftId = humanDraftId
-                };
-            }
-
-            UpdateCardsDraftBuffered = true;
-
-            OnPropertyChanged(nameof(ShowGlobalMTGAHelperSays));
-            OnPropertyChanged(nameof(PxpxItems));
+            return itemsPxpx;
         }
 
-        internal void SetCardsDraftBuffered(DraftPickProgress draftPick, ICollection<CardDraftPickWpf> ratingsInfo, bool isHuman)
+        internal void SetCardsDraftBuffered(DraftPickProgress draftPick, ICollection<CardDraftPickWpf> ratingsInfo)
         {
             lock (LockCardsDraft)
             {
-                if (isHuman)
+                // PickedCards are not ordered correctly in QuickDraft
+                var previousPick = DraftPicksHistory.FirstOrDefault(i =>
+                    i.PackNumber == draftPick.PackNumber && i.PickNumber == draftPick.PickNumber - 1);
+                if (previousPick != null)
                 {
-                    draftPick.PackNumber = DraftProgressHuman.PackNumber;
-                    draftPick.PickNumber = DraftProgressHuman.PickNumber;
-                    draftPick.DraftId = DraftProgressHuman.DraftId;
-                    draftPick.PickedCards = DraftProgressHuman.PickedCards.ToList();
-                }
-                else
-                {
-                    // PickedCards are not ordered correctly in QuickDraft
-                    var previousPick = DraftPicksHistory.FirstOrDefault(i => i.PackNumber == draftPick.PackNumber && i.PickNumber == draftPick.PickNumber - 1);
-                    if (previousPick != null)
+                    // Find the cards that was picked by difference
+                    var diffs = draftPick.PickedCards.Except(previousPick.PickedCards).ToList();
+                    if (diffs.Count == 1)
                     {
-                        // Find the cards that was picked by difference
-                        var diffs = draftPick.PickedCards.ToList();
-                        var previousPicks = previousPick.PickedCards.ToList();
-                        previousPicks.ForEach(l => diffs.Remove(l));
-                        if (diffs.Count == 1)
-                        {
-                            draftPick.PickedCards = previousPicks.Append(diffs.Single()).ToList();
-                        }
+                        draftPick.PickedCards = previousPick.PickedCards.Append(diffs.Single()).ToList();
                     }
                 }
 
@@ -276,24 +225,22 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                         DraftPicksHistory = new List<DraftPickProgress> { draftPick };
                     }
 
-                    // !!! Human drafting cards wheeling management is too messy for now
-                    // !!! So only compute it for quick draft
-                    if (isHuman == false)
+                    // Try to find the original pack that wheeled to extract the cards that didn't wheel
+                    var originalPack = DraftPicksHistory.FirstOrDefault(i =>
+                        i.PackNumber == draftPick.PackNumber && i.PickNumber == draftPick.PickNumber - POD_SIZE);
+
+                    if (originalPack != null)
                     {
-                        // Try to find the original pack that wheeled to extract the cards that didn't wheel
-                        var originalPack = DraftPicksHistory.FirstOrDefault(i => i.PackNumber == draftPick.PackNumber && i.PickNumber == draftPick.PickNumber - POD_SIZE);
+                        CardsThatDidNotWheel = originalPack.DraftPack
+                            .Where(i => draftPick.DraftPack.Contains(i) == false).ToArray();
 
-                        if (originalPack != null)
-                        {
-                            CardsThatDidNotWheel = originalPack.DraftPack.Where(i => draftPick.DraftPack.Contains(i) == false).ToArray();
-
-                            var packFollowing = DraftPicksHistory.FirstOrDefault(i => i.PackNumber == originalPack.PackNumber && i.PickNumber == originalPack.PickNumber + 1);
-                            if (packFollowing != null && packFollowing.PickedCards.Any())
-                                CardChosenThatDidNotWheel = mapper.Map<Card>(packFollowing.PickedCards.Last()).name;
-                        }
+                        var packFollowing = DraftPicksHistory.FirstOrDefault(i =>
+                            i.PackNumber == originalPack.PackNumber && i.PickNumber == originalPack.PickNumber + 1);
+                        if (packFollowing != null && packFollowing.PickedCards.Any())
+                            CardChosenThatDidNotWheel = mapper.Map<Card>(packFollowing.PickedCards.Last()).name;
                     }
 
-                    var nextPxpx = PxpxItems.FirstOrDefault(i => i.PackNumber == draftPick.PackNumber && i.PickNumber == draftPick.PickNumber);
+                    var nextPxpx = PxpxItems?.FirstOrDefault(i => i.PackNumber == draftPick.PackNumber && i.PickNumber == draftPick.PickNumber);
                     if (nextPxpx != null)
                     {
                         PxpxItemSelected = nextPxpx;

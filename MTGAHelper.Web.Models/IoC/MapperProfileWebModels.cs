@@ -35,9 +35,6 @@ namespace MTGAHelper.Web.UI.IoC
             CreateMap<Card, CardDto>()
                 .ForMember(i => i.IdArena, i => i.MapFrom(x => x.grpId));
 
-            CreateMap<Card, CardDtoFull>();
-            CreateMap<CardDtoFull, Card>();
-
             CreateMap<CardWithAmount, CardWithAmountDto>()
                 .ForMember(i => i.IdArena, i => i.MapFrom(x => x.Card.grpId))
                 .ForMember(i => i.Name, i => i.MapFrom(x => x.Card.name))
@@ -140,9 +137,23 @@ namespace MTGAHelper.Web.UI.IoC
 
             //CreateMap<DateSnapshotDiff, GetUserHistoryForDateResponseDiff>();
 
-            CreateMap<CardForDraftPick, CardForDraftPickDto>()
+            CreateMap<Card, CardForDraftPickDto>()
                 .ForMember(i => i.IdArena, i => i.MapFrom(x => x.grpId))
-                .ForMember(i => i.ManaCost, i => i.MapFrom(x => x.mana_cost));
+                .ForMember(i => i.ManaCost, i => i.MapFrom(x => x.mana_cost))
+                .ForMember(i => i.RatingToDisplay, i => i.Ignore())
+                .ForMember(i => i.RatingValue, i => i.Ignore())
+                .ForMember(i => i.RatingSource, i => i.Ignore())
+                .ForMember(i => i.Description, i => i.Ignore())
+                .ForMember(i => i.Weight, i => i.Ignore())
+                .ForMember(i => i.NbDecksUsedMain, i => i.Ignore())
+                .ForMember(i => i.NbDecksUsedSideboard, i => i.Ignore())
+                .ForMember(i => i.IsRareDraftPick, i => i.Ignore())
+                .ForMember(i => i.NbMissingTrackedDecks, i => i.Ignore())
+                .ForMember(i => i.NbMissingCollection, i => i.Ignore())
+                .ForMember(i => i.TopCommonCard, i => i.Ignore());
+
+            CreateMap<CardForDraftPick, CardForDraftPickDto>()
+                .IncludeMembers(c => c.Card);
 
             CreateMap<int, CardDto>()
                 .ConvertUsing((i, dto, ctx) => ctx.Mapper.Map<CardDto>(ctx.Mapper.Map<Card>(i)));

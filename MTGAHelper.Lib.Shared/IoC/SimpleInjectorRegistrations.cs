@@ -32,6 +32,7 @@ namespace MTGAHelper.Lib.IoC
             container.RegisterSingleton<ICacheLoader<Dictionary<int, Set>>, CacheLoaderSets>();
             container.RegisterSingleton<ICacheLoader<Dictionary<string, DraftRatings>>, CacheLoaderDraftRatings>();
             container.RegisterSingleton<ICacheLoader<Dictionary<int, Card>>, CacheLoaderAllCards>();
+            container.RegisterDecorator<ICacheLoader<Dictionary<int, Card>>, CardLoaderAddLinkedFaceCardDecorator>(Lifestyle.Singleton);
 
             return container;
         }
