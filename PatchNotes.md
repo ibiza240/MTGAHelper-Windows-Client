@@ -1,6 +1,14 @@
+### v1.7.3 (2020-12-12)
+
+Support for the latest game patch
+
+New tab while playing a match: Action log
+
 ### v1.7.2 (2020-12-06)
 
 Support all cards thumbnails (Kaladesh Remastered, Bob Ross lands)
+
+New tab while playing a match: Cards seen in Game 1 (for Best of 3)
 
 Bugfix: Rare double-logging of some history events
 
