@@ -43,10 +43,9 @@ namespace MTGAHelper.Tracker.WPF.Views.UserControls
         private void CardRow_MouseEnter(object sender, MouseEventArgs e)
         {
             var vm = (sender as FrameworkElement)?.DataContext as CardDraftPickVM;
-            WindowCardPopupDrafting.Refresh(vm, MainWindow.ViewModel.DraftingVM.ShowGlobalMTGAHelperSays);
+            WindowCardPopupDrafting.Refresh(vm, MainWindow.ViewModel.DraftingVM.ShowGlobalMTGAHelperSays, MainWindow.ViewModel.Config.ShowAllDraftRatings, MainViewModel.DraftHelper.AllRatings);
             WindowCardPopupDrafting.ShowPopup(true);
             IsMouseOnCard = true;
-
         }
 
         private void CardRow_MouseLeave(object sender, MouseEventArgs e)

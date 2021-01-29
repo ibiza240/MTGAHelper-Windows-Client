@@ -7,6 +7,7 @@ using System;
 using MTGAHelper.Tracker.WPF.Business;
 using System.Windows.Input;
 using System.Threading.Tasks;
+using MTGAHelper.Tracker.WPF.Models;
 
 namespace MTGAHelper.Tracker.WPF.Views
 {
@@ -24,7 +25,7 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         private DraftingVM ViewModelDrafting;
 
-        #endregion
+        #endregion Private Fields
 
         #region Constructor
 
@@ -37,18 +38,16 @@ namespace MTGAHelper.Tracker.WPF.Views
             InitializeComponent();
         }
 
-        #endregion
-
-        #region Public Methods
+        #endregion Constructor
 
         public void Init(DraftingVM draftingVM)
         {
             this.ViewModelDrafting = draftingVM;
         }
 
-        public void Refresh(CardDraftPickVM cardVM, bool showGlobalMTGAHelperSays)
+        public void Refresh(CardDraftPickVM cardVM, bool showGlobalMTGAHelperSays, bool showAllDraftRatings, ICollection<CardDraftPickWpf> draftRatings)
         {
-            ViewModel.SetDraftCard(cardVM, showGlobalMTGAHelperSays);
+            ViewModel.SetDraftCard(cardVM, showGlobalMTGAHelperSays, showAllDraftRatings, draftRatings);
         }
 
         public void SetCardPopupPosition(CardPopupSide side, int mainWindowTop, int mainWindowLeft, int mainWindowWidth)
@@ -79,7 +78,6 @@ namespace MTGAHelper.Tracker.WPF.Views
             if (ViewModel.IsMouseInPopup == false)
                 ViewModel.IsPopupVisible = isVisible;
         }
-        #endregion
 
         private void Window_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {

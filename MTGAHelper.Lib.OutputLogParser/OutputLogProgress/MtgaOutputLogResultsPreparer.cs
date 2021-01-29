@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using MTGAHelper.Entity;
-using MTGAHelper.Entity.Config.Users;
+using MTGAHelper.Entity.GameEvents;
 using MTGAHelper.Entity.MtgaOutputLog;
 using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Lib.Exceptions;
 using MTGAHelper.Lib.OutputLogParser.EventsSchedule;
+using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
 using MTGAHelper.Lib.OutputLogParser.Models;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.ClientToMatch;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient;
@@ -31,17 +32,21 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
         private IList<OutputLogError> Errors = new List<OutputLogError>();
 
         private int lastOpponentSystemId;
+
         //OutputLogStateEnum currentState;
         private CourseDeckRaw currentMatchDeckSubmitted;
 
         /// <summary>A match consists of one or more games</summary>
         private MatchResult currentMatch;// MatchResult.CreateDefault();
+
         /// <summary>In bo3 there's more than one game per match</summary>
         private GameProgress CurrentGameProgress { get; set; }
 
         //readonly ConfigModelApp configApp;
         private readonly IMapper mapper;
+
         private readonly IEventTypeCache eventsScheduleManager;
+        private readonly InGameTracker2 inGameTracker;
         private readonly GameStateDiffInterpreter gameStateDiffInterpreter = new GameStateDiffInterpreter();
         private readonly IReadOnlyDictionary<int, Card> dictAllCards;
 
@@ -55,15 +60,17 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 
         private string currentAccount;
 
-
         public MtgaOutputLogResultsPreparer(
             CacheSingleton<Dictionary<int, Card>> cacheCards,
             IMapper mapper,
-            IEventTypeCache eventsScheduleManager)
+            IEventTypeCache eventsScheduleManager,
+            InGameTracker2 inGameTracker
+            )
         {
             dictAllCards = cacheCards.Get();
             this.mapper = mapper;
             this.eventsScheduleManager = eventsScheduleManager;
+            this.inGameTracker = inGameTracker;
             Reset();
         }
 
@@ -84,16 +91,22 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 
         public void AddResult(IMtgaOutputLogPartResult r)
         {
+            //if (r.Part.Contains("Event.GetPlayerCoursesV2")) System.Diagnostics.Debugger.Break();
+
             try
             {
+                inGameTracker.ProcessMessage(r);
+
                 switch (r)
                 {
                     case IgnoredResult _:
                     case UnknownResult _:
                         return;
+
                     case ITagMatchResult _:
                         AddMatchResult(r);
                         break;
+
                     case AuthenticateResponseResult authenticateResponse:
                         {
                             MyScreenName = authenticateResponse.Raw.authenticateResponse.screenName;
@@ -326,11 +339,21 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 
                 Results2.ResultsByNameTag[currentAccount].EventClaimPrizeResults.Add(eventClaimPrize);
             }
-            else if (result is GetActiveEventsV3Result events)
-            {
-                eventsScheduleManager.AddEvents(events.Raw.payload);
+            //else if (result is GetActiveEventsV3Result events)
+            //{
+            //    eventsScheduleManager.AddEvents(events.Raw.payload);
 
-                var eventResultsMissing = events.Raw.payload
+            //    var eventResultsMissing = events.Raw.payload
+            //        .Where(eventResult => Results2.ResultsByNameTag[currentAccount].ActiveEvents.Raw.payload.Any(x => x.InternalEventName == eventResult.InternalEventName) == false);
+            //    foreach (var e in eventResultsMissing)
+            //        Results2.ResultsByNameTag[currentAccount].ActiveEvents.Raw.payload.Add(e);
+            //}
+            else if (result is GetEventPlayerCoursesV2Result events2)
+            {
+                var eventsConverted = events2.Raw.payload.Select(i => new GetActiveEventsV3Raw { InternalEventName = i.InternalEventName }).ToArray();
+                eventsScheduleManager.AddEvents(eventsConverted);
+
+                var eventResultsMissing = eventsConverted
                     .Where(eventResult => Results2.ResultsByNameTag[currentAccount].ActiveEvents.Raw.payload.Any(x => x.InternalEventName == eventResult.InternalEventName) == false);
                 foreach (var e in eventResultsMissing)
                     Results2.ResultsByNameTag[currentAccount].ActiveEvents.Raw.payload.Add(e);
@@ -360,8 +383,6 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 
                 ////var info = mapper.Map<DraftPickProgress>(r);
                 //infoForDate.Info.Add(draftPick.Raw.payload);
-
-
 
                 AppendToListInfoByDate(Results.DraftPickProgressIntradayByDate, draftPick.Raw.payload, result.LogDateTime);
 
@@ -438,6 +459,7 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             CurrentGameProgress ??= new GameProgress(logDateTime);
             CurrentGameProgress.SetOpponentId(opponentSystemId);
         }
+
         private void CreateGame(DateTime logDateTime, ConfigModelRawDeck deckUsed)
         {
             if (deckUsed == null) return;
@@ -453,7 +475,6 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             //{
             if (/*r.IsMessageSummarized == false &&*/ r is GameStateMessageResult gsm)
                 UpdateMatchGameStateMessage(gsm);
-
             else if (r is ConnectRespResult cr)
             {
                 var deckUsed = GetDeckUsed(cr.Raw.connectResp.deckMessage);
@@ -558,7 +579,6 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             //{
             //    System.Diagnostics.Debugger.Break();
             //}
-
         }
 
         //private void UpdateGame(DuelSceneGameStopPayloadObjectRaw gameStopInfo)
@@ -594,7 +614,6 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                     else if (winningTeamId == CurrentGameProgress.SystemSeatIdOpponent)
                         CurrentGameProgress.Outcome = GameOutcomeEnum.Defeat;
                 }
-
             }
             catch (NullReferenceException ex)
             {
@@ -604,7 +623,7 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             //currentGameProgress.MulliganCountOpponent
             //else
             //{
-            //    //var game = 
+            //    //var game =
             //    System.Diagnostics.Debugger.Break();
             //}
         }
@@ -615,6 +634,8 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                 return;
 
             var g = mapper.Map<GameDetail>(CurrentGameProgress);
+            g.ActionLog = mapper.Map<IReadOnlyList<OutputLogResultGameEvent>>(inGameTracker.State.GameEvents);
+            inGameTracker.Reset();
 
             currentMatch.Games.Add(g);
             CurrentGameProgress = null;
@@ -678,8 +699,10 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             {
                 case "Limited":
                     return "Limited deck";
+
                 case "Sealed":
                     return "Sealed deck";
+
                 default:
                     return name ?? "N/A";
             }

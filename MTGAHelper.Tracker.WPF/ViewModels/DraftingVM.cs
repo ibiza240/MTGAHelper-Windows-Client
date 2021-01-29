@@ -135,6 +135,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         private int NumCardsWheeling => Math.Max(0, CardsPerPack - (PxpxItemSelected?.PickNumber ?? 0) - POD_SIZE);
 
+        public ICollection<CardDraftPickWpf> DraftRatings { get; internal set; }
+
         private readonly ICollection<Card> AllCards;
         private readonly CardThumbnailDownloader cardThumbnailDownloader;
         private bool UpdateCardsDraftBuffered;

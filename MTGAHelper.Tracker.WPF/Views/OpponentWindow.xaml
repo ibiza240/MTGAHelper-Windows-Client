@@ -94,8 +94,78 @@
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <!--  Card List  -->
-            <uc:SimpleCardsList x:Name="CardsInWindow" DataContext="{Binding CardList}" />
+
+            <!--  Opponent Tabs  -->
+            <TabControl
+                Grid.Row="0"
+                SelectedIndex="{Binding SelectedTabIndex}"
+                Background="Transparent"
+                BorderThickness="0,0,0,0">
+                <TabControl.Resources>
+                    <Style BasedOn="{StaticResource CardListTabsHorizontal}" TargetType="{x:Type TabItem}" />
+                </TabControl.Resources>
+
+                <!--  Card List  -->
+                <TabItem>
+                    <TabItem.Header>
+                        <Label
+                            Padding="0"
+                            Margin="0"
+                            Content="Cards" />
+                    </TabItem.Header>
+                    <TabItem.Content>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Border
+                            Grid.Row="0"
+                            Margin="0,0,0,2"
+                            BorderBrush="{StaticResource HeaderBrush}"
+                            BorderThickness="0,0,0,1">
+                                <Label FontSize="16" FontWeight="Bold">
+                                    <TextBlock Text="{Binding CardList.CardCount, StringFormat={}{0} opponent cards seen}" TextTrimming="CharacterEllipsis" />
+                                </Label>
+                            </Border>
+                            <uc:SimpleCardsList
+                                x:Name="CardsInWindow"
+                                Grid.Row="1"
+                                DataContext="{Binding CardList}" />
+                        </Grid>
+                    </TabItem.Content>
+                </TabItem>
+
+                <!--  Deck urls  -->
+                <TabItem>
+                    <TabItem.Header>
+                        <Label
+                            Padding="0"
+                            Margin="0"
+                            Content="Possible deck"
+                            MouseLeftButtonDown="TabItemLabel_RefreshPossibleDeck" />
+                    </TabItem.Header>
+                    <TabItem.Content>
+                        <ItemsControl ItemsSource="{Binding DecksUsingCards}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Margin="10,5" FontWeight="Bold">
+                                        <Hyperlink helpers:HyperlinkExtensions.IsExternal="true" NavigateUri="{Binding Url}">
+                                            <TextBlock FontSize="16" Text="{Binding Name}" />
+                                        </Hyperlink>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </TabItem.Content>
+                </TabItem>
+            </TabControl>
+
             <!--  Resize Grip  -->
             <Label
                 Grid.Row="1"

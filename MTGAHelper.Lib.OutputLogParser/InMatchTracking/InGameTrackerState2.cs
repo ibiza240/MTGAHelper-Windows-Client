@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MTGAHelper.Entity.GameEvents;
 using MTGAHelper.Entity.MtgaOutputLog;
+using MTGAHelper.Lib.OutputLogParser.InMatchTracking.GameEvents;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.GameStateMessage;
 using Newtonsoft.Json;
 using Serilog;
@@ -19,24 +21,28 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
 
         public Dictionary<int, Player> Players { get; } = new Dictionary<int, Player>(2);
 
-        readonly IReadOnlyDictionary<OwnedZone, IZoneTracker> cardsInZones;
-        readonly OpponentCardTracker oppCardTracker;
+        private readonly IReadOnlyDictionary<OwnedZone, IZoneTracker> cardsInZones;
+        private readonly OpponentCardTracker oppCardTracker;
+        private readonly GameEventFactory evt;
         private bool _isSideboarding;
+        private readonly List<IGameEvent> _gameEvents = new List<IGameEvent>();
 
-        static IReadOnlyDictionary<OwnedZone, IZoneTracker> CreateZoneTrackers(OpponentCardTracker oppCardTracker)
+        private static IReadOnlyDictionary<OwnedZone, IZoneTracker> CreateZoneTrackers(OpponentCardTracker oppCardTracker)
         {
             return EnumExtensions.EveryZone().ToDictionary(z => z, zone => GetZoneTracker(zone, oppCardTracker));
         }
 
-        static IZoneTracker GetZoneTracker(OwnedZone zone, OpponentCardTracker oppCardTracker)
+        private static IZoneTracker GetZoneTracker(OwnedZone zone, OpponentCardTracker oppCardTracker)
         {
             switch (zone)
             {
                 case OwnedZone.MyLibrary:
                     return new LibraryTracker(zone);
+
                 case OwnedZone.MySideboard:
                 case OwnedZone.OppSideboard:
                     return new SideboardTracker(zone);
+
                 case OwnedZone.Unknown:
                 case OwnedZone.Battlefield:
                 case OwnedZone.Exile:
@@ -51,23 +57,27 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                 case OwnedZone.MyRevealed:
                 case OwnedZone.MyPhasedOut:
                     return new SimpleZoneTracker(zone);
+
                 case OwnedZone.OppLibrary:
                 case OwnedZone.OppHand:
                 case OwnedZone.OppPhasedOut:
                     return new OpponentZoneTracker(zone, oppCardTracker);
+
                 case OwnedZone.OppRevealed:
                     return new OppRevealedTracker(zone, oppCardTracker);
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(zone), zone, null);
             }
         }
 
-        LibraryTracker MyLibraryTracker => (LibraryTracker)cardsInZones[OwnedZone.MyLibrary];
+        private LibraryTracker MyLibraryTracker => (LibraryTracker)cardsInZones[OwnedZone.MyLibrary];
 
         public IReadOnlyCollection<CardDrawInfo> MyLibrary => MyLibraryTracker.GrpIdInfos.ToArray();
         public IReadOnlyCollection<CardDrawInfo> MySideboard => cardsInZones[OwnedZone.MySideboard].GrpIdInfos.ToArray();
         public IReadOnlyCollection<CardDrawInfo> OpponentCardsSeen => oppCardTracker.CardsSeen.ToArray();
         public IReadOnlyCollection<CardDrawInfo> OpponentCardsPrevGames => oppCardTracker.CardsSeenPreviousGames.ToArray();
+        public IReadOnlyList<IGameEvent> GameEvents => _gameEvents.ToArray();
 
         public bool IsReset { get; internal set; }
 
@@ -84,10 +94,11 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
 
         public int MyMulliganCount { get; internal set; }
 
-        IEnumerable<string> TrackedZones => cardsInZones.Values.Select(t => t.ToString());
+        private IEnumerable<string> TrackedZones => cardsInZones.Values.Select(t => t.ToString());
 
-        public InGameTrackerState2()
+        public InGameTrackerState2(GameEventFactory evt)
         {
+            this.evt = evt;
             oppCardTracker = new OpponentCardTracker();
             cardsInZones = CreateZoneTrackers(oppCardTracker);
             Reset();
@@ -115,6 +126,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             OpponentSeatId = 0;
             OpponentScreenName = null;
             Players.Clear();
+            _gameEvents.Clear();
         }
 
         public void SetSeatIds(int mySeat, int oppSeat = 0)
@@ -146,10 +158,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
 
             foreach (var zoneTransferInfo in zoneTransfers.OfType<ZoneTransferInfo2>())
             {
-                if (zoneTransferInfo.Category == "CastSpell")
-                    Log.Information("Cast spell: {zoneTransferInfo}", zoneTransferInfo);
-                else if (zoneTransferInfo.Category == "Resolve")
-                    Log.Information("Spell resolved: {zoneTransferInfo}", zoneTransferInfo);
+                AddGameEvent(evt.FromZoneTransfer(zoneTransferInfo));
             }
 
             foreach (var transfer in zoneTransfers.GroupBy(zt => new { zt.SrcZone, zt.DestZone }))
@@ -160,7 +169,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             }
         }
 
-        void HandleMoveFromTo(OwnedZone srcZone, OwnedZone destZone, ICollection<IZoneAndInstanceIdChange> moves)
+        private void HandleMoveFromTo(OwnedZone srcZone, OwnedZone destZone, ICollection<IZoneAndInstanceIdChange> moves)
         {
             try
             {
@@ -207,7 +216,8 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
 
         public void HandleScryDone(IReadOnlyCollection<int> topIds, IReadOnlyCollection<int> bottomIds)
         {
-            MyLibraryTracker.ScryComplete(topIds, bottomIds);
+            var foundInLib = MyLibraryTracker.ScryComplete(topIds, bottomIds);
+            AddGameEvent(evt.FromTopBottom(foundInLib, topIds, bottomIds));
         }
 
         public void SetInstIdsAboutToMove(IReadOnlyCollection<int> instanceIds)
@@ -272,7 +282,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             cardsInZones[OwnedZone.MyHand].AddCards(cardsToHand);
         }
 
-        static IReadOnlyCollection<ITrackedCard> AddGrpIds(IEnumerable<int> instanceIds, IEnumerable<GameCardInZone> newGameObjects)
+        private static IReadOnlyCollection<ITrackedCard> AddGrpIds(IEnumerable<int> instanceIds, IEnumerable<GameCardInZone> newGameObjects)
         {
             return instanceIds
                 .GroupJoin(newGameObjects,
@@ -280,6 +290,15 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                     c => c.InstId,
                     (instId, cards) => new CardIds(instId, cards.SingleOrDefault()?.GrpId ?? 0))
                 .ToArray();
+        }
+
+        public void AddGameEvent(IGameEvent gameEvent)
+        {
+            if (gameEvent == null)
+                return;
+
+            Log.Information("Game event: {gameEvent}", gameEvent.StringRep());
+            _gameEvents.Add(gameEvent);
         }
 
         public override string ToString()

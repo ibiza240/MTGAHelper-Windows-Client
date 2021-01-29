@@ -188,38 +188,37 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             cards.AddRange(newCards);
         }
 
-        public void ScryComplete(IReadOnlyCollection<int> topIds, IReadOnlyCollection<int> bottomIds)
+        public bool ScryComplete(IReadOnlyCollection<int> topIds, IReadOnlyCollection<int> bottomIds)
         {
             // Scrying triggers SetInstIdsAboutToMove(), reset when Scry done.
             drawCardIdx = 0;
 
+            var found = false;
+
             if (topIds != null)
-                MoveToTop(topIds);
+                found |= MoveToTop(topIds);
 
             if (bottomIds != null)
-                MoveToBottom(bottomIds);
+                found |= MoveToBottom(bottomIds);
+
+            return found;
         }
 
-        void MoveToTop(IReadOnlyCollection<int> topIds)
-        {
-            var topCards = topIds.Select(i => cards.Find(c => c.InstId == i)).ToArray();
-            if (topCards.Any(c => c == null) && topCards.Any(c => c != null))
-            {
-                Log.Warning("could not find cards {ids} in library", topIds.Where(i => cards.All(c => c.InstId != i)));
-            }
-            cards.RemoveAll(c => topIds.Contains(c.InstId));
-            cards.InsertRange(0, topCards.Where(c => c != null));
-        }
+        bool MoveToTop(IReadOnlyCollection<int> topIds) => MoveCards(topIds, c => cards.InsertRange(0, c));
+        bool MoveToBottom(IReadOnlyCollection<int> bottomIds) => MoveCards(bottomIds, cards.AddRange);
 
-        void MoveToBottom(IReadOnlyCollection<int> bottomIds)
+        bool MoveCards(IReadOnlyCollection<int> ids, Action<IEnumerable<LibraryCard>> insertAction)
         {
-            var bottomCards = bottomIds.Select(i => cards.Find(c => c.InstId == i)).ToArray();
-            if (bottomCards.Any(c => c == null) && bottomCards.Any(c => c != null))
-            {
-                Log.Warning("could not find cards {ids} in library", bottomIds.Where(i => cards.All(c => c.InstId != i)));
-            }
-            cards.RemoveAll(c => bottomIds.Contains(c.InstId));
-            cards.AddRange(bottomCards.Where(c => c != null));
+            var toMove = ids.Select(i => cards.Find(c => c.InstId == i)).ToArray();
+            if (toMove.All(c => c == null))
+                return false;
+
+            if (toMove.Any(c => c == null))
+                Log.Warning("could not find cards {ids} in library", ids.Where(i => cards.All(c => c.InstId != i)));
+
+            cards.RemoveAll(c => ids.Contains(c.InstId));
+            insertAction(toMove.Where(c => c != null));
+            return true;
         }
 
         public override void SetInstanceIds(IReadOnlyCollection<ITrackedCard> newCards)

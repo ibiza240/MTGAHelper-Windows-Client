@@ -1,4 +1,5 @@
 ﻿using MTGAHelper.Entity;
+using System.Collections.Generic;
 
 namespace MTGAHelper.Tracker.WPF.Models
 {
@@ -10,7 +11,7 @@ namespace MTGAHelper.Tracker.WPF.Models
 
         private string _RatingToDisplay;
 
-        #endregion
+        #endregion Private members
 
         public string Set { get; set; }
         public int NbMissing { get; set; }
@@ -62,12 +63,16 @@ namespace MTGAHelper.Tracker.WPF.Models
                 {
                     case RaredraftPickReasonEnum.RareLandMissing:
                         return $"Rare land!";
+
                     case RaredraftPickReasonEnum.HighestWeight:
                         return $"Highest priority based on your tracked decks";
+
                     case RaredraftPickReasonEnum.MissingInCollection:
                         return NbMissingString;
+
                     case RaredraftPickReasonEnum.BestVaultRarity:
                         return $"You own a playset of all these cards so this is for highest Vault progression value (Any {Rarity.Substring(0, 1).ToUpper() + Rarity.Substring(1, Rarity.Length - 1)})";
+
                     default:
                         return "N/A";
                 }

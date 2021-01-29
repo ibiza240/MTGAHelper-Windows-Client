@@ -291,46 +291,11 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 
                 var c = new CardForTurn
                 {
-                    CardGrpId = gameObject?.grpId ?? default(int),
+                    Action = GetActionForZones(zt.zone_src.Name, zt.zone_dest.Name),
+                    CardGrpId = gameObject?.grpId ?? 0,
                     Player = playerId,
                     Turn = currentGameProgress.CurrentTurn,
                 };
-
-                if (zt.zone_src.Name == "ZoneType_Library" && zt.zone_dest.Name == "ZoneType_Hand")
-                    c.Action = CardForTurnEnum.Drew;
-                else if (zt.zone_src.Name == "ZoneType_Hand" && (zt.zone_dest.Name == "ZoneType_Battlefield" || zt.zone_dest.Name == "ZoneType_Stack"))
-                    c.Action = CardForTurnEnum.Played;
-                else if (zt.zone_src.Name == "ZoneType_Hand" && zt.zone_dest.Name == "ZoneType_Graveyard")
-                    c.Action = CardForTurnEnum.Discarded;
-
-                else if (zt.zone_src.Name == "ZoneType_Library" && zt.zone_dest.Name == "ZoneType_Battlefield")
-                    c.Action = CardForTurnEnum.FromLibraryToBattlefield;
-                else if (zt.zone_src.Name == "ZoneType_Library" && zt.zone_dest.Name == "ZoneType_Exile")
-                    c.Action = CardForTurnEnum.FromLibraryToExile;
-                else if (zt.zone_src.Name == "ZoneType_Library" && zt.zone_dest.Name == "ZoneType_Graveyard")
-                    c.Action = CardForTurnEnum.FromLibraryToGraveyard;
-
-                else if (zt.zone_src.Name == "ZoneType_Battlefield" && (zt.zone_dest.Name == "ZoneType_Graveyard" || zt.zone_dest.Name == "ZoneType_Exile"))
-                    c.Action = CardForTurnEnum.PermanentRemoved;
-
-                else if (zt.zone_src.Name == "ZoneType_Stack" && (zt.zone_dest.Name == "ZoneType_Battlefield" || zt.zone_dest.Name == "ZoneType_Graveyard"))
-                    c.Action = CardForTurnEnum.SpellResolved;
-
-                else if (zt.zone_src.Name == "ZoneType_Graveyard" && zt.zone_dest.Name == "ZoneType_Battlefield")
-                    c.Action = CardForTurnEnum.FromGraveyardToBattlefield;
-                else if (zt.zone_src.Name == "ZoneType_Graveyard" && zt.zone_dest.Name == "ZoneType_Hand")
-                    c.Action = CardForTurnEnum.FromGraveyardToHand;
-                else if (zt.zone_src.Name == "ZoneType_Graveyard" && zt.zone_dest.Name == "ZoneType_Stack")
-                    c.Action = CardForTurnEnum.FromGraveyardToStack;
-                else if (zt.zone_src.Name == "ZoneType_Graveyard" && zt.zone_dest.Name == "ZoneType_Exile")
-                    c.Action = CardForTurnEnum.FromGraveyardToExile;
-
-                else if (zt.zone_src.Name == "ZoneType_Exile" && zt.zone_dest.Name == "ZoneType_Stack")
-                    c.Action = CardForTurnEnum.FromExileToStack;
-                else if (zt.zone_src.Name == "ZoneType_Exile" && zt.zone_dest.Name == "ZoneType_Battlefield")
-                    c.Action = CardForTurnEnum.FromExileToBattlefield;
-                else if (zt.zone_src.Name == "ZoneType_Exile" && zt.zone_dest.Name == "ZoneType_Hand")
-                    c.Action = CardForTurnEnum.FromExileToHand;
 
                 if (c.Player == 0/* || c.Turn == 14*/)
                 {
@@ -356,6 +321,59 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             //{
             //    System.Diagnostics.Debugger.Break();
             //}
+        }
+
+        public static CardForTurnEnum GetActionForZones(string originZone, string destinationZone)
+        {
+            switch (originZone)
+            {
+                case "ZoneType_Hand" when (destinationZone == "ZoneType_Battlefield" || destinationZone == "ZoneType_Stack"):
+                    return CardForTurnEnum.Played;
+                case "ZoneType_Hand" when destinationZone == "ZoneType_Graveyard":
+                    return CardForTurnEnum.Discarded;
+                case "ZoneType_Library":
+                    switch (destinationZone)
+                    {
+                        case "ZoneType_Hand":
+                            return CardForTurnEnum.Drew;
+                        case "ZoneType_Battlefield":
+                            return CardForTurnEnum.FromLibraryToBattlefield;
+                        case "ZoneType_Exile":
+                            return CardForTurnEnum.FromLibraryToExile;
+                        case "ZoneType_Graveyard":
+                            return CardForTurnEnum.FromLibraryToGraveyard;
+                    }
+                    break;
+                case "ZoneType_Battlefield" when (destinationZone == "ZoneType_Graveyard" || destinationZone == "ZoneType_Exile"):
+                    return CardForTurnEnum.PermanentRemoved;
+                case "ZoneType_Stack" when (destinationZone == "ZoneType_Battlefield" || destinationZone == "ZoneType_Graveyard"):
+                    return CardForTurnEnum.SpellResolved;
+                case "ZoneType_Graveyard":
+                    switch (destinationZone)
+                    {
+                        case "ZoneType_Battlefield":
+                            return CardForTurnEnum.FromGraveyardToBattlefield;
+                        case "ZoneType_Hand":
+                            return CardForTurnEnum.FromGraveyardToHand;
+                        case "ZoneType_Stack":
+                            return CardForTurnEnum.FromGraveyardToStack;
+                        case "ZoneType_Exile":
+                            return CardForTurnEnum.FromGraveyardToExile;
+                    }
+                    break;
+                case "ZoneType_Exile":
+                    switch (destinationZone)
+                    {
+                        case "ZoneType_Stack":
+                            return CardForTurnEnum.FromExileToStack;
+                        case "ZoneType_Battlefield":
+                            return CardForTurnEnum.FromExileToBattlefield;
+                        case "ZoneType_Hand":
+                            return CardForTurnEnum.FromExileToHand;
+                    }
+                    break;
+            }
+            return CardForTurnEnum.Unknown;
         }
     }
 }

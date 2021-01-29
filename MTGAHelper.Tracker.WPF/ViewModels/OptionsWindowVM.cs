@@ -24,14 +24,14 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             GameFile.PropertyChanged += GameFile_PropertyChanged;
         }
 
-        #endregion
+        #endregion Constructor
 
         #region ConfigurablePaths
 
         /// <summary>
         /// Path to the log file
         /// </summary>
-        public ConfigurablePath LogFile { get; } = 
+        public ConfigurablePath LogFile { get; } =
             new ConfigurablePath(ConfigurablePath.BrowseType.OpenFile, "")
             {
                 DefaultDisplayName = "Log File",
@@ -41,14 +41,14 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// <summary>
         /// Path the the game executable
         /// </summary>
-        public ConfigurablePath GameFile { get; } = 
+        public ConfigurablePath GameFile { get; } =
             new ConfigurablePath(ConfigurablePath.BrowseType.OpenFile, "")
             {
                 DefaultDisplayName = "MTG Arena Executable",
                 FileFilter = "Executables|*.exe|All Files|*.*"
             };
 
-        #endregion
+        #endregion ConfigurablePaths
 
         #region Two Way Bindable Properties
 
@@ -115,6 +115,12 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             set => SetField(ref _ShowOpponentCardsExternal, value, nameof(ShowOpponentCardsExternal));
         }
 
+        public bool ShowAllDraftRatings
+        {
+            get => _ShowAllDraftRatings;
+            set => SetField(ref _ShowAllDraftRatings, value, nameof(ShowAllDraftRatings));
+        }
+
         /// <summary>
         /// Whether to force the resolution for draft helper
         /// </summary>
@@ -170,7 +176,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         }
 
         /// <summary>
-        /// Whether the game resolution is panoramic 
+        /// Whether the game resolution is panoramic
         /// </summary>
         //public ConfigResolutionBlackBorders GameResolutionBlackBorders
         //{
@@ -178,7 +184,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         //    set => SetField(ref _GameResolutionBlackBorders, value, nameof(GameResolutionBlackBorders));
         //}
 
-        #endregion
+        #endregion Two Way Bindable Properties
 
         #region Drop Down Options
 
@@ -197,7 +203,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             .Append(Constants.LIMITEDRATINGS_SOURCE_CUSTOM)
             .ToDictionary(set => set, set => set + (set == Constants.LIMITEDRATINGS_SOURCE_CUSTOM ? "" : $" [{string.Join(", ", DraftRatings.Get()[set].RatingsBySet.Keys.OrderByDescending(i => Sets[i].ReleaseDate))}]"));
 
-
         /// <summary>
         /// Options for forcing the card popup side
         /// </summary>
@@ -207,9 +212,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// Options for ordering the card list
         /// </summary>
         public IEnumerable<string> OrderLibraryCardsByItems { get; } =
-            new[] {"Converted Mana Cost", "Highest Draw % chance"};
+            new[] { "Converted Mana Cost", "Highest Draw % chance" };
 
-        #endregion
+        #endregion Drop Down Options
 
         #region Public Properties
 
@@ -217,9 +222,10 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// DraftRatings for accessing sources
         /// </summary>
         public CacheSingleton<Dictionary<string, DraftRatings>> DraftRatings { get; set; }
+
         public Dictionary<string, Set> Sets { get; internal set; }
 
-        #endregion
+        #endregion Public Properties
 
         #region Private Backing Fields
 
@@ -258,6 +264,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// </summary>
         private bool _ShowOpponentCardsExternal;
 
+        private bool _ShowAllDraftRatings;
+
         /// <summary>
         /// Whether to force the resolution for draft helper
         /// </summary>
@@ -289,11 +297,11 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         private Size _GameResolution;
 
         /// <summary>
-        /// Whether the game resolution is panoramic 
+        /// Whether the game resolution is panoramic
         /// </summary>
         //private ConfigResolutionBlackBorders _GameResolutionBlackBorders;
 
-        #endregion
+        #endregion Private Backing Fields
 
         #region Private Methods
 
@@ -307,15 +315,15 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             switch (e.PropertyName)
             {
                 case nameof(LogFilePath):
-                {
-                    LogFile.ModelValue = LogFilePath;
-                    break;
-                }
+                    {
+                        LogFile.ModelValue = LogFilePath;
+                        break;
+                    }
                 case nameof(GameFilePath):
-                {
-                    GameFile.ModelValue = GameFilePath;
-                    break;
-                }
+                    {
+                        GameFile.ModelValue = GameFilePath;
+                        break;
+                    }
             }
         }
 
@@ -329,12 +337,11 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             switch (e.PropertyName)
             {
                 case nameof(ConfigurablePath.ViewValueString):
-                {
-                    GameFilePath = GameFile.ViewValueString;
-                    break;
-                }
+                    {
+                        GameFilePath = GameFile.ViewValueString;
+                        break;
+                    }
             }
-
         }
 
         /// <summary>
@@ -347,13 +354,13 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             switch (e.PropertyName)
             {
                 case nameof(ConfigurablePath.ViewValueString):
-                {
-                    LogFilePath = LogFile.ViewValueString;
-                    break;
-                }
+                    {
+                        LogFilePath = LogFile.ViewValueString;
+                        break;
+                    }
             }
         }
 
-        #endregion
+        #endregion Private Methods
     }
 }

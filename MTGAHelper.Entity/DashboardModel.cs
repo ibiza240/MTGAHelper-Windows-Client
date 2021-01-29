@@ -6,6 +6,12 @@ namespace MTGAHelper.Entity
     public class DashboardModel
     {
         public CardMissingDetailsModel[] Details { get; set; } = new CardMissingDetailsModel[0];
-        public Dictionary<string, InfoCardMissingSummary[]> Summary { get; set; } = new Dictionary<string, InfoCardMissingSummary[]>();
+        public Dictionary<string, DashboardModelSummary> Summary { get; set; } = new Dictionary<string, DashboardModelSummary>();
+    }
+
+    public class DashboardModelSummary
+    {
+        public float ExpectedValue { get; set; }
+        public InfoCardMissingSummary[] Data { get; set; }
     }
 }

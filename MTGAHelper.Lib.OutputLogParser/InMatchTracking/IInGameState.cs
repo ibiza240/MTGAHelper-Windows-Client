@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using MTGAHelper.Entity.GameEvents;
 using MTGAHelper.Entity.MtgaOutputLog;
 
 namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
@@ -18,5 +19,6 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
         IReadOnlyCollection<CardDrawInfo> OpponentCardsPrevGames { get; }
         IReadOnlyCollection<CardDrawInfo> MyLibrary { get; }
         IReadOnlyCollection<CardDrawInfo> MySideboard { get; }
+        IReadOnlyList<IGameEvent> GameEvents { get; }
     }
 }

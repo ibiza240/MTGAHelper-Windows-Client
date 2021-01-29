@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.MtgaOutputLog;
+using MTGAHelper.Entity.Services;
 using MTGAHelper.Lib.OutputLogParser;
 using MTGAHelper.Lib.OutputLogParser.Models;
 
@@ -14,16 +15,19 @@ namespace MTGAHelper.ConsoleSync.Services
         private readonly ReaderMtgaOutputLog reader;
         private readonly ServerApiCaller api;
         private readonly Dictionary<int, Card> dictAllCards;
+        private readonly BasicLandIdentifier basicLandIdentifier;
 
         public LogFileProcessor(
             ReaderMtgaOutputLog reader,
             ServerApiCaller api,
-            Dictionary<int, Card> dictAllCards
+            Dictionary<int, Card> dictAllCards,
+            BasicLandIdentifier basicLandIdentifier
         )
         {
             this.reader = reader;
             this.api = api;
             this.dictAllCards = dictAllCards;
+            this.basicLandIdentifier = basicLandIdentifier;
         }
 
         public void Process(string userId, string logFilePath)
@@ -42,7 +46,7 @@ namespace MTGAHelper.ConsoleSync.Services
             var matchCount = result.MatchesByDate.Sum(i => i.Info.Count);
             var matchPlural = matchCount == 1 ? "" : "es";
             var totalCards = result.GetLastCollection().Info
-                .Where(c => dictAllCards[c.Key].type.StartsWith("Basic Land") == false)
+                .Where(c => basicLandIdentifier.IsBasicLand(dictAllCards[c.Key]) == false)
                 .Sum(c => c.Value);
             Console.WriteLine($"Processing completed. Found {matchCount} match{matchPlural} and {totalCards} cards in collection");
 

@@ -1,12 +1,12 @@
-﻿using MTGAHelper.Tracker.WPF.Tools;
+﻿using MTGAHelper.Tracker.WPF.Models;
+using MTGAHelper.Tracker.WPF.Tools;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
     public class DraftingCardPopupVM : BasicModel
     {
-        #region Public Properties
-
         public CardDraftPickVM Card
         {
             get => _Card;
@@ -29,12 +29,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         {
             get => _ShowRatingsSource;
             set => SetField(ref _ShowRatingsSource, value, nameof(ShowRatingsSource));
-        }
-
-        public bool ShowDescription
-        {
-            get => _ShowDescription;
-            set => SetField(ref _ShowDescription, value, nameof(ShowDescription));
         }
 
         public bool ShowCustomRating
@@ -67,6 +61,12 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             set => SetField(ref _CustomRatingSelected, value, nameof(CustomRatingSelected));
         }
 
+        public ICollection<CardDraftPickWpf> RatingsToShow
+        {
+            get => _RatingsToShow;
+            set => SetField(ref _RatingsToShow, value, nameof(RatingsToShow));
+        }
+
         public ICollection<int> CustomRatings { get; } = new[]
         {
             0,
@@ -82,10 +82,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             10
         };
 
-        #endregion
-
-        #region Private Backing Fields
-
         private CardDraftPickVM _Card = new CardDraftPickVM();
 
         private bool _ShowGlobalMTGAHelperSays;
@@ -93,8 +89,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         private string _RatingsSource;
 
         private bool _ShowRatingsSource;
-
-        private bool _ShowDescription;
 
         private bool _ShowCustomRating;
 
@@ -106,16 +100,25 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
         private int _CustomRatingSelected;
 
-        #endregion
+        private ICollection<CardDraftPickWpf> _RatingsToShow;
 
-        #region Public Methods
-
-        public void SetDraftCard(CardDraftPickVM cardVM, bool showGlobalMTGAHelperSays)
+        public void SetDraftCard(CardDraftPickVM cardVM, bool showGlobalMTGAHelperSays, bool showAllRatings, ICollection<CardDraftPickWpf> draftRatings)
         {
             Card = cardVM;
+            RatingsToShow = new CardDraftPickWpf[] { cardVM };
+
+            if (showAllRatings)
+            {
+                RatingsToShow = RatingsToShow.Union(draftRatings
+                    .Where(i => i.Name == cardVM.Name)
+                    .Where(i => i.Set == cardVM.Set)
+                    .Where(i => i.RatingSource != RatingsSource)
+                    .Where(i => i.RatingValue != default)
+                ).ToArray();
+            }
+
             CustomRatingSelected = Card.CustomRatingValue ?? 0;
             CustomRatingDescription = Card.CustomRatingDescription;
-            ShowDescription = string.IsNullOrEmpty(Card.Description) == false;
             ShowGlobalMTGAHelperSays = showGlobalMTGAHelperSays;
             ShowCustomRating = cardVM.CustomRatingValue != null || cardVM.CustomRatingDescription != null;
             OnPropertyChanged(nameof(Card));
@@ -126,7 +129,5 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             ShowRatingsSource = showRatingsSource;
             RatingsSource = source;
         }
-
-        #endregion
     }
 }

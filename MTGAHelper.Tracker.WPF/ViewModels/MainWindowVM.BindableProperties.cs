@@ -6,11 +6,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 {
     public partial class MainWindowVM
     {
-        #region Public Two-Way Bindable Properties
-
-        /// <summary>
-        /// The main window context
-        /// </summary>
         public WindowContext Context
         {
             get => _Context;
@@ -22,9 +17,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }
         }
 
-        /// <summary>
-        /// The visibility of the window
-        /// </summary>
         public bool IsWindowVisible
         {
             get => _IsWindowVisible;
@@ -37,9 +29,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }
         }
 
-        /// <summary>
-        /// The window state of the window
-        /// </summary>
         public WindowState WindowState
         {
             get => _WindowState;
@@ -52,81 +41,62 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }
         }
 
-        /// <summary>
-        /// Authentication Account
-        /// </summary>
         public AccountResponse Account
         {
             get => _Account;
             set => SetField(ref _Account, value, nameof(Account));
         }
 
-        /// <summary>
-        /// The window position
-        /// </summary>
+        private double _PositionTop;
         public double PositionTop
         {
             get => _PositionTop;
             set => SetField(ref _PositionTop, value, nameof(PositionTop));
         }
 
-        /// <summary>
-        /// The window position
-        /// </summary>
+        private double _PositionLeft;
         public double PositionLeft
         {
             get => _PositionLeft;
             set => SetField(ref _PositionLeft, value, nameof(PositionLeft));
         }
 
-        /// <summary>
-        /// The window dimension
-        /// </summary>
+        private double _WindowWidth;
         public double WindowWidth
         {
             get => _WindowWidth;
             set => SetField(ref _WindowWidth, value, nameof(WindowWidth));
         }
 
-        /// <summary>
-        /// The window dimension
-        /// </summary>
+        private double _WindowHeight;
         public double WindowHeight
         {
             get => _WindowHeight;
             set => SetField(ref _WindowHeight, value, nameof(WindowHeight));
         }
 
-        /// <summary>
-        /// The window transparency
-        /// </summary>
+        private double _WindowOpacity;
         public double WindowOpacity
         {
             get => _WindowOpacity;
             set => SetField(ref _WindowOpacity, value, nameof(WindowOpacity));
         }
 
-        /// <summary>
-        /// The window topmost setting
-        /// </summary>
+        private bool _WindowTopmost;
         public bool WindowTopmost
         {
             get => _WindowTopmost;
             set => SetField(ref _WindowTopmost, value, nameof(WindowTopmost));
         }
 
-        /// <summary>
-        /// Whether the icon is animated
-        /// </summary>
+        private bool _AnimatedIcon;
         public bool AnimatedIcon
         {
             get => _AnimatedIcon;
             set => SetField(ref _AnimatedIcon, value, nameof(AnimatedIcon));
         }
 
-        /// <summary>
-        /// Whether the game is running
-        /// </summary>
+        private bool _IsGameRunning;
         public bool IsGameRunning
         {
             get => _IsGameRunning;
@@ -137,98 +107,77 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }
         }
 
-        /// <summary>
-        /// The users sign-in email
-        /// </summary>
+        private string _SigninEmail;
         public string SigninEmail
         {
             get => _SigninEmail;
             set => SetField(ref _SigninEmail, value, nameof(SigninEmail));
         }
 
-        /// <summary>
-        /// Whether to remember the email
-        /// </summary>
+        private bool _RememberEmail;
         public bool RememberEmail
         {
             get => _RememberEmail;
             set => SetField(ref _RememberEmail, value, nameof(RememberEmail));
         }
 
-        /// <summary>
-        /// The users sign-in password
-        /// </summary>
+        private string _SigninPassword;
         public string SigninPassword
         {
             get => _SigninPassword;
             set => SetField(ref _SigninPassword, value, nameof(SigninPassword));
         }
 
-        /// <summary>
-        /// Whether to remember the password
-        /// </summary>
+        private bool _RememberPassword;
         public bool RememberPassword
         {
             get => _RememberPassword;
             set => SetField(ref _RememberPassword, value, nameof(RememberPassword));
         }
 
-        /// <summary>
-        /// Whether the window has been height minimized
-        /// </summary>
+        private bool _IsHeightMinimized;
         public bool IsHeightMinimized
         {
             get => _IsHeightMinimized;
             set => SetField(ref _IsHeightMinimized, value, nameof(IsHeightMinimized));
         }
 
-        #endregion
+        private int _PlayingSelectedTabIndex;
 
-        #region Public One-Way Bindable Properties
+        public int PlayingSelectedTabIndex
+        {
+            get => _PlayingSelectedTabIndex;
+            set => SetField(ref _PlayingSelectedTabIndex, value, nameof(PlayingSelectedTabIndex));
+        }
 
-        /// <summary>
-        /// Whether the current state is Playing
-        /// </summary>
+        private int _PlayingOpponentSelectedTabIndex;
+
+        public int PlayingOpponentSelectedTabIndex
+        {
+            get => _PlayingOpponentSelectedTabIndex;
+            set => SetField(ref _PlayingOpponentSelectedTabIndex, value, nameof(PlayingOpponentSelectedTabIndex));
+        }
+
         public bool IsPlaying =>
             Context == WindowContext.Playing;
 
-        /// <summary>
-        /// The displayed network status string
-        /// </summary>
         public string NetworkStatusString => DictStatus[NetworkStatus] +
                                              (NetworkStatus == NetworkStatusEnum.Ready ? $" ({SizeOfLogToSend})" : "");
 
-        /// <summary>
-        /// Whether the network is currently working
-        /// </summary>
         public bool IsWorking => StatusBlinker.HasFlag(NetworkStatusEnum.Uploading) ||
                                  StatusBlinker.HasFlag(NetworkStatusEnum.Downloading) ||
                                  StatusBlinker.HasFlag(NetworkStatusEnum.ProcessingLogFile);
 
-        /// <summary>
-        /// Whether the network is ready to upload
-        /// </summary>
         public bool CanUpload =>
             IsInitialSetupDone && IsUploading == false;
 
-        /// <summary>
-        /// Number of cards in users collection
-        /// </summary>
         public string CardsOwned =>
             $"{Collection.Cards.Sum(i => i.Amount):#,##0} cards owned{CollectionDateAsOf}";
 
-        /// <summary>
-        /// Application version
-        /// </summary>
         public string Version =>
             System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
 
-        /// <summary>
-        /// Whether to show the game launcher
-        /// </summary>
         public bool ShowLaunchMtgaGameClient =>
             Problems.HasFlag(ProblemsFlags.GameClientFileNotFound) == false && IsGameRunning == false;
-
-        #endregion
     }
 }

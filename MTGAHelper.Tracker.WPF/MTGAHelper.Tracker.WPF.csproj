@@ -223,6 +223,7 @@
     <Compile Include="Tools\ConfigurablePath.cs" />
     <Compile Include="Tools\UpdatableModel.cs" />
     <Compile Include="Tools\ValidatableModel.cs" />
+    <Compile Include="ViewModels\ActionLog.cs" />
     <Compile Include="ViewModels\BorderGradientCalculator.cs" />
     <Compile Include="ViewModels\CardDraftPickVM.cs" />
     <Compile Include="ViewModels\DraftingVMPxpx.cs" />

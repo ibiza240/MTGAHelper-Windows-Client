@@ -203,6 +203,8 @@ namespace MTGAHelper.Lib.OutputLogParser
 
                     if (IsNewPart(line, out var newPart))
                     {
+                        //if (currentPart.Part.Contains("Event.JoinQueue")) System.Diagnostics.Debugger.Break();
+
                         // New part started, add previous part as message
                         AddMessage(currentPart, LogDateTime);
                         currentPart = newPart;

@@ -271,7 +271,7 @@
                     Grid.Column="0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
-                    Content="Limited ratings source" />
+                    Content="Limited ratings main source" />
                 <ComboBox
                     Grid.Column="1"
                     Margin="0"
@@ -282,6 +282,20 @@
                     DisplayMemberPath="Value"
                     SelectedItem="{Binding LimitedRatingsSource}">
                 </ComboBox>
+            </Grid>
+            <!--  Auto Show Opponent Cards Option  -->
+            <Grid Margin="5,2" Visibility="{Binding ShowLimitedRatings, Converter={StaticResource BoolToVisHidden}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="FirstColumn" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <CheckBox
+                    Grid.Column="1"
+                    Height="20"
+                    Margin="0"
+                    VerticalContentAlignment="Center"
+                    Content="Show ratings and details from all sources"
+                    IsChecked="{Binding ShowAllDraftRatings}" />
             </Grid>
             <!--  Game Resolution  -->
             <!--<Grid Margin="5,2">

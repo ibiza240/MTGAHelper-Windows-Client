@@ -1,6 +1,8 @@
-﻿namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
+﻿using MTGAHelper.Entity;
+
+namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
 {
-    class ZoneTransferInfo2 : IZoneAndInstanceIdChange
+    internal class ZoneTransferInfo2 : IZoneAndInstanceIdChange
     {
         public static ZoneTransferInfo2 Invalid { get; } = new ZoneTransferInfo2(0, OwnedZone.Unknown, OwnedZone.Unknown, "INVALID") { IsValid = false };
 
@@ -10,6 +12,7 @@
         public OwnedZone SrcZone { get; }
         public OwnedZone DestZone { get; }
         public string Category { get; }
+        public Card Card { get; private set; }
         public int GrpId { get; private set; }
 
         public ZoneTransferInfo2(int newInstanceId, OwnedZone srcZone, OwnedZone destZone, string category = "")
@@ -27,16 +30,18 @@
             return this;
         }
 
-        public ZoneTransferInfo2 WithGrpId(int grpId)
+        public ZoneTransferInfo2 WithGrpId(Card card, int grpId)
         {
+            Card = card;
             GrpId = grpId;
             return this;
         }
 
         public override string ToString()
         {
+            var cardInfo = Card == null ? string.Empty : $"'{Card.name}'({GrpId}) ";
             return IsValid
-                ? $"grpId {GrpId} from {OldInstanceId} in {SrcZone} to {NewInstanceId} in {DestZone} ({Category})"
+                ? $"{cardInfo}from {OldInstanceId} in {SrcZone} to {NewInstanceId} in {DestZone} ({Category})"
                 : "Invalid move";
         }
     }

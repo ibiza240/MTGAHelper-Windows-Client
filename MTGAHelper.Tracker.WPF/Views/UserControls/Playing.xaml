@@ -27,11 +27,12 @@
         <!--  Deck List Tabs  -->
         <TabControl
             Grid.Row="0"
+            SelectedIndex="{Binding PlayingSelectedTabIndex}"
             Background="Transparent"
             BorderThickness="0,0,0,0"
             TabStripPlacement="Left">
             <TabControl.Resources>
-                <Style BasedOn="{StaticResource CardListTabs}" TargetType="{x:Type TabItem}" />
+                <Style BasedOn="{StaticResource CardListTabsVertical}" TargetType="{x:Type TabItem}" />
             </TabControl.Resources>
 
             <!--  Match Deck  -->
@@ -158,7 +159,7 @@
                             </Grid.RowDefinitions>
                             <uc:SimpleCardsList
                                 x:Name="CardsMyLibrary"
-                                Grid.Row="1"
+                                Grid.Row="0"
                                 Grid.Column="0"
                                 DataContext="{Binding InMatchState.MyLibrary}" />
                         </Grid>
@@ -169,7 +170,7 @@
                             </Grid.RowDefinitions>
                             <uc:SimpleCardsList
                                 x:Name="CardsMyLibraryWithoutLands"
-                                Grid.Row="1"
+                                Grid.Row="0"
                                 Grid.Column="0"
                                 DataContext="{Binding InMatchState.MyLibraryWithoutLands}" />
                         </Grid>
@@ -202,31 +203,104 @@
                 </TabItem.Content>
             </TabItem>
 
+            <!--  Action Log  -->
+            <TabItem
+                Header="Log">
+                <TabItem.Content>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding InMatchState.ActionLog}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Vertical" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Time}" />
+                                        <TextBlock Text="{Binding Text}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </TabItem.Content>
+            </TabItem>
+
             <!--  Opponent Deck Window Launcher  -->
             <TabItem
                 x:Name="OpponentTab"
                 Header="Opponent Cards"
                 PreviewMouseLeftButtonDown="OpenOpponentCardsWindow">
                 <TabItem.Content>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Border
-                            Grid.Row="0"
-                            Margin="0,0,0,2"
-                            BorderBrush="{StaticResource HeaderBrush}"
-                            BorderThickness="0,0,0,1">
-                            <Label FontSize="16" FontWeight="Bold">
-                                <TextBlock Text="{Binding InMatchState.OpponentCardsSeenCount, StringFormat={}{0} opponent cards seen}" TextTrimming="CharacterEllipsis" />
-                            </Label>
-                        </Border>
-                        <uc:SimpleCardsList
-                            x:Name="CardsOpponent"
-                            Grid.Row="1"
-                            DataContext="{Binding InMatchState.OpponentCardsSeen}" />
-                    </Grid>
+                    <TabControl
+                        SelectedIndex="{Binding PlayingOpponentSelectedTabIndex}"
+                        Background="Transparent"
+                        BorderThickness="0,0,0,0">
+                        <TabControl.Resources>
+                            <Style BasedOn="{StaticResource CardListTabsHorizontal}" TargetType="{x:Type TabItem}" />
+                        </TabControl.Resources>
+
+                        <!--  Card List  -->
+                        <TabItem>
+                            <TabItem.Header>
+                                <Label
+                                    Padding="0"
+                                    Margin="0"
+                                    Content="Cards" />
+                            </TabItem.Header>
+                            <TabItem.Content>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+                                    <Border
+                                        Grid.Row="0"
+                                        Margin="0,0,0,2"
+                                        BorderBrush="{StaticResource HeaderBrush}"
+                                        BorderThickness="0,0,0,1">
+                                        <Label FontSize="16" FontWeight="Bold">
+                                            <TextBlock Text="{Binding InMatchState.OpponentCardsSeenCount, StringFormat={}{0} opponent cards seen}" TextTrimming="CharacterEllipsis" />
+                                        </Label>
+                                    </Border>
+                                    <uc:SimpleCardsList
+                                        x:Name="CardsOpponent"
+                                        Grid.Row="1"
+                                        DataContext="{Binding InMatchState.OpponentCardsSeen}" />
+                                </Grid>
+                            </TabItem.Content>
+                        </TabItem>
+
+                        <!--  Deck urls  -->
+                        <TabItem>
+                            <TabItem.Header>
+                                <Label
+                                    Padding="0"
+                                    Margin="0"
+                                    Content="Possible deck"
+                                    MouseLeftButtonDown="TabItemLabel_RefreshPossibleDeck" />
+                            </TabItem.Header>
+                            <TabItem.Content>
+                                <ItemsControl ItemsSource="{Binding OpponentWindowVM.DecksUsingCards}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Margin="10,5" FontWeight="Bold">
+                                        <Hyperlink helpers:HyperlinkExtensions.IsExternal="true" NavigateUri="{Binding Url}">
+                                            <TextBlock FontSize="16" Text="{Binding Name}" />
+                                        </Hyperlink>
+                                    </TextBlock>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </TabItem.Content>
+                        </TabItem>
+                    </TabControl>
                 </TabItem.Content>
             </TabItem>
 

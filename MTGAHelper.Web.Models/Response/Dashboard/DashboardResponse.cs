@@ -14,8 +14,10 @@ namespace MTGAHelper.Web.UI.Model.Response
         public int NbDecks { get; set; }
         public double NbAvgPerDeck { get; set; }
         public string CardName { get; set; }
+
         //public string SetId { get; set; }
         public string Set { get; set; }
+
         public bool NotInBooster { get; set; }
         public string Rarity { get; set; }
         public string Type { get; set; }
@@ -30,12 +32,18 @@ namespace MTGAHelper.Web.UI.Model.Response
         public float MissingWeight { get; set; }
     }
 
+    public class DashboardModelSummaryDto
+    {
+        public ICollection<InfoCardMissingSummaryResponseDto> Data { get; set; }
+        public float ExpectedValue { get; set; }
+    }
+
     public class DashboardResponse
     {
         public CardMissingDetailsModelResponseDto[] Details { get; }
-        public KeyValuePair<string, InfoCardMissingSummaryResponseDto[]>[] Summary { get; }
+        public KeyValuePair<string, DashboardModelSummaryDto>[] Summary { get; }
 
-        public DashboardResponse(CardMissingDetailsModelResponseDto[] details, KeyValuePair<string, InfoCardMissingSummaryResponseDto[]>[] summary)
+        public DashboardResponse(CardMissingDetailsModelResponseDto[] details, KeyValuePair<string, DashboardModelSummaryDto>[] summary)
         {
             Details = details;
             Summary = summary;
@@ -44,7 +52,7 @@ namespace MTGAHelper.Web.UI.Model.Response
         public static DashboardResponse FromModel(DashboardModel model, IMapper mapper)
         {
             var details = mapper.Map<CardMissingDetailsModelResponseDto[]>(model.Details);
-            var summary = mapper.Map<Dictionary<string, InfoCardMissingSummaryResponseDto[]>>(model.Summary);
+            var summary = mapper.Map<Dictionary<string, DashboardModelSummaryDto>>(model.Summary);
             return new DashboardResponse(details, summary.ToArray());
         }
     }

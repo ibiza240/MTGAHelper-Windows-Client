@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MTGAHelper.Entity.MtgaOutputLog;
 using MTGAHelper.Lib.OutputLogParser.Models;
 using static MTGAHelper.Lib.OutputLogParser.InMatchTracking.OwnedZone;
 
@@ -93,22 +94,15 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
 
         public static bool IsOpponentZone(this OwnedZone zone)
         {
-            switch (zone)
-            {
-                case OppLibrary:
-                case OppGraveyard:
-                case OppHand:
-                case OppCommand:
-                case OppSideboard:
-                case OppRevealed:
-                case OppPhasedOut:
-                    return true;
-                default:
-                    return false;
-            }
+            return GetPlayerEnum(zone) == PlayerEnum.Opponent;
         }
 
         public static bool IsOneOfMyZones(this OwnedZone zone)
+        {
+            return GetPlayerEnum(zone) == PlayerEnum.Me;
+        }
+
+        public static PlayerEnum GetPlayerEnum(this OwnedZone zone)
         {
             switch (zone)
             {
@@ -119,10 +113,26 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                 case MySideboard:
                 case MyRevealed:
                 case MyPhasedOut:
-                    return true;
+                    return PlayerEnum.Me;
 
+                case OppHand:
+                case OppLibrary:
+                case OppGraveyard:
+                case OppCommand:
+                case OppSideboard:
+                case OppRevealed:
+                case OppPhasedOut:
+                    return PlayerEnum.Opponent;
+
+                case Unknown:
+                case Battlefield:
+                case Exile:
+                case Stack:
+                case Limbo:
+                case Pending:
+                    return PlayerEnum.Unknown;
                 default:
-                    return false;
+                    throw new ArgumentOutOfRangeException(nameof(zone), zone, null);
             }
         }
 

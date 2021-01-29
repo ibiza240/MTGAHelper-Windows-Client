@@ -1,19 +1,16 @@
-﻿using System;
+﻿using AutoMapper;
+using MTGAHelper.Lib;
+using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
+using MTGAHelper.Tracker.WPF.Business;
+using MTGAHelper.Tracker.WPF.Models;
+using MTGAHelper.Tracker.WPF.Tools;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using AutoMapper;
-using MTGAHelper.Lib;
-using MTGAHelper.Lib.OutputLogParser;
-using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
-using MTGAHelper.Tracker.WPF.Models;
-using MTGAHelper.Tracker.WPF.Tools;
-using MTGAHelper.Tracker.WPF.Business;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
-    #region Enumeration
-
     public enum DisplayType
     {
         Percent,
@@ -27,20 +24,13 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         DrawChance,
     }
 
-    #endregion
-
     public class CardsListVM : BasicModel
     {
-        readonly IMapper mapper;
-        private readonly CardThumbnailDownloader CardThumbnailDownloader;
-        #region Constructor
+        public event EventHandler CardsUpdated;
 
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        /// <param name="display"></param>
-        /// <param name="cardsListOrder"></param>
-        /// <param name="mapper"></param>
+        private readonly IMapper mapper;
+        private readonly CardThumbnailDownloader CardThumbnailDownloader;
+
         public CardsListVM(DisplayType display, CardsListOrder cardsListOrder, IMapper mapper, CardThumbnailDownloader cardThumbnailDownloader)
         {
             CardsListOrder = cardsListOrder;
@@ -49,95 +39,27 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             CardThumbnailDownloader = cardThumbnailDownloader;
         }
 
-        #endregion
-
-        #region Public Properties
-
-        /// <summary>
-        /// Collection of cards
-        /// </summary>
         public ObservableCollection<LibraryCardWithAmountVM> Cards { get; set; }
 
-        /// <summary>
-        /// Whether to show the card images
-        /// </summary>
         public bool ShowImage
         {
             get => _ShowCardImage;
             set => SetField(ref _ShowCardImage, value, nameof(ShowImage));
         }
 
-        /// <summary>
-        /// Whether to show the draw percentage and card fraction
-        /// </summary>
         public bool ShowDrawPercent => Display == DisplayType.Percent;
-
-        /// <summary>
-        /// Whether to show only the card count
-        /// </summary>
         public bool ShowCardCountOnly => Display == DisplayType.CountOnly;
-
-        /// <summary>
-        /// Option for sorting the cards
-        /// </summary>
         public CardsListOrder CardsListOrder { get; set; }
-
-        /// <summary>
-        /// String used for noting card pop-ups
-        /// </summary>
         public string CardChosen { get; set; } = "TEST";
-
-        /// <summary>
-        /// Number of cards left in the deck
-        /// </summary>
         public int CardCount => Stats.CardsLeftInDeck;
-
-        /// <summary>
-        /// Number of lands left in the deck
-        /// </summary>
         public int LandCount => Stats.LandsLeftInDeck;
-
-        /// <summary>
-        /// Total number of lands in the original deck
-        /// </summary>
         public int TotalLandsInitial => Stats.TotalLandsInitial;
-
-        /// <summary>
-        /// Percentage chance of drawing a land
-        /// </summary>
         public float DrawLandPct => Stats.DrawLandPct;
 
-        #endregion
-
-        #region Private Backing Fields
-
-        /// <summary>
-        /// Whether to show the card images
-        /// </summary>
         private bool _ShowCardImage = true;
-
-        #endregion
-
-        #region Private Fields
-
-        /// <summary>
-        /// What type of information to display
-        /// </summary>
         private DisplayType Display { get; }
-
-        /// <summary>
-        /// Deck statistics
-        /// </summary>
         private readonly Stats Stats = new Stats();
-
-        /// <summary>
-        /// Calculator for card border gradients
-        /// </summary>
         private readonly BorderGradientCalculator GradientCalculator = new BorderGradientCalculator();
-
-        #endregion
-
-        #region Public Methods
 
         public void ResetCards()
         {
@@ -155,11 +77,18 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
             if (Cards != null)
             {
+                //var countChanged = cards.Sum(i => i.Amount) != Cards.Sum(i => i.Amount);
+                var countChanged = cards.Count() != Cards.Count();
+
                 UpdateCards(cards);
                 if (CardsListOrder == CardsListOrder.DrawChance)
                     Cards.Sort(c => c.OrderByDescending(i => i.DrawPercent));
                 Stats.Refresh(Cards);
                 NotifyStatsChanged();
+
+                if (countChanged)
+                    CardsUpdated?.Invoke(this, null);
+
                 return;
             }
 
@@ -176,10 +105,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
             OnPropertyChanged(string.Empty);
         }
-
-        #endregion
-
-        #region Private Methods
 
         private IOrderedEnumerable<LibraryCardWithAmountVM> OrderByCardListOrder(IEnumerable<LibraryCardWithAmountVM> cardsQuery)
         {
@@ -288,10 +213,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             OnPropertyChanged(nameof(DrawLandPct));
         }
 
-        #endregion
-
-        #region Internal Methods
-
         internal void SetCards(string cardChosen, ICollection<CardWpf> cards)
         {
             CardChosen = cardChosen;
@@ -302,7 +223,5 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             OnPropertyChanged(nameof(CardChosen));
             OnPropertyChanged(nameof(Cards));
         }
-
-        #endregion
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MTGAHelper.Entity.GameEvents;
 using MTGAHelper.Entity.MtgaOutputLog;
 using Serilog;
 
@@ -10,6 +11,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress
     {
         // Mapped to GameDetail
         public DateTime StartDateTime { get; }
+
         public long SecondsCount => (long)(LastMessage - StartDateTime).TotalSeconds;
         public GameOutcomeEnum Outcome { get; set; }
         public FirstTurnEnum FirstTurn { get; set; }
@@ -25,17 +27,21 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress
         //    .GroupBy(i => i.CardGrpId)
         //    .ToDictionary(i => i.Key, i => i.Count());
         public Dictionary<int, int> OpponentCardsSeenByInstanceId { get; } = new Dictionary<int, int>();
+
         public IList<ICollection<int>> StartingHands { get; } = new List<ICollection<int>>();
         public Dictionary<int, IList<CardForTurn>> CardTransfersByTurn { get; } = new Dictionary<int, IList<CardForTurn>>();
 
         // For public usage
         public Dictionary<int, GRE.MatchToClient.GameStateMessage.Zone> Zones { get; private set; }
+
         public int SystemSeatId { get; private set; }
         public int SystemSeatIdOpponent { get; private set; }
         public DateTime LastMessage { get; set; }
         public ICollection<CardIdentifier> Library { get; private set; } = new CardIdentifier[0];
         public ICollection<CardIdentifier> LibraryOpponent { get; private set; } = new CardIdentifier[0];
         public int CurrentTurn { get; set; }
+
+        public ICollection<IGameEvent> ActionLog { get; set; }
 
         public GameProgress(DateTime dateStart)
         {

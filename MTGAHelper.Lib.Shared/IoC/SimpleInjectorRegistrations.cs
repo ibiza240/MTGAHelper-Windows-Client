@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using MTGAHelper.Entity;
+using MTGAHelper.Entity.Services;
 using MTGAHelper.Lib.CacheLoaders;
 using SimpleInjector;
 
@@ -23,6 +24,9 @@ namespace MTGAHelper.Lib.IoC
             container.RegisterSingleton<PasswordHasher>();
             container.RegisterSingleton<UtilColors>();
             container.RegisterSingleton<RawDeckConverter>();
+            container.RegisterSingleton<ITimeProvider, DefaultTimeProvider>();
+
+            container.RegisterSingleton<BasicLandIdentifier>();
 
             return container;
         }

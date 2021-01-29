@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using MTGAHelper.Entity;
+using MTGAHelper.Entity.Services;
 using Serilog;
 
 namespace MTGAHelper.Lib.OutputLogParser
@@ -10,6 +11,7 @@ namespace MTGAHelper.Lib.OutputLogParser
     public class DraftPicksCalculator
     {
         readonly IMapper mapper;
+        private readonly BasicLandIdentifier basicLandIdentifier;
         readonly Dictionary<int, Card> allCards;
         //CacheSingleton<Dictionary<string, DraftRatings>> draftRatings;
         readonly Dictionary<string,
@@ -19,9 +21,12 @@ namespace MTGAHelper.Lib.OutputLogParser
         public DraftPicksCalculator(
             IMapper mapper,
             CacheSingleton<Dictionary<int, Card>> cacheAllCards,
-            CacheSingleton<Dictionary<string, DraftRatings>> draftRatings)
+            CacheSingleton<Dictionary<string, DraftRatings>> draftRatings,
+            BasicLandIdentifier basicLandIdentifier
+            )
         {
             this.mapper = mapper;
+            this.basicLandIdentifier = basicLandIdentifier;
             this.allCards = cacheAllCards.Get();
             //this.draftRatings = draftRatings;
             var ratingsBySource = draftRatings.Get();
@@ -151,10 +156,10 @@ namespace MTGAHelper.Lib.OutputLogParser
             else if (maxWeight > 0 && data.Any(i => i.Weight == maxWeight))
                 data.First(i => i.Weight == maxWeight).IsRareDraftPick = RaredraftPickReasonEnum.HighestWeight;
 
-            else if (data.Any(i => i.Card.type.StartsWith("Basic Land") == false && i.NbMissingCollection > 0))
+            else if (data.Any(i => basicLandIdentifier.IsBasicLand(i.Card) == false && i.NbMissingCollection > 0))
             {
                 var r = data
-                    .Where(i => i.Card.type.StartsWith("Basic Land") == false)
+                    .Where(i => basicLandIdentifier.IsBasicLand(i.Card) == false)
                     .Where(i => i.NbMissingCollection > 0)
                     .OrderBy(i => i.Card.GetRarityEnum())
                     .ThenByDescending(i => i.NbMissingCollection)
@@ -167,7 +172,7 @@ namespace MTGAHelper.Lib.OutputLogParser
                 var bestRarity = data.Select(c => c.Card.GetRarityEnum()).Min();
                 var cardsMatching = data
                     .Where(i => i.Card.GetRarityEnum() == bestRarity)
-                    .Where(i => i.Card.type.StartsWith("Basic Land") == false);
+                    .Where(i => basicLandIdentifier.IsBasicLand(i.Card) == false);
 
                 foreach (var c in cardsMatching)
                     c.IsRareDraftPick = RaredraftPickReasonEnum.BestVaultRarity;
@@ -182,7 +187,7 @@ namespace MTGAHelper.Lib.OutputLogParser
             ICollection<int> pickedCards)
         {
             // Check with collection
-            var missingAmount = card.type.StartsWith("Basic Land") ? 0 :
+            var missingAmount = basicLandIdentifier.IsBasicLand(card) ? 0 :
                 collection.ContainsKey(card.grpId) ? 4 - collection[card.grpId] : 4;
 
             // Consider picked cards during draft

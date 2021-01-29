@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MTGAHelper.Entity.GameEvents;
+using System;
 using System.Collections.Generic;
 
 namespace MTGAHelper.Entity.MtgaOutputLog
@@ -54,5 +55,7 @@ namespace MTGAHelper.Entity.MtgaOutputLog
         public Dictionary<int, int> OpponentCardsSeen { get; set; } = new Dictionary<int, int>();
         public IList<ICollection<int>> StartingHands { get; set; } = new List<ICollection<int>>();
         public ICollection<CardTurnAction> CardTransfers { get; set; } = new CardTurnAction[0];
+
+        public IReadOnlyList<OutputLogResultGameEvent> ActionLog { get; set; } = new OutputLogResultGameEvent[0];
     }
 }

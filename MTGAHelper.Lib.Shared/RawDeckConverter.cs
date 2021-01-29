@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MTGAHelper.Entity;
+using MTGAHelper.Entity.Services;
 using MTGAHelper.Lib.Exceptions;
 
 namespace MTGAHelper.Lib
@@ -10,10 +11,15 @@ namespace MTGAHelper.Lib
     public class RawDeckConverter
     {
         readonly Dictionary<int, Card> allCards;
+        private readonly BasicLandIdentifier basicLandIdentifier;
 
-        public RawDeckConverter(CacheSingleton<Dictionary<int, Card>> allCards)
+        public RawDeckConverter(
+            CacheSingleton<Dictionary<int, Card>> allCards,
+            BasicLandIdentifier basicLandIdentifier
+            )
         {
             this.allCards = allCards.Get();
+            this.basicLandIdentifier = basicLandIdentifier;
         }
 
         public ICollection<CardWithAmount> LoadCollection(IReadOnlyDictionary<int, int> info)
@@ -44,7 +50,7 @@ namespace MTGAHelper.Lib
             }
 
             return cards.Values
-                .Where(i => i.Card.type.StartsWith("Basic Land") == false)
+                .Where(i => basicLandIdentifier.IsBasicLand(i.Card) == false)
                 .Where(i => i.Card.isToken == false)
                 .Where(i => i.Card.linkedFaceType != enumLinkedFace.SplitCard)
                 .Where(i => i.Card.linkedFaceType != enumLinkedFace.DFC_Front)

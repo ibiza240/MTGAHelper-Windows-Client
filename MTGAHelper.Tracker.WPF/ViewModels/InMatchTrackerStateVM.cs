@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
-using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
-using MTGAHelper.Tracker.WPF.Tools;
-using MTGAHelper.Tracker.WPF.Business;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using AutoMapper;
 using MTGAHelper.Entity;
+using MTGAHelper.Entity.GameEvents;
 using MTGAHelper.Entity.MtgaOutputLog;
+using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
+using MTGAHelper.Tracker.WPF.Business;
+using MTGAHelper.Tracker.WPF.Tools;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
@@ -18,6 +21,10 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
     public class InMatchTrackerStateVM : BasicModel
     {
+        public event EventHandler GameEnded;
+
+        public event EventHandler OpponentCardsUpdated;
+
         //enum CardListTypeEnum
         //{
         //    Unknown,
@@ -26,21 +33,89 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         //    MyFullDeck,
         //}
 
+        private int PriorityPlayer;
+        private bool MustReset;
         private IInGameState StateBuffered;
-
         private bool UpdateCardsInMatchTrackingBuffered;
 
         private readonly IMapper mapper;
         private readonly CardThumbnailDownloader cardThumbnailDownloader;
         private readonly Dictionary<int, Card> dictAllCards;
+        private readonly object LockCardsInMatchTracking = new object();
 
-        public InMatchTrackerStateVM(IMapper mapper, CardThumbnailDownloader cardThumbnailDownloader, Dictionary<int, Card> dictAllCards)
+        public int TurnNumber { get; private set; }
+        public string OnThePlay { get; private set; }
+        public CardsListVM MyLibrary { get; }
+        public CardsListVM MyLibraryWithoutLands { get; }
+        public CardsListVM OpponentCardsSeen { get; }
+        public CardsListVM OpponentCardsPrevGames { get; }
+        public ObservableCollection<ActionLogEntry> ActionLog { get; } = new ObservableCollection<ActionLogEntry>();
+        public CardsListVM MySideboard { get; }
+        public string LibraryLandCurrentAndTotal => $"{MyLibrary.LandCount} / {MyLibrary.TotalLandsInitial}";
+        public float LibraryDrawLandPct => MyLibrary.DrawLandPct;
+
+        public int LibraryCardsCount => MyLibrary.CardCount;
+        public int SideboardCardsCount => MySideboard.CardCount;
+        public int OpponentCardsSeenCount => OpponentCardsSeen.CardCount;
+        public int OpponentCardsPrevGamesCount => OpponentCardsPrevGames.CardCount;
+        public string OpponentScreenName { get; set; }
+
+        public PlayerTimerVM TimerMe { get; set; } = new PlayerTimerVM();
+        public PlayerTimerVM TimerOpponent { get; set; } = new PlayerTimerVM();
+
+        //public CardsListVM FullDeck { get; set; } = new CardsListVM(false);
+
+        //private bool _SplitLands;
+        //public bool SplitLands
+        //{
+        //    get => _SplitLands;
+        //    set => SetField(ref _SplitLands, value, nameof(SplitLands));
+        //}
+
+        public Dictionary<string, ManaSource> LibraryDrawManaBySource
+        {
+            get => _LibraryDrawManaBySource;
+            set => SetField(ref _LibraryDrawManaBySource, value, nameof(LibraryDrawManaBySource));
+        }
+
+        private bool _ShowCardLands = true;
+
+        public bool ShowLands
+        {
+            get => _ShowCardLands;
+            set => SetField(ref _ShowCardLands, value, nameof(ShowLands));
+        }
+
+        private Dictionary<string, ManaSource> _LibraryDrawManaBySource = new Dictionary<string, ManaSource>();
+
+        private static bool Can_ShowHideLands() => true;
+
+        private void ShowHideLands() => ShowLands = !ShowLands;
+
+        private ICommand _ShowHideLandsCommand;
+
+        public ICommand ShowHideLandsCommand
+        {
+            get
+            {
+                return _ShowHideLandsCommand ??= new RelayCommand(param => ShowHideLands(), param => Can_ShowHideLands());
+            }
+        }
+
+        public InMatchTrackerStateVM(
+            IMapper mapper,
+            CardThumbnailDownloader cardThumbnailDownloader,
+            Dictionary<int, Card> dictAllCards
+            )
         {
             this.mapper = mapper;
             this.cardThumbnailDownloader = cardThumbnailDownloader;
             this.dictAllCards = dictAllCards;
             MySideboard = new CardsListVM(DisplayType.CountOnly, CardsListOrder.ManaCost, this.mapper, cardThumbnailDownloader);
+
             OpponentCardsSeen = new CardsListVM(DisplayType.CountOnly, CardsListOrder.ManaCost, this.mapper, cardThumbnailDownloader);
+            OpponentCardsSeen.CardsUpdated += OnOpponentCardsGotUpdated;
+
             OpponentCardsPrevGames = new CardsListVM(DisplayType.CountOnly, CardsListOrder.ManaCost, this.mapper, cardThumbnailDownloader);
             MyLibrary = new CardsListVM(DisplayType.Percent, CardsListOrder.ManaCost, this.mapper, cardThumbnailDownloader);
             MyLibraryWithoutLands = new CardsListVM(DisplayType.Percent, CardsListOrder.ManaCost, this.mapper, cardThumbnailDownloader);
@@ -55,114 +130,15 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             SetCompressedCardList(cardListCollapsed);
         }
 
-        private readonly object LockCardsInMatchTracking = new object();
-
-        private int PriorityPlayer;
-
-        private bool MustReset;
-
-        #region Bindings
-
-        public int TurnNumber { get; private set; }
-
-        public string OnThePlay { get; private set; }
-
-        /// <summary>
-        /// Current Deck
-        /// </summary>
-        public CardsListVM MyLibrary { get; }
-
-        public CardsListVM MyLibraryWithoutLands { get; }
-
-        /// <summary>
-        /// Opponent Deck
-        /// </summary>
-        public CardsListVM OpponentCardsSeen { get; }
-
-        /// <summary>
-        /// Opponent cards seen in previous games of BO3
-        /// </summary>
-        public CardsListVM OpponentCardsPrevGames { get; }
-
-        /// <summary>
-        /// Sideboard
-        /// </summary>
-        public CardsListVM MySideboard { get; }
-
-        //public CardsListVM FullDeck { get; set; } = new CardsListVM(false);
-
-        /// <summary>
-        /// String version of lands remaining over starting lands
-        /// </summary>
-        public string LibraryLandCurrentAndTotal => $"{MyLibrary.LandCount} / {MyLibrary.TotalLandsInitial}";
-
-        /// <summary>
-        /// Percent chance to draw a land
-        /// </summary>
-        public float LibraryDrawLandPct => MyLibrary.DrawLandPct;
-
-        //private bool _SplitLands;
-        //public bool SplitLands
-        //{
-        //    get => _SplitLands;
-        //    set => SetField(ref _SplitLands, value, nameof(SplitLands));
-        //}
-
-        private Dictionary<string, ManaSource> _LibraryDrawManaBySource = new Dictionary<string, ManaSource>();
-
-        public Dictionary<string, ManaSource> LibraryDrawManaBySource
+        private void OnOpponentCardsGotUpdated(object sender, EventArgs e)
         {
-            get => _LibraryDrawManaBySource;
-            set => SetField(ref _LibraryDrawManaBySource, value, nameof(LibraryDrawManaBySource));
+            OpponentCardsUpdated?.Invoke(this, null);
         }
-
-        /// <summary>
-        /// Whether to show the lands in the list
-        /// </summary>
-        private bool _ShowCardLands = true;
-
-        public bool ShowLands
-        {
-            get => _ShowCardLands;
-            set => SetField(ref _ShowCardLands, value, nameof(ShowLands));
-        }
-
-        public int LibraryCardsCount => MyLibrary.CardCount;
-
-        public int SideboardCardsCount => MySideboard.CardCount;
-
-        public int OpponentCardsSeenCount => OpponentCardsSeen.CardCount;
-        public int OpponentCardsPrevGamesCount => OpponentCardsPrevGames.CardCount;
-
-        public string OpponentScreenName { get; set; }
-
-        public PlayerTimerVM TimerMe { get; set; } = new PlayerTimerVM();
-
-        public PlayerTimerVM TimerOpponent { get; set; } = new PlayerTimerVM();
-
-        #region Show Hide Lands Command
-
-        public ICommand ShowHideLandsCommand
-        {
-            get
-            {
-                return _ShowHideLandsCommand ??= new RelayCommand(param => ShowHideLands(), param => Can_ShowHideLands());
-            }
-        }
-
-        private ICommand _ShowHideLandsCommand;
-
-        private static bool Can_ShowHideLands() => true;
-
-        private void ShowHideLands() => ShowLands = !ShowLands;
-
-        #endregion Show Hide Lands Command
-
-        #endregion Bindings
 
         internal void Reset()
         {
             PriorityPlayer = 0;
+            ActionLog.Clear();
             MyLibrary.ResetCards();
             MyLibraryWithoutLands.ResetCards();
             OpponentCardsSeen.ResetCards();
@@ -172,6 +148,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
             TimerMe.Reset();
             TimerOpponent.Reset();
+
+            GameEnded?.Invoke(this, null);
 
             // notify that everything changed
             OnPropertyChanged(string.Empty);
@@ -254,36 +232,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 
                         MySideboard.ConvertCardList(StateBuffered.MySideboard);
 
-                        var totalCards = (float)StateBuffered.MyLibrary.Sum(i => i.Amount);
+                        LibraryDrawManaBySource = CalcManaStats(StateBuffered.MyLibrary);
 
-                        var manaInfo = new[] { "W", "U", "B", "R", "G", "C" }
-                            .Select(str =>
-                            {
-                                var sourceAmount = StateBuffered.MyLibrary
-                                    .Where(c => dictAllCards[c.GrpId].ThisFaceProducesManaOfColor(str))
-                                    .Sum(c => c.Amount);
-
-                                var includingMdfcLands = StateBuffered.MyLibrary
-                                    .Where(c => dictAllCards[c.GrpId].DoesProduceManaOfColor(str))
-                                    .Sum(c => c.Amount);
-
-                                return new
-                                {
-                                    Color = str,
-                                    Amount = sourceAmount,
-                                    InclMdfcs = includingMdfcLands,
-                                    Pct = sourceAmount / totalCards,
-                                    PctIncl = includingMdfcLands / totalCards,
-                                };
-                            })
-                            .Where(i => i.InclMdfcs > 0);
-
-                        LibraryDrawManaBySource = manaInfo
-                            .ToDictionary(i => i.Color, i => new ManaSource
-                            {
-                                Info = $"{i.Pct:p1} ({i.Amount} land{(i.Amount == 1 ? "" : "s")})",
-                                InfoIncludingSpellLands = i.InclMdfcs - i.Amount == 0 ? "" : $"{i.PctIncl:p1} including {i.InclMdfcs - i.Amount} spell land{(i.InclMdfcs - i.Amount == 1 ? "" : "s")}"
-                            });
+                        AddActionLogs(StateBuffered.GameEvents);
                     }
                     catch (KeyNotFoundException)
                     {
@@ -305,10 +256,52 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }
         }
 
-        /// <summary>
-        /// Set the compression state of the match state card lists
-        /// </summary>
-        /// <param name="compressed"></param>
+        private void AddActionLogs(IReadOnlyList<IGameEvent> gameEvents)
+        {
+            if (ActionLog.Count > gameEvents.Count)
+                ActionLog.Clear();
+
+            foreach (var gameEvent in gameEvents.Skip(ActionLog.Count))
+            {
+                ActionLog.Add(new ActionLogEntry(gameEvent));
+            }
+        }
+
+        private Dictionary<string, ManaSource> CalcManaStats(IReadOnlyCollection<CardDrawInfo> library)
+        {
+            var manaInfo = new[] { "W", "U", "B", "R", "G", "C" }
+                .Select(str =>
+                {
+                    var sourceAmount = library
+                        .Where(c => dictAllCards[c.GrpId].ThisFaceProducesManaOfColor(str))
+                        .Aggregate((amount: 0, chance: 0f), (x, info) => (x.amount + info.Amount, x.chance + info.DrawChance));
+
+                    var includingMdfcLands = library
+                        .Where(c => dictAllCards[c.GrpId].DoesProduceManaOfColor(str))
+                        .Aggregate((amount: 0, chance: 0f), (x, info) => (x.amount + info.Amount, x.chance + info.DrawChance));
+
+                    return new
+                    {
+                        Color = str,
+                        Amount = sourceAmount.amount,
+                        InclMdfcs = includingMdfcLands.amount,
+                        Pct = sourceAmount.chance,
+                        PctIncl = includingMdfcLands.chance,
+                    };
+                })
+                .Where(i => i.InclMdfcs > 0);
+
+            var manaBySource = manaInfo
+                .ToDictionary(i => i.Color, i => new ManaSource
+                {
+                    Info = $"{i.Pct:p1} ({i.Amount} land{(i.Amount == 1 ? "" : "s")})",
+                    InfoIncludingSpellLands = i.InclMdfcs - i.Amount == 0
+                        ? ""
+                        : $"{i.PctIncl:p1} including {i.InclMdfcs - i.Amount} spell land{(i.InclMdfcs - i.Amount == 1 ? "" : "s")}"
+                });
+            return manaBySource;
+        }
+
         internal void SetCompressedCardList(bool compressed)
         {
             MyLibrary.ShowImage = !compressed;

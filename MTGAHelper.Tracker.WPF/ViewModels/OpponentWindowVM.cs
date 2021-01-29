@@ -1,33 +1,87 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using MTGAHelper.Tracker.WPF.Business;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.Tools;
+using static MTGAHelper.Tracker.WPF.Business.ServerApiCaller;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {
     public class OpponentWindowVM : BasicModel
     {
-        #region Constructor
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        /// <param name="windowTitle"></param>
-        /// <param name="mvm"></param>
-        public OpponentWindowVM(string windowTitle, MainWindowVM mvm)
+        private string _WindowTitle = "Cards";
+        public string WindowTitle
         {
-            // Set the window title
-            WindowTitle = windowTitle;
+            get => _WindowTitle;
+            set => SetField(ref _WindowTitle, value, nameof(WindowTitle));
+        }
 
-            // Set the reference to the main window
+        private int _SelectedTabIndex;
+        public int SelectedTabIndex
+        {
+            get => _SelectedTabIndex;
+            set => SetField(ref _SelectedTabIndex, value, nameof(SelectedTabIndex));
+        }
+
+        private double _PositionTop;
+        public double PositionTop
+        {
+            get => _PositionTop;
+            set => SetField(ref _PositionTop, value, nameof(PositionTop));
+        }
+
+        private double _PositionLeft;
+        public double PositionLeft
+        {
+            get => _PositionLeft;
+            set => SetField(ref _PositionLeft, value, nameof(PositionLeft));
+        }
+
+        private double _WindowWidth;
+        public double WindowWidth
+        {
+            get => _WindowWidth;
+            set => SetField(ref _WindowWidth, value, nameof(WindowWidth));
+        }
+
+        private double _WindowHeight;
+        public double WindowHeight
+        {
+            get => _WindowHeight;
+            set => SetField(ref _WindowHeight, value, nameof(WindowHeight));
+        }
+
+        private bool _IsWindowVisible;
+        public bool IsWindowVisible
+        {
+            get => _IsWindowVisible;
+            set => SetField(ref _IsWindowVisible, value, nameof(IsWindowVisible));
+        }
+
+        private ICollection<DecksByCardsResponseItem> _DecksUsingCards;
+        private readonly ServerApiCaller ServerApiCaller;
+
+        public CardsListVM CardList { get; set; }
+        public MainWindowVM MainWindowVM { get; }
+
+        public OpponentWindowVM(
+            string windowTitle,
+            MainWindowVM mvm,
+            ServerApiCaller serverApiCaller
+            )
+        {
+            WindowTitle = windowTitle;
             MainWindowVM = mvm;
+            ServerApiCaller = serverApiCaller;
+            CardList = mvm.InMatchState.OpponentCardsSeen;
+            CardList.CardsUpdated += OnCardsGotUpdated;
 
             // Subscribe to changes to the main window properties
             MainWindowVM.PropertyChanged += MainWindowVMOnPropertyChanged;
-
-            // Set the card list
-            CardList = mvm.InMatchState.OpponentCardsSeen;
 
             // Handle property changes
             PropertyChanged += OnPropertyChanged;
@@ -45,111 +99,22 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 : 500;
         }
 
-        #endregion
-
-        #region Public Properties
-
-        /// <summary>
-        /// Window Title
-        /// </summary>
-        public string WindowTitle
+        private void OnCardsGotUpdated(object sender, EventArgs e)
         {
-            get => _WindowTitle;
-            set => SetField(ref _WindowTitle, value, nameof(WindowTitle));
+            if (IsWindowVisible == false ||
+                SelectedTabIndex != 1 ||
+                CardList.Cards.Count < 3
+                )
+                return;
+
+            RefreshDecksUsingCards(CardList.Cards.Select(i => i.Name).ToArray());
         }
 
-        /// <summary>
-        /// List of cards
-        /// </summary>
-        public CardsListVM CardList { get; set; }
-
-        /// <summary>
-        /// Reference to the MainViewModel
-        /// </summary>
-        public MainWindowVM MainWindowVM { get; }
-
-        /// <summary>
-        /// The window position
-        /// </summary>
-        public double PositionTop
+        public ICollection<DecksByCardsResponseItem> DecksUsingCards
         {
-            get => _PositionTop;
-            set => SetField(ref _PositionTop, value, nameof(PositionTop));
+            get => _DecksUsingCards;
+            set => SetField(ref _DecksUsingCards, value, nameof(DecksUsingCards));
         }
-
-        /// <summary>
-        /// The window position
-        /// </summary>
-        public double PositionLeft
-        {
-            get => _PositionLeft;
-            set => SetField(ref _PositionLeft, value, nameof(PositionLeft));
-        }
-
-        /// <summary>
-        /// The window dimension
-        /// </summary>
-        public double WindowWidth
-        {
-            get => _WindowWidth;
-            set => SetField(ref _WindowWidth, value, nameof(WindowWidth));
-        }
-
-        /// <summary>
-        /// The window dimension
-        /// </summary>
-        public double WindowHeight
-        {
-            get => _WindowHeight;
-            set => SetField(ref _WindowHeight, value, nameof(WindowHeight));
-        }
-
-        /// <summary>
-        /// The visibility of the window
-        /// </summary>
-        public bool IsWindowVisible
-        {
-            get => _IsWindowVisible;
-            set => SetField(ref _IsWindowVisible, value, nameof(IsWindowVisible));
-        }
-
-        #endregion
-
-        #region Private Backing Fields
-
-        /// <summary>
-        /// Window Title
-        /// </summary>
-        private string _WindowTitle = "Cards";
-
-        /// <summary>
-        /// The window position
-        /// </summary>
-        private double _PositionTop;
-
-        /// <summary>
-        /// The window position
-        /// </summary>
-        private double _PositionLeft;
-
-        /// <summary>
-        /// The window dimension
-        /// </summary>
-        private double _WindowWidth;
-
-        /// <summary>
-        /// The window dimension
-        /// </summary>
-        private double _WindowHeight;
-
-        /// <summary>
-        /// The visibility of the window
-        /// </summary>
-        private bool _IsWindowVisible;
-
-        #endregion
-
-        #region Private Fields
 
         /// <summary>
         /// Config Window Settings
@@ -165,10 +130,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         /// Track the new match status of auto opening the window
         /// </summary>
         private bool NewMatch;
-
-        #endregion
-
-        #region Public Methods
 
         /// <summary>
         /// Common use method for showing or hiding the window based on main window state and options
@@ -201,47 +162,45 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }
         }
 
-        #endregion
+        internal void RefreshDecksUsingCards(ICollection<string> cards = null)
+        {
+            if (cards == null && CardList?.Cards?.Any() == true)
+                cards = CardList.Cards.Select(i => i.Name).ToArray();
 
-        #region Private Methods
+            if (cards?.Any() != true) return;
 
-        /// <summary>
-        /// Handle property changes
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+            var decks = ServerApiCaller.GetDecksFromCards(cards);
+            DecksUsingCards = decks;
+            OnPropertyChanged(nameof(DecksUsingCards));
+        }
+
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
                 case nameof(PositionLeft):
-                {
-                    WindowSettings.Position.X = PositionLeft;
-                    break;
-                }
+                    {
+                        WindowSettings.Position.X = PositionLeft;
+                        break;
+                    }
                 case nameof(PositionTop):
-                {
-                    WindowSettings.Position.Y = PositionTop;
-                    break;
-                }
+                    {
+                        WindowSettings.Position.Y = PositionTop;
+                        break;
+                    }
                 case nameof(WindowWidth):
-                {
-                    WindowSettings.Size.X = WindowWidth;
-                    break;
-                }
+                    {
+                        WindowSettings.Size.X = WindowWidth;
+                        break;
+                    }
                 case nameof(WindowHeight):
-                {
-                    WindowSettings.Size.Y = WindowHeight;
-                    break;
-                }
+                    {
+                        WindowSettings.Size.Y = WindowHeight;
+                        break;
+                    }
             }
         }
 
-        /// <summary>
-        /// Handle property changes on the main window
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void MainWindowVMOnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -250,26 +209,31 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 case nameof(MainWindowVM.IsWindowVisible):
                 case nameof(MainWindowVM.WindowState):
                 case nameof(MainWindowVM.IsHeightMinimized):
-                {
-                    ShowHideWindow();
-                    break;
-                }
-                // Handle changes to the main 
+                    {
+                        ShowHideWindow();
+                        break;
+                    }
+                // Handle changes to the main
                 case nameof(MainWindowVM.Context):
-                {
-                    if (MainWindowVM.Context == WindowContext.Playing && !NewMatch)
-                        NewMatch = true;
+                    {
+                        if (MainWindowVM.Context == WindowContext.Playing && !NewMatch)
+                            NewMatch = true;
 
-                    ShowHideWindow();
-                    break;
-                }
+                        ShowHideWindow();
+                        break;
+                    }
             }
         }
 
-        #endregion
+        internal void ResetDecks()
+        {
+            DecksUsingCards = null;
+            OnPropertyChanged(nameof(DecksUsingCards));
+        }
 
-        #region Show Window Command
-
+        private static bool Can_ShowWindow() => true;
+        private void ShowWindow() => IsWindowVisible = true;
+        private ICommand _ShowWindowCommand;
         public ICommand ShowWindowCommand
         {
             get
@@ -278,23 +242,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }
         }
 
-        private ICommand _ShowWindowCommand;
-
-        private static bool Can_ShowWindow()
-        {
-            return true;
-        }
-
-        private void ShowWindow()
-        {
-            // Set the window to visible
-            IsWindowVisible = true;
-        }
-
-        #endregion
-
-        #region Hide Window Command
-
+        private static bool Can_HideWindow() => true;
+        private void HideWindow() => IsWindowVisible = false;
+        private ICommand _HideWindowCommand;
         public ICommand HideWindowCommand
         {
             get
@@ -302,20 +252,5 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 return _HideWindowCommand ??= new RelayCommand(param => HideWindow(), param => Can_HideWindow());
             }
         }
-
-        private ICommand _HideWindowCommand;
-
-        private static bool Can_HideWindow()
-        {
-            return true;
-        }
-
-        private void HideWindow()
-        {
-            // Hide the window
-            IsWindowVisible = false;
-        }
-
-        #endregion
     }
 }

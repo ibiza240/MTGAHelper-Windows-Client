@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.MtgaOutputLog;
+using MTGAHelper.Lib.OutputLogParser.InMatchTracking.GameEvents;
 using MTGAHelper.Lib.OutputLogParser.Models;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.ClientToMatch;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient;
@@ -15,18 +16,21 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
     public class InGameTracker2
     {
         /// <summary>Key: zoneId</summary>
-        Dictionary<int, OwnedZone> zonesInfo;
+        private Dictionary<int, OwnedZone> zonesInfo;
 
         /// <summary>Key: instanceId</summary>
-        readonly Dictionary<int, GameCardInZone> gameObjects = new Dictionary<int, GameCardInZone>();
+        private readonly Dictionary<int, GameCardInZone> gameObjects = new Dictionary<int, GameCardInZone>();
 
-        readonly IReadOnlyDictionary<int, Card> cardsByGrpId;
+        private readonly IReadOnlyDictionary<int, Card> cardsByGrpId;
+        private readonly GameEventFactory evt;
 
-        public InGameTrackerState2 State { get; } = new InGameTrackerState2();
+        public InGameTrackerState2 State { get; }
 
-        public InGameTracker2(CacheSingleton<Dictionary<int, Card>> cardsSingleton)
+        public InGameTracker2(CacheSingleton<Dictionary<int, Card>> cardsSingleton, GameEventFactory eventFactory)
         {
+            evt = eventFactory;
             cardsByGrpId = cardsSingleton.Get();
+            State = new InGameTrackerState2(eventFactory);
         }
 
         public override string ToString()
@@ -80,17 +84,33 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                         {
                             // Initialization of the state (beginning of the match)
                             zonesInfo = gameStateMessage.zones.ToDictionary(z => z.zoneId, GetZoneAndOwnerFromGameStateZone);
-                            State.OnThePlay = gameStateMessage.turnInfo.decisionPlayer == State.OpponentSeatId
+                            var ti = gameStateMessage.turnInfo;
+                            State.OnThePlay = ti.decisionPlayer == State.OpponentSeatId
                                 ? PlayerEnum.Opponent
                                 : PlayerEnum.Me;
                             // first gameStateMessage should not be processed as mulligan info will get messed up
+                            // unless we start in the middle of a game (e.g. after a crash)
+                            if (ti.turnNumber <= 0) 
+                                return;
+
+                            Log.Debug("=== recovering at t{t} {p}.{s} (de{de}; ac{ac}; pr{pr}) ===",
+                                ti.turnNumber, ti.phase, ti.step, ti.decisionPlayer, ti.activePlayer, ti.priorityPlayer);
+
+                            State.OnThePlay = ti.activePlayer == State.OpponentSeatId
+                                ? ti.turnNumber % 2 == 1
+                                    ? PlayerEnum.Opponent
+                                    : PlayerEnum.Me
+                                : ti.turnNumber % 2 == 1
+                                    ? PlayerEnum.Me
+                                    : PlayerEnum.Opponent;
+                            AnalyzeDiff(gameStateMessage);
                         }
                         else if (gameStateMessage.type == "GameStateType_Full" || gameStateMessage.type == "GameStateType_Diff")
                         {
                             var ti = gameStateMessage.turnInfo;
                             if (ti != null)
-                                Log.Debug("=== game message t{t} {p}.{s} (p{p}) ===",
-                                    ti.turnNumber, ti.phase, ti.step, ti.decisionPlayer);
+                                Log.Debug("=== game message t{t} {p}.{s} (de{de}; ac{ac}; pr{pr}) ===",
+                                    ti.turnNumber, ti.phase, ti.step, ti.decisionPlayer, ti.activePlayer, ti.priorityPlayer);
 
                             AnalyzeDiff(gameStateMessage);
                         }
@@ -152,6 +172,13 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             var turnNumber = gameStateMessage.turnInfo?.turnNumber ?? -1;
             if (turnNumber >= 0)
             {
+                if (turnNumber > State.TurnNumber)
+                {
+                    // ReSharper disable once PossibleNullReferenceException (false positive)
+                    var activePlayer = gameStateMessage.turnInfo.activePlayer == State.MySeatId ? PlayerEnum.Me : PlayerEnum.Opponent;
+                    State.AddGameEvent(evt.StartTurn(turnNumber, activePlayer));
+                }
+
                 State.TurnNumber = turnNumber;
             }
 
@@ -241,6 +268,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                 .Select(d => (
                     topIds: d.FirstOrDefault(x => x.key == "topIds")?.valueInt32,
                     bottomIds: d.FirstOrDefault(x => x.key == "bottomIds")?.valueInt32))
+                .Where(x => x.topIds != null || x.bottomIds != null)
                 .ToArray();
         }
 
@@ -263,7 +291,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                             // If the instanceId is not found, it has changed. Try to retrace it
                             if (gameObjects.TryGetValue(zt.NewInstanceId, out var card)
                                 || gameObjects.TryGetValue(zt.OldInstanceId, out card))
-                                return zt.WithGrpId(card.GrpId);
+                                return zt.WithGrpId(card.Card, card.GrpId);
 
                             // no instance found. This happens for example if card move is from opponent's library to hand
                             return zt;

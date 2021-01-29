@@ -28,7 +28,6 @@ namespace MTGAHelper.Tracker.WPF.Business
         private CookieContainer CookieContainer;
         private HttpClient Client;
 
-
         public ServerApiCaller()
         {
             UnsetUserCookies();
@@ -149,10 +148,12 @@ namespace MTGAHelper.Tracker.WPF.Business
         {
             return GetResponseWithCookie<DraftRaredraftingInfoResponse>("api/User/Compare");
         }
+
         internal CollectionResponse UploadOutputLogResult(string userId, OutputLogResult result)
         {
             return PostResponseSimple<CollectionResponse>("/api/User/LogFileProcessed", new PostOutputLogProcessedRequest(result));
         }
+
         internal CollectionResponse UploadOutputLogResult2(string userId, OutputLogResult2 result2)
         {
             return PostResponseSimple<CollectionResponse>("/api/User/LogFileProcessed2", new PostOutputLogProcessedRequest2(result2));
@@ -217,6 +218,23 @@ namespace MTGAHelper.Tracker.WPF.Business
             //        //throw new HttpRequestException("Remote server unavailable", ex);
             //    }
             //}
+        }
+
+        internal ICollection<DecksByCardsResponseItem> GetDecksFromCards(ICollection<string> cards)
+        {
+            var response = PostResponseSimple<DecksByCardsResponse>("api/decks/bycards", cards);
+            return response.Decks;
+        }
+
+        public class DecksByCardsResponseItem
+        {
+            public string Name { get; set; }
+            public string Url { get; set; }
+        }
+
+        public class DecksByCardsResponse
+        {
+            public ICollection<DecksByCardsResponseItem> Decks { get; set; }
         }
     }
 }

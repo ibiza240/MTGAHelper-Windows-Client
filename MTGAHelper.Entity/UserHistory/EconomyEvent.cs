@@ -13,7 +13,7 @@ namespace MTGAHelper.Entity.UserHistory
 
     public class EconomyEventChange
     {
-        public dynamic Amount { get; set; }
+        public float Amount { get; set; }
         public EconomyEventChangeEnum Type { get; set; }
         public string Value { get; set; }
     }

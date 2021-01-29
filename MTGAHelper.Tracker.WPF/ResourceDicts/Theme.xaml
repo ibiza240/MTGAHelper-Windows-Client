@@ -452,8 +452,8 @@
         <Setter Property="Template" Value="{StaticResource ScrollViewerControlTemplate}" />
     </Style>
 
-    <!--  *********************************  TabItem Style  *********************************  -->
-    <Style x:Key="CardListTabs" TargetType="TabItem">
+    <!--  *********************************  TabItem Styles  *********************************  -->
+    <Style x:Key="CardListTabsVertical" TargetType="TabItem">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabItem">
@@ -482,6 +482,42 @@
                                         Foreground="{StaticResource CardTabBrush}"
                                         Text="{TemplateBinding Header}" />
                                 </ContentPresenter.Content>
+                            </ContentPresenter>
+                        </Border>
+                    </BulletDecorator>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True" />
+                        <Trigger Property="IsSelected" Value="False">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="Black" />
+                            <Setter TargetName="ContentSite" Property="TextBlock.Foreground" Value="Gray" />
+                            <Setter TargetName="Decorator" Property="Margin" Value="4,0,0,2" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="CardListTabsHorizontal" TargetType="TabItem">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <BulletDecorator
+                        x:Name="Decorator"
+                        Margin="0,0,0,2"
+                        Cursor="Hand">
+                        <Border
+                            Name="Border"
+                            Margin="0"
+                            Background="{StaticResource Brush07}"
+                            BorderBrush="White"
+                            BorderThickness="1,1,1,1"
+                            CornerRadius="3,3,3,3">
+                            <ContentPresenter
+                                x:Name="ContentSite"
+                                Margin="10,1,10,2"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Header}">
                             </ContentPresenter>
                         </Border>
                     </BulletDecorator>

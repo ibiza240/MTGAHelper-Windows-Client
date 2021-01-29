@@ -40,24 +40,17 @@ namespace MTGAHelper.Tracker.WPF.Views
         /// </summary>
         public MainWindowVM ViewModel { get; }
 
-        /// <summary>
-        /// DraftRating for enumerating the sources
-        /// </summary>
-        private CacheSingleton<Dictionary<string, DraftRatings>> DraftRatings { get; }
+        private ServerApiCaller Api => ViewModel.Api;
+        private MtgaResourcesLocator ResourcesLocator => ViewModel.ResourcesLocator;
+        private FileMonitor FileMonitor => ViewModel.FileMonitor;
+        private ReaderMtgaOutputLog Reader => ViewModel.ReaderMtgaOutputLog;
+        private ExternalProviderTokenManager TokenManager => ViewModel.TokenManager;
 
         private readonly IMapper mapper;
-        private readonly ServerApiCaller Api;
-        private readonly StartupShortcutManager StartupManager;
-        private readonly MtgaResourcesLocator ResourcesLocator;
-        private readonly FileMonitor FileMonitor;
-        private readonly DraftCardsPicker DraftHelper;
-        private readonly ReaderMtgaOutputLog Reader;
-        private readonly InGameTracker2 InGameTracker;
-        private readonly ExternalProviderTokenManager TokenManager;
-        private readonly PasswordHasher PasswordHasher;
-        private readonly DraftHelperRunner DraftHelperRunner;
         private ICollection<CardCompareInfo> RareDraftingInfo;
         private IList<int> lastCardsAetherized = new int[0];
+
+        private InGameTracker2 InGameTracker => ViewModel.InMatchTracker;
 
         /// <summary>
         /// Complete constructor
@@ -73,9 +66,6 @@ namespace MTGAHelper.Tracker.WPF.Views
             ViewModel.LaunchArenaAction = LaunchArenaAction;
             ViewModel.ValidateUserAction = ValidateUserAction;
 
-            // Set the resource locator
-            ResourcesLocator = viewModel.ResourcesLocator;
-
             // Set the problem action
             ResourcesLocator.SetProblem = ViewModel.SetProblem;
 
@@ -85,22 +75,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             // Locate the game path
             ResourcesLocator.LocateGameClientFilePath(ViewModel.Config);
 
-            // Set the reference to the draft helper
-            DraftHelperRunner = viewModel.DraftHelperRunner;
-
-
-            Reader = viewModel.ReaderMtgaOutputLog;
-            Api = viewModel.Api;
-            StartupManager = viewModel.StartupManager;
-            FileMonitor = viewModel.FileMonitor;
             FileMonitor.OnFileSizeChangedNewText += OnFileSizeChangedNewText;
-            DraftHelper = viewModel.DraftHelper;
-            //this.logProcessor = logProcessor;
-            InGameTracker = viewModel.InMatchTracker;
-            TokenManager = viewModel.TokenManager;
-            PasswordHasher = viewModel.PasswordHasher;
-            DraftRatings = viewModel.DraftRatings;
-
             FileMonitor.SetFilePath(ViewModel.Config.LogFilePath);
 
             // Set the data context to the view model
@@ -274,7 +249,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                 if (ViewModel.RememberPassword)
                 {
                     string salt = Api.GetAccountSalt();
-                    signinPassword = PasswordHasher.Hash(ViewModel.SigninPassword, salt);
+                    signinPassword = ViewModel.PasswordHasher.Hash(ViewModel.SigninPassword, salt);
                 }
 
                 // Set the email and password in the Config file
@@ -326,7 +301,6 @@ namespace MTGAHelper.Tracker.WPF.Views
                     ViewModel.SetProblemServerUnavailable();
                 }
             });
-
         }
 
         private void RefreshCustomRatingsFromServer()
@@ -368,7 +342,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                 var optionsVM = mapper.Map<OptionsWindowVM>(ViewModel.Config);
 
                 optionsVM.Sets = ViewModel.Sets.ToDictionary(i => i.Code, i => i);
-                optionsVM.DraftRatings = DraftRatings;
+                optionsVM.DraftRatings = ViewModel.DraftRatings;
                 optionsVM.LimitedRatingsSource = optionsVM.LimitedRatingsSourcesDict.First(i => i.Key == optionsVM.LimitedRatingsSource.Key);
 
                 OptionsWindow win = new OptionsWindow().Init(ViewModel, optionsVM);
@@ -399,6 +373,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                 configModel.ForceGameResolution = ovm.ForceGameResolution;
                 //configModel.GameResolutionBlackBorders = ovm.GameResolutionBlackBorders;
                 configModel.GameResolution = ovm.GameResolution;
+                configModel.ShowAllDraftRatings = ovm.ShowAllDraftRatings;
 
                 // Serialize the new config
                 string newConfig = JsonConvert.SerializeObject(configModel);
@@ -447,7 +422,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                     FileMonitor.SetFilePath(configModel.LogFilePath);
 
                     // Set the start-up option
-                    StartupManager.ManageRunOnStartup(configModel.RunOnStartup);
+                    ViewModel.StartupManager.ManageRunOnStartup(configModel.RunOnStartup);
 
                     // Set the card order
                     ViewModel.OrderLibraryCardsBy = ViewModel.Config.OrderLibraryCardsBy == "Converted Mana Cost" ? CardsListOrder.ManaCost : CardsListOrder.DrawChance;
@@ -522,7 +497,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                     ViewModel.WrapNetworkStatus(NetworkStatusEnum.Uploading, () =>
                     {
                         CollectionResponse collection = Api.UploadOutputLogResult(ViewModel.Account.MtgaHelperUserId, result);
-                        Api.UploadOutputLogResult2(ViewModel.Account.MtgaHelperUserId, result2);
+                        //Api.UploadOutputLogResult2(ViewModel.Account.MtgaHelperUserId, result2);
 
                         ViewModel.SetCollection(collection);
                         RefreshRareDraftingInfo();
@@ -556,6 +531,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                         case "Google":
                             token = TokenManager.GoogleRefresh();
                             break;
+
                         case "Facebook":
                             //token = tokenManager.FacebookRefresh();
                             // Always re-use the long-lived token
@@ -615,7 +591,10 @@ namespace MTGAHelper.Tracker.WPF.Views
             if (isRunning)
                 FileMonitor.ResetStringBuilder();
             else
+            {
+                GoHome();
                 UploadLogFile();
+            }
         }
 
         private void OnFileSizeChangedNewText(object sender, string newText)
@@ -631,6 +610,11 @@ namespace MTGAHelper.Tracker.WPF.Views
             }
         }
 
+        private void GoHome()
+        {
+            ViewModel.SetMainWindowContext(WindowContext.Home);
+        }
+
         private void HandleNewText(string newText)
         {
             ViewModel.SetProblem(ProblemsFlags.LogFileNotFound, false);
@@ -641,12 +625,6 @@ namespace MTGAHelper.Tracker.WPF.Views
             {
                 messages = Reader.ProcessIntoMessagesAsync("local", ms).Result;
             }
-
-            void GoHome()
-            {
-                ViewModel.SetMainWindowContext(WindowContext.Home);
-            }
-
             var mustUpload = false;
 
             foreach (IMtgaOutputLogPartResult msg in messages)
@@ -659,6 +637,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                     case DetailedLoggingResult detLogRes:
                         ViewModel.SetProblem(ProblemsFlags.DetailedLogsDisabled, detLogRes.IsDetailedLoggingDisabled);
                         break;
+
                     case IResultCardPool msgCardPool:
                         {
                             var isLimitedCardPool = true;
@@ -728,6 +707,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                                         GoHome();
                                     }
                                     break;
+
                                 case "DuelScene.EndOfMatchReport":
                                     GoHome();
                                     InGameTracker.Reset();
@@ -799,6 +779,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                     case GetCombinedRankInfoResult _:
                         mustUpload = true;
                         break;
+
                     case InventoryUpdatedResult inventoryUpdated:
                         mustUpload = true;
 
@@ -807,6 +788,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                             lastCardsAetherized = aetherizedCards.Select(i => i.grpId).ToArray();
 
                         break;
+
                     case SceneChangeResult sceneChange:
                         if (sceneChange.Raw.toSceneName == "SealedBoosterOpen")
                         {
@@ -815,6 +797,8 @@ namespace MTGAHelper.Tracker.WPF.Views
                             SetCardsDraft(new DraftPickProgress(lastCardsAetherized));
                             ViewModel.SetMainWindowContext(WindowContext.Drafting);
                         }
+                        else if (sceneChange.Raw.toSceneName == "Home")
+                            GoHome();
                         break;
                 }
 
@@ -841,7 +825,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                 .Where(i => i.IdArena != 0)
                 .ToDictionary(i => i.IdArena, i => i.Amount);
 
-            var draftingInfo = DraftHelper.GetDraftPicksForCards(
+            var draftingInfo = ViewModel.DraftHelper.GetDraftPicksForCards(
                 cardPool,
                 draftInfo.PickedCards,
                 ViewModel.Config.LimitedRatingsSource,
@@ -850,6 +834,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                 ViewModel.DraftingVM.CustomRatingsBySetThenCardName);
 
             ViewModel.DraftingVM.SetCardsDraftBuffered(draftInfo, draftingInfo);
+            ViewModel.DraftingVM.DraftRatings = draftingInfo;
 
             if (draftInfo.PickNumber == 0)
             {

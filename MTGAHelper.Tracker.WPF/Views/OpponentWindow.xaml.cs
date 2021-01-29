@@ -7,18 +7,8 @@ using Point = System.Windows.Point;
 
 namespace MTGAHelper.Tracker.WPF.Views
 {
-    /// <summary>
-    /// Interaction logic for OpponentWindow.xaml
-    /// </summary>
     public partial class OpponentWindow
     {
-
-        #region Public Constructor
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        /// <param name="mvm"></param>
         public OpponentWindow(MainWindowVM mvm)
         {
             // Set the data context to the opponent window view model
@@ -27,28 +17,16 @@ namespace MTGAHelper.Tracker.WPF.Views
             InitializeComponent();
         }
 
-        #endregion
+        private void TabItemLabel_RefreshPossibleDeck(object sender, MouseButtonEventArgs e)
+        {
+            ((OpponentWindowVM)DataContext).RefreshDecksUsingCards();
+        }
 
-        #region Internal Methods
-
-        /// <summary>
-        /// Set the location of the card pop-up
-        /// </summary>
-        /// <param name="side"></param>
         internal void SetCardsPopupPosition(CardPopupSide side)
         {
             CardsInWindow.SetCardPopupPosition(side, (int)Top, (int)Left, (int)Width);
         }
 
-        #endregion
-
-        #region Private Methods
-
-        /// <summary>
-        /// Drag Handler
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void StatusBar_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
@@ -65,11 +43,6 @@ namespace MTGAHelper.Tracker.WPF.Views
             DragMove();
         }
 
-        /// <summary>
-        /// Handle changes to the window location
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void Window_LocationChanged(object sender, EventArgs e)
         {
             if (!double.IsNaN(Top) && !double.IsNaN(Left))
@@ -77,25 +50,15 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         }
 
-        /// <summary>
-        /// Handle changes to the window size
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (!double.IsNaN(Width) && !double.IsNaN(Height))
                 UpdatePosition();
         }
 
-        /// <summary>
-        /// Save the window position and size
-        /// </summary>
         private void UpdatePosition()
         {
             CardsInWindow.SetCardPopupPosition(CardPopupSide.Auto, (int)Top, (int)Left, (int)Width);
         }
-
-        #endregion
     }
 }

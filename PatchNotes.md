@@ -1,3 +1,11 @@
+### v1.7.4 (2021-01-28)
+
+Support for the Kaladesh expansion
+
+New section in "Opponent cards" for viewing possible deck variations of what he might be playing
+
+New option to view limited from all the sources at once during a draft
+
 ### v1.7.3 (2020-12-12)
 
 Support for the latest game patch

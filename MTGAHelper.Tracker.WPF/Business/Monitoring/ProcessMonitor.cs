@@ -6,16 +6,10 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
 {
     public class ProcessMonitor
     {
-        #region Public Properties
-
         /// <summary>
         /// Process Status Changed Action
         /// </summary>
         public Action<bool> OnProcessMonitorStatusChanged { get; set; }
-
-        #endregion
-
-        #region Private Fields
 
         /// <summary>
         /// Constant process name
@@ -27,10 +21,6 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
         /// </summary>
         private bool IsRunning { get; set; }
 
-        #endregion
-
-        #region Public Methods
-
         /// <summary>
         /// Start the async monitoring task
         /// </summary>
@@ -40,10 +30,6 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
         {
             await ContinuallyCheckForProcess(cancellationToken);
         }
-
-        #endregion
-
-        #region Private Methods
 
         /// <summary>
         /// Task for continuously monitoring a process of status changes
@@ -59,7 +45,7 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
                     try
                     {
                         if (cancellationToken.IsCancellationRequested)
-                            throw new TaskCanceledException((Task) null);
+                            throw new TaskCanceledException((Task)null);
 
                         bool processFound = System.Diagnostics.Process.GetProcessesByName(PROCESS_NAME).Length > 0;
 
@@ -82,8 +68,5 @@ namespace MTGAHelper.Tracker.WPF.Business.Monitoring
 
             return task;
         }
-
-        #endregion
-
     }
 }

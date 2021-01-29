@@ -21,8 +21,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
 {
     public partial class MainWindowVM : BasicModel
     {
-        #region Constructor
-
         public MainWindowVM(StatusBlinker statusBlinker, InMatchTrackerStateVM inMatchState, ConfigModel config, DraftingVM draftingVM,
             IMapper mapper,
             ICacheLoader<Dictionary<int, Set>> cacheSets,
@@ -40,7 +38,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             DraftHelperRunner draftHelperRunner,
             //IEmailProvider emailProvider,
             ICollection<Card> allCards,
-            CardThumbnailDownloader cardThumbnailDownloader)
+            CardThumbnailDownloader cardThumbnailDownloader,
+            ServerApiCaller serverApiCaller
+            )
         {
             // Set the status blinker reference
             StatusBlinker = statusBlinker;
@@ -60,6 +60,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             DraftHelper = draftHelper;
             ReaderMtgaOutputLog = readerMtgaOutputLog;
             InMatchTracker = inMatchTracker;
+            InMatchState.GameEnded += OnGameEnded;
+            InMatchState.OpponentCardsUpdated += OnOpponentCardsUpdated;
+
             TokenManager = tokenManager;
             PasswordHasher = passwordHasher;
             DraftRatings = draftRatings;
@@ -67,6 +70,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             //this.emailProvider = emailProvider;
             AllCards = allCards;
             CardThumbnailDownloader = cardThumbnailDownloader;
+            this.serverApiCaller = serverApiCaller;
 
             // Set the library order from the config
             OrderLibraryCardsBy = config.OrderLibraryCardsBy == "Converted Mana Cost"
@@ -74,7 +78,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 : CardsListOrder.DrawChance;
 
             // Create the opponent window view model
-            OpponentWindowVM = new OpponentWindowVM("Opponent Cards", this);
+            OpponentWindowVM = new OpponentWindowVM("Opponent Cards", this, serverApiCaller);
 
             // Subscribe to property changes
             PropertyChanged += OnPropertyChanged;
@@ -95,56 +99,29 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             WindowHeight = WindowSettings != null && WindowSettings.Size.Y > double.Epsilon
                 ? WindowSettings.Size.Y
                 : 500;
-
         }
 
-        #endregion
+        private void OnOpponentCardsUpdated(object sender, EventArgs e)
+        {
+            if (IsHeightMinimized ||
+                PlayingSelectedTabIndex != 3 ||
+                PlayingOpponentSelectedTabIndex != 1 ||
+                InMatchState.OpponentCardsSeen.CardCount < 3
+                )
+                return;
 
-        #region Public Properties
+            OpponentWindowVM.RefreshDecksUsingCards(InMatchState.OpponentCardsSeen.Cards.Select(i => i.Name).ToArray());
+        }
 
-        /// <summary>
-        /// The config model
-        /// </summary>
         public ConfigModel Config { get; }
-
-        /// <summary>
-        /// The view model for the opponent window
-        /// </summary>
         public OpponentWindowVM OpponentWindowVM { get; }
-
-        /// <summary>
-        /// Card list sort type
-        /// </summary>
         public CardsListOrder OrderLibraryCardsBy { get; set; }
-
-        /// <summary>
-        /// Size of log file to upload
-        /// </summary>
         public int SizeOfLogToSend { get; set; }
-
-        /// <summary>
-        /// Action for uploading the log file
-        /// </summary>
         public Action UploadLogAction { get; set; }
-
-        /// <summary>
-        /// Action for showing the options
-        /// </summary>
         public Action ShowOptionsAction { get; set; }
-
-        /// <summary>
-        /// Action for launching Arena
-        /// </summary>
         public Action LaunchArenaAction { get; set; }
-
-        /// <summary>
-        /// Action for validating user
-        /// </summary>
         public Action<object> ValidateUserAction { get; set; }
 
-        /// <summary>
-        /// List of problems
-        /// </summary>
         public ICollection<string> ProblemsList => Enum.GetValues(typeof(ProblemsFlags)).Cast<ProblemsFlags>()
             .Where(i => i != ProblemsFlags.None)
             .Where(i => i != ProblemsFlags.GameClientFileNotFound)
@@ -152,107 +129,11 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             .Select(i => DictProblems[i])
             .ToArray();
 
-        #endregion
-
-        #region Private Backing Fields
-
-        /// <summary>
-        /// The main window context
-        /// </summary>
         private WindowContext _Context = WindowContext.Welcome;
-
-        /// <summary>
-        /// The displayed network status
-        /// </summary>
         private NetworkStatusEnum _NetworkStatusDisplayed;
-
-        /// <summary>
-        /// The visibility of the window
-        /// </summary>
         private bool _IsWindowVisible = true;
-
-        /// <summary>
-        /// The window state of the window
-        /// </summary>
         private WindowState _WindowState = WindowState.Normal;
-
-        /// <summary>
-        /// Authentication Account
-        /// </summary>
         private AccountResponse _Account = new AccountResponse();
-
-        /// <summary>
-        /// The window position
-        /// </summary>
-        private double _PositionTop;
-
-        /// <summary>
-        /// The window position
-        /// </summary>
-        private double _PositionLeft;
-
-        /// <summary>
-        /// The window dimension
-        /// </summary>
-        private double _WindowWidth;
-
-        /// <summary>
-        /// The window dimension
-        /// </summary>
-        private double _WindowHeight;
-
-        /// <summary>
-        /// The window transparency
-        /// </summary>
-        private double _WindowOpacity;
-
-        /// <summary>
-        /// The window topmost setting
-        /// </summary>
-        private bool _WindowTopmost;
-
-        /// <summary>
-        /// Whether the icon is animated
-        /// </summary>
-        private bool _AnimatedIcon;
-
-        /// <summary>
-        /// Whether the game is running
-        /// </summary>
-        private bool _IsGameRunning;
-
-        /// <summary>
-        /// The users sign-in email
-        /// </summary>
-        private string _SigninEmail;
-
-        /// <summary>
-        /// Whether to remember the email
-        /// </summary>
-        private bool _RememberEmail;
-
-        /// <summary>
-        /// The users sign-in password
-        /// </summary>
-        private string _SigninPassword;
-
-        /// <summary>
-        /// Whether to remember the password
-        /// </summary>
-        private bool _RememberPassword;
-
-        /// <summary>
-        /// Whether the window has been height minimized
-        /// </summary>
-        private bool _IsHeightMinimized;
-
-        #endregion
-
-        #region Private Fields
-
-        /// <summary>
-        /// The displayed network status
-        /// </summary>
         private NetworkStatusEnum NetworkStatus
         {
             get => _NetworkStatusDisplayed;
@@ -265,33 +146,17 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }
         }
 
-        /// <summary>
-        /// Whether the application is uploading
-        /// </summary>
         private bool IsUploading => StatusBlinker.HasFlag(NetworkStatusEnum.Uploading);
-
-        /// <summary>
-        /// Config Window Settings
-        /// </summary>
         private WindowSettings WindowSettings => Config?.WindowSettings;
-
-        /// <summary>
-        /// The network status indicator
-        /// </summary>
         private readonly StatusBlinker StatusBlinker;
         private readonly CardThumbnailDownloader CardThumbnailDownloader;
+        private readonly ServerApiCaller serverApiCaller;
 
         //readonly IEmailProvider emailProvider;
 
-        /// <summary>
-        /// Whether the initial setup is complete
-        /// </summary>
         private bool IsInitialSetupDone => Problems.HasFlag(ProblemsFlags.LogFileNotFound) == false &&
                                            Problems.HasFlag(ProblemsFlags.SigninRequired) == false;
 
-        /// <summary>
-        /// Dictionary of network status phrases
-        /// </summary>
         private Dictionary<NetworkStatusEnum, string> DictStatus { get; } =
             new Dictionary<NetworkStatusEnum, string>
             {
@@ -302,9 +167,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 {NetworkStatusEnum.ProcessingLogFile, "Processing log file..."},
             };
 
-        /// <summary>
-        /// Dictionary of problem flag phrases
-        /// </summary>
         private Dictionary<ProblemsFlags, string> DictProblems { get; } =
             new Dictionary<ProblemsFlags, string>
             {
@@ -315,14 +177,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 {ProblemsFlags.DetailedLogsDisabled, "Detailed Logs not enabled in MTGArena"},
             };
 
-        #endregion
-
-        #region Internal Methods
-
-        /// <summary>
-        /// Set the main window context
-        /// </summary>
-        /// <param name="newContext"></param>
         internal void SetMainWindowContext(WindowContext newContext)
         {
             // Confirm that the user has signed-in before changing the context
@@ -330,10 +184,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                 Context = newContext;
         }
 
-        /// <summary>
-        /// Set the signed-in status
-        /// </summary>
-        /// <param name="account"></param>
         internal void SetSignedIn(AccountResponse account)
         {
             Account = account;
@@ -347,11 +197,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             }
         }
 
-        /// <summary>
-        /// Set a problem flag as active or inactive
-        /// </summary>
-        /// <param name="flag"></param>
-        /// <param name="isActive"></param>
         internal void SetProblem(ProblemsFlags flag, bool isActive)
         {
             if (isActive)
@@ -363,9 +208,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             OnPropertyChanged(nameof(ShowLaunchMtgaGameClient));
         }
 
-        /// <summary>
-        /// Set a server problem flag and clear after 5 seconds
-        /// </summary>
         internal void SetProblemServerUnavailable()
         {
             Task.Factory.StartNew(() =>
@@ -376,15 +218,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             });
         }
 
-        #endregion
-
-        #region Private Methods
-
-        /// <summary>
-        /// Handle property changes
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -440,10 +273,6 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                     }
             }
         }
-
-        #endregion
-
-        #region Originals
 
         public string FacebookAccessToken { get; set; }
         public Set[] Sets { get; }
@@ -520,6 +349,10 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             CardThumbnailDownloader.CheckAndDownloadThumbnails(grpIds);
         }
 
-        #endregion
+        private void OnGameEnded(object sender, EventArgs e)
+        {
+            OpponentWindowVM.CardList.ResetCards();
+            OpponentWindowVM.ResetDecks();
+        }
     }
 }

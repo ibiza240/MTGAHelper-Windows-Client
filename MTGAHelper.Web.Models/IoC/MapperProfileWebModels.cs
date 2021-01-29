@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.CollectionDecksCompare;
 using MTGAHelper.Entity.Config.Users;
@@ -18,6 +16,8 @@ using MTGAHelper.Web.UI.Model.Response.User;
 using MTGAHelper.Web.UI.Model.Response.User.History;
 using MTGAHelper.Web.UI.Model.SharedDto;
 using MTGAHelper.Web.UI.Shared;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MTGAHelper.Web.UI.IoC
 {
@@ -51,7 +51,6 @@ namespace MTGAHelper.Web.UI.IoC
                 .IncludeBase<CardWithAmount, CardWithAmountDto>()
                 .ForMember(i => i.NotInBooster, i => i.MapFrom(x => x.Card.notInBooster))
                 .ForMember(i => i.Rarity, i => i.MapFrom(x => x.Card.rarity));
-
 
             //CreateMap<DateSnapshotInfo, GetUserHistoryDto>();
             //CreateMap<DateSnapshotDiff, GetUserHistoryDto>();
@@ -189,6 +188,7 @@ namespace MTGAHelper.Web.UI.IoC
 
             CreateMap<CardMissingDetailsModel, CardMissingDetailsModelResponseDto>();
             CreateMap<InfoCardMissingSummary, InfoCardMissingSummaryResponseDto>();
+            CreateMap<DashboardModelSummary, DashboardModelSummaryDto>();
 
             CreateMap<AccountModel, AccountResponse>()
                 .ForMember(m => m.IsAuthenticated, o => o.Ignore())

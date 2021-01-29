@@ -5,6 +5,7 @@ using AutoMapper;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.CollectionDecksCompare;
 using MTGAHelper.Entity.Config.Decks;
+using MTGAHelper.Entity.GameEvents;
 using MTGAHelper.Entity.OutputLogParsing;
 
 namespace MTGAHelper.Lib.IoC
@@ -47,6 +48,9 @@ namespace MTGAHelper.Lib.IoC
                 .ForMember(i => i.NbDecksMain, i => i.MapFrom(x => x.ByDeck.Count(y => y.Value.NbMissingMain > 0)))
                 .ForMember(i => i.NbDecksSideboardOnly, i => i.MapFrom(x => x.NbDecks - x.ByDeck.Count(y => y.Value.NbMissingMain > 0)))
                 .ForMember(i => i.NbMissing, i => i.MapFrom(x => x.NbMissing));
+
+            CreateMap<IGameEvent, OutputLogResultGameEvent>()
+                .ForMember(i => i.CardGrpId, i => i.MapFrom(x => x.Card.grpId));
         }
     }
 }

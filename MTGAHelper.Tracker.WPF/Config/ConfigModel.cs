@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
+
 // All properties must have setters for reflection CopyProperties() method
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
@@ -43,7 +44,7 @@ namespace MTGAHelper.Tracker.WPF.Config
             Height = h;
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Public Properties
 
@@ -57,7 +58,7 @@ namespace MTGAHelper.Tracker.WPF.Config
         /// </summary>
         public int Height { get; set; }
 
-        #endregion
+        #endregion Public Properties
     }
 
     public class Point
@@ -83,7 +84,7 @@ namespace MTGAHelper.Tracker.WPF.Config
             Y = y;
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Public Properties
 
@@ -97,7 +98,7 @@ namespace MTGAHelper.Tracker.WPF.Config
         /// </summary>
         public double Y { get; set; }
 
-        #endregion
+        #endregion Public Properties
     }
 
     public class WindowSettings
@@ -105,7 +106,7 @@ namespace MTGAHelper.Tracker.WPF.Config
         /// <summary>
         /// The Window Position
         /// </summary>
-        public Point Position { get; private set; } = new Point();
+        public Point Position { get; set; } = new Point();
 
         /// <summary>
         /// The Window Size
@@ -123,7 +124,7 @@ namespace MTGAHelper.Tracker.WPF.Config
         public bool Topmost { get; set; } = true;
 
         /// <summary>
-        /// Method for deep copying the window settings 
+        /// Method for deep copying the window settings
         /// </summary>
         /// <returns></returns>
         public WindowSettings Copy()
@@ -163,6 +164,8 @@ namespace MTGAHelper.Tracker.WPF.Config
 
         public string LimitedRatingsSource { get; set; } = "Deathsie";
 
+        public bool ShowAllDraftRatings { get; set; } = false;
+
         public bool ShowOpponentCardsAuto { get; set; } = true;
 
         public bool ShowOpponentCardsExternal { get; set; } = true;
@@ -181,7 +184,10 @@ namespace MTGAHelper.Tracker.WPF.Config
 
         public WindowSettings WindowSettingsOriginal { get; set; } = new WindowSettings();
 
-        public WindowSettings WindowSettingsOpponentCards { get; set; } = new WindowSettings();
+        public WindowSettings WindowSettingsOpponentCards { get; set; } = new WindowSettings()
+        {
+            Position = new Point { X = 340 }
+        };
 
         internal void Save()
         {

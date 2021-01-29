@@ -1,6 +1,7 @@
 ﻿using MTGAHelper.Lib.IoC;
 using MTGAHelper.Lib.OutputLogParser.EventsSchedule;
 using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
+using MTGAHelper.Lib.OutputLogParser.InMatchTracking.GameEvents;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.ClientToMatch;
 using MTGAHelper.Lib.OutputLogParser.OutputLogProgress;
 using MTGAHelper.Lib.OutputLogParser.Readers;
@@ -68,6 +69,8 @@ namespace MTGAHelper.Lib.OutputLogParser.IoC
         public static Container RegisterServicesTracker(this Container container)
         {
             container.Register<InGameTracker2>();
+            container.Register<InGameTrackerState2>();
+            container.Register<GameEventFactory>();
             container.RegisterSingleton<DraftPicksCalculator>();
 
             return container;

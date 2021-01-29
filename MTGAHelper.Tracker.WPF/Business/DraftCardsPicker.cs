@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using MTGAHelper.Entity;
+using MTGAHelper.Lib;
 using MTGAHelper.Lib.OutputLogParser;
 using MTGAHelper.Tracker.WPF.Models;
 using MTGAHelper.Tracker.WPF.Tools;
@@ -10,13 +12,21 @@ namespace MTGAHelper.Tracker.WPF.Business
 {
     public class DraftCardsPicker
     {
-        readonly DraftPicksCalculator DraftPicksCalculator;
-        readonly IMapper mapper;
+        private readonly DraftPicksCalculator DraftPicksCalculator;
+        private readonly IMapper mapper;
+        private readonly CacheSingleton<Dictionary<string, DraftRatings>> draftRatings;
 
-        public DraftCardsPicker(DraftPicksCalculator draftPicksCalculator, IMapper mapper)
+        public ICollection<CardDraftPickWpf> AllRatings { get; private set; }
+
+        public DraftCardsPicker(
+            DraftPicksCalculator draftPicksCalculator,
+            IMapper mapper,
+            CacheSingleton<Dictionary<string, DraftRatings>> draftRatings
+            )
         {
             DraftPicksCalculator = draftPicksCalculator;
             this.mapper = mapper;
+            this.draftRatings = draftRatings;
         }
 
         public ICollection<CardDraftPickWpf> GetDraftPicksForCards(
@@ -29,6 +39,16 @@ namespace MTGAHelper.Tracker.WPF.Business
             )
         {
             //var apiResponse = api.GetCardsForDraftPick(userId, grpIds, source);
+
+            AllRatings = draftRatings.Get().SelectMany(source => source.Value.RatingsBySet.SelectMany(set => set.Value.Ratings.Select(r => new CardDraftPickWpf
+            {
+                Name = r.CardName,
+                RatingSource = source.Key,
+                RatingValue = r.RatingValue,
+                Set = set.Key,
+                Description = r.Description,
+            }))
+            ).ToArray();
 
             var result = DraftPicksCalculator.Init(customRatingsBySetThenCardName).GetCardsForDraftPick(
                 cardPool,

@@ -1,4 +1,5 @@
-﻿using MTGAHelper.Web.UI.Model.SharedDto;
+﻿using MTGAHelper.Entity.GameEvents;
+using MTGAHelper.Web.UI.Model.SharedDto;
 using System;
 using System.Collections.Generic;
 
@@ -19,5 +20,6 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
         public ICollection<CardWithAmountDto> OpponentCardsSeen { get; set; }
         public IList<ICollection<CardDto>> StartingHands { get; set; }
         public ICollection<CardTurnActionDto> CardTransfers { get; set; }
+        public ICollection<OutputLogResultGameEvent> ActionLog { get; set; }
     }
 }

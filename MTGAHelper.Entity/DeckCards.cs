@@ -6,7 +6,7 @@ namespace MTGAHelper.Entity
     public class DeckCards
     {
         public ICollection<DeckCard> All { get; protected set; }
-        public ICollection<DeckCard> AllExceptBasicLands { get; protected set; }
+        //public ICollection<DeckCard> AllExceptBasicLands { get; protected set; }
         public Dictionary<int, DeckCard> QuickCardsMain { get; protected set; }
         public Dictionary<int, DeckCard> QuickCardsSideboard { get; protected set; }
         public DeckCard QuickCardCommander { get; protected set; }
@@ -21,9 +21,9 @@ namespace MTGAHelper.Entity
                 .OrderBy(i => i.Card.name)
                 .ToArray();
 
-            AllExceptBasicLands = All
-                .Where(i => i.Card.type.StartsWith("Basic Land") == false)
-                .ToArray();
+            //AllExceptBasicLands = All
+            //    .Where(i => i.Card.type.StartsWith("Basic Land") == false)
+            //    .ToArray();
 
             QuickCardsMain = All
                 .Where(i => i.Zone == DeckCardZoneEnum.Deck)

@@ -9,7 +9,7 @@ namespace MTGAHelper.Entity.CollectionDecksCompare
 
         public Dictionary<string, CardRequiredInfoByDeck> ByDeck { get; private set; } = new Dictionary<string, CardRequiredInfoByDeck>();
 
-        public Dictionary<string, CardRequiredInfoByCard> ByCard { get; private set; } = new Dictionary<string, CardRequiredInfoByCard>();
+        public Dictionary<string, CardRequiredInfoByCard> ByCard { get; set; } = new Dictionary<string, CardRequiredInfoByCard>();
 
         public CardsMissingResult()
         {

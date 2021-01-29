@@ -22,7 +22,7 @@ namespace MTGAHelper.Lib.OutputLogParser.EventsSchedule
         readonly ConcurrentDictionary<string, GetActiveEventsV3Raw> events = new ConcurrentDictionary<string, GetActiveEventsV3Raw>();
         public ICollection<GetActiveEventsV3Raw> Events => events.Values;
 
-        public string GetEventType(string internalEventName) => events[internalEventName].EventType;
+        public string GetEventType(string internalEventName) => events.ContainsKey(internalEventName) ? events[internalEventName].EventType : "Unknown";
 
         public IReadOnlyCollection<GetActiveEventsV3Raw> AddEvents(ICollection<GetActiveEventsV3Raw> currentEvents)
         {

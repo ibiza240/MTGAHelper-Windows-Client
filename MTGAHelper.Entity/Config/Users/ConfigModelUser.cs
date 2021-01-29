@@ -77,6 +77,9 @@ namespace MTGAHelper.Entity.Config.Users
         [JsonIgnore]
         public UserDataInMemoryModel DataInMemory { get; set; } = new UserDataInMemoryModel();
 
+        [JsonIgnore]
+        public bool isDebug { get; set; } = false;
+
         public ConfigModelUser()
         {
             // For serialization
