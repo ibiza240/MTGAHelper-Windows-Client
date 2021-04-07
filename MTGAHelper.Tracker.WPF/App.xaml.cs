@@ -374,7 +374,7 @@ namespace MTGAHelper.Tracker.WPF
                 Log.Information("Data [{dataType}] out of date, redownloading", dataFileType);
                 await TryDownloadFromServer(async () =>
                 {
-                    await dataDownloader.HttpClientDownloadFile_WithTimeoutNotification(DebugOrRelease.Server + $"/api/download/{dataFileType}", 60, filePath);
+                    await dataDownloader.HttpClientDownloadFile_WithTimeoutNotification(DebugOrRelease.Server + $"/api/download/{dataFileType}", 180, filePath);
                 });
             }
         }

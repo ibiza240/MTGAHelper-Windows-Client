@@ -5,13 +5,13 @@ using MTGAHelper.Entity.UserHistory;
 
 namespace MTGAHelper.Entity.Config.Users
 {
-    public enum DashboardStatusEnum
-    {
-        Unknown,
-        Success,
-        UserNotFound,
-        CollectionNotFound,
-    }
+    //public enum DashboardStatusEnum
+    //{
+    //    Unknown,
+    //    Success,
+    //    UserNotFound,
+    //    CollectionNotFound,
+    //}
 
     public class UserDataInMemoryModel
     {

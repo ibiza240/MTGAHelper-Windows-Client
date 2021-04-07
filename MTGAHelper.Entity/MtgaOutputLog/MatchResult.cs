@@ -83,5 +83,14 @@ namespace MTGAHelper.Entity.MtgaOutputLog
         public int RankingTier { get; set; }
         public double MythicPercentile { get; set; }
         public int MythicLeaderboardPlace { get; set; }
+
+        public string GetRankString()
+        {
+            return RankingClass == "Mythic"
+                ? MythicLeaderboardPlace > 0
+                    ?$"Mythic #{MythicLeaderboardPlace}"
+                    :$"Mythic {MythicPercentile}%"
+                : $"{RankingClass} {RankingTier}";
+        }
     }
 }

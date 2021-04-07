@@ -3,11 +3,11 @@ using MTGAHelper.Entity.CollectionDecksCompare;
 
 namespace MTGAHelper.Entity
 {
-    public class DashboardModel
-    {
-        public CardMissingDetailsModel[] Details { get; set; } = new CardMissingDetailsModel[0];
-        public Dictionary<string, DashboardModelSummary> Summary { get; set; } = new Dictionary<string, DashboardModelSummary>();
-    }
+    //    public class DashboardModel
+    //    {
+    //        public CardMissingDetailsModel[] Details { get; set; } = new CardMissingDetailsModel[0];
+    //        public Dictionary<string, DashboardModelSummary> Summary { get; set; } = new Dictionary<string, DashboardModelSummary>();
+    //    }
 
     public class DashboardModelSummary
     {

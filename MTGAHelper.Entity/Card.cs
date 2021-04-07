@@ -50,6 +50,7 @@ namespace MTGAHelper.Entity
         public bool isToken { get; }
         //public bool isCraftable { get; set; }
         public bool isCollectible { get; }
+        public bool isStyle { get; set; }
         public string artistCredit { get; }
 
 
@@ -71,6 +72,7 @@ namespace MTGAHelper.Entity
             mana_cost = card.ManaCost;
             set = card.SetScryfall.ToUpper();
             notInBooster = !card.IsInBooster;
+            isStyle = card.IsStyle;
             grpId = card.GrpId;
             imageArtUrl = card.imageArtUrl;
             cmc = card.Cmc;

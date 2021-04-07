@@ -11,6 +11,7 @@ namespace MTGAHelper.Entity
         public string Name { get; set; }
         public bool IsToken { get; set; }
         public bool IsCollectible { get; set; }
+        public bool IsStyle { get; set; }
         //public bool IsCraftable { get; set; }
         public int Power { get; set; }
         public int Toughness { get; set; }

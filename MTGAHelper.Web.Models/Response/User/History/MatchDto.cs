@@ -16,6 +16,7 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
         public string EventName { get; set; }
         public string OpponentName { get; set; }
         public string OpponentRank { get; set; }
+        public string OpponentRankImg { get; set; }
         public long SecondsCount { get; set; }
         public string Outcome { get; set; }
         public DateTime StartDateTime { get; set; }

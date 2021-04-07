@@ -58,7 +58,7 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
         /// </summary>
         public OutputLogResult2 Results2 { get; private set; }
 
-        private string currentAccount;
+        private string currentAccount = "";
 
         public MtgaOutputLogResultsPreparer(
             CacheSingleton<Dictionary<int, Card>> cacheCards,
@@ -261,8 +261,8 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                 //if (mustAppend)
                 //    AppendToListInfoByDate(Results.CollectionIntradayByDate, info.payload, collection.LogDateTime);
 
-                Results2.ResultsByNameTag[currentAccount].GetPlayerCardsResults.Add(collection);
-            }
+                    Results2.ResultsByNameTag[currentAccount].GetPlayerCardsResults.Add(collection);
+                }
             else if (result is GetPlayerProgressResult progress)
             {
                 var tracks = progress.Raw.payload.expiredBattlePasses

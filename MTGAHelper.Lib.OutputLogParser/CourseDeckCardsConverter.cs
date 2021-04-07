@@ -24,7 +24,15 @@ namespace MTGAHelper.Lib.OutputLogParser
                     GrpId = i.Key,
                     Amount = i.Value,
                     Zone = DeckCardZoneEnum.Deck,
-                }).ToList();
+                })
+                .Union(deckListConverter.ConvertSimple(src.sideboard).Select(i => new DeckCardRaw
+                {
+                    GrpId = i.Key,
+                    Amount = i.Value,
+                    Zone = DeckCardZoneEnum.Sideboard,
+                }
+                ))
+                .ToList();
 
             if (src.commandZoneGRPIds?.Count > 0)
                 cards.Add(new DeckCardRaw

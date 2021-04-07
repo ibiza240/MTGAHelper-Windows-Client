@@ -38,22 +38,22 @@ namespace MTGAHelper.Web.UI.Model.Response
         public float ExpectedValue { get; set; }
     }
 
-    public class DashboardResponse
-    {
-        public CardMissingDetailsModelResponseDto[] Details { get; }
-        public KeyValuePair<string, DashboardModelSummaryDto>[] Summary { get; }
+    //public class DashboardResponse
+    //{
+    //    public CardMissingDetailsModelResponseDto[] Details { get; }
+    //    public KeyValuePair<string, DashboardModelSummaryDto>[] Summary { get; }
 
-        public DashboardResponse(CardMissingDetailsModelResponseDto[] details, KeyValuePair<string, DashboardModelSummaryDto>[] summary)
-        {
-            Details = details;
-            Summary = summary;
-        }
+    //    public DashboardResponse(CardMissingDetailsModelResponseDto[] details, KeyValuePair<string, DashboardModelSummaryDto>[] summary)
+    //    {
+    //        Details = details;
+    //        Summary = summary;
+    //    }
 
-        public static DashboardResponse FromModel(DashboardModel model, IMapper mapper)
-        {
-            var details = mapper.Map<CardMissingDetailsModelResponseDto[]>(model.Details);
-            var summary = mapper.Map<Dictionary<string, DashboardModelSummaryDto>>(model.Summary);
-            return new DashboardResponse(details, summary.ToArray());
-        }
-    }
+    //    public static DashboardResponse FromModel(DashboardModel model, IMapper mapper)
+    //    {
+    //        var details = mapper.Map<CardMissingDetailsModelResponseDto[]>(model.Details);
+    //        var summary = mapper.Map<Dictionary<string, DashboardModelSummaryDto>>(model.Summary);
+    //        return new DashboardResponse(details, summary.ToArray());
+    //    }
+    //}
 }

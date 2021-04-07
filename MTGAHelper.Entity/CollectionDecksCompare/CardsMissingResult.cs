@@ -35,10 +35,20 @@ namespace MTGAHelper.Entity.CollectionDecksCompare
 
         public Dictionary<string, InfoCardMissingSummary[]> GetModelSummary(bool boostersOnly = false)
         {
-            var ret = ByCard
+            var data = ByCard
                 .Where(i => boostersOnly == false || (i.Value.Card.notInBooster == false && i.Value.Card.set != "JMP"))
                 .Where(i => i.Value.NbMissing > 0)
                 //.GroupBy(i => i.Value.Card.setAndInBooster)
+                ;
+
+            //var cards = data
+            //    .Select(i => new { i.Value.Card, i.Value.MissingWeight, i.Value.NbMissing })
+            //    .Where(i => i.Card.set == "ZNR")
+            //    .OrderByDescending(i => i.MissingWeight)
+            //    .ToArray();
+            //var test = JsonConvert.SerializeObject(cards);
+
+            var ret = data
                 .GroupBy(i => i.Value.Card.set)
                 .OrderByDescending(i => i.Sum(x => x.Value.MissingWeight))
                 .ToDictionary(i => i.Key, x => x
@@ -51,13 +61,14 @@ namespace MTGAHelper.Entity.CollectionDecksCompare
                         NbMissing = i.Sum(c => c.Value.NbMissing),
                         MissingWeight = i.Sum(c => c.Value.MissingWeight)
                     }).ToArray());
+
             return ret;
         }
 
         public CardMissingDetailsModel[] GetModelDetails()
         {
             var ret = ByCard
-                .Where(i => i.Value.NbMissing > 0)
+                //.Where(i => i.Value.NbMissing > 0)
                 //.Where(i =>/* i.Value.Card.type.Contains("Land") ||*/ i.Value.MissingWeight != 0)
                 .Select(i => new CardMissingDetailsModel
                 {
@@ -66,7 +77,7 @@ namespace MTGAHelper.Entity.CollectionDecksCompare
                     //SetId = i.Key.number,
                     NotInBooster = i.Value.Card.notInBooster,
                     ImageCardUrl = i.Value.Card.imageCardUrl,//i.Key.images["normal"],
-                    Rarity = i.Value.Card.GetRarityEnum(true).ToString(),
+                    Rarity = i.Value.Card.GetRarityEnum(true),
                     Type = i.Value.Card.type,
                     NbOwned = i.Value.NbOwned,
                     NbMissing = i.Value.NbMissing,

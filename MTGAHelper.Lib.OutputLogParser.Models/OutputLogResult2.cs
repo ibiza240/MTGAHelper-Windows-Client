@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using MTGAHelper.Entity.OutputLogParsing;
+﻿using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
-using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace MTGAHelper.Lib.OutputLogParser.Models
 {
@@ -12,13 +8,16 @@ namespace MTGAHelper.Lib.OutputLogParser.Models
     {
         public ICollection<ConverterUsage> LogReadersUsage { get; set; } = new ConverterUsage[0];
 
-        public Dictionary<string, OutputLogResult2ByNameTag> ResultsByNameTag { get; set; } = new Dictionary<string, OutputLogResult2ByNameTag>();
-
-        public int GetResultsHash()
+        public Dictionary<string, OutputLogResult2ByNameTag> ResultsByNameTag { get; set; } = new Dictionary<string, OutputLogResult2ByNameTag>()
         {
-            var json = JsonConvert.SerializeObject(ResultsByNameTag);
-            return json.GetHashCode();
-        }
+            [""] = new OutputLogResult2ByNameTag()
+        };
+
+        //public int GetResultsHash()
+        //{
+        //    var json = JsonConvert.SerializeObject(ResultsByNameTag);
+        //    return json.GetHashCode();
+        //}
     }
 
     public class OutputLogResult2ByNameTag

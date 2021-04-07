@@ -101,7 +101,8 @@ namespace MTGAHelper.Web.UI.IoC
             CreateMap<MatchResult, MatchDtoLightweight>()
                 .ForMember(i => i.OpponentName, i => i.MapFrom(x => x.Opponent.ScreenName))
                 .ForMember(i => i.FirstTurn, i => i.MapFrom(x => x.Games.Any() == false ? FirstTurnEnum.Unknown.ToString() : x.Games.First().FirstTurn.ToString()))
-                .ForMember(i => i.OpponentRank, i => i.MapFrom(x => $"{x.Opponent.RankingClass}_{x.Opponent.RankingTier}"))
+                .ForMember(i => i.OpponentRank, i => i.MapFrom(x => x.Opponent.GetRankString()))
+                .ForMember(i => i.OpponentRankImg, i => i.MapFrom(x => $"{x.Opponent.RankingClass}_{x.Opponent.RankingTier}"))
                 //.ForMember(i => i.Outcome, i => i.MapFrom(x => string.Join('-', x.Games.Select(y => y.Outcome.ToString()[0]))))
                 .ForMember(i => i.OpponentDeckColors, i => i.ConvertUsing(utilColors, x => x.GetOpponentCardsSeen()))
                 .ForMember(m => m.RankDelta, o => o.Ignore());
