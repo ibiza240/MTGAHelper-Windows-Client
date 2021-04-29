@@ -16,6 +16,7 @@ using MTGAHelper.Web.UI.Model.Response.User;
 using MTGAHelper.Web.UI.Model.Response.User.History;
 using MTGAHelper.Web.UI.Model.SharedDto;
 using MTGAHelper.Web.UI.Shared;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,7 +34,8 @@ namespace MTGAHelper.Web.UI.IoC
             AutoMapperDictCardsByZoneConverter dictCardsByZoneConverter)
         {
             CreateMap<Card, CardDto>()
-                .ForMember(i => i.IdArena, i => i.MapFrom(x => x.grpId));
+                .ForMember(i => i.IdArena, i => i.MapFrom(x => x.grpId))
+                .ForMember(i => i.Name, i => i.MapFrom(x => x.name.Split(new[] { "//" }, StringSplitOptions.RemoveEmptyEntries)[0].Trim()));
 
             CreateMap<CardWithAmount, CardWithAmountDto>()
                 .ForMember(i => i.IdArena, i => i.MapFrom(x => x.Card.grpId))

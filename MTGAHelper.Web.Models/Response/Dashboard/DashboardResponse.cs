@@ -36,6 +36,7 @@ namespace MTGAHelper.Web.UI.Model.Response
     {
         public ICollection<InfoCardMissingSummaryResponseDto> Data { get; set; }
         public float ExpectedValue { get; set; }
+        public KeyValuePair<string, float> ExpectedValueOther { get; set; }
     }
 
     //public class DashboardResponse

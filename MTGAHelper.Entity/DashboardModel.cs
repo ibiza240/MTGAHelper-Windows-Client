@@ -12,6 +12,7 @@ namespace MTGAHelper.Entity
     public class DashboardModelSummary
     {
         public float ExpectedValue { get; set; }
+        public KeyValuePair<string, float> ExpectedValueOther { get; set; }
         public InfoCardMissingSummary[] Data { get; set; }
     }
 }

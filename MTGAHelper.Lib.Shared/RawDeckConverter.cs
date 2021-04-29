@@ -10,20 +10,21 @@ namespace MTGAHelper.Lib
     // TODO: move out of Entity
     public class RawDeckConverter
     {
-        readonly Dictionary<int, Card> allCards;
+        private readonly CacheSingleton<Dictionary<int, Card>> cacheAllCards;
         private readonly BasicLandIdentifier basicLandIdentifier;
 
         public RawDeckConverter(
-            CacheSingleton<Dictionary<int, Card>> allCards,
+            CacheSingleton<Dictionary<int, Card>> cacheAllCards,
             BasicLandIdentifier basicLandIdentifier
             )
         {
-            this.allCards = allCards.Get();
+            this.cacheAllCards = cacheAllCards;
             this.basicLandIdentifier = basicLandIdentifier;
         }
 
         public ICollection<CardWithAmount> LoadCollection(IReadOnlyDictionary<int, int> info)
         {
+            var allCards = cacheAllCards.Get();
             if (info == null)
                 return new CardWithAmount[0];
 
@@ -38,9 +39,12 @@ namespace MTGAHelper.Lib
             {
                 try
                 {
-
                     var cardMapping = allCards[kv.Key];
                     var card = cardMapping;
+
+                    //if (card.name == "Increasing Vengeance")
+                    //    System.Diagnostics.Debugger.Break();
+
                     cards.Add(card.grpId.ToString(), new CardWithAmount(card, kv.Value));
                 }
                 catch (Exception ex)

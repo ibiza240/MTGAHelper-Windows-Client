@@ -9,5 +9,8 @@ namespace MTGAHelper.Web.Models.Request
         public int IdArena { get; set; }
         public int? Rating { get; set; }
         public string Note { get; set; }
+
+        public string Name { get; set; }
+        public string Set { get; set; }
     }
 }

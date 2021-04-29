@@ -22,10 +22,18 @@ namespace MTGAHelper.Lib.CacheLoaders
             var fileSets = Path.Combine(folderData, "AllCardsCached2.json");
             LogExt.LogReadFile(fileSets);
             var content = File.ReadAllText(fileSets);
-            var data = JsonConvert.DeserializeObject<ICollection<Card2>>(content);
+            var dataOldFormat = JsonConvert.DeserializeObject<ICollection<Card2>>(content)
+                .Select(c => new Card(c))
+                .ToArray();
 
-            var dataOldFormat = data.Select(c => new Card(c)).ToDictionary(i => i.grpId);
-            return dataOldFormat;
+            // Patch to support multiple cards with an Arena Id of 0
+            var iNewId = dataOldFormat.Max(i => i.grpId) + 1;
+            foreach (var cardMissingId in dataOldFormat.Where(i => i.grpId == 0).Skip(1))
+            {
+                cardMissingId.grpId = iNewId++;
+            }
+
+            return dataOldFormat.ToDictionary(i => i.grpId);
         }
     }
 }

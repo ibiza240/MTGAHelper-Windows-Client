@@ -28,7 +28,7 @@ namespace MTGAHelper.Entity
         public string set { get; }
         public bool notInBooster { get; }
         //public bool craftedOnly { get; set; }
-        public int grpId { get; }
+        public int grpId { get; set; }
         public string imageCardUrl { get; }
         public string imageArtUrl { get; }
         public int cmc { get; }
@@ -65,7 +65,7 @@ namespace MTGAHelper.Entity
         }
 
         public Card(Card2 card)
-        : this(card.Name, card.GrpId, card.imageCardUrl, card.TypeLine, card.Colors, card.ColorIdentity)
+        : this(card.Name, card.IdArena, card.imageCardUrl, card.TypeLine, card.Colors, card.ColorIdentity)
         {
             number = card.Number;
             rarity = card.Rarity;
@@ -73,7 +73,7 @@ namespace MTGAHelper.Entity
             set = card.SetScryfall.ToUpper();
             notInBooster = !card.IsInBooster;
             isStyle = card.IsStyle;
-            grpId = card.GrpId;
+            grpId = card.IdArena;
             imageArtUrl = card.imageArtUrl;
             cmc = card.Cmc;
             linkedFaceType = card.LinkedFaceType;

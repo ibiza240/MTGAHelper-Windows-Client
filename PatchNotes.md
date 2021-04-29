@@ -1,3 +1,7 @@
+### v1.7.5 (2021-04-15)
+
+Support for the Strixhaven expansion
+
 ### v1.7.4 (2021-01-28)
 
 Support for the Kaladesh expansion

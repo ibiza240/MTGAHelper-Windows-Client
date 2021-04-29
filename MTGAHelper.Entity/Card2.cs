@@ -7,7 +7,7 @@ namespace MTGAHelper.Entity
     public class Card2
     {
         // from MTGA
-        public int GrpId { get; set; }
+        public int IdArena { get; set; }
         public string Name { get; set; }
         public bool IsToken { get; set; }
         public bool IsCollectible { get; set; }

@@ -8,7 +8,7 @@ namespace MTGAHelper.Entity
     {
         public string Set { get; set; }
         public string Name { get; set; }
-        public string Note { get; set; }
         public int? Rating { get; set; }
+        public string Note { get; set; }
     }
 }

@@ -49,7 +49,14 @@ namespace MTGAHelper.Entity.CollectionDecksCompare
             //var test = JsonConvert.SerializeObject(cards);
 
             var ret = data
-                .GroupBy(i => i.Value.Card.set)
+                .GroupBy(i =>
+                //// C# 9
+                //i.Value.Card.set switch {
+                //    "STA" or "STX" => "STX",
+                //    _ => i.Value.Card.set
+                //}
+                i.Value.Card.set == "STA" || i.Value.Card.set == "STX" ? "STX" : i.Value.Card.set
+                )
                 .OrderByDescending(i => i.Sum(x => x.Value.MissingWeight))
                 .ToDictionary(i => i.Key, x => x
                     .OrderBy(i => i.Value.Card.GetRarityEnum(true))

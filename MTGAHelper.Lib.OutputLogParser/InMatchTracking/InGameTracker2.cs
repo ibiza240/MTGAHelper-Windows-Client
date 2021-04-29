@@ -82,6 +82,9 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                         var gameStateMessage = gsm.Raw.gameStateMessage;
                         if (gameStateMessage.type == "GameStateType_Full" && zonesInfo == null)
                         {
+                            // 2021-04-25: STX Sealed matches broke this with a [Message summarized] log event
+                            // at the start of the game instead of the details below
+
                             // Initialization of the state (beginning of the match)
                             zonesInfo = gameStateMessage.zones.ToDictionary(z => z.zoneId, GetZoneAndOwnerFromGameStateZone);
                             var ti = gameStateMessage.turnInfo;

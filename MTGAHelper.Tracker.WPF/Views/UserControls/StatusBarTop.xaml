@@ -168,6 +168,8 @@
                     <!--  Manual Log Upload  -->
                     <MenuItem Command="{Binding UploadLogCommand}" Header="_Upload log file now" />
                     <Separator />
+                    <!--  Go to website  -->
+                    <MenuItem Click="Menu_GoToWebsite_Click" Header="Go to _Website" />
                     <!--  About  -->
                     <MenuItem Click="Menu_About_Click" Header="_About" />
                     <!--  Patch Notes  -->
