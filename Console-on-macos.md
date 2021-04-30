@@ -5,4 +5,7 @@ After installing .Net Core 3.1, you can download the ConsoleSync program [here](
 
 ```dotnet MTGAHelper.ConsoleSync.dll MTGAHelperuserID "/Users/username/Library/Logs/Wizards of the Coast/MTGA/Player.log"```
 
-(replacing `MTGAHelperuserID` with your id and `username` with your (MacOS) username)
+replacing above
+
+- `MTGAHelperuserID` with your User ID that you can find on the profile webpage at https://mtgahelper.com/profile
+- and `username` with your (MacOS) username
