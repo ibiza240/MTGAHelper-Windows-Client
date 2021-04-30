@@ -8,3 +8,15 @@ You will need to put the "Player.log" file inside the "MTGAHelper.ConsoleSync.ex
 (replacing `MTGAHelperuserID` with your id
 
 A trick is to simply make a symlink though, which works. So symlinking "Player.log" inside the "MTGAHelper.ConsoleSync.exe" folder to the actual location of the "Player.log" in the wine location.
+
+Example symlink creation on Ubuntu 20.04 (replace YOURUSERNAME with your actual username):
+
+```
+ln -s /home/YOURUSERNAME/Games/magic-the-gathering-arena/drive_c/users/YOURUSERNAME/AppData/LocalLow/Wizards\ Of\ The\ Coast/MTGA/Player.log Player.log
+```
+
+To make it even simpler to run the ConsoleSync, you can add this alias to your `.bashrc` file, replacing `yourpath` with your path location for the "MTGAHelper.ConsoleSync.exe" folder, and `userid` with your own mtgahelper.com user id (found here: https://mtgahelper.com/profile):
+
+```
+alias mtgup='cd ~/yourpath/MTGAHelper.ConsoleSync.exe/ && dotnet MTGAHelper.ConsoleSync.dll "2d39dd1eb1d246e0a3ed5e60eaba7a9e" "Player.log"'
+```
