@@ -1,3 +1,7 @@
+### v1.7.7 (2021-07-12)
+
+Hotfix for a tracking bug
+
 ### v1.7.6 (2021-07-12)
 
 Support for the Adventures in the Forgotten Realms
