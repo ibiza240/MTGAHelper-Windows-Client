@@ -199,9 +199,17 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         //public IEnumerable<string> LimitedRatingsSources => DraftRatings.Get().Keys.OrderBy(i => i).Append(Constants.LIMITEDRATINGS_SOURCE_CUSTOM).ToArray();
 
         public Dictionary<string, string> LimitedRatingsSourcesDict => DraftRatings.Get().Keys
-            .OrderBy(i => i)
+            .OrderBy(i => RatingsOrder.ContainsKey(i) ? RatingsOrder[i] : i)
             .Append(Constants.LIMITEDRATINGS_SOURCE_CUSTOM)
             .ToDictionary(set => set, set => set + (set == Constants.LIMITEDRATINGS_SOURCE_CUSTOM ? "" : $" [{string.Join(", ", DraftRatings.Get()[set].RatingsBySet.Keys.OrderByDescending(i => Sets[i].ReleaseDate))}]"));
+
+
+        private Dictionary<string, string> RatingsOrder = new Dictionary<string, string>
+        {
+            ["Deathsie"] = "_",
+            ["MTG Arena Zone"] = "__",
+            ["Infinite Mythic Edition"] = "___",
+        };
 
         /// <summary>
         /// Options for forcing the card popup side

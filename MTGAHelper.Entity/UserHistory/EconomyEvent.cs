@@ -8,7 +8,7 @@ namespace MTGAHelper.Entity.UserHistory
         public string Context { get; set; }
         public DateTime DateTime { get; set; }
         public ICollection<EconomyEventChange> Changes { get; set; }
-        public Dictionary<int, int> NewCards { get; set; } = new Dictionary<int, int>();
+        public IReadOnlyDictionary<int, int> NewCards { get; set; } = new Dictionary<int, int>();
     }
 
     public class EconomyEventChange

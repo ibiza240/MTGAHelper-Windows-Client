@@ -93,7 +93,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                                 : PlayerEnum.Me;
                             // first gameStateMessage should not be processed as mulligan info will get messed up
                             // unless we start in the middle of a game (e.g. after a crash)
-                            if (ti.turnNumber <= 0) 
+                            if (ti.turnNumber <= 0)
                                 return;
 
                             Log.Debug("=== recovering at t{t} {p}.{s} (de{de}; ac{ac}; pr{pr}) ===",
@@ -157,14 +157,13 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             }
         }
 
-        OwnedZone GetZoneAndOwnerFromGameStateZone(Zone zone)
+        private OwnedZone GetZoneAndOwnerFromGameStateZone(Zone zone)
         {
             Enum.TryParse(zone.type, out ZoneSimpleEnum zoneType);
             return zoneType.ToOwnedZone(State.MySeatId == zone.ownerSeatId);
         }
 
-
-        void AnalyzeDiff(GameStateMessage gameStateMessage)
+        private void AnalyzeDiff(GameStateMessage gameStateMessage)
         {
             var priorityPlayer = gameStateMessage.turnInfo?.priorityPlayer;
             if (priorityPlayer.HasValue)
@@ -229,7 +228,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             State.SetGameObjects(instanceIdsInZones, currentGameObjects);
         }
 
-        static ILookup<AnnotationType, Annotation> ParseAnnotations(IEnumerable<Annotation> annotations)
+        private static ILookup<AnnotationType, Annotation> ParseAnnotations(IEnumerable<Annotation> annotations)
         {
             return (annotations ?? Enumerable.Empty<Annotation>())
                 .SelectMany(a => a.type.Select(t =>
@@ -243,7 +242,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             //    g => (IReadOnlyCollection<Annotation>)g.Select(t => t.a).ToArray());
         }
 
-        static IEnumerable<(IReadOnlyCollection<int> oldIds, IReadOnlyCollection<int> newIds)> ParseShuffles(ILookup<AnnotationType, Annotation> annotationsByType)
+        private static IEnumerable<(IReadOnlyCollection<int> oldIds, IReadOnlyCollection<int> newIds)> ParseShuffles(ILookup<AnnotationType, Annotation> annotationsByType)
         {
             return annotationsByType[AnnotationType.AnnotationType_Shuffle]
                 .Select(a => a.details)
@@ -252,7 +251,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                     newIds: (IReadOnlyCollection<int>)d.First(k => k.key == "NewIds").valueInt32));
         }
 
-        static IReadOnlyCollection<(int origId, int newId)> ParseObjectIdChanges(ILookup<AnnotationType, Annotation> annotationsByType)
+        private static IReadOnlyCollection<(int origId, int newId)> ParseObjectIdChanges(ILookup<AnnotationType, Annotation> annotationsByType)
         {
             return annotationsByType[AnnotationType.AnnotationType_ObjectIdChanged]
                 .Where(a => a.details != null)
@@ -263,7 +262,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                 .ToArray();
         }
 
-        static IReadOnlyCollection<(List<int> topIds, List<int> bottomIds)> ParseScryAnnotations(ILookup<AnnotationType, Annotation> annotationsByType)
+        private static IReadOnlyCollection<(List<int> topIds, List<int> bottomIds)> ParseScryAnnotations(ILookup<AnnotationType, Annotation> annotationsByType)
         {
             return annotationsByType[AnnotationType.AnnotationType_Scry]
                 .Where(a => a.details != null)
@@ -275,7 +274,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                 .ToArray();
         }
 
-        IReadOnlyCollection<ZoneTransferInfo2> ParseZoneTransfers(
+        private IReadOnlyCollection<ZoneTransferInfo2> ParseZoneTransfers(
             ILookup<AnnotationType, Annotation> annotationsByType,
             IReadOnlyCollection<(int oldId, int newId)> objectIdChanges)
         {
@@ -310,7 +309,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             return zoneTransfers;
         }
 
-        ZoneTransferInfo2 ZoneTransferInfoFromAnnotation(Annotation annotation)
+        private ZoneTransferInfo2 ZoneTransferInfoFromAnnotation(Annotation annotation)
         {
             try
             {
@@ -329,7 +328,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             }
         }
 
-        IReadOnlyCollection<GameCardInZone> AddNewGameObjects(IEnumerable<GameObject> gameStateObjects)
+        private IReadOnlyCollection<GameCardInZone> AddNewGameObjects(IEnumerable<GameObject> gameStateObjects)
         {
             if (gameStateObjects == null)
                 return null;

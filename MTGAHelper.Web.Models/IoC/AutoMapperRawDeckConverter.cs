@@ -8,16 +8,16 @@ using MTGAHelper.Web.UI.Model.SharedDto;
 
 namespace MTGAHelper.Web.UI.Shared
 {
-    public class AutoMapperRawDeckConverter : ITypeConverter<Dictionary<int, int>, ICollection<CardWithAmountDto>>
+    public class AutoMapperRawDeckConverter : ITypeConverter<IReadOnlyDictionary<int, int>, ICollection<CardWithAmountDto>>
     {
-        readonly RawDeckConverter converter;
+        private readonly RawDeckConverter converter;
 
         public AutoMapperRawDeckConverter(RawDeckConverter converter)
         {
             this.converter = converter;
         }
 
-        public ICollection<CardWithAmountDto> Convert(Dictionary<int, int> source, ICollection<CardWithAmountDto> destination, ResolutionContext context)
+        public ICollection<CardWithAmountDto> Convert(IReadOnlyDictionary<int, int> source, ICollection<CardWithAmountDto> destination, ResolutionContext context)
         {
             return context.Mapper.Map<ICollection<CardWithAmountDto>>(converter.LoadCollection(source));
         }

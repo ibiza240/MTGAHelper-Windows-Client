@@ -16,24 +16,29 @@ namespace MTGAHelper.Entity.MtgaOutputLog
         public IList<InfoByDate<List<ConfigModelRankInfo>>> RankSyntheticByDate { get; set; } = new List<InfoByDate<List<ConfigModelRankInfo>>>();
         public IList<InfoByDate<HashSet<string>>> MtgaDecksFoundByDate { get; set; } = new List<InfoByDate<HashSet<string>>>();
         public IList<InfoByDate<Inventory>> InventoryByDate { get; set; } = new List<InfoByDate<Inventory>>();
-        public IList<InfoByDate<Dictionary<int, int>>> CollectionByDate { get; set; } = new List<InfoByDate<Dictionary<int, int>>>();
+        public IList<InfoByDate<IReadOnlyDictionary<int, int>>> CollectionByDate { get; set; } = new List<InfoByDate<IReadOnlyDictionary<int, int>>>();
         public IList<InfoByDate<List<MatchResult>>> MatchesByDate { get; set; } = new List<InfoByDate<List<MatchResult>>>();
         public IList<InfoByDate<List<PlayerQuest>>> PlayerQuestsByDate { get; set; } = new List<InfoByDate<List<PlayerQuest>>>();
         public IList<InfoByDate<Dictionary<string, PlayerProgress>>> PlayerProgressByDate { get; set; } = new List<InfoByDate<Dictionary<string, PlayerProgress>>>();
+
         //public IList<InfoByDate<List<DraftMakePickRaw>>> DraftPickProgressByDate { get; set; } = new List<InfoByDate<List<DraftMakePickRaw>>>();
         //public IList<InfoByDate<DateSnapshotDiff>> DiffByDate { get; set; } = new List<InfoByDate<DateSnapshotDiff>>();
         //public IList<InfoByDate<Dictionary<DateTime, CrackBoosterRaw>>> CrackedBoostersByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, CrackBoosterRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, GetPlayerProgressRaw>>> PlayerProgressIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, GetPlayerProgressRaw>>>();
+
         public IList<InfoByDate<Dictionary<DateTime, InventoryUpdatedRaw>>> InventoryUpdatesByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, InventoryUpdatedRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, PostMatchUpdateRaw>>> PostMatchUpdatesByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, PostMatchUpdateRaw>>>();
+
         //public IList<InfoByDate<Dictionary<DateTime, CompleteVaultRaw>>> VaultsOpenedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, CompleteVaultRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, DraftMakePickRaw>>> DraftPickProgressIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, DraftMakePickRaw>>>();
+
         public IList<InfoByDate<Dictionary<DateTime, RankUpdatedRaw>>> RankUpdatedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, RankUpdatedRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, EventClaimPrizeRaw>>> EventClaimPriceByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, EventClaimPrizeRaw>>>();
 
         //public IList<InfoByDate<Dictionary<DateTime, MythicRatingUpdatedRaw>>> MythicRatingUpdatedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, MythicRatingUpdatedRaw>>>();
         //public IList<InfoByDate<Dictionary<DateTime, PayEntryRaw>>> PayEntryByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, PayEntryRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, GetCombinedRankInfoRaw>>> CombinedRankInfoByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, GetCombinedRankInfoRaw>>>();
+
         public IList<InfoByDate<Dictionary<DateTime, Inventory>>> InventoryIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, Inventory>>>();
         //public IList<InfoByDate<Dictionary<DateTime, Dictionary<int, int>>>> CollectionIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, Dictionary<int, int>>>>();
 
@@ -160,8 +165,8 @@ namespace MTGAHelper.Entity.MtgaOutputLog
             return dates.Select(i => i.ToString("yyyyMMdd")).ToList();
         }
 
-        public InfoByDate<Dictionary<int, int>> GetLastCollection() => CollectionByDate.OrderBy(i => i.DateTime).LastOrDefault()
-            ?? new InfoByDate<Dictionary<int, int>>(default(DateTime), new Dictionary<int, int>());
+        public InfoByDate<IReadOnlyDictionary<int, int>> GetLastCollection() => CollectionByDate.OrderBy(i => i.DateTime).LastOrDefault()
+            ?? new InfoByDate<IReadOnlyDictionary<int, int>>(default(DateTime), new Dictionary<int, int>());
 
         //public InfoByDate<ICollection<ConfigModelRankInfo>> GetLastRank() => RankSyntheticByDate.OrderBy(i => i.DateTime).LastOrDefault()
         //    ?? new InfoByDate<ICollection<ConfigModelRankInfo>>(default(DateTime),

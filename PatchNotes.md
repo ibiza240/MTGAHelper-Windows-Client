@@ -1,3 +1,7 @@
+### v1.7.6 (2021-07-12)
+
+Support for the Adventures in the Forgotten Realms
+
 ### v1.7.5 (2021-04-15)
 
 Support for the Strixhaven expansion

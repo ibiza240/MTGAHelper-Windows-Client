@@ -261,8 +261,8 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                 //if (mustAppend)
                 //    AppendToListInfoByDate(Results.CollectionIntradayByDate, info.payload, collection.LogDateTime);
 
-                    Results2.ResultsByNameTag[currentAccount].GetPlayerCardsResults.Add(collection);
-                }
+                Results2.ResultsByNameTag[currentAccount].GetPlayerCardsResults.Add(collection);
+            }
             else if (result is GetPlayerProgressResult progress)
             {
                 var tracks = progress.Raw.payload.expiredBattlePasses
@@ -329,6 +329,22 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             }
             else if (result is PostMatchUpdateResult postMatchUpdate)
             {
+                var info = mapper.Map<PostMatchUpdateRaw>(postMatchUpdate.Raw.payload);
+
+                // PATCH FOR AFR LOGS BROKEN
+                var lastMatch = currentMatch ?? matches.LastOrDefault();
+                if (lastMatch != null)
+                {
+                    if (lastMatch.Outcome == GameOutcomeEnum.Unknown || lastMatch.Outcome == GameOutcomeEnum.Draw)
+                    {
+                        var hasProgressed =
+                            info.battlePassUpdate.trackDiff.currentLevel != info.battlePassUpdate.trackDiff.oldLevel ||
+                            info.battlePassUpdate.trackDiff.currentExp != info.battlePassUpdate.trackDiff.oldExp;
+
+                        lastMatch.Outcome = hasProgressed ? GameOutcomeEnum.Victory : GameOutcomeEnum.Defeat;
+                    }
+                }
+
                 AppendToListInfoByDate(Results.PostMatchUpdatesByDate, postMatchUpdate.Raw.payload, postMatchUpdate.LogDateTime);
 
                 //Results2.ResultsByNameTag[currentAccount].PostMatchUpdateResults.Add(postMatchUpdate);

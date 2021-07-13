@@ -23,7 +23,7 @@ namespace MTGAHelper.Entity
         public int LossCount { get; set; }
         public int DrawCount { get; set; }
 
-        public int TotalCount => WinCount + LossCount + DrawCount;
+        public int TotalCount => WinCount + LossCount;
     }
 
     public class CosmosDataStatsLimited

@@ -121,6 +121,7 @@ namespace MTGAHelper.Web.UI.IoC
                 .ForMember(i => i.Card, i => i.MapFrom(x => x.CardGrpId));
 
             CreateMap<Dictionary<int, int>, ICollection<CardWithAmountDto>>().ConvertUsing(rawDeckConverter);
+            CreateMap<IReadOnlyDictionary<int, int>, ICollection<CardWithAmountDto>>().ConvertUsing(rawDeckConverter);
 
             CreateMap<ConfigModelRankInfo, RankInfoDto>();
 
