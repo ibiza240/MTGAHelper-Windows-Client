@@ -53,5 +53,4 @@ namespace MTGAHelper.Lib.OutputLogParser
             return cards;
         }
     }
-
 }

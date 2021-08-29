@@ -9,7 +9,6 @@ namespace MTGAHelper.Entity.OutputLogParsing
 
     //public class PayloadObject : ITagPayloadObject
     //{
-
     //}
 
     // Client.SceneChange
@@ -48,13 +47,13 @@ namespace MTGAHelper.Entity.OutputLogParsing
         public string playerId { get; set; }
     }
 
-    public class LogInfoRequestRaw
-    {
-        public string messageName { get; set; }
-        public string humanContext { get; set; }
-        public dynamic payloadObject { get; set; }
-        public string transactionId { get; set; }
-    }
+    //public class LogInfoRequestRaw
+    //{
+    //    public string messageName { get; set; }
+    //    public string humanContext { get; set; }
+    //    public dynamic payloadObject { get; set; }
+    //    public string transactionId { get; set; }
+    //}
 
     public class Params<T>
     {

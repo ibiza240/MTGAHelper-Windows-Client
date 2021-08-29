@@ -3,11 +3,18 @@ using MTGAHelper.Entity.OutputLogParsing;
 
 namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
-    public class CompleteDraftResult : MtgaOutputLogPartResultBase<PayloadRaw<CompleteDraftRaw>>, IResultCardPool//, IMtgaOutputLogPartResult<CompleteDraftRaw>
+    public class CompleteDraftResult : MtgaOutputLogPartResultBase<CompleteDraftRaw>, ICardPool
     {
-        //public override ReaderMtgaOutputLogPartTypeEnum ResultType => ReaderMtgaOutputLogPartTypeEnum.CompleteDraft;
-
-        //public CompleteDraftRaw Raw { get; set; }
-        public List<int> CardPool => Raw.payload.CardPool;
+        public List<int> CardPool
+        {
+            get
+            {
+                return Raw.CardPool;
+            }
+            set
+            {
+                Raw.CardPool = value;
+            }
+        }
     }
 }

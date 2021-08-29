@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.MtgaOutputLog;
@@ -23,6 +24,8 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
 
         private readonly IReadOnlyDictionary<int, Card> cardsByGrpId;
         private readonly GameEventFactory evt;
+
+        private string myScreenName;
 
         public InGameTrackerState2 State { get; }
 
@@ -50,27 +53,38 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
 
             switch (message)
             {
-                case MatchCreatedResult matchCreated:
+                case AuthenticateResponseResult authenticateResponse:
+                    myScreenName = authenticateResponse.Raw.authenticateResponse.screenName;
+                    return;
+
+                case ConnectingToMatchIdResult matchCreated:
                     Reset();
-                    State.OpponentScreenName = matchCreated.Raw.payload.opponentScreenName;
                     return;
 
                 case MatchGameRoomStateChangedEventResult gameRoom:
                     {
-                        var opponentInfo = gameRoom.Raw.gameRoomInfo.gameRoomConfig.reservedPlayers?
-                            .FirstOrDefault(i => i.playerName.StartsWith(State.OpponentScreenName));
-                        if (opponentInfo != null)
+                        try
                         {
-                            State.SetSeatIds(State.OpponentSeatId == 1 ? 2 : 1, opponentInfo.systemSeatId);
-                            if (opponentInfo.playerName.Contains("#"))
-                                State.OpponentScreenName = opponentInfo.playerName;
+                            var opponentInfo = gameRoom.Raw.gameRoomInfo.gameRoomConfig.reservedPlayers
+                                ?.FirstOrDefault(i => i.playerName != myScreenName);
+
+                            if (opponentInfo != null)
+                            {
+                                State.SetSeatIds(opponentInfo.systemSeatId == 1 ? 2 : 1, opponentInfo.systemSeatId);
+                                if (opponentInfo.playerName.Contains("#"))
+                                    State.OpponentScreenName = opponentInfo.playerName;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debugger.Break();
                         }
 
                         return;
                     }
 
                 case ConnectRespResult connectResp:
-                    State.SetSeatIds(connectResp.Raw.systemSeatIds.First());
+                    //State.SetSeatIds(connectResp.Raw.systemSeatIds.First());
 
                     // only happens at start of game 1
                     State.SetLibraryGrpIds(connectResp.Raw.connectResp.deckMessage.deckCards);

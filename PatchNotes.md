@@ -1,3 +1,11 @@
+### v1.8.0 (2021-08-29)
+
+The game's last patch from WotC changed a lot of things, so it will take time to restore some features.
+
+Working: Matches tracking, Deck stats, Mastery pass calculator, Draft helper
+
+Broken: Inventory, Collection, Booster advisors, Draft vs boosters tool
+
 ### v1.7.7 (2021-07-12)
 
 Hotfix for a tracking bug

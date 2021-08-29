@@ -17,53 +17,55 @@ namespace MTGAHelper.Lib.OutputLogParser
     public class ReaderMtgaOutputLog
     {
         // Not a normal prefix found between []
-        const string MONO = "Mono ";
-        const string INITIALIZING = "Initialize engine version:";
-        const string DETAILED_LOGS = "DETAILED LOGS:";
-        const string URLAPI = "Url: https://api.platform.wizards.com/";
-        const string BI_ERROR = "BIError";
-        readonly IEnumerable<string> noBracePrefixes = new[] { MONO, INITIALIZING, DETAILED_LOGS, URLAPI, BI_ERROR };
+        private const string MONO = "Mono ";
+
+        private const string INITIALIZING = "Initialize engine version:";
+        private const string DETAILED_LOGS = "DETAILED LOGS:";
+        private const string URLAPI = "Url: https://api.platform.wizards.com/";
+        private const string BI_ERROR = "BIError";
+        private readonly IEnumerable<string> noBracePrefixes = new[] { MONO, INITIALIZING, DETAILED_LOGS, URLAPI, BI_ERROR };
 
         // Prefixes that are between []
-        const string PREFIX_CLEANUP = "CLEANUP";
-        const string PREFIX_CROSSTHREADLOGGER = "UnityCrossThreadLogger";
-        const string PREFIX_ACCOUNTS_STARTUP = "Accounts - Startup";
-        const string PREFIX_ACCOUNTS_CLIENT = "Accounts - Client";
-        const string PREFIX_ACCOUNTS_ACCOUNTCLIENT = "Accounts - AccountClient";
-        const string PREFIX_STORE_AUTH_GETSKUS = "Store - Auth - Get SKUs";
-        const string PREFIX_STORE_GETSKUS = "Store - Get SKUs";
-        const string PREFIX_SOCIAL_CONTROLLER = "Social Controller";
-        const string PREFIX_DISCORD = "Discord Rich Presence";
-        const string PREFIX_ACCOUNTS_SHAREDCONTEXTVIEW = "Accounts - SharedContextView";
-        const string PREFIX_ACCOUNTS_LOGIN = "Accounts - Login";
-        const string PREFIX_SUBSYSTEMS = "Subsystems";
-        const string PREFIX_EOSCLIENT = "EOSClient";
-        const string PREFIX_WIZARDS_PLATFORM_SDK = "Wizards.Platform.Sdk";
-        const string PREFIX_SOCIAL = "Social";
+        private const string PREFIX_CLEANUP = "CLEANUP";
 
-        readonly IReadOnlyCollection<string> dateFormats;
+        private const string PREFIX_CROSSTHREADLOGGER = "UnityCrossThreadLogger";
+        private const string PREFIX_ACCOUNTS_STARTUP = "Accounts - Startup";
+        private const string PREFIX_ACCOUNTS_CLIENT = "Accounts - Client";
+        private const string PREFIX_ACCOUNTS_ACCOUNTCLIENT = "Accounts - AccountClient";
+        private const string PREFIX_STORE_AUTH_GETSKUS = "Store - Auth - Get SKUs";
+        private const string PREFIX_STORE_GETSKUS = "Store - Get SKUs";
+        private const string PREFIX_SOCIAL_CONTROLLER = "Social Controller";
+        private const string PREFIX_DISCORD = "Discord Rich Presence";
+        private const string PREFIX_ACCOUNTS_SHAREDCONTEXTVIEW = "Accounts - SharedContextView";
+        private const string PREFIX_ACCOUNTS_LOGIN = "Accounts - Login";
+        private const string PREFIX_SUBSYSTEMS = "Subsystems";
+        private const string PREFIX_EOSCLIENT = "EOSClient";
+        private const string PREFIX_WIZARDS_PLATFORM_SDK = "Wizards.Platform.Sdk";
+        private const string PREFIX_SOCIAL = "Social";
 
-        readonly LogSplitter logSplitter;
-        readonly Util util;
+        private readonly IReadOnlyCollection<string> dateFormats;
 
-        bool dateFormatNullReported;
+        private readonly LogSplitter logSplitter;
+        private readonly Util util;
 
-        readonly Dictionary<string, IReaderMtgaOutputLogPart> converters = new Dictionary<string, IReaderMtgaOutputLogPart>();
-        readonly MtgaOutputLogResultsPreparer preparer2;
-        readonly OutputLogMessagesBatcher outputLogMessagesBatcher;
+        private bool dateFormatNullReported;
+
+        private readonly Dictionary<string, IReaderMtgaOutputLogPart> converters = new Dictionary<string, IReaderMtgaOutputLogPart>();
+        private readonly MtgaOutputLogResultsPreparer preparer2;
+        private readonly OutputLogMessagesBatcher outputLogMessagesBatcher;
 
         //Regex regexDateClean = new Regex(@"[^0-9: -\/.amp]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        readonly Regex regexDateClean2 = new Regex("[ ]{2,}", RegexOptions.Compiled);
+        private readonly Regex regexDateClean2 = new Regex("[ ]{2,}", RegexOptions.Compiled);
 
         // 11/21/2019 10:55:39 PM LoadWrapperScene
         // 11/21/2019 10:55:42 PM Coroutine_StartupSequence
-        readonly Regex regexDeduceTimestamp = new Regex("^(.*?) (?:LoadWrapperScene|Coroutine_StartupSequence)", RegexOptions.Compiled);
+        private readonly Regex regexDeduceTimestamp = new Regex("^(.*?) (?:LoadWrapperScene|Coroutine_StartupSequence)", RegexOptions.Compiled);
 
-        string dateFormatToUse = null;
+        private string dateFormatToUse = null;
 
         public DateTime LogDateTime { get; private set; }
 
-        readonly List<ConverterUsage> convertersUsage = new List<ConverterUsage>();
+        private readonly List<ConverterUsage> convertersUsage = new List<ConverterUsage>();
 
         public ReaderMtgaOutputLog(
             LogSplitter logSplitter,
@@ -116,7 +118,10 @@ namespace MTGAHelper.Lib.OutputLogParser
             // Everything else ends up as Unknown
         }
 
-        public void ResetPreparer() { preparer2.Reset(); }
+        public void ResetPreparer()
+        {
+            preparer2.Reset();
+        }
 
         public async Task<ICollection<IMtgaOutputLogPartResult>> ProcessIntoMessagesAsync(string userId, Stream streamMtgaOutputLog)
         {
@@ -194,7 +199,7 @@ namespace MTGAHelper.Lib.OutputLogParser
                             throw new ParseCollectionInvalidFileException();
                     }
 
-                    //if (line.Contains("[{\"collationId\":100017,\"count\":-10}]")) System.Diagnostics.Debugger.Break();
+                    //if (line.Contains("Event_Join")) System.Diagnostics.Debugger.Break();
 
                     //if (line.Contains("[UnityCrossThreadLogger]8/3/2019 12:11:45 AM: Match to 933E5CE627155485: AuthenticateResponse")) System.Diagnostics.Debugger.Break();
                     //if (line.Contains("STATE CHANGED MatchCompleted -> Disconnected")) System.Diagnostics.Debugger.Break();
@@ -203,7 +208,7 @@ namespace MTGAHelper.Lib.OutputLogParser
 
                     if (IsNewPart(line, out var newPart))
                     {
-                        //if (currentPart.Part.Contains("Event.JoinQueue")) System.Diagnostics.Debugger.Break();
+                        //if (currentPart?.Part?.Contains("AuthenticateResponse") == true) System.Diagnostics.Debugger.Break();
 
                         // New part started, add previous part as message
                         AddMessage(currentPart, LogDateTime);
@@ -228,7 +233,7 @@ namespace MTGAHelper.Lib.OutputLogParser
             return ret;
         }
 
-        bool IsNewPart(string line, out ReadPartIntermediateResult result)
+        private bool IsNewPart(string line, out ReadPartIntermediateResult result)
         {
             if (line.StartsWith("[Message summarized"))
             {
@@ -260,14 +265,14 @@ namespace MTGAHelper.Lib.OutputLogParser
             return false;
         }
 
-        void TryDeduceAndSetDateTime(string userId, string line)
+        private void TryDeduceAndSetDateTime(string userId, string line)
         {
             var m = regexDeduceTimestamp.Match(line);
             if (m.Success)
                 TrySetLogDate(userId, m.Groups[1].Value);
         }
 
-        void TrySetLogDate(string userId, string strDateTime)
+        private void TrySetLogDate(string userId, string strDateTime)
         {
             if (string.IsNullOrWhiteSpace(strDateTime))
                 return;
@@ -326,7 +331,6 @@ namespace MTGAHelper.Lib.OutputLogParser
                     "OUTPUTLOG", userId, dateFormatToUse, strDateTime);
                 return;
             }
-
 
             if (dateFormatNullReported)
                 return;

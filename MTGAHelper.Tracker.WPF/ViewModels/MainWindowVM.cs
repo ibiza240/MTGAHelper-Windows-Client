@@ -134,6 +134,7 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
         private bool _IsWindowVisible = true;
         private WindowState _WindowState = WindowState.Normal;
         private AccountResponse _Account = new AccountResponse();
+
         private NetworkStatusEnum NetworkStatus
         {
             get => _NetworkStatusDisplayed;
@@ -344,10 +345,10 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             InMatchState.SetInMatchStateBuffered(state);
         }
 
-        internal void CheckAndDownloadThumbnails(ICollection<int> grpIds)
-        {
-            CardThumbnailDownloader.CheckAndDownloadThumbnails(grpIds);
-        }
+        //internal void CheckAndDownloadThumbnails(ICollection<int> grpIds)
+        //{
+        //    CardThumbnailDownloader.CheckAndDownloadThumbnails(grpIds);
+        //}
 
         private void OnGameEnded(object sender, EventArgs e)
         {

@@ -13,21 +13,21 @@ namespace MTGAHelper.Lib.OutputLogParser
     {
         public string LogTextKey => Constants.LOGTEXTKEY_UNKNOWN;
 
-        readonly IReadOnlyCollection<ILogMessageReader> readers;
+        private readonly IReadOnlyCollection<ILogMessageReader> readers;
 
-        readonly string[] skipped = new[]
+        private readonly string[] skipped = new[]
         {
             "<== Log",
             "Card #",
         };
 
-        readonly string[] ignoredMatch = new[]
+        private readonly string[] ignoredMatch = new[]
         {
             "GREConnection.HandleWebSocketClosed",
             "NULL entity on ",
         };
 
-        readonly string[] ignored = new[]
+        private readonly string[] ignored = new[]
         {
             /*^*/"Got non-message event",
             /*^*/"FrontDoor",
@@ -111,6 +111,8 @@ namespace MTGAHelper.Lib.OutputLogParser
             "GetEventAndSeasonPayouts",
             "<== PlayerInventory.GetCardMetaDataInfo",
             "<== CampaignGraph.GetDefinitions",
+            "<== LogBusinessEvents",
+            "==> LogBusinessEvents",
         };
 
         public ReaderMtgaOutputLogUnityCrossThreadLogger(
@@ -131,6 +133,9 @@ namespace MTGAHelper.Lib.OutputLogParser
             if (reader != null)
                 try
                 {
+                    //if (part == "Connecting to matchId d0fe83f9-0ab2-415d-b5bc-72d5b5ce12bf")
+                    //    Debugger.Break();
+
                     return reader.ParsePart(part).ToArray();
                 }
                 catch (MtgaOutputLogInvalidJsonException)
@@ -160,7 +165,12 @@ namespace MTGAHelper.Lib.OutputLogParser
 
             ignoredTextKey = ignored.FirstOrDefault(i => part.Contains(i));
             if (ignoredTextKey != null)
+            {
+                if (ignoredTextKey == "<== LogBusinessEvents")
+                    Debugger.Break();
+
                 return new[] { new IgnoredResult() { LogTextKey = ignoredTextKey } };
+            }
 
             return new[] { new UnknownResult() };
         }

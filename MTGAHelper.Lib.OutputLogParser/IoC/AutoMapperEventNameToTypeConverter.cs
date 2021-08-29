@@ -5,7 +5,7 @@ namespace MTGAHelper.Lib.OutputLogParser.IoC
 {
     public class AutoMapperEventNameToTypeConverter : IValueConverter<string, string>
     {
-        readonly IEventTypeCache eventsScheduleManager;
+        private readonly IEventTypeCache eventsScheduleManager;
 
         public AutoMapperEventNameToTypeConverter(IEventTypeCache eventsScheduleManager)
         {

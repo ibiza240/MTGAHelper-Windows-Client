@@ -26,18 +26,21 @@ namespace MTGAHelper.Entity.MtgaOutputLog
         public string EventName { get; set; }
         public string EventType { get; set; }
         public DateTime StartDateTime { get; set; }
+
         public long SecondsCount => Games.Any() == false ? 0 :
             (long)(Games.Last().StartDateTime.AddSeconds(Games.Last().SecondsCount) - Games.First().StartDateTime).TotalSeconds;
+
         public ICollection<GameDetail> Games { get; set; } = new List<GameDetail>();
 
         private GameOutcomeEnum _outcome;
+
         public GameOutcomeEnum Outcome
         {
             get => _outcome != GameOutcomeEnum.Unknown ? _outcome : DeriveOutcome();
             set => _outcome = value;
         }
 
-        public MatchOpponentInfo Opponent { get; set; }
+        public MatchOpponentInfo Opponent { get; set; } = new MatchOpponentInfo();
 
         public ConfigModelRawDeck DeckUsed { get; set; }
         //public ConfigModelRawDeck DeckUsed => Games.Any() ? Games.First().DeckUsed : new ConfigModelRawDeck { Name = "Unknown" };
@@ -48,18 +51,6 @@ namespace MTGAHelper.Entity.MtgaOutputLog
         public ICollection<int> GetOpponentCardsSeen()
         {
             return Games.SelectMany(i => i.OpponentCardsSeen.Keys).ToArray();
-        }
-
-        public static MatchResult CreateDefault()
-        {
-            return new MatchResult
-            {
-                Opponent = new MatchOpponentInfo
-                {
-                    ScreenName = "N/A",
-                    RankingClass = "Beginner",
-                },
-            };
         }
 
         private GameOutcomeEnum DeriveOutcome()
@@ -74,12 +65,11 @@ namespace MTGAHelper.Entity.MtgaOutputLog
         }
     }
 
-
     public class MatchOpponentInfo
     {
-        public string ScreenName { get; set; }
+        public string ScreenName { get; set; } = "N/A";
         public bool IsWotc { get; set; }
-        public string RankingClass { get; set; }
+        public string RankingClass { get; set; } = "Beginner";
         public int RankingTier { get; set; }
         public double MythicPercentile { get; set; }
         public int MythicLeaderboardPlace { get; set; }
@@ -88,8 +78,8 @@ namespace MTGAHelper.Entity.MtgaOutputLog
         {
             return RankingClass == "Mythic"
                 ? MythicLeaderboardPlace > 0
-                    ?$"Mythic #{MythicLeaderboardPlace}"
-                    :$"Mythic {MythicPercentile}%"
+                    ? $"Mythic #{MythicLeaderboardPlace}"
+                    : $"Mythic {MythicPercentile}%"
                 : $"{RankingClass} {RankingTier}";
         }
     }

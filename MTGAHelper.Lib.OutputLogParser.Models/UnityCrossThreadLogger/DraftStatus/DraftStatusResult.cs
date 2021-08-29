@@ -5,10 +5,10 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
     public interface IResultDraftPick
     {
         //List<string> DraftPack { get; }
-        PayloadRaw<DraftMakePickRaw> Raw { get; set; }
+        PayloadRaw<DraftPickStatusRaw> Raw { get; set; }
     }
 
-    public class DraftResultBase : MtgaOutputLogPartResultBase<PayloadRaw<DraftMakePickRaw>>, IResultDraftPick
+    public class DraftResultBase : MtgaOutputLogPartResultBase<PayloadRaw<DraftPickStatusRaw>>, IResultDraftPick
     {
         //public PayloadRaw<DraftMakePickRaw> Raw { get; set; }
     }

@@ -12,6 +12,8 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.MatchGameRoomS
         //public string greHostLoggerLevel { get; set; }
         //public int joinRoomTimeoutSecs { get; set; }
         //public int playerDisconnectTimeoutSecs { get; set; }
+
+        public Dictionary<string, string> clientMetadata { get; set; }
     }
 
     public class ResultList

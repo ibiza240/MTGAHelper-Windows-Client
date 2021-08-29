@@ -2,7 +2,7 @@
 
 namespace MTGAHelper.Lib.OutputLogParser.Readers
 {
-    public class AuthenticateResponseConverter : GenericConverter<AuthenticateResponseResult, AuthenticateResponseRaw>
+    public class AuthenticateResponseConverter : GenericConverter<AuthenticateResponseResult, AuthenticateResponseRaw>, IMessageReaderUnityCrossThreadLogger
     {
         public override string LogTextKey => "AuthenticateResponse";
     }

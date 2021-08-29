@@ -30,7 +30,7 @@ namespace MTGAHelper.Lib.IoC
 
             //CreateMap<QuestUpdate, PlayerQuest>();// TODO: delete?
             CreateMap<TrackDiff, PlayerProgress>(MemberList.None);
-            CreateMap<DraftMakePickRaw, DraftPickProgress>();
+            CreateMap<DraftPickStatusRaw, DraftPickProgress>();
 
             CreateMap<ConfigModelRawDeck, ConfigModelDeck>(MemberList.None)
                 .ForMember(i => i.ScraperTypeId, i => i.MapFrom(x => Constants.USERDECK_SOURCE_MTGADECK))

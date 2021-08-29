@@ -3,7 +3,7 @@ using MTGAHelper.Entity.OutputLogParsing;
 
 namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
 {
-    public class GetPreconDecksV3Result : MtgaOutputLogPartResultBase<PayloadRaw<ICollection<CourseDeckRaw>>>//, IMtgaOutputLogPartResult<ICollection<GetDeckListResultDeckRaw>>
+    public class GetPreconDecksV3Result : MtgaOutputLogPartResultBase<PayloadRaw<ICollection<Entity.OutputLogParsing.CourseDeckRaw>>>//, IMtgaOutputLogPartResult<ICollection<GetDeckListResultDeckRaw>>
     {
         //public override ReaderMtgaOutputLogPartTypeEnum ResultType => ReaderMtgaOutputLogPartTypeEnum.GetDeckList;
 

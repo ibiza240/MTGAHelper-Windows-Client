@@ -3,8 +3,8 @@ using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
 
 namespace MTGAHelper.Lib.OutputLogParser.Readers.UnityCrossThreadLogger
 {
-    public class CompleteDraftConverter : GenericConverter<CompleteDraftResult, PayloadRaw<CompleteDraftRaw>>, IMessageReaderUnityCrossThreadLogger
+    public class CompleteDraftConverter : GenericConverter<CompleteDraftResult, CompleteDraftRaw>, IMessageReaderUnityCrossThreadLogger
     {
-        public override string LogTextKey => "<== Event.CompleteDraft";
+        public override string LogTextKey => "<== Draft_CompleteDraft";
     }
 }

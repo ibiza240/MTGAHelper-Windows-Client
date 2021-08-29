@@ -48,7 +48,11 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         private readonly IMapper mapper;
         private ICollection<CardCompareInfo> RareDraftingInfo;
-        private IList<int> lastCardsAetherized = new int[0];
+
+        //private IList<int> lastCardsAetherized = new int[0];
+        private Guid currentCourseId;
+
+        private ICollection<EventGetCourseRaw> courses;
 
         private InGameTracker2 InGameTracker => ViewModel.InMatchTracker;
 
@@ -280,7 +284,7 @@ namespace MTGAHelper.Tracker.WPF.Views
             Api.SetUserId(account.MtgaHelperUserId);
             RefreshCustomRatingsFromServer();
 
-            if (ViewModel.CanUpload == false || ViewModel.Account.IsAuthenticated == false)
+            if (ViewModel.Account.IsAuthenticated == false)
                 return;
 
             Task.Factory.StartNew(() =>
@@ -294,7 +298,8 @@ namespace MTGAHelper.Tracker.WPF.Views
                         RefreshRareDraftingInfo();
                     });
 
-                    UploadLogFile();
+                    if (ViewModel.CanUpload)
+                        UploadLogFile();
                 }
                 catch (HttpRequestException)
                 {
@@ -612,6 +617,7 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         private void GoHome()
         {
+            currentCourseId = default;
             ViewModel.SetMainWindowContext(WindowContext.Home);
         }
 
@@ -638,32 +644,32 @@ namespace MTGAHelper.Tracker.WPF.Views
                         ViewModel.SetProblem(ProblemsFlags.DetailedLogsDisabled, detLogRes.IsDetailedLoggingDisabled);
                         break;
 
-                    case IResultCardPool msgCardPool:
+                    case ICardPool msgCardPool:
                         {
                             var isLimitedCardPool = true;
-                            if (msg is GetEventPlayerCourseV2Result playerCourse)
+                            if (msg is EventJoinRequestResult playerCourse)
                             {
                                 // Set the set drafted for the Human DraftHelper
                                 string set = null;
-                                var regexMatch = Regex.Match(playerCourse.Raw.payload.InternalEventName, "(?:Draft|Sealed)_(.*?)_");
+                                var regexMatch = Regex.Match(playerCourse.Raw.FetchPayload().EventName, "(?:Draft|Sealed)_(.*?)_");
                                 if (regexMatch.Success)
                                 {
                                     set = regexMatch.Groups[1].Value;
                                 }
 
-                                GetEventPlayerCourseV2Raw payload = playerCourse.Raw.payload;
-                                if (payload.CurrentEventState == "PreMatch")
+                                var payload = playerCourse.Raw.FetchPayload();
+                                //if (payload.CurrentEventState == "PreMatch")
                                 {
                                     RefreshCustomRatingsFromServer();
                                     ViewModel.DraftingVM.ResetDraftPicks(set);
                                 }
 
-                                isLimitedCardPool = payload.InternalEventName.Contains("Draft") || payload.InternalEventName.Contains("Sealed");
+                                isLimitedCardPool = payload.EventName.Contains("Draft") || payload.EventName.Contains("Sealed");
                             }
 
                             if (isLimitedCardPool)
                             {
-                                ViewModel.CheckAndDownloadThumbnails(msgCardPool.CardPool);
+                                //ViewModel.CheckAndDownloadThumbnails(msgCardPool.CardPool);
 
                                 // Refresh the drafting window to show whole card pool
                                 ViewModel.DraftingVM.ShowGlobalMTGAHelperSays = false;
@@ -673,54 +679,83 @@ namespace MTGAHelper.Tracker.WPF.Views
 
                             break;
                         }
-                    case IResultDraftPick msgDraftPack when msgDraftPack.Raw.payload.draftPack != null:
+
+                    case EventGetCoursesResult eventGetCourses:
+                        courses = eventGetCourses.Raw.Courses;
+                        var currentCourse = eventGetCourses.Raw.Courses.FirstOrDefault(i => i.CourseId == currentCourseId);
+                        if (currentCourse != default &&
+                            (currentCourse.InternalEventName.Contains("Draft") || currentCourse.InternalEventName.Contains("Sealed"))
+                        )
+                        {
+                            // Refresh the drafting window to show whole card pool
+                            ViewModel.DraftingVM.ShowGlobalMTGAHelperSays = false;
+                            SetCardsDraft(new DraftPickProgress(currentCourse.CardPool));
+                            ViewModel.SetMainWindowContext(WindowContext.Drafting);
+                        }
+                        break;
+
+                    case EventJoinResult eventJoin:
+                        currentCourseId = eventJoin.Raw.FetchPayload().Changes.FirstOrDefault()?.SourceId ?? default;
+                        break;
+
+                    case DraftPickStatusResult msgDraftPack when msgDraftPack.Payload != null:
                         {
                             ViewModel.SetMainWindowContext(WindowContext.Drafting);
 
                             // Refresh the drafting window to show the new picks
                             ViewModel.DraftingVM.ShowGlobalMTGAHelperSays = true;
-                            var draftInfo = mapper.Map<DraftPickProgress>(msgDraftPack.Raw.payload);
+                            var draftInfo = mapper.Map<DraftPickProgress>(msgDraftPack.Payload);
                             SetCardsDraft(draftInfo);
                             break;
                         }
-                    case LogInfoRequestResult logInfoContainer:
-                        {
-                            var prms = logInfoContainer.RequestParams;
-                            if (prms.messageName == "DuelScene.EndOfMatchReport" || prms.humanContext.Contains("Client changed scenes to Home"))
-                            {
-                                //// Trigger to upload the stored log content
-                                //UploadLogFragment();
-                                mustUpload = true;
-                            }
+                    //case MatchGameRoomStateChangedEvent matchGameRoomStateChanged:
+                    //    if (matchGameRoomStateChanged.gameRoomInfo.stateType == "MatchGameRoomStateType_MatchCompleted")
+                    //    {
+                    //        mustUpload = true;
+                    //        GoHome();
+                    //    }
+                    //    break;
+                    //case LogInfoRequestResult logInfoContainer:
+                    //    {
+                    //        var prms = logInfoContainer.RequestParams;
+                    //        if (prms.messageName == "DuelScene.EndOfMatchReport" || prms.humanContext.Contains("Client changed scenes to Home"))
+                    //        {
+                    //            //// Trigger to upload the stored log content
+                    //            //UploadLogFragment();
+                    //            mustUpload = true;
+                    //        }
 
-                            // Change MainWindowContext
-                            switch (prms.messageName)
-                            {
-                                case "Client.SceneChange":
-                                    dynamic context = prms.payloadObject.context?.ToString();   // SceneChange_PayloadObject
-                                    if (prms.humanContext.Contains("Client changed scene") &&
-                                        context.Contains("Draft") == false &&
-                                        context.Contains("Opening sealed boosters") == false &&
-                                        context.Contains("Sealed") == false &&
-                                        context != "deck builder")
-                                    {
-                                        GoHome();
-                                    }
-                                    break;
+                    //        // Change MainWindowContext
+                    //        switch (prms.messageName)
+                    //        {
+                    //            case "Client.SceneChange":
+                    //                dynamic context = prms.payloadObject.context?.ToString();   // SceneChange_PayloadObject
+                    //                if (prms.humanContext.Contains("Client changed scene") &&
+                    //                    context.Contains("Draft") == false &&
+                    //                    context.Contains("Opening sealed boosters") == false &&
+                    //                    context.Contains("Sealed") == false &&
+                    //                    context != "deck builder")
+                    //                {
+                    //                    GoHome();
+                    //                }
+                    //                break;
 
-                                case "DuelScene.EndOfMatchReport":
-                                    GoHome();
-                                    InGameTracker.Reset();
-                                    ViewModel.SetInMatchStateBuffered(InGameTracker.State);
-                                    break;
-                            }
+                    //            case "DuelScene.EndOfMatchReport":
+                    //                GoHome();
+                    //                InGameTracker.Reset();
+                    //                ViewModel.SetInMatchStateBuffered(InGameTracker.State);
+                    //                break;
+                    //        }
 
-                            break;
-                        }
+                    //        break;
+                    //    }
                     case StateChangedResult stateChanged:
                         {
                             if (stateChanged.SignifiesMatchEnd)
+                            {
+                                mustUpload = true;
                                 GoHome();
+                            }
                             break;
                         }
                     case GetActiveEventsV2Result _:
@@ -728,28 +763,28 @@ namespace MTGAHelper.Tracker.WPF.Views
                         GoHome();
                         break;
 
-                    case MatchCreatedResult _:
-                        ViewModel.SetMainWindowContext(WindowContext.Playing);
-                        break;
+                    //case MatchCreatedResult _:
+                    //    ViewModel.SetMainWindowContext(WindowContext.Playing);
+                    //    break;
 
                     case ConnectRespResult connectResp:
-                        var distinctCards = connectResp.Raw.connectResp.deckMessage.deckCards.Union(connectResp.Raw.connectResp.deckMessage.sideboardCards ?? new List<int>()).Distinct().ToArray();
-                        ViewModel.CheckAndDownloadThumbnails(distinctCards);
+                        //var distinctCards = connectResp.Raw.connectResp.deckMessage.deckCards.Union(connectResp.Raw.connectResp.deckMessage.sideboardCards ?? new List<int>()).Distinct().ToArray();
+                        //ViewModel.CheckAndDownloadThumbnails(distinctCards);
                         ViewModel.SetMainWindowContext(WindowContext.Playing);
                         break;
 
-                    case JoinPodmakingResult joinPodmaking:
-                        var txt = joinPodmaking.RequestParams.queueId;
-                        var match = Regex.Match(txt, @"Draft_(.*?)_\d+");
-                        if (match.Success)
-                        {
-                            var set = match.Groups[2].Value;
+                    //case JoinPodmakingResult joinPodmaking:
+                    //    var txt = joinPodmaking.RequestParams.queueId;
+                    //    var match = Regex.Match(txt, @"Draft_(.*?)_\d+");
+                    //    if (match.Success)
+                    //    {
+                    //        var set = match.Groups[2].Value;
 
-                            //InitDraftHelperForHumanDraft(set);
-                            RefreshCustomRatingsFromServer();
-                            ViewModel.DraftingVM.ResetDraftPicks(set);
-                        }
-                        break;
+                    //        //InitDraftHelperForHumanDraft(set);
+                    //        RefreshCustomRatingsFromServer();
+                    //        ViewModel.DraftingVM.ResetDraftPicks(set);
+                    //    }
+                    //    break;
 
                     //case MakeHumanDraftPickResult humanDraftPick:
                     //    ViewModel.SetMainWindowContext(WindowContext.Drafting);
@@ -780,25 +815,32 @@ namespace MTGAHelper.Tracker.WPF.Views
                         mustUpload = true;
                         break;
 
-                    case InventoryUpdatedResult inventoryUpdated:
-                        mustUpload = true;
+                    //case InventoryUpdatedResult inventoryUpdated:
+                    //    mustUpload = true;
 
-                        var aetherizedCards = inventoryUpdated.Raw.payload.updates.LastOrDefault()?.aetherizedCards;
-                        if (aetherizedCards != null && aetherizedCards.Any())
-                            lastCardsAetherized = aetherizedCards.Select(i => i.grpId).ToArray();
+                    //    var aetherizedCards = inventoryUpdated.Raw.payload.updates.LastOrDefault()?.aetherizedCards;
+                    //    if (aetherizedCards != null && aetherizedCards.Any())
+                    //        lastCardsAetherized = aetherizedCards.Select(i => i.grpId).ToArray();
 
-                        break;
+                    //    break;
 
                     case SceneChangeResult sceneChange:
-                        if (sceneChange.Raw.toSceneName == "SealedBoosterOpen")
+                        if (sceneChange.Raw.context.Contains("Sealed") || sceneChange.Raw.context.Contains("Draft"))
                         {
                             // Refresh the drafting window to show whole card pool
+                            currentCourse = courses.FirstOrDefault(i => sceneChange.Raw.context.Split('_').All(x => i.InternalEventName.Contains(x)));
                             ViewModel.DraftingVM.ShowGlobalMTGAHelperSays = false;
-                            SetCardsDraft(new DraftPickProgress(lastCardsAetherized));
+                            //SetCardsDraft(new DraftPickProgress(lastCardsAetherized));
+                            SetCardsDraft(new DraftPickProgress(currentCourse.CardPool));
                             ViewModel.SetMainWindowContext(WindowContext.Drafting);
                         }
                         else if (sceneChange.Raw.toSceneName == "Home")
                             GoHome();
+                        break;
+
+                    case AuthenticateResponseResult authenticateResponse:
+                        ViewModel.SetMainWindowContext(WindowContext.Playing);
+                        InGameTracker.ProcessMessage(msg);
                         break;
                 }
 

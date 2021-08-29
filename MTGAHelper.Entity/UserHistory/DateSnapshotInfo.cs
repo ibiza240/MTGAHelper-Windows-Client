@@ -18,8 +18,8 @@ namespace MTGAHelper.Entity.UserHistory
         public Dictionary<DateTime, GetPlayerProgressRaw> PlayerProgressIntraday { get; set; } = new Dictionary<DateTime, GetPlayerProgressRaw>();
         public ICollection<MatchResult> Matches { get; set; } = new MatchResult[0];
         public ICollection<PlayerQuest> PlayerQuests { get; set; } = new PlayerQuest[0];
-        public ICollection<DraftMakePickRaw> DraftPickProgress { get; set; } = new DraftMakePickRaw[0];
-        public Dictionary<DateTime, DraftMakePickRaw> DraftPickProgressIntraday { get; set; } = new Dictionary<DateTime, DraftMakePickRaw>();
+        public ICollection<DraftPickStatusRaw> DraftPickProgress { get; set; } = new DraftPickStatusRaw[0];
+        public Dictionary<DateTime, DraftPickStatusRaw> DraftPickProgressIntraday { get; set; } = new Dictionary<DateTime, DraftPickStatusRaw>();
         public Dictionary<DateTime, InventoryUpdatedRaw> InventoryUpdates { get; set; } = new Dictionary<DateTime, InventoryUpdatedRaw>();
         public Dictionary<DateTime, PostMatchUpdateRaw> PostMatchUpdates { get; set; } = new Dictionary<DateTime, PostMatchUpdateRaw>();
 

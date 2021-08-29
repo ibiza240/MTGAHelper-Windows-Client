@@ -16,9 +16,11 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
     [TrackerForZone(OwnedZone.MyLibrary)]
     internal class LibraryTracker : ZoneTrackerBase
     {
-        public LibraryTracker(OwnedZone forZone) : base(forZone) { }
+        public LibraryTracker(OwnedZone forZone) : base(forZone)
+        {
+        }
 
-        readonly List<List<int>> cardIds = new List<List<int>>(1);
+        private readonly List<List<int>> cardIds = new List<List<int>>(1);
 
         protected override int CardCount => cards?.Count ?? 0;
 
@@ -34,7 +36,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             }
         }
 
-        IReadOnlyDictionary<int, float> GetDrawChancesTopCard()
+        private IReadOnlyDictionary<int, float> GetDrawChancesTopCard()
         {
             if (cards == null || cards.Count <= drawCardIdx)
                 return new Dictionary<int, float>(0);
@@ -43,13 +45,12 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
         }
 
         /// <summary>Ordered collection of the instanceIds in the library</summary>
-        List<LibraryCard> cards;
+        private List<LibraryCard> cards;
 
-        ReadOnlyCollection<int> originalGrpIds;
+        private ReadOnlyCollection<int> originalGrpIds;
 
         /// <summary>usually 0, unless viewing the top card(s) of the library</summary>
-        int drawCardIdx;
-
+        private int drawCardIdx;
 
         public void ResetWithGrpIds(IEnumerable<int> grpIds)
         {
@@ -139,7 +140,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             Log.Debug("Shuffling complete.{nl}New cards    : {cards}", Environment.NewLine, cards);
         }
 
-        void ShuffleCardsWithUnknown(IReadOnlyCollection<LibraryCard> oldCards, IReadOnlyCollection<int> newIds)
+        private void ShuffleCardsWithUnknown(IReadOnlyCollection<LibraryCard> oldCards, IReadOnlyCollection<int> newIds)
         {
             // known issue: after this, some cards that should be known to be in the bottom half of de deck might still show up in de draw%...
             // not as accurate as maybe possible, but it's the best we can do with the current tracking method
@@ -204,10 +205,11 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             return found;
         }
 
-        bool MoveToTop(IReadOnlyCollection<int> topIds) => MoveCards(topIds, c => cards.InsertRange(0, c));
-        bool MoveToBottom(IReadOnlyCollection<int> bottomIds) => MoveCards(bottomIds, cards.AddRange);
+        private bool MoveToTop(IReadOnlyCollection<int> topIds) => MoveCards(topIds, c => cards.InsertRange(0, c));
 
-        bool MoveCards(IReadOnlyCollection<int> ids, Action<IEnumerable<LibraryCard>> insertAction)
+        private bool MoveToBottom(IReadOnlyCollection<int> bottomIds) => MoveCards(bottomIds, cards.AddRange);
+
+        private bool MoveCards(IReadOnlyCollection<int> ids, Action<IEnumerable<LibraryCard>> insertAction)
         {
             var toMove = ids.Select(i => cards.Find(c => c.InstId == i)).ToArray();
             if (toMove.All(c => c == null))
@@ -226,8 +228,8 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             if (newCards == null)
                 throw new ArgumentNullException(nameof(newCards));
 
-            if (cards == null)
-                Debugger.Break();
+            //if (cards == null)
+            //    Debugger.Break();
 
             drawCardIdx = 0;
 
@@ -275,7 +277,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             RevealCards(newCards);
         }
 
-        void TryGetCountsEqual(IReadOnlyCollection<ITrackedCard> newCards)
+        private void TryGetCountsEqual(IReadOnlyCollection<ITrackedCard> newCards)
         {
             // handle added cards
             var addedCards = newCards.Where(nc => cards.All(c => c.InstId != nc.InstId)).ToArray();
@@ -283,7 +285,6 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
                 throw new InvalidTrackerOperationException("unknown cards added to library");
 
             cards.AddRange(CreateKnownCards(addedCards));
-
 
             // handle removed cards
             var removedCards = cards.Where(c => newCards.All(nc => nc.InstId != c.InstId)).ToArray();
@@ -308,7 +309,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             CleanCardIds();
         }
 
-        void RevealCard(ITrackedCard card)
+        private void RevealCard(ITrackedCard card)
         {
             Debug.Assert(card.GrpId > 0);
 
@@ -337,7 +338,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             return cardsToTake.Select(c => CreateStateCard(c.GrpId).UpdateInstanceId(c.InstId)).ToArray();
         }
 
-        void TakeCardsInternal(IReadOnlyCollection<ITrackedCard> cardsToTake)
+        private void TakeCardsInternal(IReadOnlyCollection<ITrackedCard> cardsToTake)
         {
             foreach (var toTake in cardsToTake)
             {
@@ -371,7 +372,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
         }
 
         /// <summary>Remove empty collections to prevent clogging cardIds</summary>
-        void CleanCardIds()
+        private void CleanCardIds()
         {
             cardIds.RemoveAll(col => col.Count <= 0);
         }
@@ -380,7 +381,7 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
         /// returns true if cards were already ordered or if card reordering was successful,
         /// returns false if set of instanceIds differ
         /// </summary>
-        bool TryReOrderCards(IReadOnlyCollection<ITrackedCard> newCards)
+        private bool TryReOrderCards(IReadOnlyCollection<ITrackedCard> newCards)
         {
             if (newCards.Count != cards?.Count)
                 return false;
@@ -409,13 +410,13 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             }
         }
 
-        IEnumerable<LibraryCard> CreateKnownCards(IEnumerable<ITrackedCard> cardsToCreate)
+        private IEnumerable<LibraryCard> CreateKnownCards(IEnumerable<ITrackedCard> cardsToCreate)
         {
             var ret = cardsToCreate.Select(CreateKnownCard).ToArray();
             return ret;
         }
 
-        LibraryCard CreateKnownCard(ITrackedCard card)
+        private LibraryCard CreateKnownCard(ITrackedCard card)
         {
             Debug.Assert(card.IsKnown);
 
@@ -424,9 +425,9 @@ namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
             return new LibraryCard(card.InstId, possibleGrpIds);
         }
 
-        class LibraryCard : CardIds
+        private class LibraryCard : CardIds
         {
-            bool isKnown;
+            private bool isKnown;
             public override int GrpId => IsKnown ? PossibleGrpIds.First() : 0;
             internal List<int> PossibleGrpIds { get; }
 

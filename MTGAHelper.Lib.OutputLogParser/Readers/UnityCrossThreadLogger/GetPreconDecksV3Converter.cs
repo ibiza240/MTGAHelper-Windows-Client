@@ -40,7 +40,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Readers.UnityCrossThreadLogger
     //        //}
     //    }
     //}
-    public class GetPreconDecksV3Converter : GenericConverter<GetPreconDecksV3Result, PayloadRaw<ICollection<CourseDeckRaw>>>, IMessageReaderUnityCrossThreadLogger
+    public class GetPreconDecksV3Converter : GenericConverter<GetPreconDecksV3Result, PayloadRaw<ICollection<Entity.OutputLogParsing.CourseDeckRaw>>>, IMessageReaderUnityCrossThreadLogger
     {
         public override string LogTextKey => "<== Deck.GetPreconDecks";
     }

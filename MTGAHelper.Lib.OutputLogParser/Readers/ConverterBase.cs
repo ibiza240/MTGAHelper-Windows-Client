@@ -17,14 +17,22 @@ namespace MTGAHelper.Lib.OutputLogParser.Readers
 
         protected virtual MtgaOutputLogPartResultBase<TRaw> ParseJsonTyped(string json)
         {
-            if (json == null)
+            try
             {
-                Log.Warning("JsonReader {jsonReader} json was NULL!", this.GetType().ToString());
-                return null;
-            }
+                if (json == null)
+                {
+                    Log.Warning("JsonReader {jsonReader} json was NULL!", this.GetType().ToString());
+                    return null;
+                }
 
-            var raw = JsonConvert.DeserializeObject<TRaw>(json);
-            return CreateT(raw);
+                var raw = JsonConvert.DeserializeObject<TRaw>(json);
+                return CreateT(raw);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debugger.Break();
+                throw;
+            }
         }
 
         public virtual IMtgaOutputLogPartResult ParseJson(string json)
@@ -54,7 +62,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Readers
             return new[] { ParseJson(json) };
         }
 
-        string GetJson(string part)
+        private string GetJson(string part)
         {
             var subpart = GetSubpart(part);
             var jsonStartArray = subpart.IndexOf("[", StringComparison.Ordinal);
@@ -73,7 +81,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Readers
             return json;
         }
 
-        string GetSubpart(string part)
+        private string GetSubpart(string part)
         {
             // Remove everything after this useless debugging log
             var endMaxIndex = part.IndexOf("(Filename:", StringComparison.Ordinal);

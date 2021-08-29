@@ -7,7 +7,7 @@ namespace MTGAHelper.Lib.OutputLogParser
 {
     public class DeckListConverter : IValueConverter<IList<int>, Dictionary<int, int>>
     {
-        readonly Dictionary<int, Card> dictAllCards;
+        private readonly Dictionary<int, Card> dictAllCards;
 
         public DeckListConverter(CacheSingleton<Dictionary<int, Card>> cacheCards)
         {
@@ -32,6 +32,10 @@ namespace MTGAHelper.Lib.OutputLogParser
         public Dictionary<int, int> ConvertSimple(IList<int> cardsInfo)
         {
             var cards = new Dictionary<int, int>();
+
+            if (cardsInfo == default)
+                return cards;
+
             var iCard = 0;
             while (iCard < cardsInfo.Count)
             {

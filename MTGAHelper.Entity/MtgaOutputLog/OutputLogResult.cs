@@ -30,7 +30,7 @@ namespace MTGAHelper.Entity.MtgaOutputLog
         public IList<InfoByDate<Dictionary<DateTime, PostMatchUpdateRaw>>> PostMatchUpdatesByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, PostMatchUpdateRaw>>>();
 
         //public IList<InfoByDate<Dictionary<DateTime, CompleteVaultRaw>>> VaultsOpenedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, CompleteVaultRaw>>>();
-        public IList<InfoByDate<Dictionary<DateTime, DraftMakePickRaw>>> DraftPickProgressIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, DraftMakePickRaw>>>();
+        public IList<InfoByDate<Dictionary<DateTime, DraftPickStatusRaw>>> DraftPickProgressIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, DraftPickStatusRaw>>>();
 
         public IList<InfoByDate<Dictionary<DateTime, RankUpdatedRaw>>> RankUpdatedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, RankUpdatedRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, EventClaimPrizeRaw>>> EventClaimPriceByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, EventClaimPrizeRaw>>>();
@@ -208,7 +208,7 @@ namespace MTGAHelper.Entity.MtgaOutputLog
                 InventoryUpdates = InventoryUpdatesByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, InventoryUpdatedRaw>(),
                 PostMatchUpdates = PostMatchUpdatesByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, PostMatchUpdateRaw>(),
                 //DraftPickProgress = DraftPickProgressByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new List<DraftMakePickRaw>(),
-                DraftPickProgressIntraday = DraftPickProgressIntradayByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, DraftMakePickRaw>(),
+                DraftPickProgressIntraday = DraftPickProgressIntradayByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, DraftPickStatusRaw>(),
                 //VaultsOpened = VaultsOpenedByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, CompleteVaultRaw>(),
                 //CollectionIntraday = CollectionIntradayByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, Dictionary<int, int>>(),
                 InventoryIntraday = InventoryIntradayByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, Inventory>(),
