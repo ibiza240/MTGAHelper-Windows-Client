@@ -6,6 +6,7 @@ using MTGAHelper.Lib.OutputLogParser.Models.GRE.ClientToMatch;
 using MTGAHelper.Lib.OutputLogParser.OutputLogProgress;
 using MTGAHelper.Lib.OutputLogParser.Readers;
 using MTGAHelper.Lib.OutputLogParser.Readers.GreMessageType;
+using MTGAHelper.Lib.OutputLogParser.Readers.MTGAProLogger;
 using MTGAHelper.Lib.OutputLogParser.Readers.UnityCrossThreadLogger;
 using SimpleInjector;
 
@@ -31,7 +32,9 @@ namespace MTGAHelper.Lib.OutputLogParser.IoC
             container.Register<ReaderAccountsClient>();
             container.Register<ReaderAccountsAccountClient>();
             container.Register<ReaderMtgaOutputLogUnityCrossThreadLogger>();
+            container.Register<ReaderMtgaProLogger>();
             container.Collection.Register<IMessageReaderUnityCrossThreadLogger>(typeof(IMessageReaderUnityCrossThreadLogger).Assembly);
+            container.Collection.Register<IMessageReaderMtgaProLogger>(typeof(IMessageReaderMtgaProLogger).Assembly);
             container.Collection.Register<IMessageReaderRequestToServer>(typeof(IMessageReaderRequestToServer).Assembly);
 
             container.Register<AuthenticateResponseConverter>();

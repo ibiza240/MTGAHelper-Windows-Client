@@ -1,8 +1,8 @@
-﻿using MTGAHelper.Web.UI.Model.SharedDto;
+﻿using MTGAHelper.Web.Models.SharedDto;
 using System;
 using System.Collections.Generic;
 
-namespace MTGAHelper.Web.UI.Model.Response.User.History
+namespace MTGAHelper.Web.Models.Response.User.History
 {
     public class MatchRankDeltaDto
     {

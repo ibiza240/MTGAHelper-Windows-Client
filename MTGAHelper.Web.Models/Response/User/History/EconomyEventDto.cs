@@ -1,4 +1,4 @@
-﻿using MTGAHelper.Web.UI.Model.SharedDto;
+﻿using MTGAHelper.Web.Models.SharedDto;
 using System;
 using System.Collections.Generic;
 

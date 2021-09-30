@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using MTGAHelper.Entity;
+﻿using MTGAHelper.Entity;
 using MTGAHelper.Entity.MtgaOutputLog;
 using MTGAHelper.Lib.OutputLogParser.InMatchTracking.GameEvents;
 using MTGAHelper.Lib.OutputLogParser.Models;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.ClientToMatch;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.GameStateMessage;
-using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.AuthenticateResponse;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.ConnectingToMatchId;
 using Serilog;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace MTGAHelper.Lib.OutputLogParser.InMatchTracking
 {

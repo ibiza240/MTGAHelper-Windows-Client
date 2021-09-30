@@ -1,6 +1,6 @@
 ﻿using MTGAHelper.Entity.OutputLogParsing;
 
-namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.ConnectingToMatchId
 {
     public class ConnectingToMatchIdResult : MtgaOutputLogPartResultBase<string>, ITagMatchResult//, IMtgaOutputLogPartResult<ConnectingToMatchIdRaw>
     {

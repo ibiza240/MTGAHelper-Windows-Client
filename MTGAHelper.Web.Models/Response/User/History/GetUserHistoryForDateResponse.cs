@@ -1,6 +1,6 @@
 ﻿using MTGAHelper.Web.Models.Response.User.History;
 
-namespace MTGAHelper.Web.Model.Response.User.History
+namespace MTGAHelper.Web.Models.Response.User.History
 {
     public class GetUserHistoryForDateResponse
     {

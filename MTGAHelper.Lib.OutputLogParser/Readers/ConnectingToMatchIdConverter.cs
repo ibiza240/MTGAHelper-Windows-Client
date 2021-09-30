@@ -1,6 +1,5 @@
-﻿using MTGAHelper.Entity.OutputLogParsing;
-using MTGAHelper.Lib.OutputLogParser.Models;
-using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
+﻿using MTGAHelper.Lib.OutputLogParser.Models;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.ConnectingToMatchId;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 

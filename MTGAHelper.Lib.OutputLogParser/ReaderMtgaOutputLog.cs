@@ -1,4 +1,10 @@
-﻿using System;
+﻿using MTGAHelper.Entity.MtgaOutputLog;
+using MTGAHelper.Lib.Exceptions;
+using MTGAHelper.Lib.OutputLogParser.Models;
+using MTGAHelper.Lib.OutputLogParser.OutputLogProgress;
+using MTGAHelper.Lib.OutputLogParser.Readers.MTGAProLogger;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -6,11 +12,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using MTGAHelper.Entity.MtgaOutputLog;
-using MTGAHelper.Lib.Exceptions;
-using MTGAHelper.Lib.OutputLogParser.Models;
-using MTGAHelper.Lib.OutputLogParser.OutputLogProgress;
-using Serilog;
 
 namespace MTGAHelper.Lib.OutputLogParser
 {
@@ -29,6 +30,7 @@ namespace MTGAHelper.Lib.OutputLogParser
         private const string PREFIX_CLEANUP = "CLEANUP";
 
         private const string PREFIX_CROSSTHREADLOGGER = "UnityCrossThreadLogger";
+        private const string PREFIX_MTGAPROLOGGER = "MTGA.Pro Logger";
         private const string PREFIX_ACCOUNTS_STARTUP = "Accounts - Startup";
         private const string PREFIX_ACCOUNTS_CLIENT = "Accounts - Client";
         private const string PREFIX_ACCOUNTS_ACCOUNTCLIENT = "Accounts - AccountClient";
@@ -72,6 +74,7 @@ namespace MTGAHelper.Lib.OutputLogParser
             Util util,
             IPossibleDateFormats dateFormatsProvider,
             ReaderMtgaOutputLogUnityCrossThreadLogger readerCrossThreadLogger,
+            ReaderMtgaProLogger readerMtgaProLogger,
             //ReaderMtgaOutputLogGre readerGRE,
             ReaderDetailedLogs readerDetailedLogs,
             ReaderMessageSummarized converterMessageSummarized,
@@ -91,6 +94,7 @@ namespace MTGAHelper.Lib.OutputLogParser
 
             // Handled
             converters.Add(PREFIX_CROSSTHREADLOGGER, readerCrossThreadLogger);
+            converters.Add(PREFIX_MTGAPROLOGGER, readerMtgaProLogger);
             //converters.Add(PREFIX_CLIENT_GRE, readerGRE);
             converters.Add(DETAILED_LOGS, readerDetailedLogs);
             converters.Add(Constants.PREFIX_MESSAGESUMMARIZED, converterMessageSummarized);

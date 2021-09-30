@@ -1,4 +1,4 @@
-﻿using MTGAHelper.Web.UI.Model.Response.User.History;
+﻿using MTGAHelper.Web.Models.Response.User.History;
 
 namespace MTGAHelper.Web.Models.Response.User.Match
 {

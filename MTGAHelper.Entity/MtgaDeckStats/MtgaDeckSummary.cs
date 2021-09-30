@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using MTGAHelper.Entity.MtgaOutputLog;
 
-
 namespace MTGAHelper.Entity.MtgaDeckStats
 {
     public class MtgaDeckSummary
@@ -27,13 +26,15 @@ namespace MTGAHelper.Entity.MtgaDeckStats
         public string DeckId { get; set; }
         public string DeckImage { get; set; }
         public string DeckName { get; set; }
+
         //public DateTime FirstPlayed { get; set; }
         //public DateTime LastPlayed { get; set; }
-        public ICollection<MtgaDeckStatsByFormat> StatsByFormat { get; set; }
+        //public ICollection<MtgaDeckStatsByFormat> StatsByFormat { get; set; }
         public ICollection<MatchResult> Matches { get; set; }
 
         //public ConfigModelRawDeck DeckUsed { get; set; }
         public string DeckColor { get; set; }
+
         public ICollection<DeckCardRaw> CardsMain { get; set; }
         public Dictionary<DeckCardZoneEnum, ICollection<DeckCardRaw>> CardsNotMainByZone { get; set; }
     }

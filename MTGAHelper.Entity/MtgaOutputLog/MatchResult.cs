@@ -25,6 +25,8 @@ namespace MTGAHelper.Entity.MtgaOutputLog
 
         public string EventName { get; set; }
         public string EventType { get; set; }
+        public string EventInstanceId { get; set; }
+
         public DateTime StartDateTime { get; set; }
 
         public long SecondsCount => Games.Any() == false ? 0 :

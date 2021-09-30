@@ -7,20 +7,16 @@ using MTGAHelper.Entity.MtgaOutputLog;
 using MTGAHelper.Entity.UserHistory;
 using MTGAHelper.Lib;
 using MTGAHelper.Web.Models.Response.Account;
+using MTGAHelper.Web.Models.Response.Dashboard;
+using MTGAHelper.Web.Models.Response.Deck;
 using MTGAHelper.Web.Models.Response.User;
 using MTGAHelper.Web.Models.Response.User.History;
 using MTGAHelper.Web.Models.SharedDto;
-using MTGAHelper.Web.UI.Model.Response;
-using MTGAHelper.Web.UI.Model.Response.Dto;
-using MTGAHelper.Web.UI.Model.Response.User;
-using MTGAHelper.Web.UI.Model.Response.User.History;
-using MTGAHelper.Web.UI.Model.SharedDto;
-using MTGAHelper.Web.UI.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MTGAHelper.Web.UI.IoC
+namespace MTGAHelper.Web.Models.IoC
 {
     public class MapperProfileWebModels : Profile
     {

@@ -5,8 +5,9 @@ namespace MTGAHelper.Entity.OutputLogParsing
 {
     public class GetCombinedRankInfoRaw
     {
-        public string playerId { get; set; }
+        //public string playerId { get; set; }
         public int constructedSeasonOrdinal { get; set; }
+
         public string constructedClass { get; set; }
         public int constructedLevel { get; set; }
         public int constructedStep { get; set; }
@@ -20,10 +21,10 @@ namespace MTGAHelper.Entity.OutputLogParsing
         public int limitedMatchesWon { get; set; }
         public int limitedMatchesLost { get; set; }
         public int limitedMatchesDrawn { get; set; }
-        public float constructedPercentile { get; set; }
-        public int constructedLeaderboardPlace { get; set; }
-        public float limitedPercentile { get; set; }
-        public int limitedLeaderboardPlace { get; set; }
+        //public float constructedPercentile { get; set; }
+        //public int constructedLeaderboardPlace { get; set; }
+        //public float limitedPercentile { get; set; }
+        //public int limitedLeaderboardPlace { get; set; }
 
         public List<ConfigModelRankInfo> ToConfig()
         {
@@ -38,8 +39,8 @@ namespace MTGAHelper.Entity.OutputLogParsing
                     MatchesWon = constructedMatchesWon,
                     MatchesLost = constructedMatchesLost,
                     MatchesDrawn = constructedMatchesDrawn,
-                    Percentile = constructedPercentile,
-                    LeaderboardPlace = constructedLeaderboardPlace,
+                    //Percentile = constructedPercentile,
+                    //LeaderboardPlace = constructedLeaderboardPlace,
                 },
                 new ConfigModelRankInfo(RankFormatEnum.Limited)
                 {
@@ -50,8 +51,8 @@ namespace MTGAHelper.Entity.OutputLogParsing
                     MatchesWon = limitedMatchesWon,
                     MatchesLost = limitedMatchesLost,
                     MatchesDrawn = limitedMatchesDrawn,
-                    Percentile = limitedPercentile,
-                    LeaderboardPlace = limitedLeaderboardPlace,
+                    //Percentile = limitedPercentile,
+                    //LeaderboardPlace = limitedLeaderboardPlace,
                 },
             };
         }

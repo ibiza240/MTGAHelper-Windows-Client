@@ -1,9 +1,7 @@
-﻿using System;
+﻿using MTGAHelper.Web.Models.SharedDto;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using MTGAHelper.Web.Models.SharedDto;
-using MTGAHelper.Web.UI.Model.Response.User.History;
-using MTGAHelper.Web.UI.Model.SharedDto;
 
 namespace MTGAHelper.Web.Models.Response.User.History
 {

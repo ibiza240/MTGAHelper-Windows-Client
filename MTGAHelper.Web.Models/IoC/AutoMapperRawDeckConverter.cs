@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using MTGAHelper.Entity;
 using MTGAHelper.Lib;
-using MTGAHelper.Web.UI.Model.Response.Dto;
-using MTGAHelper.Web.UI.Model.SharedDto;
+using MTGAHelper.Web.Models.Response.Deck;
+using MTGAHelper.Web.Models.SharedDto;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace MTGAHelper.Web.UI.Shared
+namespace MTGAHelper.Web.Models.IoC
 {
     public class AutoMapperRawDeckConverter : ITypeConverter<IReadOnlyDictionary<int, int>, ICollection<CardWithAmountDto>>
     {

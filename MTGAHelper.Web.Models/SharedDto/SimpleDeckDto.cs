@@ -1,7 +1,7 @@
-﻿using MTGAHelper.Web.UI.Model.Response.Dto;
+﻿using MTGAHelper.Web.Models.Response.Deck;
 using System.Collections.Generic;
 
-namespace MTGAHelper.Web.UI.Model.SharedDto
+namespace MTGAHelper.Web.Models.SharedDto
 {
     public class SimpleDeckDto
     {

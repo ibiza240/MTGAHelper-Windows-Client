@@ -1,6 +1,6 @@
-﻿using MTGAHelper.Web.UI.Model.SharedDto;
+﻿using MTGAHelper.Web.Models.SharedDto;
 
-namespace MTGAHelper.Web.UI.Model.Response.Dto
+namespace MTGAHelper.Web.Models.Response.Deck
 {
     public class DeckCardDto : CardWithAmountDto
     {

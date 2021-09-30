@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using MTGAHelper.Entity;
 
-namespace MTGAHelper.Web.UI.Model.Response.User
+namespace MTGAHelper.Web.Models.Response.User
 {
     public class InventoryBoosterDto
     {
@@ -13,6 +13,7 @@ namespace MTGAHelper.Web.UI.Model.Response.User
     {
         //public string PlayerId { get; set; }
         public int Gold { get; set; }
+
         public int Gems { get; set; }
         public int DraftTokens { get; set; }
         public int SealedTokens { get; set; }

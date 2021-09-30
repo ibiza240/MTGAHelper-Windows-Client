@@ -1,8 +1,8 @@
-﻿using System;
+﻿using MTGAHelper.Entity;
+using MTGAHelper.Web.Models.Response.Deck;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using MTGAHelper.Entity;
-using MTGAHelper.Web.UI.Model.Response.Dto;
 
 namespace MTGAHelper.Web.Models
 {

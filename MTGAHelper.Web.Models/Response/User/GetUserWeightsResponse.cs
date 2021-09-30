@@ -3,7 +3,7 @@ using MTGAHelper.Lib;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MTGAHelper.Web.UI.Model.Response
+namespace MTGAHelper.Web.Models.Response.User
 {
     public class GetUserWeightsResponse
     {

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using MTGAHelper.Web.UI.Model.SharedDto;
+﻿using MTGAHelper.Web.Models.SharedDto;
+using System.Collections.Generic;
 
-namespace MTGAHelper.Web.UI.Model.Response.User
+namespace MTGAHelper.Web.Models.Response.User
 {
     public class CollectionMissingResponse
     {

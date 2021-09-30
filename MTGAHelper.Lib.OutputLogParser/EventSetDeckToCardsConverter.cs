@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using MTGAHelper.Entity;
-using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventSetDeck;
 using System.Collections.Generic;
 using System.Linq;
 

@@ -1,9 +1,7 @@
-﻿using System.Linq;
-using MTGAHelper.Web.Models;
-using MTGAHelper.Web.UI.IoC;
-using SimpleInjector;
+﻿using SimpleInjector;
+using System.Linq;
 
-namespace MtgaHelper.Web.Models.IoC
+namespace MTGAHelper.Web.Models.IoC
 {
     public static class IServiceCollectionExtension
     {

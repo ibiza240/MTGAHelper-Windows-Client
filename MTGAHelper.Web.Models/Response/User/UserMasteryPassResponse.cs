@@ -1,6 +1,4 @@
-﻿using MTGAHelper.Web.UI.Model.Response;
-
-namespace MTGAHelper.Web.Models.Response.User
+﻿namespace MTGAHelper.Web.Models.Response.User
 {
     public class UserMasteryPassResponse : IResponse
     {

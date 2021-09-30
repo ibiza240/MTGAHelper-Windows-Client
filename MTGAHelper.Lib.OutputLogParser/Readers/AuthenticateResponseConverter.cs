@@ -1,4 +1,4 @@
-﻿using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
+﻿using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.AuthenticateResponse;
 
 namespace MTGAHelper.Lib.OutputLogParser.Readers
 {

@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+﻿namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.SceneChange
 {
     public class SceneChangeRaw
     {

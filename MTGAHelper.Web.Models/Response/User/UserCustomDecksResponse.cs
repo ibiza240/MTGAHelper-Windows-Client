@@ -1,9 +1,9 @@
-﻿using MTGAHelper.Web.UI.Model.Response.Dto;
+﻿using MTGAHelper.Entity.Config.Decks;
+using MTGAHelper.Web.Models.Response.Deck;
 using System.Collections.Generic;
 using System.Linq;
-using MTGAHelper.Entity.Config.Decks;
 
-namespace MTGAHelper.Web.UI.Model.Response
+namespace MTGAHelper.Web.Models.Response.User
 {
     public class UserCustomDecksResponse
     {

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventJoin;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventSetDeck;
+using System;
 using System.Collections.Generic;
-using MTGAHelper.Entity.OutputLogParsing;
 
-namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.StartHook
 {
     public class StartHookResult : MtgaOutputLogPartResultBase<StartHookRaw>//, IMtgaOutputLogPartResult<ICollection<GetDeckListResultDeckRaw>>
     {
@@ -119,7 +120,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
         public Guid DeckId { get; set; }
         public string Mana { get; set; }
         public string Name { get; set; }
-        public Attribute[] Attributes { get; set; }
+        public EventSetDeck.Attribute[] Attributes { get; set; }
         public string Description { get; set; }
         public long DeckTileId { get; set; }
         public bool IsCompanionValid { get; set; }

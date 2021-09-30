@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MTGAHelper.Web.UI.Model.Response.Dto
+namespace MTGAHelper.Web.Models.Response.Deck
 {
     public class DeckDto
     {
@@ -25,7 +25,6 @@ namespace MTGAHelper.Web.UI.Model.Response.Dto
         public int NbMissing { get; set; }
         public float MissingWeightTotal { get; set; }
     }
-
 
     public class DeckManaCurveDto
     {

@@ -1,4 +1,4 @@
-﻿using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
+﻿using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.SceneChange;
 
 namespace MTGAHelper.Lib.OutputLogParser.Readers.UnityCrossThreadLogger
 {

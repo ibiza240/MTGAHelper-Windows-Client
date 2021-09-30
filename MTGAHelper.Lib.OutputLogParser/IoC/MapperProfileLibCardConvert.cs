@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.MtgaOutputLog;
-using MTGAHelper.Entity.OutputLogParsing;
 using MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress;
-using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.ConnectingToMatchId;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventSetDeck;
+using System.Linq;
 
 namespace MTGAHelper.Lib.OutputLogParser.IoC
 {

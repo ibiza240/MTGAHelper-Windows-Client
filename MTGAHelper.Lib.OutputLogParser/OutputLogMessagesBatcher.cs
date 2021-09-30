@@ -1,9 +1,10 @@
-﻿using System;
+﻿using MTGAHelper.Lib.OutputLogParser.Models;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.ConnectingToMatchId;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.StateChanged;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using MTGAHelper.Lib.OutputLogParser.Models;
-using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
 
 namespace MTGAHelper.Lib.OutputLogParser
 {

@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+﻿namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.AuthenticateResponse
 {
     public class AuthenticateResponseRaw
     {
@@ -13,5 +13,4 @@
         public string sessionId { get; set; }
         public string screenName { get; set; }
     }
-
 }

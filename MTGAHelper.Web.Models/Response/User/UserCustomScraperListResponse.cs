@@ -1,7 +1,7 @@
 ﻿using MTGAHelper.Entity;
 using System.Collections.Generic;
 
-namespace MTGAHelper.Web.UI.Model.Response
+namespace MTGAHelper.Web.Models.Response.User
 {
     public class UserCustomScraperListResponse
     {

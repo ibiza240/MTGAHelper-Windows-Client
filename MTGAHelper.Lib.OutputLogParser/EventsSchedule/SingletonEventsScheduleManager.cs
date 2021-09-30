@@ -1,25 +1,27 @@
-﻿using System;
+﻿using MTGAHelper.Entity.Config.App;
+using MTGAHelper.Lib.Logging;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetActiveEventsV3;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MTGAHelper.Entity.Config.App;
-using MTGAHelper.Lib.Logging;
-using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
-using Newtonsoft.Json;
 
 namespace MTGAHelper.Lib.OutputLogParser.EventsSchedule
 {
     public interface IEventTypeCache
     {
         IReadOnlyCollection<GetActiveEventsV3Raw> AddEvents(ICollection<GetActiveEventsV3Raw> currentEvents);
+
         string GetEventType(string internalEventName);
+
         ICollection<GetActiveEventsV3Raw> Events { get; }
     }
 
     public class SimpleEventCache : IEventTypeCache
     {
-        readonly ConcurrentDictionary<string, GetActiveEventsV3Raw> events = new ConcurrentDictionary<string, GetActiveEventsV3Raw>();
+        private readonly ConcurrentDictionary<string, GetActiveEventsV3Raw> events = new ConcurrentDictionary<string, GetActiveEventsV3Raw>();
         public ICollection<GetActiveEventsV3Raw> Events => events.Values;
 
         public string GetEventType(string internalEventName) => events.ContainsKey(internalEventName) ? events[internalEventName].EventType : "Unknown";
@@ -39,13 +41,14 @@ namespace MTGAHelper.Lib.OutputLogParser.EventsSchedule
 
     public class SingletonEventsScheduleManager : IEventTypeCache
     {
-        readonly object lockWriteFile = new object();
-        readonly IEventTypeCache cache;
+        private readonly object lockWriteFile = new object();
+        private readonly IEventTypeCache cache;
 
         public string GetEventType(string internalEventName) => cache.GetEventType(internalEventName);
+
         public ICollection<GetActiveEventsV3Raw> Events => cache.Events;
 
-        readonly string path;
+        private readonly string path;
 
         public SingletonEventsScheduleManager(IEventTypeCache cache, IDataPath folderData)
         {

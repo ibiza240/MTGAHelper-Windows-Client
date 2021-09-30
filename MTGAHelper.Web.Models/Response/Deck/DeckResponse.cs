@@ -1,12 +1,9 @@
-﻿using System;
+﻿using AutoMapper;
+using MTGAHelper.Entity;
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
-using MTGAHelper.Entity;
-using MTGAHelper.Web.Models;
-using MTGAHelper.Web.UI.Model.Response.Dto;
 
-namespace MTGAHelper.Web.UI.Model.Response
+namespace MTGAHelper.Web.Models.Response.Deck
 {
     public class DeckResponse
     {
@@ -33,9 +30,8 @@ namespace MTGAHelper.Web.UI.Model.Response
                 .ThenBy(i => i.Card.GetSimpleType())
                 .ThenBy(i => i.Card.cmc)
                 .ThenBy(i => i.Card.name)
-                .Select(i => 
+                .Select(i =>
                 {
-
                     //if (i.Card.name.Contains("eace")) System.Diagnostics.Debugger.Break();
 
                     var card = mapper.Map<DeckCardDto>(i);

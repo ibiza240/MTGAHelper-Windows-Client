@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using MTGAHelper.Entity.MtgaDeckStats;
-using MTGAHelper.Web.UI.Model.Response.Dto;
-using MTGAHelper.Web.UI.Model.Response.User.History;
+﻿using MTGAHelper.Entity.MtgaDeckStats;
+using MTGAHelper.Web.Models.Response.Deck;
+using MTGAHelper.Web.Models.Response.User.History;
+using System.Collections.Generic;
 
 namespace MTGAHelper.Web.Models.Response.User
 {
@@ -21,9 +21,11 @@ namespace MTGAHelper.Web.Models.Response.User
         public string DeckImage { get; set; }
         public string DeckName { get; set; }
         public string DeckColor { get; set; }
+
         //public string FirstPlayed { get; set; }
         //public string LastPlayed { get; set; }
         public ICollection<MtgaDeckStatsByFormat> StatsByFormat { get; set; }
+
         public ICollection<MatchDtoLightweight> Matches { get; set; }
         public ICollection<DeckCardDto> CardsMain { get; set; }
         public ICollection<KeyValuePair<string, DeckCardDto[]>> CardsNotMainByZone { get; set; }

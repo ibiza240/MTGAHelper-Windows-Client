@@ -22,7 +22,7 @@
 //                string userId = null;
 //                using (StringWriter writer = new StringWriter())
 //                    logEvent.Properties["userId"].Render(writer);
-                
+
 //                var path = Path.Combine(configApp.FolderConfigUsers, "audit", $"{userId}_audit.txt");
 
 //                File.AppendAllLines(path, new [] { logEvent.RenderMessage() });

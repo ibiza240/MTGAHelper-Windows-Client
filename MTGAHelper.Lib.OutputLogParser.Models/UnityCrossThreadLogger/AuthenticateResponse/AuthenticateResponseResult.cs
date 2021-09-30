@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+﻿namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.AuthenticateResponse
 {
     public class AuthenticateResponseResult : MtgaOutputLogPartResultBase<AuthenticateResponseRaw>//, IMtgaOutputLogPartResult<AuthenticateResponseRaw>
     {
@@ -6,5 +6,4 @@
 
         //public new AuthenticateResponseRaw Raw { get; set; }
     }
-
 }

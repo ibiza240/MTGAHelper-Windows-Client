@@ -1,4 +1,4 @@
-﻿namespace WebApplication1.Model.Account
+﻿namespace MTGAHelper.Web.Models.Request.Account
 {
     public class AccountSignupRequest
     {

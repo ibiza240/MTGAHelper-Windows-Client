@@ -3,11 +3,11 @@ using AutoMapper;
 using MTGAHelper.Entity;
 using MTGAHelper.Lib;
 
-namespace MTGAHelper.Web.UI.Shared
+namespace MTGAHelper.Web.Models.IoC
 {
     public class AutoMapperCollationToSetConverter : IValueConverter<int, string>
     {
-        readonly CacheSingleton<Dictionary<int, Set>> cache;
+        private readonly CacheSingleton<Dictionary<int, Set>> cache;
 
         public AutoMapperCollationToSetConverter(CacheSingleton<Dictionary<int, Set>> cacheSetsByCollation)
         {

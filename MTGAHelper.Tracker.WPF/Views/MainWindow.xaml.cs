@@ -1,4 +1,35 @@
-﻿using System;
+﻿using AutoMapper;
+using MTGAHelper.Entity;
+using MTGAHelper.Entity.MtgaOutputLog;
+using MTGAHelper.Lib.OutputLogParser;
+using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
+using MTGAHelper.Lib.OutputLogParser.Models;
+using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.AuthenticateResponse;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.DraftNotify;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.DraftPickStatus;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventGetCourses;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventJoin;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventJoinRequest;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetActiveEventsV2;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetActiveEventsV3;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetCombinedRankInfo;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPlayerCardsV3;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPlayerInventory;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.PostMatchUpdate;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.SceneChange;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.StateChanged;
+using MTGAHelper.Tracker.WPF.Business;
+using MTGAHelper.Tracker.WPF.Business.Monitoring;
+using MTGAHelper.Tracker.WPF.Config;
+using MTGAHelper.Tracker.WPF.Tools;
+using MTGAHelper.Tracker.WPF.ViewModels;
+using MTGAHelper.Web.Models.Response.Account;
+using MTGAHelper.Web.Models.Response.User;
+using Newtonsoft.Json;
+using Serilog;
+using Serilog.Events;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -10,25 +41,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using AutoMapper;
-using MTGAHelper.Entity;
-using MTGAHelper.Entity.MtgaOutputLog;
-using MTGAHelper.Lib;
-using MTGAHelper.Lib.OutputLogParser;
-using MTGAHelper.Lib.OutputLogParser.InMatchTracking;
-using MTGAHelper.Lib.OutputLogParser.Models;
-using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient;
-using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
-using MTGAHelper.Tracker.WPF.Business;
-using MTGAHelper.Tracker.WPF.Business.Monitoring;
-using MTGAHelper.Tracker.WPF.Config;
-using MTGAHelper.Tracker.WPF.Tools;
-using MTGAHelper.Tracker.WPF.ViewModels;
-using MTGAHelper.Web.Models.Response.Account;
-using MTGAHelper.Web.UI.Model.Response.User;
-using Newtonsoft.Json;
-using Serilog;
-using Serilog.Events;
 using Point = System.Windows.Point;
 
 namespace MTGAHelper.Tracker.WPF.Views
@@ -348,6 +360,10 @@ namespace MTGAHelper.Tracker.WPF.Views
 
                 optionsVM.Sets = ViewModel.Sets.ToDictionary(i => i.Code, i => i);
                 optionsVM.DraftRatings = ViewModel.DraftRatings;
+
+                if (optionsVM.LimitedRatingsSourcesDict.ContainsKey(optionsVM.LimitedRatingsSource.Key) == false)
+                    optionsVM.LimitedRatingsSource = optionsVM.LimitedRatingsSourcesDict.First();
+
                 optionsVM.LimitedRatingsSource = optionsVM.LimitedRatingsSourcesDict.First(i => i.Key == optionsVM.LimitedRatingsSource.Key);
 
                 OptionsWindow win = new OptionsWindow().Init(ViewModel, optionsVM);
@@ -810,7 +826,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                     case GetPlayerInventoryResult _:
                     case GetPlayerCardsResult _:
                     case PostMatchUpdateResult _:
-                    case RankUpdatedResult _:
+                    //case RankUpdatedResult _:
                     case GetCombinedRankInfoResult _:
                         mustUpload = true;
                         break;

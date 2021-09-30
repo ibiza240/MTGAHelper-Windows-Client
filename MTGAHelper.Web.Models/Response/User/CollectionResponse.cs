@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using MTGAHelper.Entity;
-using MTGAHelper.Web.UI.Model.SharedDto;
+using MTGAHelper.Entity.Config.Users;
+using MTGAHelper.Web.Models.SharedDto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MTGAHelper.Entity.Config.Users;
 
-namespace MTGAHelper.Web.UI.Model.Response.User
+namespace MTGAHelper.Web.Models.Response.User
 {
     public class CollectionResponse
     {
@@ -14,6 +14,7 @@ namespace MTGAHelper.Web.UI.Model.Response.User
         public string CollectionDate { get; set; }
         public string LastUploadHash { get; set; }
         public ICollection<CollectionCardDto> Cards { get; set; } = new CollectionCardDto[0];
+
         public InventoryResponseDto Inventory
         { get; set; } = new InventoryResponseDto();
 

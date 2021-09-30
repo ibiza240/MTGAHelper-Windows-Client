@@ -7,7 +7,7 @@ using MTGAHelper.Entity.CollectionDecksCompare;
 using MTGAHelper.Entity.Config.Decks;
 using MTGAHelper.Lib;
 
-namespace MTGAHelper.Web.UI.Model.Response
+namespace MTGAHelper.Web.Models.Response.Dashboard
 {
     public class DashboardDetailsCardResponse
     {

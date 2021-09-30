@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventJoinRequest
 {
     public class EventJoinRequestResult : RequestParamsResult2<EventJoinRequestPayloadRaw>
     {

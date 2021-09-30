@@ -1,7 +1,7 @@
 ﻿using System;
 using MTGAHelper.Entity.Config.Decks;
 
-namespace MTGAHelper.Lib.Config
+namespace MTGAHelper.Web.Models.Response.Misc
 {
     public class GetCalendarResponse
     {

@@ -1,6 +1,6 @@
-﻿using MTGAHelper.Web.UI.Model.SharedDto;
+﻿using MTGAHelper.Web.Models.SharedDto;
 
-namespace MTGAHelper.Web.UI.Model.Response.User.History
+namespace MTGAHelper.Web.Models.Response.User.History
 {
     public class CardTurnActionDto
     {

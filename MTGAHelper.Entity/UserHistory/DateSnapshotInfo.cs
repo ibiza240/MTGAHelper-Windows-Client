@@ -30,7 +30,7 @@ namespace MTGAHelper.Entity.UserHistory
         public Dictionary<DateTime, Inventory> InventoryIntraday { get; set; } = new Dictionary<DateTime, Inventory>();
 
         //public Dictionary<DateTime, Dictionary<int, int>> CollectionIntraday { get; set; } = new Dictionary<DateTime, Dictionary<int, int>>();
-        public Dictionary<DateTime, RankUpdatedRaw> RankUpdated { get; set; } = new Dictionary<DateTime, RankUpdatedRaw>();
+        //public Dictionary<DateTime, RankUpdatedRaw> RankUpdated { get; set; } = new Dictionary<DateTime, RankUpdatedRaw>();
 
         public Dictionary<DateTime, GetCombinedRankInfoRaw> CombinedRankInfo { get; set; } = new Dictionary<DateTime, GetCombinedRankInfoRaw>();
         //public Dictionary<DateTime, PayEntryRaw> PayEntry { get; set; } = new Dictionary<DateTime, PayEntryRaw>();

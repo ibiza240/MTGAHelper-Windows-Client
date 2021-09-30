@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MTGAHelper.Web.UI.Model.SharedDto
+namespace MTGAHelper.Web.Models.SharedDto
 {
     public class SimpleListDto
     {

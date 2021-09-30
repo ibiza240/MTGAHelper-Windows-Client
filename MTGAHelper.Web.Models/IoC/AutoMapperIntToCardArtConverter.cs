@@ -3,11 +3,11 @@ using AutoMapper;
 using MTGAHelper.Entity;
 using MTGAHelper.Lib;
 
-namespace MTGAHelper.Web.UI.Shared
+namespace MTGAHelper.Web.Models.IoC
 {
     public class AutoMapperIntToCardArtConverter : IValueConverter<int, string>
     {
-        readonly Dictionary<int, Card> cards;
+        private readonly Dictionary<int, Card> cards;
 
         public AutoMapperIntToCardArtConverter(CacheSingleton<Dictionary<int, Card>> cache)
         {

@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+﻿namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.DraftStatus
 {
     // Same as DraftPick
 }

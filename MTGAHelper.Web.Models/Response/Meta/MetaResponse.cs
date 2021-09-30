@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MTGAHelper.Entity.Config.Decks;
 
-namespace MTGAHelper.Web.UI.Model.Response.Meta
+namespace MTGAHelper.Web.Models.Response.Meta
 {
     public class MetaResponseArchetype
     {

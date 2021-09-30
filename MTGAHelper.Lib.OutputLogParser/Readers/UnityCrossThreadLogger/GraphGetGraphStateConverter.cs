@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using MTGAHelper.Entity.OutputLogParsing;
-using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
+﻿using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GraphGetGraphState;
 
 namespace MTGAHelper.Lib.OutputLogParser.Readers.UnityCrossThreadLogger
 {

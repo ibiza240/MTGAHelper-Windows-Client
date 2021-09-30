@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using MTGAHelper.Entity.OutputLogParsing;
 
-namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.CompleteDraft
 {
     public class CompleteDraftResult : MtgaOutputLogPartResultBase<CompleteDraftRaw>, ICardPool
     {

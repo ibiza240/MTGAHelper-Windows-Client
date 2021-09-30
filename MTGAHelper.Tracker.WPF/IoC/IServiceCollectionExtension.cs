@@ -42,6 +42,7 @@ namespace MTGAHelper.Tracker.WPF.IoC
             container.Register<ExternalProviderTokenManager>();
             container.Register<DraftHelperRunner>();
             //container.Register<CacheLoaderConfigResolutions>();
+            container.RegisterSingleton<MtgaProLoggerAdaptor>();
 
             return container;
         }

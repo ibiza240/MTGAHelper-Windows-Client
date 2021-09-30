@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MTGAHelper.Entity;
 
-namespace MTGAHelper.Web.UI.Model.Response
+namespace MTGAHelper.Web.Models.Response.Dashboard
 {
     public class CardMissingDetailsModelResponseDto
     {

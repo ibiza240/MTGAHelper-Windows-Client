@@ -1,5 +1,5 @@
 ﻿using MTGAHelper.Entity.OutputLogParsing;
-using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.InventoryUpdated;
 
 namespace MTGAHelper.Lib.OutputLogParser.Readers.UnityCrossThreadLogger
 {

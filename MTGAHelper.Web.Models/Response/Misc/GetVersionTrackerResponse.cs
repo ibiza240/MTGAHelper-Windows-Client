@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Web.UI.Model.Response.Misc
+﻿namespace MTGAHelper.Web.Models.Response.Misc
 {
     public class GetVersionTrackerResponse
     {

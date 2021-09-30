@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Web.UI.Model.Response
+﻿namespace MTGAHelper.Web.Models.Response
 {
     public class StatusOkResponse : StatusResponse
     {

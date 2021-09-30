@@ -1,11 +1,8 @@
-﻿using System;
+﻿using AutoMapper;
+using MTGAHelper.Entity;
+using MTGAHelper.Entity.OutputLogParsing;
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
-using MTGAHelper.Entity;
-using MTGAHelper.Entity.MtgaOutputLog;
-using MTGAHelper.Entity.OutputLogParsing;
-using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
 
 namespace MTGAHelper.Lib.OutputLogParser.IoC
 {
@@ -43,9 +40,9 @@ namespace MTGAHelper.Lib.OutputLogParser.IoC
             CreateMap<BattlePass, PlayerProgress>();
             CreateMap<GetPlayerQuestRaw, PlayerQuest>();
 
-            CreateMap<Models.UnityCrossThreadLogger.DeckSummary, CourseDeckRaw>()
+            CreateMap<Models.UnityCrossThreadLogger.StartHook.DeckSummary, CourseDeckRaw>()
                 .ForMember(i => i.id, i => i.MapFrom(x => x.DeckId))
-                .ForMember(i => i.lastUpdated, i => i.MapFrom(x => x.Attributes.FirstOrDefault(i => i.Name == "lastPlayed").Value))
+                .ForMember(i => i.lastUpdated, i => i.MapFrom(x => x.Attributes.FirstOrDefault(y => y.Name == "lastPlayed").Value))
                 //.ForMember(i => i.mainDeck, i => i.MapFrom(x => new List<int>()))
                 ;
         }

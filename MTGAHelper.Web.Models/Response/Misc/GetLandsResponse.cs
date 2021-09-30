@@ -1,7 +1,7 @@
 ﻿using MTGAHelper.Entity;
 using System.Collections.Generic;
 
-namespace MTGAHelper.Web.UI.Model.Response.Misc
+namespace MTGAHelper.Web.Models.Response.Misc
 {
     public class GetLandsResponse
     {

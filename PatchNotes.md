@@ -1,10 +1,20 @@
+### v1.8.1 (2021-09-30)
+
+Tracking is back to being fully operational.
+
+If you are manually uploading your file (with the console program or from the website), please read the detailed guide **[here](https://github.com/ibiza240/MTGAHelper-Windows-Client/blob/master/Manual-upload-1-8-1.md)**.
+
+Minor known issues:
+
+- Inventory updates in the history can glitch (duplicates or missing entries, new cards are not displayed), but your latest full collection and inventory are still tracked correctly nonetheless;
+
 ### v1.8.0 (2021-08-29)
 
 The game's last patch from WotC changed a lot of things, so it will take time to restore some features.
 
 Working: Matches tracking, Deck stats, Mastery pass calculator, Draft helper
 
-Broken: Inventory, Collection, Booster advisors, Draft vs boosters tool
+Broken: Inventory, Collection, Booster/Cards to craft advisors, Draft vs boosters tool
 
 ### v1.7.7 (2021-07-12)
 

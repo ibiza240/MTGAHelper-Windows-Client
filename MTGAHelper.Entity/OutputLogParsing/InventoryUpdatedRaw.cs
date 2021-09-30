@@ -56,5 +56,8 @@ namespace MTGAHelper.Entity.OutputLogParsing
     {
         public string context { get; set; }
         public ICollection<Update> updates { get; set; } = new Update[0];
+
+        // For MtgaProLogger
+        public long timestamp { get; set; }
     }
 }

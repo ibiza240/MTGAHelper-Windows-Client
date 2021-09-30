@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using MTGAHelper.Web.Models.SharedDto;
 
-namespace MTGAHelper.Web.UI.Model.Response.User.History
+namespace MTGAHelper.Web.Models.Response.User.History
 {
     public class GetUserHistorySummaryDto
     {
         public DateTime Date { get; set; }
+
         //public ICollection<CardWithAmountDto> NewCards { get; set; }
         public int NewCardsCount { get; set; }
+
         public int GoldChange { get; set; }
         public int GemsChange { get; set; }
         public int XpChange { get; set; }

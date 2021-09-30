@@ -221,6 +221,7 @@
     <Compile Include="Business\DraftCardsPicker.cs" />
     <Compile Include="Business\DraftHelperRunner.cs" />
     <Compile Include="Business\InputOutputOrchestratorMock.cs" />
+    <Compile Include="Business\MtgaProLoggerAdaptor.cs" />
     <Compile Include="Business\SupporterChecker.cs" />
     <Compile Include="Config\ConfiguratorConfig.cs" />
     <Compile Include="Constants.cs" />
@@ -493,6 +494,17 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="GetData2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="getFrontWindow.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SharpMonoInjector.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

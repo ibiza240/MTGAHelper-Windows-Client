@@ -1,7 +1,7 @@
-﻿namespace MTGAHelper.Web.UI.Model.Request
+﻿namespace MTGAHelper.Web.Models.Request
 {
     public class PatchDeckPriorityFactorResetAllRequest
     {
-        public float  Value { get; set; }
+        public float Value { get; set; }
     }
 }

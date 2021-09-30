@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using MTGAHelper.Entity.OutputLogParsing;
 
-namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPreconDecksV3
 {
     public class GetPreconDecksV3Result : MtgaOutputLogPartResultBase<PayloadRaw<ICollection<Entity.OutputLogParsing.CourseDeckRaw>>>//, IMtgaOutputLogPartResult<ICollection<GetDeckListResultDeckRaw>>
     {
@@ -31,7 +31,6 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
     //    {
     //        return new ConfigModelRawDeck
     //        {
-
     //            Name = name,
     //            CardsMain = MainDeck.ToDictionary(i => i.Card.grpId, i => i.Amount),
     //            CardsSideboard = Sideboard.ToDictionary(i => i.Card.grpId, i => i.Amount),

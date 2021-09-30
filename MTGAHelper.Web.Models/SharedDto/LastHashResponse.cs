@@ -1,4 +1,4 @@
-﻿namespace MTGAHelper.Web.Models.Response.SharedDto
+﻿namespace MTGAHelper.Web.Models.SharedDto
 {
     public class LastHashResponse
     {

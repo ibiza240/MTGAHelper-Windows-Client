@@ -62,7 +62,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Readers
             return new[] { ParseJson(json) };
         }
 
-        private string GetJson(string part)
+        protected string GetJson(string part)
         {
             var subpart = GetSubpart(part);
             var jsonStartArray = subpart.IndexOf("[", StringComparison.Ordinal);

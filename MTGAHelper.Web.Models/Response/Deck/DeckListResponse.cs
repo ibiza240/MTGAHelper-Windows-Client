@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MTGAHelper.Web.UI.Model.Response
+namespace MTGAHelper.Web.Models.Response.Deck
 {
     public class DeckSummaryResponseDto
     {

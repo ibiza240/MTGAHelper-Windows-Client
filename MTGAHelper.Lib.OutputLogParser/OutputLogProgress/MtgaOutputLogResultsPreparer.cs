@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using MTGAHelper.Entity;
+using MTGAHelper.Entity.Config.App;
 using MTGAHelper.Entity.GameEvents;
 using MTGAHelper.Entity.MtgaOutputLog;
 using MTGAHelper.Entity.OutputLogParsing;
@@ -15,9 +13,29 @@ using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.ConnectResp;
 using MTGAHelper.Lib.OutputLogParser.Models.GRE.MatchToClient.MatchGameRoomStateChanged;
 using MTGAHelper.Lib.OutputLogParser.Models.OutputLogProgress;
-using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.AuthenticateResponse;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.ConnectingToMatchId;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.DraftPickStatus;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventClaimPrize;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventGetCourses;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventSetDeck;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetActiveEventsV3;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetCombinedRankInfo;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPlayerCardsV3;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPlayerInventory;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPlayerProgress;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPlayerQuests;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPreconDecksV3;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetSeasonAndRankDetail;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GraphGetGraphState;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.InventoryUpdated;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.PostMatchUpdate;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.StartHook;
 using Newtonsoft.Json;
 using Serilog;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using PlayerEnum = MTGAHelper.Entity.MtgaOutputLog.PlayerEnum; //using MTGAHelper.Lib.EventsSchedule;
 
 namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
@@ -47,6 +65,7 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 
         private readonly IEventTypeCache eventsScheduleManager;
         private readonly InGameTracker2 inGameTracker;
+        private readonly ConfigModelApp configApp;
         private readonly GameStateDiffInterpreter gameStateDiffInterpreter = new GameStateDiffInterpreter();
         private readonly IReadOnlyDictionary<int, Card> dictAllCards;
 
@@ -59,18 +78,21 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
         public OutputLogResult2 Results2 { get; private set; }
 
         private string currentAccount = "";
+        private Dictionary<string, string> eventCourseInstanceIds;
 
         public MtgaOutputLogResultsPreparer(
             CacheSingleton<Dictionary<int, Card>> cacheCards,
             IMapper mapper,
             IEventTypeCache eventsScheduleManager,
-            InGameTracker2 inGameTracker
+            InGameTracker2 inGameTracker,
+            ConfigModelApp configApp
             )
         {
             dictAllCards = cacheCards.Get();
             this.mapper = mapper;
             this.eventsScheduleManager = eventsScheduleManager;
             this.inGameTracker = inGameTracker;
+            this.configApp = configApp;
             Reset();
         }
 
@@ -81,12 +103,13 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             OpponentInfo = new MatchOpponentInfo();
             Errors = new List<OutputLogError>();
             lastOpponentSystemId = default;
-            currentMatchDeckSubmitted = default;
+            //currentMatchDeckSubmitted = default;
             currentMatch = default;
             CurrentGameProgress = default;
             matches = new List<MatchResult>();
             Results = new OutputLogResult();
             Results2 = new OutputLogResult2();
+            eventCourseInstanceIds = new Dictionary<string, string>();
         }
 
         public void AddResult(IMtgaOutputLogPartResult r)
@@ -174,6 +197,11 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                     //currentGameProgress.DeckUsed.Name = currentMatch.DeckUsed.Name;
                     currentMatch.EventName = roomChanged.Raw.gameRoomInfo.gameRoomConfig.eventId;
                     currentMatch.EventType = eventsScheduleManager.GetEventType(roomChanged.Raw.gameRoomInfo.gameRoomConfig.eventId);
+
+                    if (eventCourseInstanceIds.ContainsKey(currentMatch.EventName))
+                    {
+                        currentMatch.EventInstanceId = eventCourseInstanceIds[currentMatch.EventName];
+                    }
                 }
 
                 if (roomChanged.Raw.gameRoomInfo.finalMatchResult != null)
@@ -247,13 +275,13 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                     Results2.ResultsByNameTag[currentAccount] = new OutputLogResult2ByNameTag();
                 Results2.ResultsByNameTag[currentAccount].PlayerNameResults.Add(playerName);
             }
-            else if (result is RankUpdatedResult rankUpdated)
-            {
-                AppendToListInfoByDate(Results.RankUpdatedByDate, rankUpdated.Raw.payload, rankUpdated.LogDateTime);
-                //    UpdateRank_Synthetic(rankUpdated);
+            //else if (result is RankUpdatedResult rankUpdated)
+            //{
+            //    AppendToListInfoByDate(Results.RankUpdatedByDate, rankUpdated.Raw.payload, rankUpdated.LogDateTime);
+            //    //    UpdateRank_Synthetic(rankUpdated);
 
-                Results2.ResultsByNameTag[currentAccount].RankUpdatedResults.Add(rankUpdated);
-            }
+            //    Results2.ResultsByNameTag[currentAccount].RankUpdatedResults.Add(rankUpdated);
+            //}
             //else if (result is MythicRatingUpdatedResult mythicRatingUpdated)
             //{
             //    AppendToListInfoByDate(Results.MythicRatingUpdatedByDate, mythicRatingUpdated.Raw.payload, mythicRatingUpdated.LogDateTime);
@@ -319,10 +347,10 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             }
             else if (result is GetCombinedRankInfoResult ranks)
             {
-                var info = ranks.Raw.payload.ToConfig();
+                var info = ranks.Raw.ToConfig();
                 AddToListInfoByDate(Results.RankSyntheticByDate, info, ranks.LogDateTime);
 
-                AppendToListInfoByDate(Results.CombinedRankInfoByDate, ranks.Raw.payload, result.LogDateTime);
+                AppendToListInfoByDate(Results.CombinedRankInfoByDate, ranks.Raw, result.LogDateTime);
 
                 Results2.ResultsByNameTag[currentAccount].GetCombinedRankInfoResults.Add(ranks);
             }
@@ -410,11 +438,17 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                 var eventsConverted = courses.Raw.Courses.Select(i => new GetActiveEventsV3Raw { InternalEventName = i.InternalEventName }).ToArray();
                 eventsScheduleManager.AddEvents(eventsConverted);
 
-                var eventResultsMissing = eventsConverted
-                    .Where(eventResult => Results2.ResultsByNameTag[currentAccount].ActiveEvents.Raw.payload.Any(x => x.InternalEventName == eventResult.InternalEventName) == false);
+                eventCourseInstanceIds = courses.Raw.Courses
+                    .Where(i => i.CardPool?.Any() == true)
+                    .Where(i => i.InternalEventName.Contains("Draft") || i.InternalEventName.Contains("Sealed"))
+                    .ToDictionary(i => i.InternalEventName, i => string.Join("-", i.CardPool));
 
-                foreach (var e in eventResultsMissing)
-                    Results2.ResultsByNameTag[currentAccount].ActiveEvents.Raw.payload.Add(e);
+                // TODO: Reactivate maybe
+                //var eventResultsMissing = eventsConverted
+                //    .Where(eventResult => Results2.ResultsByNameTag[currentAccount].ActiveEvents.Raw.payload.Any(x => x.InternalEventName == eventResult.InternalEventName) == false);
+
+                //foreach (var e in eventResultsMissing)
+                //    Results2.ResultsByNameTag[currentAccount].ActiveEvents.Raw.payload.Add(e);
             }
             else if (result is GetPreconDecksV3Result preconDecks)
             {
@@ -498,7 +532,7 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                 {
                     currentLevel = currentLevel - 1,
                     currentExp = currentExp,
-                    trackName = "BattlePass_AFR",
+                    trackName = $"BattlePass_{configApp.CurrentSet}",
                 }
             };
         }
@@ -783,9 +817,9 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             }
             else
             {
-                currentMatch.DeckUsed = mapper.Map<ConfigModelRawDeck>(currentMatchDeckSubmitted);
+                currentMatch.DeckUsed = currentMatch.DeckUsed ?? mapper.Map<ConfigModelRawDeck>(currentMatchDeckSubmitted);
                 currentMatch.DeckUsed.Name = GetDeckNameFromEventType(currentMatch.DeckUsed.Name);
-                currentMatchDeckSubmitted = null;
+                //currentMatchDeckSubmitted = null;
             }
 
             matches.Add(currentMatch);
@@ -809,6 +843,27 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 
         public void FinalizeResults(uint lastUploadHash, ICollection<ConverterUsage> converterUsage)
         {
+            // Remove duplicate entries
+            foreach (var iud in Results.InventoryUpdatesByDate)
+            {
+                var inventoryUpdates = new Dictionary<DateTime, InventoryUpdatedRaw>();
+                foreach (var iu in iud.Info)
+                {
+                    //if (iu.Value.context.Contains("Mercantile")) System.Diagnostics.Debugger.Break();
+
+                    var objToCompare = iu.Value.context.Contains("Mercantile") ? iu.Value : new InventoryUpdatedRaw
+                    {
+                        updates = iu.Value.updates,
+                        context = iu.Value.context,
+                    };
+
+                    if (inventoryUpdates.Values.All(x => JsonConvert.SerializeObject(x) != JsonConvert.SerializeObject(objToCompare)))
+                        inventoryUpdates.Add(iu.Key, objToCompare);
+                }
+
+                iud.Info = inventoryUpdates;
+            }
+
             Results2.LogReadersUsage = converterUsage
                 .OrderByDescending(i => i.LastUsed)
                 .GroupBy(i => new { i.Converter, i.LogTextKey, i.Prefix, i.Result })

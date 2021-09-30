@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using Microsoft.Extensions.Configuration;
-using MtgaHelper.Web.Models.IoC;
+﻿using Microsoft.Extensions.Configuration;
 using MTGAHelper.Entity;
 using MTGAHelper.Lib.IoC;
 using MTGAHelper.Lib.OutputLogParser.IoC;
@@ -21,12 +10,22 @@ using MTGAHelper.Tracker.WPF.Logging;
 using MTGAHelper.Tracker.WPF.Tools;
 using MTGAHelper.Tracker.WPF.ViewModels;
 using MTGAHelper.Tracker.WPF.Views;
+using MTGAHelper.Web.Models.IoC;
 using MTGAHelper.Web.Models.Response.Misc;
-using MTGAHelper.Web.UI.Model.Response.Misc;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
 using SimpleInjector;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace MTGAHelper.Tracker.WPF
 {
@@ -39,7 +38,7 @@ namespace MTGAHelper.Tracker.WPF
         private ConfigModel ConfigApp;
 
         private Container Container;
-
+        private MtgaProLoggerAdaptor mtgaProLogger;
         private readonly HttpClientFactory HttpClientFactory = new HttpClientFactory();
 
         private string FolderForConfigAndLog;
@@ -141,7 +140,6 @@ namespace MTGAHelper.Tracker.WPF
 
             if (new Version(fvi.FileVersion) < new Version(latestVersion))
                 MustDownloadNewVersion();
-
         }
 
         private static void MustDownloadNewVersion()
@@ -276,6 +274,8 @@ namespace MTGAHelper.Tracker.WPF
             ConfigApp.LogFilePath = ConfigApp.LogFilePath.Replace("output_log.txt", "Player.log");
 
             Container = CreateContainer(ConfigApp, FolderData);
+            mtgaProLogger = Container.GetInstance<MtgaProLoggerAdaptor>();
+            mtgaProLogger.Start();
 
             Directory.CreateDirectory(FolderData);
         }
@@ -403,6 +403,7 @@ namespace MTGAHelper.Tracker.WPF
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
+            mtgaProLogger.Stop();
             TrackerMainWindow?.ViewModel?.Config?.Save();
         }
 

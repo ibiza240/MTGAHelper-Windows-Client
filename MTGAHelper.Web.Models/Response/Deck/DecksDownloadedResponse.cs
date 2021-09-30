@@ -2,7 +2,7 @@
 using System.Linq;
 using MTGAHelper.Entity.DeckScraper;
 
-namespace MTGAHelper.Web.UI.Model.Response
+namespace MTGAHelper.Web.Models.Response.Deck
 {
     public class DecksDownloadedResponse
     {

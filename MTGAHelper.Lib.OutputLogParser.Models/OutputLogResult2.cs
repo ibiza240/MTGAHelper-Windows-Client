@@ -1,5 +1,15 @@
 ﻿using MTGAHelper.Entity.OutputLogParsing;
-using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger._GetDeckListV3;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventClaimPrize;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetActiveEventsV3;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetCombinedRankInfo;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPlayerCardsV3;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPlayerInventory;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPlayerProgress;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPlayerQuests;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPreconDecksV3;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetSeasonAndRankDetail;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.InventoryUpdated;
 using System.Collections.Generic;
 
 namespace MTGAHelper.Lib.OutputLogParser.Models
@@ -32,7 +42,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Models
 
         public List<PlayerNameResult> PlayerNameResults { get; set; } = new List<PlayerNameResult>();
         public List<GetSeasonAndRankDetailResult> GetSeasonAndRankDetailResults { get; set; } = new List<GetSeasonAndRankDetailResult>();
-        public List<RankUpdatedResult> RankUpdatedResults { get; set; } = new List<RankUpdatedResult>();
+        //public List<RankUpdatedResult> RankUpdatedResults { get; set; } = new List<RankUpdatedResult>();
 
         //public List<MythicRatingUpdatedResult> MythicRatingUpdatedResults { get; set; } = new List<MythicRatingUpdatedResult>();
         public List<GetPlayerCardsResult> GetPlayerCardsResults { get; set; } = new List<GetPlayerCardsResult>();

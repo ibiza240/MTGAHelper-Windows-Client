@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using MTGAHelper.Entity;
-using MTGAHelper.Web.UI.Model.SharedDto;
+﻿using MTGAHelper.Entity;
+using MTGAHelper.Web.Models.SharedDto;
+using System.Collections.Generic;
 
 namespace MTGAHelper.Web.Models.Response.User
 {

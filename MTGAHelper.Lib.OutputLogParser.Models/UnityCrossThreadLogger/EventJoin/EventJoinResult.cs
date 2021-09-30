@@ -1,7 +1,7 @@
 ﻿using MTGAHelper.Entity.OutputLogParsing;
 using System;
 
-namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventJoin
 {
     public class EventJoinResult : MtgaOutputLogPartResultBase<PayloadRaw2<EventJoinPayloadRaw>>
     {

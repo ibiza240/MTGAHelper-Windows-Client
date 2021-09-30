@@ -131,6 +131,7 @@ namespace MTGAHelper.Lib.OutputLogParser
             Debug.Assert(readers.Count(r => r.DoesParse(part)) <= 1);
             var reader = readers.FirstOrDefault(c => c.DoesParse(part));
             if (reader != null)
+            {
                 try
                 {
                     //if (part == "Connecting to matchId d0fe83f9-0ab2-415d-b5bc-72d5b5ce12bf")
@@ -155,6 +156,7 @@ namespace MTGAHelper.Lib.OutputLogParser
                     Log.Error(ex, "{outputLogError}: Error on {functioName} with json", "OUTPUTLOG", functioName);
                     return new IMtgaOutputLogPartResult[0];
                 }
+            }
 
             if (skipped.Any(i => part.Contains(i)))
                 return null;

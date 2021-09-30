@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using MTGAHelper.Entity;
-using MTGAHelper.Web.Models;
-using MTGAHelper.Web.UI.Model.Response.Dto;
+using MTGAHelper.Web.Models.Response.Deck;
+using System.Collections.Generic;
 
-namespace MTGAHelper.Web.UI.Shared
+namespace MTGAHelper.Web.Models.IoC
 {
     public class AutoMapperManaCurveConverter : IValueConverter<ICollection<DeckCardRaw>, ICollection<DeckManaCurveDto>>
     {
-        readonly UtilManaCurve utilManaCurve;
+        private readonly UtilManaCurve utilManaCurve;
 
         public AutoMapperManaCurveConverter(UtilManaCurve utilManaCurve)
         {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using MTGAHelper.Entity.OutputLogParsing;
 
-namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.ProgressionGetAllTracks
 {
     public class TrackLevel
     {

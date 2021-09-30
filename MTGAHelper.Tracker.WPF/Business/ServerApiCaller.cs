@@ -1,21 +1,19 @@
-﻿using System;
+﻿using MTGAHelper.Entity.MtgaOutputLog;
+using MTGAHelper.Lib.OutputLogParser.Models;
+using MTGAHelper.Tracker.WPF.Config;
+using MTGAHelper.Web.Models.Request;
+using MTGAHelper.Web.Models.Request.Account;
+using MTGAHelper.Web.Models.Response.Account;
+using MTGAHelper.Web.Models.Response.User;
+using MTGAHelper.Web.Models.SharedDto;
+using Newtonsoft.Json;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using MTGAHelper.Entity.MtgaOutputLog;
-using MTGAHelper.Lib.OutputLogParser.Models;
-using MTGAHelper.Tracker.WPF.Config;
-using MTGAHelper.Web.Models.Request;
-using MTGAHelper.Web.Models.Response.Account;
-using MTGAHelper.Web.Models.Response.SharedDto;
-using MTGAHelper.Web.Models.Response.User;
-using MTGAHelper.Web.UI.Model.Request;
-using MTGAHelper.Web.UI.Model.Response.User;
-using Newtonsoft.Json;
-using Serilog;
-using WebApplication1.Model.Account;
 
 namespace MTGAHelper.Tracker.WPF.Business
 {

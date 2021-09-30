@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using AutoMapper;
+﻿using AutoMapper;
 using MTGAHelper.Entity;
 using MTGAHelper.Lib;
 using MTGAHelper.Lib.OutputLogParser;
@@ -14,8 +8,14 @@ using MTGAHelper.Tracker.WPF.Business.Monitoring;
 using MTGAHelper.Tracker.WPF.Config;
 using MTGAHelper.Tracker.WPF.Tools;
 using MTGAHelper.Web.Models.Response.Account;
-using MTGAHelper.Web.UI.Model.Response.User;
+using MTGAHelper.Web.Models.Response.User;
 using Serilog;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace MTGAHelper.Tracker.WPF.ViewModels
 {

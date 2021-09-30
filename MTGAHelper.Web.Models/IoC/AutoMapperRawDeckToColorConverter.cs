@@ -5,11 +5,11 @@ using MTGAHelper.Entity;
 using MTGAHelper.Lib;
 using Serilog;
 
-namespace MTGAHelper.Web.UI.Shared
+namespace MTGAHelper.Web.Models.IoC
 {
     public class AutoMapperRawDeckToColorConverter : IValueConverter<ConfigModelRawDeck, string>
     {
-        readonly UtilColors utilColors;
+        private readonly UtilColors utilColors;
 
         public AutoMapperRawDeckToColorConverter(UtilColors utilColors)
         {

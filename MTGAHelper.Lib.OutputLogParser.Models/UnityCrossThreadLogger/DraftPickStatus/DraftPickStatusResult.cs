@@ -1,7 +1,7 @@
 ﻿using MTGAHelper.Entity.OutputLogParsing;
 using Newtonsoft.Json;
 
-namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.DraftPickStatus
 {
     public class DraftPickStatusResult : MtgaOutputLogPartResultBase<PayloadRaw<string>>
     {

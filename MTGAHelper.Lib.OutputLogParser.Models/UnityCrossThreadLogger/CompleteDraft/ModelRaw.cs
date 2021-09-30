@@ -1,8 +1,8 @@
-﻿using System;
+﻿using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventSetDeck;
+using System;
 using System.Collections.Generic;
-using MTGAHelper.Entity.OutputLogParsing;
 
-namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.CompleteDraft
 {
     public partial class CompleteDraftRaw : ICardPool
     {

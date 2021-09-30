@@ -32,7 +32,7 @@ namespace MTGAHelper.Entity.MtgaOutputLog
         //public IList<InfoByDate<Dictionary<DateTime, CompleteVaultRaw>>> VaultsOpenedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, CompleteVaultRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, DraftPickStatusRaw>>> DraftPickProgressIntradayByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, DraftPickStatusRaw>>>();
 
-        public IList<InfoByDate<Dictionary<DateTime, RankUpdatedRaw>>> RankUpdatedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, RankUpdatedRaw>>>();
+        //public IList<InfoByDate<Dictionary<DateTime, RankUpdatedRaw>>> RankUpdatedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, RankUpdatedRaw>>>();
         public IList<InfoByDate<Dictionary<DateTime, EventClaimPrizeRaw>>> EventClaimPriceByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, EventClaimPrizeRaw>>>();
 
         //public IList<InfoByDate<Dictionary<DateTime, MythicRatingUpdatedRaw>>> MythicRatingUpdatedByDate { get; set; } = new List<InfoByDate<Dictionary<DateTime, MythicRatingUpdatedRaw>>>();
@@ -100,8 +100,8 @@ namespace MTGAHelper.Entity.MtgaOutputLog
             foreach (var draftPick in DraftPickProgressIntradayByDate)
                 CreateOrGetDateSnapshotInfo(draftPick.DateTime).DraftPickProgressIntraday = draftPick.Info;
 
-            foreach (var rankUpdated in RankUpdatedByDate)
-                CreateOrGetDateSnapshotInfo(rankUpdated.DateTime).RankUpdated = rankUpdated.Info;
+            //foreach (var rankUpdated in RankUpdatedByDate)
+            //    CreateOrGetDateSnapshotInfo(rankUpdated.DateTime).RankUpdated = rankUpdated.Info;
 
             foreach (var eventClaimPrice in EventClaimPriceByDate)
                 CreateOrGetDateSnapshotInfo(eventClaimPrice.DateTime).EventClaimPrize = eventClaimPrice.Info;
@@ -212,7 +212,7 @@ namespace MTGAHelper.Entity.MtgaOutputLog
                 //VaultsOpened = VaultsOpenedByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, CompleteVaultRaw>(),
                 //CollectionIntraday = CollectionIntradayByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, Dictionary<int, int>>(),
                 InventoryIntraday = InventoryIntradayByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, Inventory>(),
-                RankUpdated = RankUpdatedByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, RankUpdatedRaw>(),
+                //RankUpdated = RankUpdatedByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, RankUpdatedRaw>(),
                 CombinedRankInfo = CombinedRankInfoByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, GetCombinedRankInfoRaw>(),
                 EventClaimPrize = EventClaimPriceByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, EventClaimPrizeRaw>(),
                 //MythicRatingUpdated = MythicRatingUpdatedByDate.SingleOrDefault(i => i.DateTime.Date == dateFor)?.Info ?? new Dictionary<DateTime, MythicRatingUpdatedRaw>(),

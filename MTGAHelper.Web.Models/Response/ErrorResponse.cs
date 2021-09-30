@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MTGAHelper.Web.UI.Model.Response
+namespace MTGAHelper.Web.Models.Response
 {
     public interface IResponse
     {

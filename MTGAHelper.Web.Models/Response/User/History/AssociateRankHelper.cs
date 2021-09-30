@@ -1,7 +1,6 @@
-﻿using System;
+﻿using MTGAHelper.Web.Models.SharedDto;
+using System;
 using System.Linq;
-using MTGAHelper.Web.UI.Model.Response.User.History;
-using MTGAHelper.Web.UI.Model.SharedDto;
 
 namespace MTGAHelper.Web.Models.Response.User.History
 {
@@ -30,7 +29,6 @@ namespace MTGAHelper.Web.Models.Response.User.History
                             StepsDelta = bestRankUpdated.deltaSteps,
                         };
                     }
-
 
                     // Patch brought back from V1
                     m.DeckUsed ??= new SimpleDeckDto();

@@ -1,7 +1,8 @@
-﻿using System;
+﻿using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetActiveEventsV2;
+using System;
 using System.Collections.Generic;
 
-namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetActiveEventsV3
 {
     public class GetActiveEventsV3Raw
     {

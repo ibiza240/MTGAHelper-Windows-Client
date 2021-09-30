@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using MTGAHelper.Web.Models.Response.Deck;
+using System.Collections.Generic;
 
-namespace MTGAHelper.Web.UI.Model.Response.User
+namespace MTGAHelper.Web.Models.Response.User
 {
     public class DeckTrackedSummaryResponseDto : DeckSummaryResponseDto
     {

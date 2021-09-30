@@ -6,18 +6,18 @@ using MTGAHelper.Entity.UserHistory;
 using System.Text.RegularExpressions;
 using MTGAHelper.Web.Models.SharedDto;
 
-namespace MTGAHelper.Web.UI.Model.Response.User.History
+namespace MTGAHelper.Web.Models.Response.User.History
 {
     public class GetUserHistorySummaryResponse
     {
-        readonly Regex regex_Rank_StringParts = new Regex(@"^(.*?)_(.*?)_(.*?)$", RegexOptions.Compiled);
+        private readonly Regex regex_Rank_StringParts = new Regex(@"^(.*?)_(.*?)_(.*?)$", RegexOptions.Compiled);
 
         //public ICollection<GetUserHistorySummaryDto> History { get; set; }
         public ICollection<GetUserHistorySummaryDto> History2 { get; set; }
 
         public int TotalItems { get; set; }
 
-        readonly DateTime dateNewHistory = new DateTime(2019, 11, 18);
+        private readonly DateTime dateNewHistory = new DateTime(2019, 11, 18);
 
         //public GetUserHistoryResponse(ICollection<DateSnapshot> details)
         //{
@@ -40,7 +40,7 @@ namespace MTGAHelper.Web.UI.Model.Response.User.History
             );
         }
 
-        ICollection<GetUserHistorySummaryDto> Merge(ICollection<GetUserHistorySummaryDto> history, IEnumerable<GetUserHistorySummaryDto> history2)
+        private ICollection<GetUserHistorySummaryDto> Merge(ICollection<GetUserHistorySummaryDto> history, IEnumerable<GetUserHistorySummaryDto> history2)
         {
             foreach (var i in history)
             {

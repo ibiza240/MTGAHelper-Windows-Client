@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger
+namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventSetDeck
 {
     public class EventSetDeckResult : RequestParamsResult2<EventSetDeckRaw>
     {
