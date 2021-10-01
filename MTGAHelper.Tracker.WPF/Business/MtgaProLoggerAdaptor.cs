@@ -1,27 +1,42 @@
 ﻿using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MTGAHelper.Tracker.WPF.Business
 {
     public class MtgaProLoggerAdaptor
     {
-        private readonly Process process;
+        public bool IsStarted => process != default;
+
+        private Process process = default;
 
         public MtgaProLoggerAdaptor()
         {
-            process = new Process();
-            process.StartInfo.FileName = @"getFrontWindow.exe";
-            process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process.StartInfo.CreateNoWindow = true;
         }
 
-        public void Start()
+        public async Task Start()
         {
-            process.Start();
+            if (Process.GetProcessesByName("MTGA").Any())
+            {
+                await Task.Delay(15000);
+                if (IsStarted == false)
+                {
+                    process = new Process();
+                    process.StartInfo.FileName = @"getFrontWindow.exe";
+                    process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    process.StartInfo.CreateNoWindow = true;
+                    process.Start();
+                }
+            }
         }
 
         public void Stop()
         {
-            process.Kill();
+            if (process != default)
+            {
+                process.Kill();
+                process = default;
+            }
         }
     }
 }

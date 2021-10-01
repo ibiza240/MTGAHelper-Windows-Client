@@ -39,7 +39,8 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             //IEmailProvider emailProvider,
             ICollection<Card> allCards,
             CardThumbnailDownloader cardThumbnailDownloader,
-            ServerApiCaller serverApiCaller
+            ServerApiCaller serverApiCaller,
+            MtgaProLoggerAdaptor mtgaProLoggerAdaptor
             )
         {
             // Set the status blinker reference
@@ -99,6 +100,18 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
             WindowHeight = WindowSettings != null && WindowSettings.Size.Y > double.Epsilon
                 ? WindowSettings.Size.Y
                 : 500;
+
+            Task.Run(async () =>
+            {
+                while (true)
+                {
+                    if (mtgaProLoggerAdaptor.IsStarted == false)
+                    {
+                        await mtgaProLoggerAdaptor.Start();
+                        await Task.Delay(2000);
+                    }
+                }
+            });
         }
 
         private void OnOpponentCardsUpdated(object sender, EventArgs e)

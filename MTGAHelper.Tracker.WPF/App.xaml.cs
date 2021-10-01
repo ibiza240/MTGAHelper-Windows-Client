@@ -275,7 +275,7 @@ namespace MTGAHelper.Tracker.WPF
 
             Container = CreateContainer(ConfigApp, FolderData);
             mtgaProLogger = Container.GetInstance<MtgaProLoggerAdaptor>();
-            mtgaProLogger.Start();
+            //mtgaProLogger.Start();
 
             Directory.CreateDirectory(FolderData);
         }
