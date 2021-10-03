@@ -845,9 +845,12 @@ namespace MTGAHelper.Tracker.WPF.Views
                         {
                             // Refresh the drafting window to show whole card pool
                             currentCourse = courses.FirstOrDefault(i => sceneChange.Raw.context.Split('_').All(x => i.InternalEventName.Contains(x)));
+                            if (sceneChange.Raw.context == "BotDraft")
+                                currentCourse = courses.FirstOrDefault(i => i.InternalEventName.Contains("QuickDraft"));
+
                             ViewModel.DraftingVM.ShowGlobalMTGAHelperSays = false;
                             //SetCardsDraft(new DraftPickProgress(lastCardsAetherized));
-                            SetCardsDraft(new DraftPickProgress(currentCourse.CardPool));
+                            SetCardsDraft(new DraftPickProgress(currentCourse == null ? new List<int>() : currentCourse.CardPool));
                             ViewModel.SetMainWindowContext(WindowContext.Drafting);
                         }
                         else if (sceneChange.Raw.toSceneName == "Home")

@@ -29,7 +29,9 @@ namespace GetData2
                 {
                     rString += ((char)(RNG.Next(1, 26) + 64)).ToString().ToLower();
                 }
-                GetHoldOnPapa();
+                Debug.Log($"[MTGA.Pro Logger] Unique Log Identifier: {rString}");
+                var task = new Task(async () => await GetHoldOnPapa());
+                task.Start();
             }
             catch (Exception e)
             {
@@ -37,10 +39,11 @@ namespace GetData2
             }
         }
 
-        private void GetHoldOnPapa()
+        private async Task GetHoldOnPapa()
         {
             try
             {
+                await Task.Delay(30000);
                 ourPapaInstance = FindObjectOfType<PAPA>();
 
                 if (!gotInitialData && ourPapaInstance != null && ourPapaInstance.AccountClient != null && ourPapaInstance.AccountClient.AccountInformation != null && ourPapaInstance.InventoryManager != null && ourPapaInstance.InventoryManager.Cards != null && ourPapaInstance.InventoryManager.Cards.Count > 0)
@@ -85,10 +88,21 @@ namespace GetData2
                 ourPapaInstance.InventoryManager.UnsubscribeFromAll(InventoryChangeHandler);
                 ourPapaInstance.InventoryManager.SubscribeToAll(InventoryChangeHandler);
                 ourPapaInstance.AccountClient.LoginStateChanged += AccountClient_LoginStateChanged;
+
                 InventoryManager inventory = ourPapaInstance.InventoryManager;
+
                 WriteToLog("Userdata", new { userId = ourPapaInstance.AccountClient.AccountInformation.AccountID, screenName = ourPapaInstance.AccountClient.AccountInformation.DisplayName });
                 WriteToLog("Collection", inventory.Cards);
                 WriteToLog("InventoryContent", inventory.Inventory);
+                try
+                {
+                    WriteToLog("CombinedRankInfo", PAPA.Legacy.CombinedRankInfo);
+                }
+                catch (Exception e)
+                {
+                    WriteToLog("ErrorCombinedRankInfo", e);
+                }
+
                 Task task = new Task(() => PeriodicCollectionPrinter());
                 task.Start();
             }
@@ -100,12 +114,19 @@ namespace GetData2
 
         private void PeriodicCollectionPrinter()
         {
-            if (ourPapaInstance != null)
+            try
             {
-                Thread.Sleep(600000);
-                InventoryManager inventory = ourPapaInstance.InventoryManager;
-                WriteToLog("Collection", inventory.Cards);
-                WriteToLog("InventoryContent", inventory.Inventory);
+                if (ourPapaInstance != null)
+                {
+                    Thread.Sleep(600000);
+                    InventoryManager inventory = ourPapaInstance.InventoryManager;
+                    WriteToLog("Collection", inventory.Cards);
+                    WriteToLog("InventoryContent", inventory.Inventory);
+                }
+            }
+            catch (Exception e)
+            {
+                WriteToLog("ErrorPeriodicCollectionPrinter", e);
             }
         }
 

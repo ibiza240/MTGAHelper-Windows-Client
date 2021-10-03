@@ -1,3 +1,9 @@
+### v1.8.2 (2021-10-02)
+
+Bugfix: High memory usage
+
+Bugfix: Correctly display limited ratings in quick draft 
+
 ### v1.8.1 (2021-09-30)
 
 Tracking is back to being fully operational.

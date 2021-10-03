@@ -21,6 +21,12 @@ namespace MTGAHelper.Tracker.WPF.Business
                 await Task.Delay(15000);
                 if (IsStarted == false)
                 {
+                    var processes = Process.GetProcessesByName("getFrontWindow");
+                    foreach (var p in processes)
+                    {
+                        p.Kill();
+                    }
+
                     process = new Process();
                     process.StartInfo.FileName = @"getFrontWindow.exe";
                     process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;

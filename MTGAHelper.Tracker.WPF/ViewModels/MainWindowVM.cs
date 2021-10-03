@@ -108,8 +108,9 @@ namespace MTGAHelper.Tracker.WPF.ViewModels
                     if (mtgaProLoggerAdaptor.IsStarted == false)
                     {
                         await mtgaProLoggerAdaptor.Start();
-                        await Task.Delay(2000);
                     }
+
+                    await Task.Delay(2000);
                 }
             });
         }
