@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 namespace MTGAHelper.Lib.OutputLogParser.Readers.UnityCrossThreadLogger
 {
-    public class GetPlayerQuestsConverter : GenericConverter<GetPlayerQuestsResult, PayloadRaw<ICollection<GetPlayerQuestRaw>>>, IMessageReaderUnityCrossThreadLogger
+    public class GetPlayerQuestsConverter : GenericConverter<GetPlayerQuestsResult, GetPlayerQuestsRaw>, IMessageReaderUnityCrossThreadLogger
     {
-        public override string LogTextKey => "<== Quest.GetPlayerQuests";
+        public override string LogTextKey => "<== Quest_GetQuests";
     }
 }

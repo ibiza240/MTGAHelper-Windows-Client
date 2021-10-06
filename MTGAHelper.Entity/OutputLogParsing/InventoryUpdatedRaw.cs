@@ -33,6 +33,9 @@ namespace MTGAHelper.Entity.OutputLogParsing
     public class AetherizedCard
     {
         public int grpId { get; set; }
+        public bool addedToInventory { get; set; }
+        public bool isGrantedFromDeck { get; set; }
+        public float vaultProgress { get; set; }
         public int goldAwarded { get; set; }
         public int gemsAwarded { get; set; }
         public string set { get; set; }

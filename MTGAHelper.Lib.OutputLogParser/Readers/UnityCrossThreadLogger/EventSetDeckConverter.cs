@@ -7,4 +7,9 @@ namespace MTGAHelper.Lib.OutputLogParser.Readers.UnityCrossThreadLogger
     {
         public override string LogTextKey => "==> Event_SetDeck";
     }
+
+    public class EventEnterPairingConverter : GenericConverter<EventEnterPairingResult, RequestRaw2<EventEnterPairingRequestPayloadRaw>>, IMessageReaderRequestToServer
+    {
+        public override string LogTextKey => "==> Event_EnterPairing";
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MTGAHelper.Entity.OutputLogParsing
 {
@@ -14,6 +15,11 @@ namespace MTGAHelper.Entity.OutputLogParsing
         public string quantity { get; set; }
         public LocParams locParams { get; set; }
         public DateTime availableDate { get; set; }
+    }
+
+    public class GetPlayerQuestsRaw
+    {
+        public ICollection<GetPlayerQuestRaw> quests { get; set; }
     }
 
     public class GetPlayerQuestRaw

@@ -157,11 +157,11 @@ namespace MTGAHelper.Tracker.WPF.Business
             return PostResponseSimple<CollectionResponse>("/api/User/LogFileProcessed2", new PostOutputLogProcessedRequest2(result2));
         }
 
-        internal bool IsSameLastUploadHash(uint uploadHash)
-        {
-            string latestUploadHash = GetResponseWithCookie<LastHashResponse>("/api/User/LastUploadHash").LastHash;
-            return latestUploadHash == uploadHash.ToString();
-        }
+        //internal bool IsSameLastUploadHash(uint uploadHash)
+        //{
+        //    string latestUploadHash = GetResponseWithCookie<LastHashResponse>("/api/User/LastUploadHash").LastHash;
+        //    return latestUploadHash == uploadHash.ToString();
+        //}
 
         internal CollectionResponse GetCollection()
         {

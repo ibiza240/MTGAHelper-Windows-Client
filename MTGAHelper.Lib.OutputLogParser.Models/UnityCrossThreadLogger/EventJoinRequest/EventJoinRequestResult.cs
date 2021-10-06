@@ -10,7 +10,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventJoin
     {
         public string EventName { get; set; }
         public string EntryCurrencyType { get; set; }
-        public long EntryCurrencyPaid { get; set; }
+        public int EntryCurrencyPaid { get; set; }
         public object CustomTokenId { get; set; }
     }
 }

@@ -633,6 +633,15 @@ namespace MTGAHelper.Tracker.WPF.Views
 
         private void GoHome()
         {
+            if (ViewModel.Context != WindowContext.Home)
+            {
+                Task.Factory.StartNew(async () =>
+                {
+                    await Task.Delay(5000);
+                    UploadLogFragment();
+                });
+            }
+
             currentCourseId = default;
             ViewModel.SetMainWindowContext(WindowContext.Home);
         }
@@ -647,7 +656,8 @@ namespace MTGAHelper.Tracker.WPF.Views
             {
                 messages = Reader.ProcessIntoMessagesAsync("local", ms).Result;
             }
-            var mustUpload = false;
+
+            //var mustUpload = false;
 
             foreach (IMtgaOutputLogPartResult msg in messages)
             {
@@ -769,7 +779,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                         {
                             if (stateChanged.SignifiesMatchEnd)
                             {
-                                mustUpload = true;
+                                //mustUpload = true;
                                 GoHome();
                             }
                             break;
@@ -823,13 +833,13 @@ namespace MTGAHelper.Tracker.WPF.Views
                         SetCardsDraft(info);
                         break;
 
-                    case GetPlayerInventoryResult _:
-                    case GetPlayerCardsResult _:
-                    case PostMatchUpdateResult _:
+                    //case GetPlayerInventoryResult _:
+                    //case GetPlayerCardsResult _:
+                    //case PostMatchUpdateResult _:
                     //case RankUpdatedResult _:
-                    case GetCombinedRankInfoResult _:
-                        mustUpload = true;
-                        break;
+                    //case GetCombinedRankInfoResult _:
+                    //    mustUpload = true;
+                    //    break;
 
                     //case InventoryUpdatedResult inventoryUpdated:
                     //    mustUpload = true;
@@ -870,10 +880,10 @@ namespace MTGAHelper.Tracker.WPF.Views
                 }
             }
 
-            if (mustUpload)
-            {
-                UploadLogFragment();
-            }
+            //if (mustUpload)
+            //{
+            //    UploadLogFragment();
+            //}
         }
 
         private void SetCardsDraft(DraftPickProgress draftInfo)

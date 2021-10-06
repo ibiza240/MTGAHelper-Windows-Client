@@ -151,10 +151,6 @@ namespace GetData2
             try
             {
                 WriteToLog("InventoryUpdate", obj);
-
-                InventoryManager inventory = ourPapaInstance.InventoryManager;
-                WriteToLog("Collection", inventory.Cards);
-                WriteToLog("InventoryContent", inventory.Inventory);
             }
             catch (Exception e)
             {

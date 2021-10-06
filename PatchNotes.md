@@ -1,3 +1,14 @@
+### v1.8.3 (2021-10-05)
+
+Bugfix: glitches in the history for inventory updates
+
+Note: Automatic upload during gameplay has been scaled down to:
+- on tracker startup
+- once after each match
+- on game close
+
+The "Upload now" manual upload is still available if you need more reactivity.
+
 ### v1.8.2 (2021-10-02)
 
 Bugfix: High memory usage
