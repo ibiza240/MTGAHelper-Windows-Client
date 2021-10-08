@@ -547,13 +547,11 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                 currentMatchDeckSubmitted = new EventSetDeckRaw
                 {
                     EventName = eventData.InternalEventName,
-                    Summary = new CourseDeckSummary
-                    {
-                        Name = eventData.InternalEventName?.Contains("Draft") == true ? "Draft deck" :
-                            currentMatch?.EventName?.Contains("Sealed") == true ? "Sealed deck" : eventData.CourseDeckSummary.Name,
-                    },
+                    Summary = eventData.CourseDeckSummary,
                     Deck = eventData.CourseDeck,
                 };
+                currentMatchDeckSubmitted.Summary.Name = eventData.InternalEventName?.Contains("Draft") == true ? "Draft deck" :
+                            currentMatch?.EventName?.Contains("Sealed") == true ? "Sealed deck" : eventData.CourseDeckSummary.Name;
             }
             //else if (result is GetEventPlayerCourseV2Result getCourse)
             //{
@@ -639,7 +637,7 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 
             currentMatch = mapper.Map<MatchResult>(r);
 
-            if (currentMatch.DeckUsed == null && currentMatchDeckSubmitted != null)
+            if (currentMatch.DeckUsed == null && currentMatchDeckSubmitted != null && currentMatchDeckSubmitted.Summary.DeckId != Guid.Empty)
                 currentMatch.DeckUsed = mapper.Map<ConfigModelRawDeck>(currentMatchDeckSubmitted);
         }
 
@@ -654,7 +652,7 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
         {
             if (deckUsed == null) return;
 
-            currentMatch.DeckUsed = deckUsed;
+            currentMatch.DeckUsed = currentMatch.DeckUsed ?? deckUsed;
 
             // GREMessageType_ConnectResp received first
             CurrentGameProgress ??= new GameProgress(logDateTime);

@@ -1,3 +1,7 @@
+### v1.8.4 (2021-10-07)
+
+Bugfix: Deck id not always correctly associated per match
+
 ### v1.8.3 (2021-10-05)
 
 Bugfix: glitches in the history for inventory updates
