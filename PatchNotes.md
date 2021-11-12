@@ -1,3 +1,11 @@
+### v1.8.5 (2021-11-11)
+
+Support for Innistrad: Crimson Vow
+
+Improved tracking stability
+
+Bugfix: Vault % progress was slightly off
+
 ### v1.8.4 (2021-10-07)
 
 Bugfix: Deck id not always correctly associated per match

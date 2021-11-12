@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -13,10 +15,20 @@ namespace GetData2
         public object Payload;
     }
 
+    public class DeckForLog
+    {
+        public string Name;
+        public Wizards.Mtga.Decks.Client_DeckContents Deck;
+    }
+
     public class MTGAProGetData : MonoBehaviour
     {
-        private static PAPA ourPapaInstance = null;
-        private static bool gotInitialData = false;
+        private static bool gotInventoryData = false;
+        private static bool gotLoginData = false;
+        private static bool gotRankInfo = false;
+        private static bool gotUniqueID = false;
+        private static List<string> dataWrittenHashes = new List<string>();
+        private static readonly UnityCrossThreadLogger MTGAProLogger = new UnityCrossThreadLogger("MTGA.Pro Logger");
 
         public void Start()
         {
@@ -29,8 +41,8 @@ namespace GetData2
                 {
                     rString += ((char)(RNG.Next(1, 26) + 64)).ToString().ToLower();
                 }
-                Debug.Log($"[MTGA.Pro Logger] Unique Log Identifier: {rString}");
-                var task = new Task(async () => await GetHoldOnPapa());
+                MTGAProLogger.Debug($" Unique Log Identifier: {rString}");
+                Task task = new Task(() => GetHoldOnPapa());
                 task.Start();
             }
             catch (Exception e)
@@ -39,21 +51,51 @@ namespace GetData2
             }
         }
 
-        private async Task GetHoldOnPapa()
+        public static string CreateMD5(string input)
+        {
+            // Use input string to calculate MD5 hash
+            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+            {
+                byte[] inputBytes = Encoding.ASCII.GetBytes(input);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+                // Convert the byte array to hexadecimal string
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++)
+                {
+                    sb.Append(hashBytes[i].ToString("X2"));
+                }
+                return sb.ToString();
+            }
+        }
+
+        private void GetHoldOnPapa()
         {
             try
             {
-                await Task.Delay(30000);
-                ourPapaInstance = FindObjectOfType<PAPA>();
+                Thread.Sleep(10000);
 
-                if (!gotInitialData && ourPapaInstance != null && ourPapaInstance.AccountClient != null && ourPapaInstance.AccountClient.AccountInformation != null && ourPapaInstance.InventoryManager != null && ourPapaInstance.InventoryManager.Cards != null && ourPapaInstance.InventoryManager.Cards.Count > 0)
+                if (!gotLoginData && WrapperController.Instance != null && WrapperController.Instance.AccountClient != null && WrapperController.Instance.AccountClient.AccountInformation != null && WrapperController.Instance.AccountClient.AccountInformation.AccountID != null)
                 {
-                    GetInitialData();
+                    PrintAccountInfo();
+                }
+
+                if (!gotInventoryData && WrapperController.Instance != null && WrapperController.Instance.InventoryManager != null && WrapperController.Instance.InventoryManager.Cards != null && WrapperController.Instance.InventoryManager.Cards.Count > 0)
+                {
+                    GetInventoryData();
+                }
+
+                if (!gotRankInfo && PAPA.Legacy.CombinedRankInfo != null)
+                {
+                    PrintCombinedRankInfo();
+                }
+
+                if (gotUniqueID && gotInventoryData && gotLoginData && gotRankInfo)
+                {
                     return;
                 }
-                else if (!gotInitialData)
+                else
                 {
-                    ourPapaInstance = null;
                     GetHoldOnPapa();
                 }
             }
@@ -72,36 +114,59 @@ namespace GetData2
                     Payload = report,
                     timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds().ToString()
                 };
-                Debug.Log($"[MTGA.Pro Logger] **{indicator}** {JsonConvert.SerializeObject(logElem)}");
+                string hashMD5 = CreateMD5(JsonConvert.SerializeObject(report));
+                if (!dataWrittenHashes.Contains(hashMD5))
+                {
+                    MTGAProLogger.Debug($" **{indicator}** {JsonConvert.SerializeObject(logElem)}");
+                    dataWrittenHashes.Add(hashMD5);
+                }
             }
             catch (Exception e)
             {
-                Debug.Log($"[MTGA.Pro Logger] **WriteToLogError** {e}");
+                MTGAProLogger.Debug($" **WriteToLogError** {e}");
             }
         }
 
-        private void GetInitialData()
+        private void PrintCombinedRankInfo()
         {
             try
             {
-                gotInitialData = true;
-                ourPapaInstance.InventoryManager.UnsubscribeFromAll(InventoryChangeHandler);
-                ourPapaInstance.InventoryManager.SubscribeToAll(InventoryChangeHandler);
-                ourPapaInstance.AccountClient.LoginStateChanged += AccountClient_LoginStateChanged;
+                gotRankInfo = true;
+                WriteToLog("CombinedRankInfo", PAPA.Legacy.CombinedRankInfo);
+            }
+            catch (Exception e)
+            {
+                WriteToLog("ErrorCombinedRankInfo", e);
+            }
+        }
 
-                InventoryManager inventory = ourPapaInstance.InventoryManager;
+        private void PrintAccountInfo()
+        {
+            try
+            {
+                WriteToLog("Userdata", new { userId = WrapperController.Instance.AccountClient.AccountInformation.AccountID, screenName = WrapperController.Instance.AccountClient.AccountInformation.DisplayName });
+                WrapperController.Instance.AccountClient.LoginStateChanged += AccountClient_LoginStateChanged;
+                gotLoginData = true;
+            }
+            catch (Exception e)
+            {
+                WriteToLog("ErrorPrintAccountInfo", e);
+            }
+        }
 
-                WriteToLog("Userdata", new { userId = ourPapaInstance.AccountClient.AccountInformation.AccountID, screenName = ourPapaInstance.AccountClient.AccountInformation.DisplayName });
-                WriteToLog("Collection", inventory.Cards);
-                WriteToLog("InventoryContent", inventory.Inventory);
-                try
-                {
-                    WriteToLog("CombinedRankInfo", PAPA.Legacy.CombinedRankInfo);
-                }
-                catch (Exception e)
-                {
-                    WriteToLog("ErrorCombinedRankInfo", e);
-                }
+        private void GetInventoryData()
+        {
+            try
+            {
+                gotInventoryData = true;
+                WrapperController.Instance.InventoryManager.UnsubscribeFromAll(InventoryChangeHandler);
+                WrapperController.Instance.InventoryManager.SubscribeToAll(InventoryChangeHandler);
+
+                /*PAPA.SceneLoading.OnWrapperSceneLoaded += onWrapperSceneLoaded;
+                PAPA.SceneLoading.OnDuelSceneLoaded += onDuelSceneLoaded;*/
+
+                WriteToLog("Collection", WrapperController.Instance.InventoryManager.Cards);
+                WriteToLog("InventoryContent", WrapperController.Instance.InventoryManager.Inventory);
 
                 Task task = new Task(() => PeriodicCollectionPrinter());
                 task.Start();
@@ -112,17 +177,34 @@ namespace GetData2
             }
         }
 
+        /*private void onWrapperSceneLoaded(object obj)
+        {
+            WriteToLog("onWrapperSceneLoaded", obj);
+            WriteToLog("onWrapperSceneLoaded", PAPA.SceneLoading.CurrentScene);
+            if (WrapperController.Instance.PostMatchClientUpdate != null)
+            {
+                WriteToLog("onWrapperSceneLoadedPostMatchClientUpdate", WrapperController.Instance.PostMatchClientUpdate);
+            }
+        }
+
+        private void onDuelSceneLoaded(UnityEngine.SceneManagement.LoadSceneMode obj)
+        {
+            WriteToLog("onDuelSceneLoaded", obj);
+            WriteToLog("onDuelSceneLoaded", PAPA.SceneLoading.CurrentScene);
+            if (WrapperController.Instance.PostMatchClientUpdate != null)
+            {
+                WriteToLog("onWrapperSceneLoadedPostMatchClientUpdate", WrapperController.Instance.PostMatchClientUpdate);
+            }
+        }*/
+
         private void PeriodicCollectionPrinter()
         {
             try
             {
-                if (ourPapaInstance != null)
-                {
-                    Thread.Sleep(600000);
-                    InventoryManager inventory = ourPapaInstance.InventoryManager;
-                    WriteToLog("Collection", inventory.Cards);
-                    WriteToLog("InventoryContent", inventory.Inventory);
-                }
+                Thread.Sleep(600000);
+                WriteToLog("Collection", WrapperController.Instance.InventoryManager.Cards);
+                WriteToLog("InventoryContent", WrapperController.Instance.InventoryManager.Inventory);
+                PeriodicCollectionPrinter();
             }
             catch (Exception e)
             {
@@ -135,8 +217,9 @@ namespace GetData2
             try
             {
                 WriteToLog("LoginStateChanged", obj);
-                gotInitialData = false;
-                ourPapaInstance = null;
+                gotInventoryData = false;
+                gotLoginData = false;
+                gotRankInfo = false;
                 Task task = new Task(() => GetHoldOnPapa());
                 task.Start();
             }

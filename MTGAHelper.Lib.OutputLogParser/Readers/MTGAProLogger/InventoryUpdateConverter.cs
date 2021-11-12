@@ -23,7 +23,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Readers.MTGAProLogger
 
             var d = JsonConvert.DeserializeObject<dynamic>(json);
             var aetherizedCards = (JArray)d.Payload.aetherizedCards;
-            var vaultProgress = aetherizedCards.Sum(i => (float)i["vaultProgress"] / 900) * 100;
+            var vaultProgress = aetherizedCards.Sum(i => (float)i["vaultProgress"] / 1000) * 100;
 
             payload.delta.vaultProgressDelta = vaultProgress;
 
