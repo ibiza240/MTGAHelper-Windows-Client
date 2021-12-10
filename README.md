@@ -30,7 +30,9 @@ See [this explanation page](Console-on-macos.md) for more info on how to run the
 
 ### Installation
 
-Simply [download the Tracker Installer](https://mtgahelper.com/download/MTGAHelperTracker.msi) and after the very simple setup, the tracker will be ready to run from your Desktop where a shortcut will be created.
+Important! You will need .NET 6 installed on your computer. If you are not sure, simply download and run this installer from Microsoft: https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-6.0.0-windows-x64-installer
+
+Once .NET 6 installed, [download the Tracker Installer](https://mtgahelper.com/download/MTGAHelperTracker.msi) and after the very simple setup, the tracker will be ready to run from your Desktop where a shortcut will be created.
 
 ### Configuration
 
