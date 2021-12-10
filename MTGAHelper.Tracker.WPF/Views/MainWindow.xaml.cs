@@ -657,7 +657,7 @@ namespace MTGAHelper.Tracker.WPF.Views
                 messages = Reader.ProcessIntoMessagesAsync("local", ms).Result;
             }
 
-            //var mustUpload = false;
+            var mustUpload = false;
 
             foreach (IMtgaOutputLogPartResult msg in messages)
             {
@@ -834,12 +834,12 @@ namespace MTGAHelper.Tracker.WPF.Views
                         break;
 
                     //case GetPlayerInventoryResult _:
-                    //case GetPlayerCardsResult _:
-                    //case PostMatchUpdateResult _:
-                    //case RankUpdatedResult _:
-                    //case GetCombinedRankInfoResult _:
-                    //    mustUpload = true;
-                    //    break;
+                    case GetPlayerCardsResult _:
+                        //case PostMatchUpdateResult _:
+                        //case RankUpdatedResult _:
+                        //case GetCombinedRankInfoResult _:
+                        mustUpload = true;
+                        break;
 
                     //case InventoryUpdatedResult inventoryUpdated:
                     //    mustUpload = true;
@@ -880,10 +880,10 @@ namespace MTGAHelper.Tracker.WPF.Views
                 }
             }
 
-            //if (mustUpload)
-            //{
-            //    UploadLogFragment();
-            //}
+            if (mustUpload)
+            {
+                UploadLogFragment();
+            }
         }
 
         private void SetCardsDraft(DraftPickProgress draftInfo)

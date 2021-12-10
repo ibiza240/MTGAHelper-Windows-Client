@@ -34,7 +34,8 @@ namespace MTGAHelper.Lib.IoC
 
             CreateMap<ConfigModelRawDeck, ConfigModelDeck>(MemberList.None)
                 .ForMember(i => i.ScraperTypeId, i => i.MapFrom(x => Constants.USERDECK_SOURCE_MTGADECK))
-                .ForMember(i => i.UrlDeckList, i => i.MapFrom(x => (string)null));
+                .ForMember(i => i.UrlDeckList, i => i.MapFrom(x => (string)null))
+                .ForMember(i => i.CardsMainWithCommander, i => i.Ignore());
 
             //CreateMap<RankUpdatedRaw, Rank>()
             //    .ForMember(i => i.Format, i => i.MapFrom(x => Enum.Parse(typeof(RankFormatEnum), x.rankUpdateType)))

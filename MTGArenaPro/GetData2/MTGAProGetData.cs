@@ -25,13 +25,16 @@ namespace GetData2
     {
         private static bool gotInventoryData = false;
         private static bool gotLoginData = false;
-        private static bool gotRankInfo = false;
+
+        //private static bool gotRankInfo = false;
         private static bool gotUniqueID = false;
+
         private static List<string> dataWrittenHashes = new List<string>();
         private static readonly UnityCrossThreadLogger MTGAProLogger = new UnityCrossThreadLogger("MTGA.Pro Logger");
 
         public void Start()
         {
+            //Debug.Log("TEST!!!!! Start()");
             try
             {
                 System.Random RNG = new System.Random();
@@ -71,6 +74,7 @@ namespace GetData2
 
         private void GetHoldOnPapa()
         {
+            //Debug.Log("TEST!!!!! GetHoldOnPapa()");
             try
             {
                 Thread.Sleep(10000);
@@ -85,12 +89,12 @@ namespace GetData2
                     GetInventoryData();
                 }
 
-                if (!gotRankInfo && PAPA.Legacy.CombinedRankInfo != null)
-                {
-                    PrintCombinedRankInfo();
-                }
+                //if (!gotRankInfo && PAPA.Legacy.CombinedRankInfo != null)
+                //{
+                //    PrintCombinedRankInfo();
+                //}
 
-                if (gotUniqueID && gotInventoryData && gotLoginData && gotRankInfo)
+                if (gotUniqueID && gotInventoryData && gotLoginData /*&& gotRankInfo*/)
                 {
                     return;
                 }
@@ -127,21 +131,22 @@ namespace GetData2
             }
         }
 
-        private void PrintCombinedRankInfo()
-        {
-            try
-            {
-                gotRankInfo = true;
-                WriteToLog("CombinedRankInfo", PAPA.Legacy.CombinedRankInfo);
-            }
-            catch (Exception e)
-            {
-                WriteToLog("ErrorCombinedRankInfo", e);
-            }
-        }
+        //private void PrintCombinedRankInfo()
+        //{
+        //    try
+        //    {
+        //        gotRankInfo = true;
+        //        WriteToLog("CombinedRankInfo", PAPA.Legacy.CombinedRankInfo);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        WriteToLog("ErrorCombinedRankInfo", e);
+        //    }
+        //}
 
         private void PrintAccountInfo()
         {
+            //Debug.Log("TEST!!!!! PrintAccountInfo()");
             try
             {
                 WriteToLog("Userdata", new { userId = WrapperController.Instance.AccountClient.AccountInformation.AccountID, screenName = WrapperController.Instance.AccountClient.AccountInformation.DisplayName });
@@ -156,6 +161,7 @@ namespace GetData2
 
         private void GetInventoryData()
         {
+            //Debug.Log("TEST!!!!! GetInventoryData()");
             try
             {
                 gotInventoryData = true;
@@ -199,6 +205,7 @@ namespace GetData2
 
         private void PeriodicCollectionPrinter()
         {
+            //Debug.Log("TEST!!!!! PeriodicCollectionPrinter()");
             try
             {
                 Thread.Sleep(600000);
@@ -214,12 +221,13 @@ namespace GetData2
 
         private void AccountClient_LoginStateChanged(LoginState obj)
         {
+            //Debug.Log("TEST!!!!! AccountClient_LoginStateChanged()");
             try
             {
                 WriteToLog("LoginStateChanged", obj);
                 gotInventoryData = false;
                 gotLoginData = false;
-                gotRankInfo = false;
+                //gotRankInfo = false;
                 Task task = new Task(() => GetHoldOnPapa());
                 task.Start();
             }
@@ -231,9 +239,19 @@ namespace GetData2
 
         private void InventoryChangeHandler(ClientInventoryUpdateReportItem obj)
         {
+            //Debug.Log("TEST!!!!! InventoryChangeHandler()");
             try
             {
                 WriteToLog("InventoryUpdate", obj);
+
+                new Task(async () =>
+                {
+                    if (gotInventoryData && WrapperController.Instance?.InventoryManager?.Cards?.Count > 0)
+                    {
+                        await Task.Delay(5000);
+                        GetInventoryData();
+                    }
+                }).Start();
             }
             catch (Exception e)
             {

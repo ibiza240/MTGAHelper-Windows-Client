@@ -366,9 +366,12 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
             {
                 var raw = MapToGetPlayerProgressRaw(graphState.Raw);
                 var playerProgress = mapper.Map<PlayerProgress>(raw.activeBattlePass);
-                var info = new[] { playerProgress }.ToDictionary(i => i.TrackName, i => i);
-                AddToListInfoByDate(Results.PlayerProgressByDate, info, graphState.LogDateTime);
-                AppendToListInfoByDate(Results.PlayerProgressIntradayByDate, raw, graphState.LogDateTime);
+                if (playerProgress.CurrentLevel > 0)
+                {
+                    var info = new[] { playerProgress }.ToDictionary(i => i.TrackName, i => i);
+                    AddToListInfoByDate(Results.PlayerProgressByDate, info, graphState.LogDateTime);
+                    AppendToListInfoByDate(Results.PlayerProgressIntradayByDate, raw, graphState.LogDateTime);
+                }
             }
             else if (result is StartHookResult hook)
             {
@@ -594,7 +597,6 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                 {
                     currentLevel = currentLevel - 1,
                     currentExp = currentExp,
-                    trackName = $"BattlePass_MID",
                 }
             };
         }

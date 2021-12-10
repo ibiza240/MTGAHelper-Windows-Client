@@ -11,18 +11,23 @@ using System.Windows.Forms;
 
 namespace getFrontWindow
 {
-    class Program
+    public class Program
     {
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        static extern IntPtr GetForegroundWindow();
+        public static extern IntPtr GetForegroundWindow();
+
         [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+        public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern int GetWindowTextLength(IntPtr hWnd);
+        public static extern int GetWindowTextLength(IntPtr hWnd);
+
         [DllImport("user32.dll", SetLastError = true)]
-        static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
+        public static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
+
         [DllImport("user32.dll")]
         private static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventDelegate lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
 
@@ -31,6 +36,7 @@ namespace getFrontWindow
 
         [DllImport("advapi32.dll", SetLastError = true)]
         private static extern bool OpenProcessToken(IntPtr ProcessHandle, uint DesiredAccess, out IntPtr TokenHandle);
+
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool CloseHandle(IntPtr hObject);
@@ -87,7 +93,7 @@ namespace getFrontWindow
         private static bool JustDoInjection = false;
         private static WinEventDelegate deleTargetMoved = null;
         private static WinEventDelegate deleForegroundChanged = null;
-        private static IntPtr[] hook=new IntPtr[3];
+        private static IntPtr[] hook = new IntPtr[3];
         private static ForegroundWindowOutput output;
 
         public static string AssemblyDirectory
@@ -103,6 +109,8 @@ namespace getFrontWindow
 
         private static bool GetProcessUser(uint ProcessID)
         {
+            //File.WriteAllText(Path.GetTempFileName(), $"GetProcessUser {ProcessID}");
+
             try
             {
                 Process process = Process.GetProcessById(Convert.ToInt32(ProcessID));
@@ -116,11 +124,11 @@ namespace getFrontWindow
             }
         }
 
-        static void TargetMoved(IntPtr hWinEventHook, uint eventType, IntPtr lParam, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        private static void TargetMoved(IntPtr hWinEventHook, uint eventType, IntPtr lParam, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
             GetWindowRect(activeWindowHandle, out RECT rct);
             Bounds result = new Bounds { x = rct.left < 0 ? 0 : rct.left, y = rct.top < 0 ? 0 : rct.top, width = rct.right - (rct.left < 0 ? 0 : rct.left), height = rct.bottom - (rct.top < 0 ? 0 : rct.top) };
-            if(currentBounds.x != result.x || currentBounds.y != result.y || currentBounds.height != result.height || currentBounds.width != result.width)
+            if (currentBounds.x != result.x || currentBounds.y != result.y || currentBounds.height != result.height || currentBounds.width != result.width)
             {
                 output.bounds = result;
                 string json = new JavaScriptSerializer().Serialize(output);
@@ -129,10 +137,10 @@ namespace getFrontWindow
                 currentBounds.height = result.height;
                 currentBounds.width = result.width;
                 Console.WriteLine(json);
-            }    
+            }
         }
 
-        static void ForegroundChanged(IntPtr hWinEventHook, uint eventType, IntPtr lParam, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+        private static void ForegroundChanged(IntPtr hWinEventHook, uint eventType, IntPtr lParam, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
         {
             output.title = "NotWhatYouWant";
             output.owner.processId = 0;
@@ -147,13 +155,15 @@ namespace getFrontWindow
 
         private static bool Inject(string assemblyPath, string nmspc, string className, string methodName)
         {
+            //File.WriteAllText(Path.GetTempFileName(), $"Inject({assemblyPath}, {nmspc}, {className}, {methodName})");
+
             byte[] assembly;
             Injector injector = new Injector((int)MTGAprocessID);
             try
             {
                 assembly = File.ReadAllBytes(assemblyPath);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
                 return false;
@@ -184,12 +194,13 @@ namespace getFrontWindow
                 {
                     return true;
                 }
-
             }
         }
 
-        static void LocateAndHook()
+        private static void LocateAndHook()
         {
+            //File.WriteAllText(Path.GetTempFileName(), "LocateAndHook");
+
             try
             {
                 while (!hookSet)
@@ -201,24 +212,31 @@ namespace getFrontWindow
                     GetWindowText(activeWindowHandle, sb, sb.Capacity);
                     string title = sb.ToString();
                     Process MTGAProcess = Process.GetProcessById((int)newPID);
+
                     if (title == @"MTGA" && MTGAProcess.MainModule.ModuleName == "MTGA.exe")
                     {
-                        if(newPID != MTGAprocessID)
+                        //File.WriteAllText(Path.GetTempFileName(), $"MTGA found Title:{title} ModuleName:{MTGAProcess.MainModule.ModuleName}");
+
+                        if (newPID != MTGAprocessID)
                         {
                             MTGAprocessID = newPID;
                             InjectionDone = false;
                         }
                         if (!InjectionDone && !DontDoInjection)
                         {
+                            //File.WriteAllText(Path.GetTempFileName(), "Must inject");
+
                             InjectionDone = true;
                             Thread.Sleep(3000);
                             Inject($"{AssemblyDirectory}\\GetData2.dll", "GetData2", "Loader", "Load");
-                            
+
                             if (JustDoInjection)
                             {
                                 Environment.Exit(0);
                             }
                         }
+
+                        //File.WriteAllText(Path.GetTempFileName(), "End inject check");
 
                         GetWindowRect(activeWindowHandle, out RECT rct);
                         Bounds result = new Bounds { x = rct.left < 0 ? 0 : rct.left, y = rct.top < 0 ? 0 : rct.top, width = rct.right - (rct.left < 0 ? 0 : rct.left), height = rct.bottom - (rct.top < 0 ? 0 : rct.top) };
@@ -241,6 +259,8 @@ namespace getFrontWindow
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                //File.WriteAllText(Path.GetTempFileName(), e.ToString());
+
                 ForegroundWindowOutput output = new ForegroundWindowOutput { platform = "windows", id = 0, owner = { processId = 0 }, bounds = { x = 0, y = 0, width = 0, height = 0 } };
                 string json = new JavaScriptSerializer().Serialize(output);
                 Console.WriteLine(json);
@@ -248,8 +268,10 @@ namespace getFrontWindow
         }
 
         [STAThread]
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
+            //File.WriteAllText(Path.GetTempFileName(), "Main");
+
             if (args.Length > 0 && args[0] == "DontDoInjection")
             {
                 DontDoInjection = true;
@@ -266,8 +288,10 @@ namespace getFrontWindow
             Application.Run();
         }
 
-        static void Application_ApplicationExit(object sender, EventArgs e)
+        private static void Application_ApplicationExit(object sender, EventArgs e)
         {
+            //File.WriteAllText(Path.GetTempFileName(), "Application_ApplicationExit");
+
             UnhookWinEvent(hook[0]);
             UnhookWinEvent(hook[1]);
             UnhookWinEvent(hook[2]);

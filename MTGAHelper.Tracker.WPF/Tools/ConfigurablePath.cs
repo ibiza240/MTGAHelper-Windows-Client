@@ -2,7 +2,6 @@
 using System.IO;
 using System.Windows.Input;
 using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace MTGAHelper.Tracker.WPF.Tools
 {
@@ -13,50 +12,33 @@ namespace MTGAHelper.Tracker.WPF.Tools
     {
         #region Constructor
 
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="path"></param>
         public ConfigurablePath(BrowseType t, string path) : base(path)
         {
             DialogType = t;
         }
 
-        #endregion
+        #endregion Constructor
 
         #region Public Enumerations
 
-        /// <summary>
-        /// Types of ConfigurablePath used for setting the browse command to the correct dialog
-        /// </summary>
         public enum BrowseType
         {
             OpenFile,
-            OpenFolder,
-            Save
+            //OpenFolder,
+            //Save
         }
 
-        #endregion
+        #endregion Public Enumerations
 
         #region Public Properties
 
-        /// <summary>
-        /// The filter to be used in the browse dialog
-        /// </summary>
         public string FileFilter { get; set; } = "All Files|*.*";
 
-        /// <summary>
-        /// The default file name to be used in the browse dialog
-        /// </summary>
         public string DefaultFileName { get; set; }
 
-        /// <summary>
-        /// The type of browse dialog
-        /// </summary>
         public BrowseType DialogType { get; set; }
 
-        #endregion
+        #endregion Public Properties
 
         #region Browse Command
 
@@ -103,7 +85,6 @@ namespace MTGAHelper.Tracker.WPF.Tools
                 switch (DialogType)
                 {
                     case BrowseType.OpenFile:
-                    {
                         // Open the dialog to select the file
                         var openFileDialog = new OpenFileDialog
                         {
@@ -118,47 +99,39 @@ namespace MTGAHelper.Tracker.WPF.Tools
                         {
                             ViewValueString = openFileDialog.FileName;
                         }
-
                         break;
-                    }
 
-                    case BrowseType.OpenFolder:
-                    {
-                        var dialog = new CommonOpenFileDialog
-                        {
-                            InitialDirectory = path,
-                            IsFolderPicker = true,
-                            RestoreDirectory = true
-                        };
+                        //case BrowseType.OpenFolder:
+                        //    var dialog = new CommonOpenFileDialog
+                        //    {
+                        //        InitialDirectory = path,
+                        //        IsFolderPicker = true,
+                        //        RestoreDirectory = true
+                        //    };
 
-                        if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-                        {
-                            ViewValueString = dialog.FileName + @"\";
-                        }
+                        //    if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                        //    {
+                        //        ViewValueString = dialog.FileName + @"\";
+                        //    }
+                        //    break;
 
-                        break;
-                    }
+                        //default:
+                        //    // Create the save dialog
+                        //    var saveFileDialog = new SaveFileDialog
+                        //    {
+                        //        InitialDirectory = path ?? "",
+                        //        Filter = FileFilter,
+                        //        FilterIndex = 1,
+                        //        RestoreDirectory = true,
+                        //        FileName = fileName ?? ""
+                        //    };
 
-                    default:
-                    {
-                        // Create the save dialog
-                        var saveFileDialog = new SaveFileDialog
-                        {
-                            InitialDirectory = path ?? "",
-                            Filter = FileFilter,
-                            FilterIndex = 1,
-                            RestoreDirectory = true,
-                            FileName = fileName ?? ""
-                        };
-
-                        // Show and wait for result
-                        if (saveFileDialog.ShowDialog() == true)
-                        {
-                            ViewValueString = saveFileDialog.FileName;
-                        }
-
-                        break;
-                    }
+                        //    // Show and wait for result
+                        //    if (saveFileDialog.ShowDialog() == true)
+                        //    {
+                        //        ViewValueString = saveFileDialog.FileName;
+                        //    }
+                        //    break;
                 }
             }
             catch (Exception)
@@ -167,6 +140,6 @@ namespace MTGAHelper.Tracker.WPF.Tools
             }
         }
 
-        #endregion
+        #endregion Browse Command
     }
 }

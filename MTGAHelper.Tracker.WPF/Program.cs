@@ -23,7 +23,8 @@ namespace MTGAHelper.Tracker.WPF
                     {
                         hasHandle = Mutex.WaitOne(1000, false);
                         if (hasHandle == false)
-                            throw new TimeoutException("Timeout waiting for exclusive access");
+                            if (MessageBox.Show("MTGAHelper is already running! Are you sure you want to continue?", "Other MTGAHelper instance detected!", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                                throw new TimeoutException("Timeout waiting for exclusive access");
                     }
                     catch (AbandonedMutexException)
                     {
@@ -36,7 +37,7 @@ namespace MTGAHelper.Tracker.WPF
                 }
                 catch (TimeoutException)
                 {
-                    MessageBox.Show("Cannot run MTGAHelper more than once", "MTGAHelper");
+                    //MessageBox.Show("Cannot run MTGAHelper more than once", "MTGAHelper");
                 }
                 catch (Exception e)
                 {

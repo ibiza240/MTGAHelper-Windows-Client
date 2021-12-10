@@ -21,16 +21,15 @@ namespace MTGAHelper.Tracker.WPF.Business
                 await Task.Delay(15000);
                 if (IsStarted == false)
                 {
-                    var processes = Process.GetProcessesByName("getFrontWindow");
-                    foreach (var p in processes)
-                    {
-                        p.Kill();
-                    }
+                    KillOthers();
 
                     process = new Process();
                     process.StartInfo.FileName = @"getFrontWindow.exe";
                     process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                     process.StartInfo.CreateNoWindow = true;
+
+                    //File.WriteAllText(Path.GetTempFileName(), $"Starting {Path.GetFullPath(process.StartInfo.FileName)}");
+
                     process.Start();
                 }
             }
@@ -43,6 +42,15 @@ namespace MTGAHelper.Tracker.WPF.Business
                 process.Kill();
                 process = default;
             }
+
+            KillOthers();
+        }
+
+        private static void KillOthers()
+        {
+            var others = Process.GetProcessesByName("getFrontWindow");
+            foreach (var p in others)
+                p.Kill();
         }
     }
 }

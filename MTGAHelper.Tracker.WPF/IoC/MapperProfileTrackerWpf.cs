@@ -22,7 +22,8 @@ namespace MTGAHelper.Tracker.WPF.IoC
                 .ForMember(m => m.Type, opt => opt.Ignore()); // todo Bruno?
 
             CreateMap<CardDraftPickWpf, CardDraftPickVM>()
-                .ForMember(i => i.BorderGradient, opt => opt.MapFrom(x => gradientCalculator.CalculateBorderGradient(x)));
+                .ForMember(i => i.BorderGradient, opt => opt.MapFrom(x => gradientCalculator.CalculateBorderGradient(x)))
+                .ForMember(i => i.CmcImages, i => i.Ignore());
 
             CreateMap<Entity.Card, CardWpf>()
                 .ForMember(i => i.ArenaId, i => i.MapFrom(x => x.grpId))

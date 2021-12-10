@@ -4,7 +4,6 @@ namespace MTGAHelper.Entity.OutputLogParsing
 {
     public class BattlePass
     {
-        public string trackName { get; set; }
         public int currentLevel { get; set; }
         public int currentExp { get; set; }
         //public List<int> rewardTiers { get; set; }
