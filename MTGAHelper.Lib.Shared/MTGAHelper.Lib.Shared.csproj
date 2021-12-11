@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>MTGAHelper.Lib</RootNamespace>
-    <Version>1.9</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<RootNamespace>MTGAHelper.Lib</RootNamespace>
+		<Version>1.9.1</Version>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Serilog" Version="2.10.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Serilog" Version="2.10.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MTGAHelper.Entity\MTGAHelper.Entity.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\MTGAHelper.Entity\MTGAHelper.Entity.csproj" />
+	</ItemGroup>
 </Project>

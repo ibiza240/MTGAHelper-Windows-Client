@@ -1,35 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Configurations>Debug;Release;DebugWithServer</Configurations>
-    <Version>1.9</Version>
-    <LangVersion>8</LangVersion>
-    <IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
-    <OutputPath>$(SolutionDir)\_Output\bin\$(Configuration)\</OutputPath>
-    <OutDir>$(OutputPath)</OutDir>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Configurations>Debug;Release;DebugWithServer</Configurations>
+		<Version>1.9.1</Version>
+		<LangVersion>8</LangVersion>
+		<IntermediateOutputPath>$(SolutionDir)\_Output\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
+		<OutputPath>$(SolutionDir)\_Output\bin\$(Configuration)\</OutputPath>
+		<OutDir>$(OutputPath)</OutDir>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugWithServer|AnyCPU'">
-    <DefineConstants>DEBUG;DEBUGWITHSERVER;TRACE</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugWithServer|AnyCPU'">
+		<DefineConstants>DEBUG;DEBUGWITHSERVER;TRACE</DefineConstants>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<PlatformTarget>AnyCPU</PlatformTarget>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Serilog" Version="2.10.0" />
-    <PackageReference Include="SimpleInjector" Version="4.10.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Serilog" Version="2.10.0" />
+		<PackageReference Include="SimpleInjector" Version="4.10.2" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MTGAHelper.Entity\MTGAHelper.Entity.csproj" />
-    <ProjectReference Include="..\MTGAHelper.Lib.OutputLogParser.Models\MTGAHelper.Lib.OutputLogParser.Models.csproj" />
-    <ProjectReference Include="..\MTGAHelper.Lib.Shared\MTGAHelper.Lib.Shared.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\MTGAHelper.Entity\MTGAHelper.Entity.csproj" />
+		<ProjectReference Include="..\MTGAHelper.Lib.OutputLogParser.Models\MTGAHelper.Lib.OutputLogParser.Models.csproj" />
+		<ProjectReference Include="..\MTGAHelper.Lib.Shared\MTGAHelper.Lib.Shared.csproj" />
+	</ItemGroup>
 </Project>
