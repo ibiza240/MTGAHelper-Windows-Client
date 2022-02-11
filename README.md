@@ -60,6 +60,25 @@ Once your data is uploaded successfully, you can simply refresh the MTGAHelper w
 
 ## Troubleshooting
 
+### Missing frameworks
+
+If you are getting this message:
+
+![image](https://user-images.githubusercontent.com/6589646/153540820-9e4b8766-dabd-49f0-aed1-59622aeab321.png)
+
+try the following:
+
+1. uninstall the program from the App & features window
+2. download/install the latest version from https://www.mtgahelper.com/download/MTGAHelperTracker.msi
+
+Clicking Yes in the message box should bring you to a page where you can download the correct framework:
+
+![image](https://user-images.githubusercontent.com/6589646/153540848-a93632f4-b48b-49bb-ae03-9f37838c3b3d.png)
+
+After installing the x64 framework to run desktop apps, the program should be able to run.
+
+
+
 ### Nothing happens when I run the MTGAHelper Tracker
 
 1- The server might be unresponsive. Try to go on https://mtgahelper.com and if the site cannot load, the tracker won't be able to start. You can report this downtime on [Discord](https://discord.gg/GTd3RMd).
