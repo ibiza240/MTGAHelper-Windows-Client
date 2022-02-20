@@ -368,7 +368,7 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                 var playerProgress = mapper.Map<PlayerProgress>(raw.activeBattlePass);
                 if (playerProgress.CurrentLevel > 0)
                 {
-                    var info = new[] { playerProgress }.ToDictionary(i => i.TrackName, i => i);
+                    var info = new[] { playerProgress }.ToDictionary(i => i.TrackName ?? "", i => i);
                     AddToListInfoByDate(Results.PlayerProgressByDate, info, graphState.LogDateTime);
                     AppendToListInfoByDate(Results.PlayerProgressIntradayByDate, raw, graphState.LogDateTime);
                 }
