@@ -30,7 +30,7 @@ See [this explanation page](Console-on-macos.md) for more info on how to run the
 
 ### Installation
 
-Important! You will need .NET 6 installed on your computer. If you are not sure, simply download and run this installer from Microsoft: https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-6.0.0-windows-x64-installer
+Important! You will need .NET 6 installed on your computer. If you are not sure, simply download and run this installer from Microsoft: https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-6.0.0-windows-x64-installer
 
 Once .NET 6 installed, [download the Tracker Installer](https://mtgahelper.com/download/MTGAHelperTracker.msi) and after the very simple setup, the tracker will be ready to run from your Desktop where a shortcut will be created.
 
@@ -59,6 +59,25 @@ Once your data is uploaded successfully, you can simply refresh the MTGAHelper w
 -----
 
 ## Troubleshooting
+
+### Missing frameworks
+
+If you are getting this message:
+
+![image](https://user-images.githubusercontent.com/6589646/153540820-9e4b8766-dabd-49f0-aed1-59622aeab321.png)
+
+try the following:
+
+1. uninstall the program from the App & features window
+2. download/install the latest version from https://www.mtgahelper.com/download/MTGAHelperTracker.msi
+
+Clicking Yes in the message box should bring you to a page where you can download the correct framework:
+
+![image](https://user-images.githubusercontent.com/6589646/153540848-a93632f4-b48b-49bb-ae03-9f37838c3b3d.png)
+
+After installing the x64 framework to run desktop apps, the program should be able to run.
+
+
 
 ### Nothing happens when I run the MTGAHelper Tracker
 
