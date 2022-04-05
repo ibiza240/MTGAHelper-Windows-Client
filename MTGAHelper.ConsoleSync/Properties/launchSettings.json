@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "MTGAHelper.ConsoleSync": {
-      "commandName": "Project",
-      "commandLineArgs": "YourMTGAHelperID \"%AppData%\\..\\LocalLow\\Wizards Of The Coast\\MTGA\\Player.log\""
-    }
-  }
-}
