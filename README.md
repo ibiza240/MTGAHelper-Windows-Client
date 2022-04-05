@@ -10,8 +10,7 @@ You can then use the **[MTGAHelper website](http://www.mtgahelper.com)**  at any
 
 See [this post](https://www.patreon.com/posts/how-to-make-best-29075781) for an overview on how to best use MTGAHelper.
 
-> Please note that the Full Tracker runs only on Windows for now. However, you can upload your log file on any OS with this [portable console program](https://github.com/ibiza240/MTGAHelper-Windows-Client/raw/master/MTGAHelper.ConsoleSync.exe.zip) or manually on the website at any time.
-See [this explanation page](Console-on-macos.md) for more info on how to run the console program on MacOS.
+> Please note that the Full Tracker runs only on Windows for now.
 
 ### Features
 
