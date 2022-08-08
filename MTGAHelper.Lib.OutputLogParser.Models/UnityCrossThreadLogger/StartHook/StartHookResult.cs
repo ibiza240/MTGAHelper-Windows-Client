@@ -12,7 +12,7 @@ namespace MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.StartHook
     public partial class StartHookRaw
     {
         public InventoryInfo InventoryInfo { get; set; }
-        public DeckSummary[] DeckSummaries { get; set; }
+        public DeckSummary[] DeckSummariesV2 { get; set; }
         public object[] SystemMessages { get; set; }
         public object SensitiveArt { get; set; }
         public Format[] Formats { get; set; }

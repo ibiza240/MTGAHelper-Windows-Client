@@ -22,6 +22,7 @@ using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventJoinRequ
 using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.EventSetDeck;
 using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetActiveEventsV3;
 using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetCombinedRankInfo;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetDeck;
 using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPlayerCardsV3;
 using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPlayerInventory;
 using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetPlayerProgress;
@@ -77,7 +78,7 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
         private readonly InGameTracker2 inGameTracker;
         private readonly GameStateDiffInterpreter gameStateDiffInterpreter = new GameStateDiffInterpreter();
         private readonly IReadOnlyDictionary<int, Card> dictAllCards;
-
+        private readonly Dictionary<string, string> getDeckIdRequestIds = new Dictionary<string, string>();
         private List<MatchResult> matches;
         public OutputLogResult Results { get; private set; }
 
@@ -193,14 +194,16 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                     lastOpponentSystemId = opponentInfo.systemSeatId;
 
                     OpponentInfo.ScreenName = opponentInfo.playerName;
-                    OpponentInfo.RankingClass = roomChanged.Raw.gameRoomInfo.gameRoomConfig.clientMetadata[$"{opponentPlayerId}_RankClass"];
-                    // Quickfix for 0 values...
-                    OpponentInfo.RankingTier = Math.Max(1, int.Parse(roomChanged.Raw.gameRoomInfo.gameRoomConfig.clientMetadata[$"{opponentPlayerId}_RankTier"]));
 
-                    int.TryParse(roomChanged.Raw.gameRoomInfo.gameRoomConfig.clientMetadata[$"{opponentPlayerId}_LeaderboardPlacement"], out int iMythicLeaderboardPlace);
-                    OpponentInfo.MythicLeaderboardPlace = iMythicLeaderboardPlace;
-                    int.TryParse(roomChanged.Raw.gameRoomInfo.gameRoomConfig.clientMetadata[$"{opponentPlayerId}_LeaderboardPercentile"], out int iMythicPercentile);
-                    OpponentInfo.MythicPercentile = iMythicPercentile;
+                    //OpponentInfo.RankingClass = roomChanged.Raw.gameRoomInfo.gameRoomConfig.clientMetadata[$"{opponentPlayerId}_RankClass"];
+
+                    // Quickfix for 0 values...
+                    //OpponentInfo.RankingTier = Math.Max(1, int.Parse(roomChanged.Raw.gameRoomInfo.gameRoomConfig.clientMetadata[$"{opponentPlayerId}_RankTier"]));
+
+                    //int.TryParse(roomChanged.Raw.gameRoomInfo.gameRoomConfig.clientMetadata[$"{opponentPlayerId}_LeaderboardPlacement"], out int iMythicLeaderboardPlace);
+                    //OpponentInfo.MythicLeaderboardPlace = iMythicLeaderboardPlace;
+                    //int.TryParse(roomChanged.Raw.gameRoomInfo.gameRoomConfig.clientMetadata[$"{opponentPlayerId}_LeaderboardPercentile"], out int iMythicPercentile);
+                    //OpponentInfo.MythicPercentile = iMythicPercentile;
 
                     CreateGame(roomChanged.LogDateTime, opponentInfo.systemSeatId);
                     //currentGameProgress.DeckUsed.Name = currentMatch.DeckUsed.Name;
@@ -373,12 +376,31 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
                     AppendToListInfoByDate(Results.PlayerProgressIntradayByDate, raw, graphState.LogDateTime);
                 }
             }
+            else if (result is GetDeckRequestResult getDeckRequest)
+            {
+                getDeckIdRequestIds[getDeckRequest.Raw.id] = getDeckRequest.Raw.FetchPayload().DeckId;
+            }
+            else if (result is GetDeckResult getDeck)
+            {
+                var requestId = new System.Text.RegularExpressions.Regex(@"Deck_GetDeck\((.*?)\)").Match(getDeck.Part).Groups[1].Value;
+                var deckId = getDeckIdRequestIds[requestId];
+
+                // Update the deck cards
+                var deck = Results.DecksSynthetic.FirstOrDefault(i => i.Id == deckId);
+                if (deck != null)
+                {
+                    deck.Cards = mapper.Map<ICollection<DeckCardRaw>>(getDeck.Raw);
+                }
+            }
             else if (result is StartHookResult hook)
             {
-                var deckIds = hook.Raw.DeckSummaries.Select(i => i.DeckId.ToString());
+                var deckIds = hook.Raw.DeckSummariesV2.Select(i => i.DeckId.ToString());
 
+                // Always save the latest ids
                 AddToListInfoByDate(Results.MtgaDecksFoundByDate, new HashSet<string>(deckIds), hook.LogDateTime);
-                var decks = hook.Raw.DeckSummaries.Select(i => mapper.Map<CourseDeckRaw>(i)).ToList();
+
+                // Save summaries (no cards) as decks
+                var decks = hook.Raw.DeckSummariesV2.Select(i => mapper.Map<CourseDeckRaw>(i)).ToList();
                 Results.DecksSynthetic = mapper.Map<List<ConfigModelRawDeck>>(decks);
 
                 // TODO: Reactivate maybe?
@@ -875,6 +897,12 @@ namespace MTGAHelper.Lib.OutputLogParser.OutputLogProgress
 
             currentMatch.DeckUsed = currentMatch.DeckUsed ?? mapper.Map<ConfigModelRawDeck>(currentMatchDeckSubmitted);
             currentMatch.DeckUsed.Name = currentMatch.DeckUsed.Name ?? GetDeckNameFromEventType(currentMatch.DeckUsed.Name);
+
+            if (currentMatch.Opponent.ScreenName == "Sparky")
+            {
+                currentMatch.Opponent.RankingClass = "Beginner";
+                currentMatch.Opponent.RankingTier = 0;
+            }
 
             matches.Add(currentMatch);
             currentMatch = null;// MatchResult.CreateDefault();

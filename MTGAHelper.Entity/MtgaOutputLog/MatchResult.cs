@@ -71,9 +71,10 @@ namespace MTGAHelper.Entity.MtgaOutputLog
     {
         public string ScreenName { get; set; } = "N/A";
         public bool IsWotc { get; set; }
-        public string RankingClass { get; set; } = "Beginner";
-        public int RankingTier { get; set; }
+        public string RankingClass { get; set; } = "Bronze";
+        public int RankingTier { get; set; } = 1;
         public double MythicPercentile { get; set; }
+
         public int MythicLeaderboardPlace { get; set; }
 
         public string GetRankString()

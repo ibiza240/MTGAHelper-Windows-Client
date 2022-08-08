@@ -1,3 +1,11 @@
+### v1.9.4 (2022-08-07)
+
+Log file change fix: MTGA decks tracking
+
+Log file change fix: Matches tracking
+
+Support for latest sets
+
 ### v1.9.3 (2022-02-10)
 
 Support for Kamigawa: Neon Dynasty

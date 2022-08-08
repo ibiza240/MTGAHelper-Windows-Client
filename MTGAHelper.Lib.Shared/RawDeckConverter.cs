@@ -53,7 +53,10 @@ namespace MTGAHelper.Lib
                 }
             }
 
+            var test = cards.Values.Where(i => i.Card.name == "Luminarch Aspirant").ToArray();
+
             return cards.Values
+                .Where(i => i.Card.isRebalanced == false)
                 .Where(i => basicLandIdentifier.IsBasicLand(i.Card) == false)
                 .Where(i => i.Card.isToken == false)
                 .Where(i => i.Card.linkedFaceType != enumLinkedFace.SplitCard)

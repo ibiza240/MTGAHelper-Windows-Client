@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MTGAHelper.Entity;
 using MTGAHelper.Entity.OutputLogParsing;
+using MTGAHelper.Lib.OutputLogParser.Models.UnityCrossThreadLogger.GetDeck;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +9,9 @@ namespace MTGAHelper.Lib.OutputLogParser.IoC
 {
     public class MapperProfileLibOutputLogParser : Profile
     {
-        public MapperProfileLibOutputLogParser()
+        public MapperProfileLibOutputLogParser(
+            DeckCardsConverter deckCardsConverter
+            )
         {
             //CreateMap<MatchCreatedRaw, MatchOpponentInfo>()
             //    .ForMember(i => i.IsWotc, i => i.MapFrom(x => x.opponentIsWotc))
@@ -45,6 +48,8 @@ namespace MTGAHelper.Lib.OutputLogParser.IoC
                 .ForMember(i => i.lastUpdated, i => i.MapFrom(x => x.Attributes.FirstOrDefault(y => y.Name == "lastPlayed").Value))
                 //.ForMember(i => i.mainDeck, i => i.MapFrom(x => new List<int>()))
                 ;
+
+            CreateMap<GetDeckRaw, ICollection<DeckCardRaw>>().ConvertUsing(deckCardsConverter);
         }
     }
 }

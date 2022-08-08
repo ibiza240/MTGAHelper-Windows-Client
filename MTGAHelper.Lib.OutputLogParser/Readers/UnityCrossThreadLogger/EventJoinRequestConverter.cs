@@ -7,4 +7,9 @@ namespace MTGAHelper.Lib.OutputLogParser.Readers.UnityCrossThreadLogger
     {
         public override string LogTextKey => "==> Event_Join";
     }
+
+    public class GetDeckRequestConverter : GenericConverter<GetDeckRequestResult, RequestRaw2<GetDeckRequestPayloadRaw>>, IMessageReaderRequestToServer
+    {
+        public override string LogTextKey => "==> Deck_GetDeck";
+    }
 }

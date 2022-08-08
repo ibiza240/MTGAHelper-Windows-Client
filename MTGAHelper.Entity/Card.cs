@@ -11,24 +11,29 @@ namespace MTGAHelper.Entity
 
         private const string unknownImage =
             "https://cdn11.bigcommerce.com/s-0kvv9/images/stencil/1280x1280/products/266486/371622/classicmtgsleeves__43072.1532006814.jpg?c=2&imbypass=on";
-        public static Card Unknown { get; } = new Card("Unknown", 0, unknownImage);
 
+        public static Card Unknown { get; } = new Card("Unknown", 0, unknownImage);
 
         public string setAndInBooster => notInBooster ? NOTINBOOSTER : set;
 
         public ICollection<string> colors { get; }
         public ICollection<string> color_identity { get; }
+
         //public string layout { get; set; }
         public string name { get; }
+
         //public int mtgo_id { get; set; }
         public string number { get; }
+
         public string rarity { get; }
         public string mana_cost { get; }
         public string type { get; }
         public string set { get; }
         public bool notInBooster { get; }
+
         //public bool craftedOnly { get; set; }
         public int grpId { get; set; }
+
         public string imageCardUrl { get; }
         public string imageArtUrl { get; }
         public int cmc { get; }
@@ -48,11 +53,13 @@ namespace MTGAHelper.Entity
         public Card LinkedCard { get; private set; }
 
         public bool isToken { get; }
+
         //public bool isCraftable { get; set; }
         public bool isCollectible { get; }
+
         public bool isStyle { get; set; }
         public string artistCredit { get; }
-
+        public bool isRebalanced { get; set; }
 
         private Card(string name, int grpId, string imageCardUrl, string type = null, ICollection<string> colors = null, ICollection<string> colorIdentity = null)
         {
@@ -80,6 +87,7 @@ namespace MTGAHelper.Entity
             LinkedCardGrpId = card.LinkedFaces?.Count == 1 ? card.LinkedFaces.First() : 0;
             isToken = card.IsToken;
             isCollectible = card.IsCollectible;
+            isRebalanced = card.IsRebalanced;
             artistCredit = card.Artist;
         }
 
@@ -121,6 +129,7 @@ namespace MTGAHelper.Entity
 
             return simpleType.Split(new[] { "//" }, StringSplitOptions.None)[0].Trim();
         }
+
         public RarityEnum GetRarityEnum(bool splitRareLands = false)
         {
             if (string.IsNullOrWhiteSpace(rarity))
@@ -135,14 +144,18 @@ namespace MTGAHelper.Entity
             {
                 case "mythic":
                     return RarityEnum.Mythic;
+
                 case "rare":
                     if (splitRareLands)
                         return type.ToLower().Contains("land") ? RarityEnum.RareLand : RarityEnum.RareNonLand;
                     return RarityEnum.Rare;
+
                 case "uncommon":
                     return RarityEnum.Uncommon;
+
                 case "common":
                     return RarityEnum.Common;
+
                 default:
                     return RarityEnum.Unknown;
             }
@@ -206,6 +219,7 @@ namespace MTGAHelper.Entity
         {
             return base.Equals(obj);
         }
+
         public override string ToString()
         {
             return name;
