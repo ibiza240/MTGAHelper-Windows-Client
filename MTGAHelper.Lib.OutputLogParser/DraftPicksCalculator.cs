@@ -10,11 +10,12 @@ namespace MTGAHelper.Lib.OutputLogParser
 {
     public class DraftPicksCalculator
     {
-        readonly IMapper mapper;
+        private readonly IMapper mapper;
         private readonly BasicLandIdentifier basicLandIdentifier;
-        readonly Dictionary<int, Card> allCards;
+        private readonly Dictionary<int, Card> allCards;
+
         //CacheSingleton<Dictionary<string, DraftRatings>> draftRatings;
-        readonly Dictionary<string,
+        private readonly Dictionary<string,
             Dictionary<string,
                 (Dictionary<string, DraftRating> ratings, Dictionary<string, ICollection<DraftRatingTopCard>> topCardsByColor)>> ratingsBySourceSet;
 
@@ -152,10 +153,8 @@ namespace MTGAHelper.Lib.OutputLogParser
 
             if (isMissingRareLand != null)
                 isMissingRareLand.IsRareDraftPick = RaredraftPickReasonEnum.RareLandMissing;
-
             else if (maxWeight > 0 && data.Any(i => i.Weight == maxWeight))
                 data.First(i => i.Weight == maxWeight).IsRareDraftPick = RaredraftPickReasonEnum.HighestWeight;
-
             else if (data.Any(i => basicLandIdentifier.IsBasicLand(i.Card) == false && i.NbMissingCollection > 0))
             {
                 var r = data

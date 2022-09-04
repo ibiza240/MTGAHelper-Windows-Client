@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="GetData2.dll" />
+    <Content Include="SharpMonoInjector.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
