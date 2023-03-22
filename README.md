@@ -93,6 +93,8 @@ Please be sure that you [activated the detailed logging in-game](#activate-the-d
 
 If you are stuck at any moment, please reach us directly through our [Discord server](https://discord.gg/GTd3RMd) for the fastest response time or by using the [contact form](https://www.mtgahelper.com/contact) on the MTGAHelper website so we can assist you.
 
+See https://github.com/ibiza240/MTGAHelper-Server for the full codebase, including the server
+
 -----
 
 ###### All art is property of their respective artists and/or Wizards of the Coast Inc. This website is not produced, endorsed, supported, or affiliated with Wizards of the Coast. MTGAHelper is unofficial Fan Content permitted under the Fan Content Policy.
